@@ -11,24 +11,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e32da883-6307-4c52-8af3-eb0e741fd4c0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/vue/public/favicon.ico" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/public/img/icons/android-chrome-192x192.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/public/img/icons/android-chrome-512x512.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/public/img/icons/android-chrome-maskable-192x192.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/public/img/icons/android-chrome-maskable-512x512.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/public/img/icons/apple-touch-icon-120x120.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/public/img/icons/apple-touch-icon-152x152.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/public/img/icons/apple-touch-icon-180x180.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/public/img/icons/apple-touch-icon-60x60.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/public/img/icons/apple-touch-icon-76x76.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/public/img/icons/apple-touch-icon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/public/img/icons/favicon-16x16.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/public/img/icons/favicon-32x32.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/public/img/icons/msapplication-icon-144x144.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/public/img/icons/mstile-150x150.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/public/img/icons/safari-pinned-tab.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/public/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vue/public/robots.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphql/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphql/types/EnityTypes/User.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphql/types/Mutation.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphql/types/Query.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphql/webpack.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphql/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/graphql/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphql/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/graphql/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphql/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/graphql/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/views/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/Home.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,6 +42,12 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
   <component name="ProjectId" id="1ivKSRsgyodnlLxpSCRabCuVvsh" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -65,8 +64,9 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/graphql" />
+      <recent name="$PROJECT_DIR$/graphql/types/EnityTypes" />
+      <recent name="$PROJECT_DIR$" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -79,6 +79,7 @@
       <updated>1602782624623</updated>
       <workItem from="1602782625716" duration="4005000" />
       <workItem from="1602868297913" duration="6257000" />
+      <workItem from="1602938535030" duration="12782000" />
     </task>
     <task id="LOCAL-00001" summary="Initialize">
       <created>1602879434278</created>
@@ -103,20 +104,29 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initialize" />
     <option name="LAST_COMMIT_MESSAGE" value="Initialize" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="695" y="251" key="FileChooserDialogImpl" timestamp="1602875893047">
+    <state x="562" y="330" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1602948153104">
       <screen x="0" y="24" width="1920" height="1056" />
     </state>
-    <state x="695" y="251" key="FileChooserDialogImpl/0.24.1920.1056@0.24.1920.1056" timestamp="1602875893047" />
+    <state x="562" y="330" key="#com.intellij.fileTypes.FileTypeChooser/0.24.1920.1056@0.24.1920.1056" timestamp="1602948153104" />
+    <state x="695" y="251" key="FileChooserDialogImpl" timestamp="1602942263095">
+      <screen x="0" y="24" width="1920" height="1056" />
+    </state>
+    <state x="695" y="251" key="FileChooserDialogImpl/0.24.1920.1056@0.24.1920.1056" timestamp="1602942263095" />
     <state x="329" y="98" key="SettingsEditor" timestamp="1602874903781">
       <screen x="0" y="24" width="1920" height="1056" />
     </state>
     <state x="329" y="98" key="SettingsEditor/0.24.1920.1056@0.24.1920.1056" timestamp="1602874903781" />
+    <state x="540" y="248" key="run.anything.popup" timestamp="1602957717954">
+      <screen x="0" y="24" width="1920" height="1056" />
+    </state>
+    <state x="540" y="248" key="run.anything.popup/0.24.1920.1056@0.24.1920.1056" timestamp="1602957717954" />
     <state x="539" y="44" width="840" height="1034" key="search.everywhere.popup" timestamp="1602879137075">
       <screen x="0" y="24" width="1920" height="1056" />
     </state>
