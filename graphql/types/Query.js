@@ -1,19 +1,25 @@
 const {GraphQLBoolean, GraphQLObjectType, GraphQLString} = require("graphql");
+const Db = require('../database/Db');
+
+let db = new Db();
 
 module.exports = new GraphQLObjectType({
     name: 'Query',
     fields: {
-        field: {
+        get_mysql_user_host: {
             type: GraphQLString,
             args: {
-                input: {
-                    type: GraphQLBoolean
+                name: {
+                    type: GraphQLString
                 }
             },
-            resolve(obj, {input}) {
-                console.log(obj);
-                console.log(input);
-                return true;
+            async resolve(obj, { name }) {
+                return await db.query("SELECT * FROM mysql.user WHERE `User` = ?", [ name ])
+                .then(data => {
+                    return data[0].Host;
+                }).catch(err => {
+                    console.log(err);
+                });
             }
         },
     },
