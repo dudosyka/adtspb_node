@@ -1,5 +1,6 @@
 const {GraphQLBoolean, GraphQLObjectType, GraphQLString} = require("graphql");
-const Db = require('../database/Db');
+const Db = require('../utils/Db');
+const User = require('../Entity/User');
 
 let db = new Db();
 
@@ -14,9 +15,12 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve(obj, { name }) {
-                return await db.query("SELECT * FROM mysql.user WHERE `User` = ?", [ name ])
+                const user = new User();
+                return await db.select(user, "`User` = ?", [ name ])
                 .then(data => {
-                    return data[0].Host;
+                    if (data.length)
+                        return data[0].fields.Host;
+                    return null;
                 }).catch(err => {
                     console.log(err);
                 });

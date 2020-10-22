@@ -10,4 +10,4 @@ module.exports = new graphql.GraphQLObjectType({
             type: graphql.GraphQLString,
         }
     }
-})
+});

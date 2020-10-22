@@ -1,7 +1,7 @@
 const express = require("express");
 const {graphqlHTTP} = require("express-graphql");
 const {GraphQLSchema} = require("graphql");
-const User = require("./types/EnityTypes/User")
+const User = require("./types/EntityTypes/User")
 
 let schema = new GraphQLSchema({
     query: require('./types/Query'),
