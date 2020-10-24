@@ -102,7 +102,7 @@ Db.prototype.deleteWhere = async function (entity, query, bindings)
 }
 
 /**
- * @param entity <Entity
+ * @param entity <Entity>
  * @returns {Promise<unknown>}
  *
  * Update entity
