@@ -1,15 +1,19 @@
 const {GraphQLObjectType, GraphQLString} = require("graphql");
-const User = require("./EnityTypes/User");
+const UserType = require("./EntityTypes/User");
+const User = require('../Entity/User');
+
+const Db = require("../utils/Db");
+const db = new Db();
+
+const { client } = require('../utils/Redis');
 
 module.exports = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
         viewer: {
-            type: User,
+            type: GraphQLString,
             async resolve(obj, data) {
-                let user = await obj.user();
-                console.log(user.id);
-                return user;
+                return "user";
             }
         },
     }
