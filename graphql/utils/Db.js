@@ -18,11 +18,12 @@ let Db = function ()
  * @param query <String>
  * @param data <Array>
  * @param entity <null|function>
+ * @param asArray <boolean>
  * @returns {Promise<unknown>}
  *
  * Executes query to database
  */
-Db.prototype.query = function (query, data = [], entity = null) {
+Db.prototype.query = function (query, data = [], entity = null, asArray = false) {
     return new Promise((resolve, reject) => {
         this.connection.query(query, data, (err, rows) => {
             //If any errs returns them
@@ -37,7 +38,16 @@ Db.prototype.query = function (query, data = [], entity = null) {
             }).then(() => {
                 if (entity === null)
                 {
-                    resolve(true);
+                    if (!asArray)
+                        resolve(true);
+                    else
+                    {
+                        let result = [];
+                        rows.map(el => {
+                            result.push(el);
+                        });
+                        resolve(result);
+                    }
                 }
                 let result = [];
                 rows.map(el => {
