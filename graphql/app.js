@@ -1,4 +1,5 @@
 const express = require("express");
+const bodyParcer = require("body-parser");
 let app = express();
 
 const expressWs = require('express-ws')(app);
@@ -14,6 +15,8 @@ let schema = new GraphQLSchema({
 });
 
 let rootValue = {};
+
+app.use(bodyParcer.urlencoded({ extended: true }));
 
 //Auth middleware
 app.use((req, res, next) => {
@@ -46,7 +49,6 @@ expressWs.getWss().on('connection', (ws) => {
     instance.hmset(['ws', id, id], (err, res) => {
         // console.log(err,res);
     });
-
     //When connection closed delete id from redis
     ws.on('close', () => {
         instance.hdel(['ws', ws.id], (err, res) => {
