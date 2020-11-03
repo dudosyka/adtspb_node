@@ -1,6 +1,7 @@
+//To use db connection add new database.js file into this dir. It content should be like this:
 module.exports = {
     host: "localhost",
-    db: "adtspb_node",
+    database: "adtspb_node",
     user: "dudosyka",
     password: "123",
 }
