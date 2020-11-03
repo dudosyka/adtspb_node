@@ -29,8 +29,13 @@ Db.prototype.query = function (query, data = [], entity = null) {
             //If any errs returns them
             if (err) reject(err);
 
+            //If any errs return null (or when select returns empty \_(._.)_/ )
+            if (typeof res === 'undefined')
+            {
+                resolve(null);
+            }
             //If we get not a select query then return result which contain information about affected rows
-            if (res.affectedRows)
+            else if (res.affectedRows)
             {
                 resolve(res);
             }
