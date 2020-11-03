@@ -9,27 +9,38 @@ const User = require("./Entity/User");
 
 const { instance } = require('./utils/Redis');
 
+const Jwt = require('./utils/Jwt');
+
+const jwt = new Jwt();
+
 let schema = new GraphQLSchema({
     query: require('./types/Query'),
     mutation: require('./types/Mutation'),
 });
 
-let rootValue = {};
+let rootValue = {
+    user: null
+};
 
-app.use(bodyParcer.urlencoded({ extended: true }));
+// app.use(bodyParcer.urlencoded({ extended: true }));
 
 //Auth middleware
-app.use((req, res, next) => {
-    let count = 0;
-    expressWs.getWss().clients.forEach((curVal) => {
-        count++;
-    });
-    rootValue = {
-        ...rootValue,
-        user: new User({
-            id: count
-        })
-    };
+app.use(async (req, res, next) => {
+    let token = req.header("Authorization").split(" ")[1];
+    console.log(token);
+    let data = await jwt.parse(token);
+    console.log(data);
+    if (data !== false)
+    {
+        let count = 0;
+        expressWs.getWss().clients.forEach((curVal) => {
+            count++;
+        });
+        rootValue = {
+            ...rootValue,
+            user: await User.createFrom(data)
+        };
+    }
     next();
 });
 

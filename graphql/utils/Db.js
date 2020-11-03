@@ -23,38 +23,33 @@ let Db = function ()
  *
  * Executes query to database
  */
-Db.prototype.query = function (query, data = [], entity = null, asArray = false) {
+Db.prototype.query = function (query, data = [], entity = null) {
     return new Promise((resolve, reject) => {
-        this.connection.query(query, data, (err, rows) => {
+        this.connection.query(query, data, (err, res) => {
             //If any errs returns them
             if (err) reject(err);
 
-            //If there are no errs, returns the received data
-            (new Promise((resolve, reject) => {
-                rows
-                resolve();
-            })).catch(err => {
-                reject(err);
-            }).then(() => {
-                if (entity === null)
-                {
-                    if (!asArray)
-                        resolve(true);
-                    else
-                    {
-                        let result = [];
-                        rows.map(el => {
-                            result.push(el);
-                        });
-                        resolve(result);
-                    }
-                }
+            //If any errs return null (or when select returns empty \_(._.)_/ )
+            if (typeof res === 'undefined')
+            {
+                resolve(null);
+            }
+            //If we get not a select query then return result which contain information about affected rows
+            else if (res.affectedRows)
+            {
+                resolve(res);
+            }
+            else
+            {
                 let result = [];
-                rows.map(el => {
-                    result.push(new entity(el));
-                });
+                //If we passed the entity return array of entities
+                if (entity !== null)
+                    res.map(el => { result.push(new entity(el)); });
+                //Else return array of rows
+                else
+                    resolve(res);
                 resolve(result);
-            });
+            }
         });
     });
 }
