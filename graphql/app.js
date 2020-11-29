@@ -19,17 +19,17 @@ let schema = new GraphQLSchema({
 });
 
 let rootValue = {
-    user: null
+    viewer: null
 };
+
+let token = "dd";
 
 // app.use(bodyParcer.urlencoded({ extended: true }));
 
 //Auth middleware
 app.use(async (req, res, next) => {
-    let token = req.header("Authorization").split(" ")[1];
-    console.log(token);
+    token = req.header("Authorization").split(" ")[1];
     let data = await jwt.parse(token);
-    console.log(data);
     if (data !== false)
     {
         let count = 0;
@@ -38,15 +38,18 @@ app.use(async (req, res, next) => {
         });
         rootValue = {
             ...rootValue,
-            user: await User.createFrom(data)
+            viewer: await User.createFrom(data)
         };
     }
+    console.log(rootValue);
     next();
 });
 
 app.use('/api', graphqlHTTP({
     schema: schema,
-    rootValue: rootValue,
+    rootValue: () => {
+        return rootValue;
+    },
     graphiql: true
 }));
 

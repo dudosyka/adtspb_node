@@ -2,14 +2,16 @@ const {GraphQLBoolean, GraphQLObjectType, GraphQLString, GraphQLID} = require("g
 const Db = require('../utils/Db');
 const User = require('../Entity/User');
 const UserType = require('./EntityTypes/User');
+const Rbac = require('../utils/Rbac');
 
 let db = new Db();
+let rbac = new Rbac();
 
 module.exports = new GraphQLObjectType({
     name: 'Query',
     fields: {
         get_user_by_id: {
-            type: GraphQLString,
+            type: UserType,
             args: {
                 id: {
                     type: GraphQLID
