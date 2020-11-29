@@ -7,9 +7,10 @@ const mysql = require('mysql');
  */
 let Db = function ()
 {
-    this.connection = mysql.createConnection(
-        require('../config/database')
-    );
+    this.connection = mysql.createConnection({
+        ...require('../config/database'),
+        multipleStatements: true
+    });
 
     this.connection.connect();
 }
@@ -144,6 +145,12 @@ Db.prototype.updateWhere = async function (entity, fields = false, query = false
     query = "UPDATE " + entity.table + " " + set + " WHERE " + query;
 
     return await this.query(query, bindings)
+}
+
+//TODO Create insert method (SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`='xxx'  AND `TABLE_NAME`='xxx';)
+Db.prototype.insert = async function (entity)
+{
+
 }
 
 module.exports = Db;
