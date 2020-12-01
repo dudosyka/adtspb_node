@@ -22,26 +22,33 @@ let rootValue = {
     viewer: null
 };
 
-let token = "dd";
-
 // app.use(bodyParcer.urlencoded({ extended: true }));
 
 //Auth middleware
 app.use(async (req, res, next) => {
-    token = req.header("Authorization").split(" ")[1];
-    let data = await jwt.parse(token);
-    if (data !== false)
+    let token = req.header("Authorization");
+
+    if (typeof token === 'undefined')
     {
-        let count = 0;
-        expressWs.getWss().clients.forEach((curVal) => {
-            count++;
-        });
-        rootValue = {
-            ...rootValue,
-            viewer: await User.createFrom(data)
-        };
+        res.status(403).send();
     }
-    console.log(rootValue);
+    else
+    {
+        token = token.split(" ")[1];
+        let data = await jwt.parse(token);
+        if (data !== false)
+        {
+            let count = 0;
+            expressWs.getWss().clients.forEach((curVal) => {
+                count++;
+            });
+            rootValue = {
+                ...rootValue,
+                viewer: await User.createFrom(data)
+            };
+        }
+        console.log(rootValue);
+    }
     next();
 });
 
