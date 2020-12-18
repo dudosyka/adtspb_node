@@ -1,4 +1,5 @@
 const express = require("express");
+const bodyParcer = require("body-parser");
 let app = express();
 
 const expressWs = require('express-ws')(app);
@@ -8,31 +9,54 @@ const User = require("./Entity/User");
 
 const { instance } = require('./utils/Redis');
 
+const Jwt = require('./utils/Jwt');
+
+const jwt = new Jwt();
+
 let schema = new GraphQLSchema({
     query: require('./types/Query'),
     mutation: require('./types/Mutation'),
 });
 
-let rootValue = {};
+let rootValue = {
+    viewer: null
+};
+
+// app.use(bodyParcer.urlencoded({ extended: true }));
 
 //Auth middleware
-app.use((req, res, next) => {
-    let count = 0;
-    expressWs.getWss().clients.forEach((curVal) => {
-        count++;
-    });
-    rootValue = {
-        ...rootValue,
-        user: new User({
-            id: count
-        })
-    };
+app.use(async (req, res, next) => {
+    let token = req.header("Authorization");
+
+    if (typeof token === 'undefined')
+    {
+        res.status(403).send();
+    }
+    else
+    {
+        token = token.split(" ")[1];
+        let data = await jwt.parse(token);
+        if (data !== false)
+        {
+            let count = 0;
+            expressWs.getWss().clients.forEach((curVal) => {
+                count++;
+            });
+            rootValue = {
+                ...rootValue,
+                viewer: await User.createFrom(data)
+            };
+        }
+        console.log(rootValue);
+    }
     next();
 });
 
 app.use('/api', graphqlHTTP({
     schema: schema,
-    rootValue: rootValue,
+    rootValue: () => {
+        return rootValue;
+    },
     graphiql: true
 }));
 
@@ -46,7 +70,6 @@ expressWs.getWss().on('connection', (ws) => {
     instance.hmset(['ws', id, id], (err, res) => {
         // console.log(err,res);
     });
-
     //When connection closed delete id from redis
     ws.on('close', () => {
         instance.hdel(['ws', ws.id], (err, res) => {

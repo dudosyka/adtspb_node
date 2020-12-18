@@ -7,9 +7,10 @@ const mysql = require('mysql');
  */
 let Db = function ()
 {
-    this.connection = mysql.createConnection(
-        require('../config/database')
-    );
+    this.connection = mysql.createConnection({
+        ...require('../config/database'),
+        multipleStatements: true
+    });
 
     this.connection.connect();
 }
@@ -18,33 +19,38 @@ let Db = function ()
  * @param query <String>
  * @param data <Array>
  * @param entity <null|function>
+ * @param asArray <boolean>
  * @returns {Promise<unknown>}
  *
  * Executes query to database
  */
 Db.prototype.query = function (query, data = [], entity = null) {
     return new Promise((resolve, reject) => {
-        this.connection.query(query, data, (err, rows) => {
+        this.connection.query(query, data, (err, res) => {
             //If any errs returns them
             if (err) reject(err);
 
-            //If there are no errs, returns the received data
-            (new Promise((resolve, reject) => {
-                rows
-                resolve();
-            })).catch(err => {
-                reject(err);
-            }).then(() => {
-                if (entity === null)
-                {
-                    resolve(true);
-                }
+            //If any errs return null (or when select returns empty \_(._.)_/ )
+            if (typeof res === 'undefined')
+            {
+                resolve(null);
+            }
+            //If we get not a select query then return result which contain information about affected rows
+            else if (res.affectedRows)
+            {
+                resolve(res);
+            }
+            else
+            {
                 let result = [];
-                rows.map(el => {
-                    result.push(new entity(el));
-                });
+                //If we passed the entity return array of entities
+                if (entity !== null)
+                    res.map(el => { result.push(new entity(el)); });
+                //Else return array of rows
+                else
+                    resolve(res);
                 resolve(result);
-            });
+            }
         });
     });
 }
@@ -139,6 +145,12 @@ Db.prototype.updateWhere = async function (entity, fields = false, query = false
     query = "UPDATE " + entity.table + " " + set + " WHERE " + query;
 
     return await this.query(query, bindings)
+}
+
+//TODO Create insert method (SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`='xxx'  AND `TABLE_NAME`='xxx';)
+Db.prototype.insert = async function (entity)
+{
+
 }
 
 module.exports = Db;

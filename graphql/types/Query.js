@@ -1,25 +1,29 @@
-const {GraphQLBoolean, GraphQLObjectType, GraphQLString} = require("graphql");
+const {GraphQLBoolean, GraphQLObjectType, GraphQLString, GraphQLID} = require("graphql");
 const Db = require('../utils/Db');
 const User = require('../Entity/User');
+const UserType = require('./EntityTypes/User');
+const Rbac = require('../utils/Rbac');
 
 let db = new Db();
+let rbac = new Rbac();
 
 module.exports = new GraphQLObjectType({
     name: 'Query',
     fields: {
-        get_mysql_user_host: {
-            type: GraphQLString,
+        get_user_by_id: {
+            type: UserType,
             args: {
-                name: {
-                    type: GraphQLString
+                id: {
+                    type: GraphQLID
                 }
             },
-            async resolve(obj, { name }) {
-                const user = new User();
-                return await db.select(user, "`User` = ?", [ name ])
+            async resolve(obj, { id }) {
+                return await db.select(User, "`id` = ?", [ id ])
                 .then(data => {
+                    if (data === null)
+                        return [];
                     if (data.length)
-                        return data[0].fields.Host;
+                        return data[0];
                     return null;
                 }).catch(err => {
                     console.log(err);
