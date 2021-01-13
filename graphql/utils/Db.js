@@ -26,7 +26,7 @@ let Db = function ()
  */
 Db.prototype.query = function (query, data = [], entity = null) {
     return new Promise((resolve, reject) => {
-        this.connection.query(query, data, (err, res) => {
+        this.connection.query(query, data, async (err, res) => {
             //If any errs returns them
             if (err) reject(err);
 
@@ -45,7 +45,14 @@ Db.prototype.query = function (query, data = [], entity = null) {
                 let result = [];
                 //If we passed the entity return array of entities
                 if (entity !== null)
-                    res.map(el => { result.push(new entity(el)); });
+                {
+                    for (let i = 0; i < res.length; i++)
+                    {
+                        let el = res[i];
+                        let model = await (new entity()).createFrom(el);
+                        result.push(model);
+                    }
+                }
                 //Else return array of rows
                 else
                     resolve(res);
