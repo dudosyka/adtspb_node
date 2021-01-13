@@ -1,6 +1,7 @@
 const Db = require('../utils/Db');
 const baseEntity = require('./BaseEntity');
 const Rbac = require('../utils/Rbac');
+const { crypt, compare } = require('../utils/Crypt');
 
 let db = new Db();
 let rbac = new Rbac();
@@ -39,5 +40,24 @@ User.prototype.getRole = async function () {
             console.error(err);
         });
 }
+
+User.prototype._save = async function () {
+    this.pass = crypt(this.pass);
+    await this.save();
+}
+
+User.prototype.auth = async function (data) {
+    return new Promise(async (resolve, reject) => {
+        let res = await db.select(this, "`login` = ?", [ data['user'] ]);
+        if (res.length)
+        {
+            let user = await res[0];
+            resolve(await compare(data['pass'], user.pass));
+
+        }
+        else
+            resolve(false);
+    });
+};
 
 User.prototype.table = 'user';

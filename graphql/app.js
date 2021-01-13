@@ -10,8 +10,11 @@ const User = require("./Entity/User");
 const { instance } = require('./utils/Redis');
 
 const Jwt = require('./utils/Jwt');
+const bodyParser = require("body-parser");
+const multer = require('multer');
 
 const jwt = new Jwt();
+const upload = multer();
 
 let schema = new GraphQLSchema({
     query: require('./types/Query'),
@@ -22,10 +25,44 @@ let rootValue = {
     viewer: null
 };
 
-// app.use(bodyParcer.urlencoded({ extended: true }));
+app.use('/auth', bodyParser.json());
+
+app.use('/auth', bodyParser.urlencoded({ extended: true }));
+
+app.use('/auth', upload.array());
+
+app.use('/auth', express.static('public'));
+
+app.use('/auth', bodyParser.urlencoded({ extended: true }));
+
+//Auth port
+app.use('/auth', async (req, res, next) =>
+{
+    let data = req.body;
+    if (typeof data['user'] !== 'undefined' && typeof data['pass'] !== 'undefined')
+    {
+        await User.auth(data)
+            .then(data => {
+                res.send(jwt.sign(data));
+                res.sendStatus(200).end();
+            })
+            .catch(err => {
+                if (!res.headersSent)
+                {
+                    res.send('null');
+                    res.sendStatus(403);
+                }
+            });
+    }
+    else
+    {
+        res.sendStatus(403);
+    }
+});
 
 //Auth middleware
-app.use(async (req, res, next) => {
+app.use('/api', async (req, res, next) =>
+{
     let token = req.header("Authorization");
 
     if (typeof token === 'undefined')
@@ -78,4 +115,8 @@ expressWs.getWss().on('connection', (ws) => {
     })
 });
 
-app.listen(8081);
+app.wss = expressWs.getWss();
+
+app.listen(8080);
+
+console.log("App listen on localhost:8080");
