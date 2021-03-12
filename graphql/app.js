@@ -1,6 +1,8 @@
 const express = require("express");
+const cors = require("cors");
 const bodyParcer = require("body-parser");
 let app = express();
+app.use(cors());
 
 const expressWs = require('express-ws')(app);
 const {graphqlHTTP} = require("express-graphql");
@@ -25,6 +27,20 @@ let rootValue = {
     viewer: null
 };
 
+// TEMP: Uncommented to generate test role and rule.
+// const Rbac = require('./utils/Rbac');
+//
+// const rbac = new Rbac();
+//
+// app.use('/genRoleAndRules', async (req, res, next) => {
+//   const role = await rbac.addRole('common user', 'TEST ROLE.');
+//   const rule = await rbac.addRule('simple rule', 'TEST RULE.');
+//   rbac.assign(role, rule);
+//   rbac.addRoleToUser(1, role);
+//   rbac.minimize();
+//   res.send();
+// });
+
 app.use('/auth', bodyParser.json());
 
 app.use('/auth', bodyParser.urlencoded({ extended: true }));
@@ -43,13 +59,16 @@ app.use('/auth', async (req, res, next) =>
     {
         await User.auth(data)
             .then(data => {
-                res.send(jwt.sign(data));
-                res.sendStatus(200).end();
+              try {
+                  res.send(jwt.sign({id: data['id']}));
+              } catch (err) {
+                  console.log(err);
+              }
             })
             .catch(err => {
-                if (!res.headersSent)
+              console.log(err);
+                if (!res.headerSent)
                 {
-                    res.send('null');
                     res.sendStatus(403);
                 }
             });
@@ -63,7 +82,7 @@ app.use('/auth', async (req, res, next) =>
 //Check user token. If valid -> next(), invalid -> HTTP 403
 app.use('/api', async (req, res, next) =>
 {
-    //Authorization: Bearer-[token]
+    //Authorization: Bearer [token]
     let token = req.header("Authorization");
 
     if (typeof token === 'undefined')
@@ -73,17 +92,19 @@ app.use('/api', async (req, res, next) =>
     else
     {
         token = token.split(" ")[1];
+        console.log(token);
         let data = await jwt.parse(token);
+        console.log(data);
         if (data !== false)
         {
             let count = 0;
-            expressWs.getWss().clients.forEach((curVal) => {
-                count++;
-            });
             rootValue = {
                 ...rootValue,
                 viewer: await User.createFrom(data)
             };
+        }
+        else {
+            res.status(403).send();
         }
         console.log(rootValue);
     }
@@ -117,9 +138,6 @@ app.use('/api', graphqlHTTP({
 //         });
 //     })
 // });
+// app.wss = expressWs.getWss();
 
-app.wss = expressWs.getWss();
-
-app.listen(8080);
-
-console.log("App listen on localhost:8080");
+module.exports = app;

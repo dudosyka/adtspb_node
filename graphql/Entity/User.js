@@ -25,10 +25,7 @@ User.prototype.createFrom = async function (data)
 User.prototype.getInstance = () => User;
 
 User.prototype.fields = {
-    id: null,
-    login: null,
-    pass: null,
-    token: null
+    id: null
 };
 
 User.prototype.getRole = async function () {
@@ -52,8 +49,10 @@ User.prototype.auth = async function (data) {
         if (res.length)
         {
             let user = await res[0];
-            resolve(await compare(data['pass'], user.password).catch(err => { console.error(err); }));
-
+            if (await compare(data['pass'], user.password).catch(err => { console.error(err); }))
+              resolve(user);
+            else
+              resolve(false);
         }
         else
             resolve(false);
