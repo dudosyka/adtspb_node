@@ -153,9 +153,10 @@ Rbac.prototype.removeRole = async function (id)
     return await this.removeItem(id, true);
 }
 
-Rbac.prototype.addRoleToUser = async function (user, role_id)
+Rbac.prototype.addRoleToUser = async function (user_id, role_id)
 {
-    return await this.assign(user.__get('__role'), role_id, false);
+    await db.query('INSERT INTO `user_role` (`user_id`, `auth_role_id`) VALUES (?, ?)', [ user_id, role_id ]);
+    return true;
 }
 
 Rbac.prototype.removeRule = async function (id)
