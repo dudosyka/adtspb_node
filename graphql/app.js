@@ -63,7 +63,7 @@ app.use('/auth', async (req, res, next) =>
 //Check user token. If valid -> next(), invalid -> HTTP 403
 app.use('/api', async (req, res, next) =>
 {
-    Authorization: Bearer-[token]
+    //Authorization: Bearer-[token]
     let token = req.header("Authorization");
 
     if (typeof token === 'undefined')
@@ -99,23 +99,24 @@ app.use('/api', graphqlHTTP({
     graphiql: true
 }));
 
+//We really needn`t chat? (Delete if yes)
 //Listen for WS connections
-expressWs.getWss().on('connection', (ws) => {
-    //When connect get current from rootValue
-    let id = rootValue.user.fields.id;
-
-    //Setting id to WS and redis
-    ws.id = id;
-    instance.hmset(['ws', id, id], (err, res) => {
-        // console.log(err,res);
-    });
-    //When connection closed delete id from redis
-    ws.on('close', () => {
-        instance.hdel(['ws', ws.id], (err, res) => {
-            // console.log(res);
-        });
-    })
-});
+// expressWs.getWss().on('connection', (ws) => {
+//     //When connect get current from rootValue
+//     let id = rootValue.user.fields.id;
+//
+//     //Setting id to WS and redis
+//     ws.id = id;
+//     instance.hmset(['ws', id, id], (err, res) => {
+//         // console.log(err,res);
+//     });
+//     //When connection closed delete id from redis
+//     ws.on('close', () => {
+//         instance.hdel(['ws', ws.id], (err, res) => {
+//             // console.log(res);
+//         });
+//     })
+// });
 
 app.wss = expressWs.getWss();
 
