@@ -35,7 +35,7 @@ app.use('/auth', express.static('public'));
 
 app.use('/auth', bodyParser.urlencoded({ extended: true }));
 
-//Auth port
+//Auth port. Check user credentials. If valid -> return token, invalid -> HTTP 403.
 app.use('/auth', async (req, res, next) =>
 {
     let data = req.body;
@@ -60,9 +60,10 @@ app.use('/auth', async (req, res, next) =>
     }
 });
 
-//Auth middleware
+//Check user token. If valid -> next(), invalid -> HTTP 403
 app.use('/api', async (req, res, next) =>
 {
+    Authorization: Bearer-[token]
     let token = req.header("Authorization");
 
     if (typeof token === 'undefined')
@@ -89,6 +90,7 @@ app.use('/api', async (req, res, next) =>
     next();
 });
 
+// GraphQLSchema port.
 app.use('/api', graphqlHTTP({
     schema: schema,
     rootValue: () => {

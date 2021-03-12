@@ -48,11 +48,11 @@ User.prototype._save = async function () {
 
 User.prototype.auth = async function (data) {
     return new Promise(async (resolve, reject) => {
-        let res = await db.select(this, "`login` = ?", [ data['user'] ]);
+        let res = await db.select(this, "`email` = ? OR `phone` = ?", [ data['user'], data['user'] ]);
         if (res.length)
         {
             let user = await res[0];
-            resolve(await compare(data['pass'], user.pass));
+            resolve(await compare(data['pass'], user.password).catch(err => { console.error(err); }));
 
         }
         else
@@ -61,3 +61,6 @@ User.prototype.auth = async function (data) {
 };
 
 User.prototype.table = 'user';
+
+
+module.exports = (new User());
