@@ -6,7 +6,7 @@ module.exports = {
             bcrypt.genSalt(10, function(err, salt) {
                 if (err)
                     reject(err);
-                bcrypt.hash(password, salt, function(err, hash) {
+                bcrypt.hash(str, salt, function(err, hash) {
                     if (err)
                         reject(err);
                     resolve(hash);
@@ -17,10 +17,17 @@ module.exports = {
     compare: (pass, hashpass) => {
         return new Promise((resolve, reject) => {
             bcrypt.compare(pass, hashpass, function(err, isPasswordMatch) {
-                if (err !== null)
+
+              //typeof check was added because of this dumb shit named bcrypt,
+              //returning both null and Undefined in same situations... Why? I don`t know...
+
+              if (err !== null && typeof err !== 'undefined') {
+                    console.error(err);
                     reject(err);
-                resolve(isPasswordMatch);
+              }
+              resolve(isPasswordMatch);
+
             });
-        });
+        }).catch(err => {console.error(err);});
     }
 }
