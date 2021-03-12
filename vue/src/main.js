@@ -1,111 +1,62 @@
 import Vue from 'vue'
 import App from './App.vue'
-import './registerServiceWorker'
 import router from './router'
-import store from './store'
-import { GraphQLClient, request } from 'graphql-request'
-const ws = new WebSocket('ws://localhost:8081/')
+import { request, GraphQLClient } from "graphql-request"
 
-console.log(ws)
+console.log(localStorage);
 
-Vue.prototype.$request_endpoint = process.env.VUE_APP_REQUEST_ENDPOINT
-Vue.prototype.$request = request
+// localStorage.removeItem('token');
 
-const $globals = Vue.observable({
-  $graphql_client: {},
-  $access_control: {
-    actions: []
-  }
-})
-
-Object.defineProperty(Vue.prototype, '$graphql_client', {
-  get () {
-    return $globals.$graphql_client
-  },
-
-  set (value) {
-    $globals.$graphql_client = value
-  }
-})
-
-
-Object.defineProperty(Vue.prototype, '$access_control', {
-  get () {
-    return $globals.$access_control
-  },
-
-  set (value) {
-    $globals.$access_control = value;
-  }
-})
-
-async function hasAccess (action_id, action_list_id = 1) {
-  const request = ` r
-                mutation {
-                    getViewerRights(action_list_id: ` + action_list_id + `)
-                }
-            `
-  let result = false
-  try {
-    await $globals.$graphql_client.request(request, {}).then(data => {
-      $globals.$access_control.actions = JSON.parse(data.getViewerRights).map(el => {
-        return parseInt(el)
-      })
-      console.log(action_id)
-      result = ($globals.$access_control.actions.indexOf(action_id) > -1)
-      console.log(result)
-    }).catch(err => {
-      // console.log(err)
-    })
-  } catch (e) {}
-  return result
-}
-
-const config = [
-  //Page access control
-]
-
-const checkConfig = async () => {
-  config.map(async el => {
-      if (requested.path.match(el.regExp))
-      {
-        let success = false;
-        let act = el.actions.map(async action => {
-          if (await hasAccess(action))
-          {
-            success = true;
-          }
-        });
-        act[el.actions.length - 1].finally(() => {
-          if (!success)
-            redirect();
-        });
-      }
+// TODO:Change localhost to real domain when publish
+const graphql = new GraphQLClient("http://localhost:8080/api", {
+    headers: {
+        Authorization: "Bearer " + localStorage.getItem('token'),
     }
-  )
+});
+
+global.api = graphql;
+
+let token = localStorage.getItem('token');
+
+let validToken = () => {
+    const req = `
+      query($token: String) {
+        validToken(token: $token)
+      }
+    `;
+    return api.request(req, {token: token})
+    .then(data => {
+      console.log(data.validToken);
+      return data.validToken;
+    })
+    .catch(err => {
+      console.log(err);
+    });
+};
+let redirectTo = (name) => {
+    router.push({name: name}).catch(err => { /* QUITE! */ });
 }
 
-let requested
+router.afterEach(async (to, from) => {
+    let isLogin = true;
+    isLogin = (token !== null);
 
-let redirect
+    if (isLogin) {
+        isLogin = await validToken();
+        console.log(isLogin);
+    }
 
-router.beforeEach(async function (to, from, next) {
-  // console.log(1)
-  requested = to
-  redirect = () => {
-    router.push('/')
-  }
-  if (isCreated) {
-    checkConfig()
-  }
-  next()
-})
+    if (to.path == '/login' && isLogin)
+      redirectTo('Home');
 
+    if (!isLogin)
+      redirectTo('Authorization');
+});
 
 new Vue({
   router,
   render: h => h(App),
-  created: async function () {
-    // checkConfig() check viewer rights
+  created: () => {
+    console.log(11);
   }
-}).$mount('#app')
+}).$mount('#app');
