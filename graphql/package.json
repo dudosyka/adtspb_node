@@ -5,13 +5,14 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack",
-    "start": "sudo nodemon ./app.js"
+    "start": "sudo nodemon ./main.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-graphql": "^0.11.0",
     "express-session": "^1.17.1",
