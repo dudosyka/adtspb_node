@@ -10,8 +10,11 @@ const User = require("./Entity/User");
 const { instance } = require('./utils/Redis');
 
 const Jwt = require('./utils/Jwt');
+const bodyParser = require("body-parser");
+const multer = require('multer');
 
 const jwt = new Jwt();
+const upload = multer();
 
 let schema = new GraphQLSchema({
     query: require('./types/Query'),
@@ -22,10 +25,45 @@ let rootValue = {
     viewer: null
 };
 
-// app.use(bodyParcer.urlencoded({ extended: true }));
+app.use('/auth', bodyParser.json());
 
-//Auth middleware
-app.use(async (req, res, next) => {
+app.use('/auth', bodyParser.urlencoded({ extended: true }));
+
+app.use('/auth', upload.array());
+
+app.use('/auth', express.static('public'));
+
+app.use('/auth', bodyParser.urlencoded({ extended: true }));
+
+//Auth port. Check user credentials. If valid -> return token, invalid -> HTTP 403.
+app.use('/auth', async (req, res, next) =>
+{
+    let data = req.body;
+    if (typeof data['user'] !== 'undefined' && typeof data['pass'] !== 'undefined')
+    {
+        await User.auth(data)
+            .then(data => {
+                res.send(jwt.sign(data));
+                res.sendStatus(200).end();
+            })
+            .catch(err => {
+                if (!res.headersSent)
+                {
+                    res.send('null');
+                    res.sendStatus(403);
+                }
+            });
+    }
+    else
+    {
+        res.sendStatus(403);
+    }
+});
+
+//Check user token. If valid -> next(), invalid -> HTTP 403
+app.use('/api', async (req, res, next) =>
+{
+    //Authorization: Bearer-[token]
     let token = req.header("Authorization");
 
     if (typeof token === 'undefined')
@@ -52,6 +90,7 @@ app.use(async (req, res, next) => {
     next();
 });
 
+// GraphQLSchema port.
 app.use('/api', graphqlHTTP({
     schema: schema,
     rootValue: () => {
@@ -60,22 +99,27 @@ app.use('/api', graphqlHTTP({
     graphiql: true
 }));
 
+//We really needn`t chat? (Delete if yes)
 //Listen for WS connections
-expressWs.getWss().on('connection', (ws) => {
-    //When connect get current from rootValue
-    let id = rootValue.user.fields.id;
+// expressWs.getWss().on('connection', (ws) => {
+//     //When connect get current from rootValue
+//     let id = rootValue.user.fields.id;
+//
+//     //Setting id to WS and redis
+//     ws.id = id;
+//     instance.hmset(['ws', id, id], (err, res) => {
+//         // console.log(err,res);
+//     });
+//     //When connection closed delete id from redis
+//     ws.on('close', () => {
+//         instance.hdel(['ws', ws.id], (err, res) => {
+//             // console.log(res);
+//         });
+//     })
+// });
 
-    //Setting id to WS and redis
-    ws.id = id;
-    instance.hmset(['ws', id, id], (err, res) => {
-        // console.log(err,res);
-    });
-    //When connection closed delete id from redis
-    ws.on('close', () => {
-        instance.hdel(['ws', ws.id], (err, res) => {
-            // console.log(res);
-        });
-    })
-});
+app.wss = expressWs.getWss();
 
-app.listen(8081);
+app.listen(8080);
+
+console.log("App listen on localhost:8080");

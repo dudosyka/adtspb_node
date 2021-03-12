@@ -1,4 +1,5 @@
 const mysql = require('mysql');
+const db_cnf = require('../config/database');
 
 /**
  * @constructor
@@ -8,7 +9,7 @@ const mysql = require('mysql');
 let Db = function ()
 {
     this.connection = mysql.createConnection({
-        ...require('../config/database'),
+        ...db_cnf,
         multipleStatements: true
     });
 
@@ -26,7 +27,7 @@ let Db = function ()
  */
 Db.prototype.query = function (query, data = [], entity = null) {
     return new Promise((resolve, reject) => {
-        this.connection.query(query, data, (err, res) => {
+        this.connection.query(query, data, async (err, res) => {
             //If any errs returns them
             if (err) reject(err);
 
@@ -37,22 +38,28 @@ Db.prototype.query = function (query, data = [], entity = null) {
             }
             //If we get not a select query then return result which contain information about affected rows
             else if (res.affectedRows)
-            {
                 resolve(res);
-            }
             else
-            {
-                let result = [];
-                //If we passed the entity return array of entities
-                if (entity !== null)
-                    res.map(el => { result.push(new entity(el)); });
-                //Else return array of rows
-                else
-                    resolve(res);
-                resolve(result);
-            }
+                resolve(res);
         });
     });
+}
+
+Db.prototype.createRangeQuery = function (field, arr, selected_field = 'id')
+{
+    let ids = [];
+    let query = " " + selected_field + " in (";
+    let i = 0;
+    arr.map(el => {
+        ids.push(el[field]);
+        query += "?";
+        if (i + 1 < arr.length)
+            query += ",";
+        i++;
+    });
+    query += ")";
+
+    return {ids: ids, query: query};
 }
 
 /**
@@ -90,7 +97,7 @@ Db.prototype.selectOne = async function(entity, query, bindings)
 Db.prototype.delete = async function (entity)
 {
     //Build simple delete request like: "DELETE FROM `xxx` WHERE `id` = XX" and execute id
-    return await this.query('DELETE FROM ' + entity.table + ' WHERE `id` = ?', [ entity.id ])
+    return await this.query('DELETE FROM ' + entity.table + ' WHERE `id` = ?', [ entity.__get('id') ])
 }
 
 /**
@@ -150,7 +157,36 @@ Db.prototype.updateWhere = async function (entity, fields = false, query = false
 //TODO Create insert method (SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`='xxx'  AND `TABLE_NAME`='xxx';)
 Db.prototype.insert = async function (entity)
 {
-
+    let columns = await this.query("SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`= ?  AND `TABLE_NAME`= ?",[ db_cnf.database, entity.table ]);
+    let req = "INSERT INTO " + entity.table + " (";
+    let i = 0;
+    columns.map(el => {
+        if (el.COLUMN_NAME !== 'id')
+        {
+            req += el.COLUMN_NAME;
+            if (i + 1 != columns.length)
+                req += ",";
+        }
+        i++;
+    });
+    req += ") VALUES (";
+    let j = 0;
+    columns.map(el => {
+        if (el.COLUMN_NAME !== 'id')
+        {
+            req += "?";
+            if (j + 1 != columns.length)
+                req += ",";
+        }
+        j++;
+    });
+    req += ")";
+    let data = [];
+    Object.keys(entity.fields).map(el => {
+        if (el !== 'id')
+            data.push(entity.fields[el]);
+    });
+    return this.query(req, data);
 }
 
 module.exports = Db;
