@@ -3,9 +3,11 @@ const Db = require('../utils/Db');
 const User = require('../Entity/User');
 const UserType = require('./EntityTypes/User');
 const Rbac = require('../utils/Rbac');
+const Jwt = require('../utils/Jwt');
 
 let db = new Db();
 let rbac = new Rbac();
+let jwt = new Jwt();
 
 module.exports = new GraphQLObjectType({
     name: 'Query',
@@ -30,5 +32,16 @@ module.exports = new GraphQLObjectType({
                 });
             }
         },
+        validToken: {
+          type: GraphQLBoolean,
+          args: {
+            token: {
+              type: GraphQLString
+            }
+          },
+          async resolve(obj, { token }) {
+              return (await jwt.parse(token) !== false);
+          }
+        }
     },
 });
