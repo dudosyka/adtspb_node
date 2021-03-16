@@ -12,14 +12,13 @@ User.prototype = Object.assign(User.prototype, baseEntity.prototype);
 
 User.prototype.createFrom = async function (data)
 {
-    if (data === {})
+    usr = await (new baseEntity()).createFrom(data, (new User()));
+    if (usr === false)
         return;
-    data = await this.construct(data);
-    Object.assign(this.fields, data);
-    let { role, rules } = await rbac.auth(this.__get('id'));
-    this.fields.__accessible = rules;
-    this.fields.__role = role;
-    return this;
+    let { role, rules } = await rbac.auth(usr.__get('id'));
+    usr.fields.__accessible = rules;
+    usr.fields.__role = role;
+    return usr;
 }
 
 User.prototype.getInstance = () => User;
@@ -29,7 +28,7 @@ User.prototype.fields = {
 };
 
 User.prototype.getRole = async function () {
-    return db.query("SELECT `role_id` FROM `user_role` WHERE `user_id` = ?", [ this.__get('id') ])
+    return this.db.query("SELECT `role_id` FROM `user_role` WHERE `user_id` = ?", [ this.__get('id') ])
         .then(data => {
             console.log(data);
         })
@@ -45,7 +44,7 @@ User.prototype._save = async function () {
 
 User.prototype.auth = async function (data) {
     return new Promise(async (resolve, reject) => {
-        let res = await db.select(this, "`email` = ? OR `phone` = ?", [ data['user'], data['user'] ]);
+        let res = await this.db.select(this, "`email` = ? OR `phone` = ?", [ data['user'], data['user'] ]);
         if (res.length)
         {
             let user = await res[0];
