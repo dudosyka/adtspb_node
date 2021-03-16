@@ -6,6 +6,8 @@ const Validator = require('../utils/Validate');
 
 let baseEntity = function () {};
 
+baseEntity.prototype.db = db;
+
 baseEntity.prototype.construct = function (data) {
     if (data.id !== undefined && data.id !== null)
     {
@@ -22,6 +24,24 @@ baseEntity.prototype.construct = function (data) {
     }
     return data;
 };
+
+baseEntity.prototype.createFrom = async function (data, inside = true) {
+    if (data === {})
+        return false;
+
+    if (inside === true)
+    {
+        data = await this.construct(data);
+        Object.assign(this.fields, data);
+        return this;
+    }
+    else
+    {
+        data = await inside.construct(data);
+        Object.assign(inside.fields, data);
+        return inside;
+    }
+}
 
 baseEntity.prototype.fields = {};
 

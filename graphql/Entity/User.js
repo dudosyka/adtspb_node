@@ -1,12 +1,10 @@
-const Db = require('../utils/Db');
 const baseEntity = require('./BaseEntity');
 const Rbac = require('../utils/Rbac');
 const { crypt, compare } = require('../utils/Crypt');
 
-let db = new Db();
 let rbac = new Rbac();
 
-let User = function () {}
+let User = function () {  }
 
 User.prototype = Object.assign(User.prototype, baseEntity.prototype);
 
