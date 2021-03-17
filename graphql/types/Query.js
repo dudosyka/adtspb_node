@@ -2,6 +2,8 @@ const {GraphQLBoolean, GraphQLObjectType, GraphQLString, GraphQLID} = require("g
 const Db = require('../utils/Db');
 const User = require('../Entity/User');
 const UserType = require('./EntityTypes/User');
+const Association = require('../Entity/Association');
+const AssociationType = require('./EntityTypes/Association');
 const Rbac = require('../utils/Rbac');
 const Jwt = require('../utils/Jwt');
 
@@ -12,7 +14,7 @@ let jwt = new Jwt();
 module.exports = new GraphQLObjectType({
     name: 'Query',
     fields: {
-        get_user_by_id: {
+        user: {
             type: UserType,
             args: {
                 id: {
@@ -20,17 +22,20 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve(obj, { id }) {
-                return await db.select(User, "`id` = ?", [ id ])
-                .then(data => {
-                    if (data === null)
-                        return [];
-                    if (data.length)
-                        return data[0];
-                    return null;
-                }).catch(err => {
-                    console.log(err);
-                });
+                let user = await User.createFrom({id: id});
+                return user.fields;
             }
+        },
+        association: {
+                type: AssociationType,
+                args: {
+                    id: {
+                        type: GraphQLID
+                    }
+                },
+                async resolve(obj, { id }) {
+                    return (await Association.createFrom({id: id})).fields;
+                }
         },
         validToken: {
           type: GraphQLBoolean,

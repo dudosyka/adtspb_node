@@ -8,14 +8,21 @@ let User = function () {  }
 
 User.prototype = Object.assign(User.prototype, baseEntity.prototype);
 
-User.prototype.createFrom = async function (data)
-{
+User.prototype.createFrom = async function (data) {
     usr = await (new baseEntity()).createFrom(data, (new User()));
     if (usr === false)
         return;
     let { role, rules } = await rbac.auth(usr.__get('id'));
     usr.fields.__accessible = rules;
     usr.fields.__role = role;
+    return usr;
+}
+
+//Light version of createFrom to load user data when we needn`t to know anything about user`s roles and rules
+User.prototype._createFrom = async function (data) {
+    usr = await (new baseEntity()).createFrom(data, (new User()));
+    if (usr === false)
+        return;
     return usr;
 }
 
@@ -56,7 +63,28 @@ User.prototype.auth = async function (data) {
     });
 };
 
-User.prototype.table = 'user';
+User.prototype.checkRole = function (checkFor, target = false) {
+    //If target not provided then check...
+    //...if it called on mnodel with loaded roles...
+    //...then check and returns result...
+    //... in other situations - returns false.
+    if (target === false) {
+        if (this.__get('__role') == null)
+            return false;
+        else
+            return this.__get('__role').includes(checkFor);
+    }
 
+    //Check if not object or array provided returns false
+    if (typeof target == 'object')
+        return target.includes(checkFor);
+    else
+        return false;
+
+    //In any unpredictable situations returns false
+    return false;
+}
+
+User.prototype.table = 'user';
 
 module.exports = (new User());
