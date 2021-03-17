@@ -1,4 +1,4 @@
-const baseEntity require('./BaseEntity');
+const baseEntity = require('./BaseEntity');
 
 let Association = function () {}
 
@@ -6,8 +6,10 @@ Association.prototype = Object.assign(Association.prototype, baseEntity.prototyp
 
 Association.prototype.getInstance = () => Association;
 
-Association.fields = {
+Association.prototype.fields = {
     id: null,
 };
 
-Association.table = "association";
+Association.prototype.table = "association";
+
+module.exports = (new Association());

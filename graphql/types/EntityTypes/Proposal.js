@@ -1,4 +1,6 @@
 const graphql = require("graphql");
+const Status = require('../../Entity/Status');
+const User = require('../../Entity/User');
 
 module.exports = new graphql.GraphQLObjectType({
     name: "Proposal",
@@ -8,22 +10,22 @@ module.exports = new graphql.GraphQLObjectType({
             type: graphql.GraphQLID,
         },
         association: {
-            type: require('./Association'),
+            type: AssociationType,
         },
         child: {
             type: UserType,
             async resolve (obj, data) {
-              return { /*..*/ };
+              return (await User._createFrom({id: obj.child_id})).fields;
             }
         },
         parent: {
             type: UserType,
             async resolve (obj, data) {
-              return { /*..*/ };
+              return (await User._createFrom({id: obj.parent_id})).fields;
             }
         },
         status: {
-            type: StatusType,
+            type: graphql.GraphQLList(StatusType),
             args: {
             //Should we send hidden statuses? [true|false]
                 showHidden: {
@@ -31,7 +33,10 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve (obj, { showHidden }) {
-                return { /*..*/ };
+                console.log('OBJ 2: ', obj);
+                let statuses = await Status.selectByProposal(obj, showHidden);
+                console.log(statuses);
+                return statuses;
             },
         },
         isHiddent: {

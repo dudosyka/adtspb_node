@@ -1,13 +1,19 @@
-const baseEntity require('./BaseEntity');
+const baseEntity = require('./BaseEntity');
 
 let Status = function () {}
 
-Status.prototype = Object.assign(Association.prototype, baseEntity.prototype);
+Status.prototype = Object.assign(Status.prototype, baseEntity.prototype);
 
-Status.prototype.getInstance = () => Association;
+Status.prototype.getInstance = () => Status;
 
-Status.fields = {
+Status.prototype.fields = {
     id: null,
 };
 
-Status.table = "association";
+Status.prototype.selectByProposal = async function (proposal, showHidden = 0) {
+    return await this.db.select(this, '`proposal_id` = ? AND (`hidden` = 0 OR `hidden` = ?)' , [ proposal.id, showHidden ]).then(data => data).catch(err => { console.log(err); });
+}
+
+Status.prototype.table = "proposal_status";
+
+module.exports = (new Status());
