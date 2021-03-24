@@ -2,13 +2,14 @@ const Db = require('../utils/Db');
 
 const db = new Db();
 
-const Validator = require('../utils/Validate');
+const Validator = require('../utils/Validator');
 
 let baseEntity = function () {};
 
 baseEntity.prototype.db = db;
 
 baseEntity.prototype.construct = function (data) {
+    this.fields = {};
     if (data.id !== undefined && data.id !== null)
     {
         return db.query( "SELECT * FROM `"+this.table+"` WHERE id = ?", [ data.id ])
@@ -25,25 +26,25 @@ baseEntity.prototype.construct = function (data) {
     return data;
 };
 
-baseEntity.prototype.createFrom = async function (data, inside = true) {
+baseEntity.prototype.baseCreateFrom = async function (data) {
     if (data === {})
         return false;
 
-    if (inside === true)
-    {
-        data = await this.construct(data);
-        Object.assign(this.fields, data);
-        return this;
-    }
-    else
-    {
-        data = await inside.construct(data);
-        Object.assign(inside.fields, data);
-        return inside;
-    }
+    data = await this.construct(data);
+    Object.assign(this.fields, data);
+    return this;
+}
+
+baseEntity.prototype.createFrom = function (data) {
+    return this.baseCreateFrom(data);
+}
+
+baseEntity.prototype.createFrom = async function (data, inside = true) {
 }
 
 baseEntity.prototype.fields = {};
+
+baseEntity.prototype.validateRules = {};
 
 baseEntity.prototype.__get = function (field) {
     let res = this.fields[field];
@@ -65,14 +66,20 @@ baseEntity.prototype.__set = function (field, value) {
     }
 }
 
-baseEntity.table = "";
+baseEntity.prototype.table = "";
 
 baseEntity.prototype.save = async function () {
-    return await db.insert(this);
+    if (this.validate())
+        return await db.insert(this);
+    else
+        return false;
 }
 
 baseEntity.prototype.update = async function () {
-    return await db.update(this);
+    if (this.validate())
+        return await db.update(this);
+    else
+        return false;
 }
 
 baseEntity.prototype.delete = async function () {
@@ -80,7 +87,7 @@ baseEntity.prototype.delete = async function () {
 }
 
 baseEntity.prototype.checkForPairs = async function (field, val) {
-    return await db.select(this, field + "=?", [ val ]);
+    return await db.select(this, "`" + field + "`" + " = ?", [ val ]);
 }
 
 baseEntity.prototype.search = async function (Search) {
@@ -102,13 +109,25 @@ baseEntity.prototype.search = async function (Search) {
     return await db.select(this, query, data);
 }
 
-//Validate method (for all types, realization of validation methods is in {home}/utils/validate.js)
-baseEntity.prototype.validate = async function (field, type) {
-    return Validator(type, this.__get(field))
-                .then(data => data)
-                .catch(err => {
-                    throw new Error(err);
-                });
+baseEntity.prototype.validator = function (field, onErr = "Validate error") {
+    let values = field.map(el => {
+        return {
+            name: el,
+            val: this.__get(el),
+        };
+    });
+    console.log(values);
+    return (new Validator(values, onErr));
+}
+
+baseEntity.prototype.validate = function () {
+    let rules = this.validateRules();
+    let errs = {};
+    for (rule in rules) {
+        if (!rules[rule].check())
+            errs = Object.assign(errs, rules[rule].errs);
+    }
+    return (Object.keys(errs).length > 0) ? errs : true;
 }
 
 module.exports = baseEntity;
