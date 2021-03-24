@@ -1,6 +1,7 @@
 const baseEntity = require('./BaseEntity');
 const Rbac = require('../utils/Rbac');
 const { crypt, compare } = require('../utils/Crypt');
+const AppConfig = require('../config/AppConfig');
 
 let rbac = new Rbac();
 
@@ -9,28 +10,23 @@ let User = function () {  }
 User.prototype = Object.assign(User.prototype, baseEntity.prototype);
 
 User.prototype.createFrom = async function (data) {
-    usr = await (new baseEntity()).createFrom(data, (new User()));
-    if (usr === false)
-        return;
-    let { role, rules } = await rbac.auth(usr.__get('id'));
-    usr.fields.__accessible = rules;
-    usr.fields.__role = role;
-    return usr;
-}
-
-//Light version of createFrom to load user data when we needn`t to know anything about user`s roles and rules
-User.prototype._createFrom = async function (data) {
-    usr = await (new baseEntity()).createFrom(data, (new User()));
-    if (usr === false)
-        return;
-    return usr;
+    await this.baseCreateFrom(data);
+    let { role, rules } = await rbac.auth(this.__get('id'));
+    this.fields.__role = role;
+    this.fields.__accessible = rules;
+    return this;
 }
 
 User.prototype.getInstance = () => User;
 
-User.prototype.fields = {
-    id: null
-};
+User.prototype.validateRules = function () {
+    return [
+        this.validator(['name', 'surname', 'lastname', 'sex', 'email', 'phone', 'password'], 'Can`t be empty.').notNull(),
+        this.validator(['phone'], 'Should be valid phone number.').phone(),
+        this.validator(['email'], 'Should be valid email.').email(),
+        this.validator(['sex'], 'Invalid format').match(/^[0-1]{1}$/),
+    ];
+}
 
 User.prototype.getRole = async function () {
     return this.db.query("SELECT `role_id` FROM `user_role` WHERE `user_id` = ?", [ this.__get('id') ])
@@ -83,6 +79,36 @@ User.prototype.checkRole = function (checkFor, target = false) {
 
     //In any unpredictable situations returns false
     return false;
+}
+
+User.prototype.encryptPassword = async function () {
+    await this.__set('password', await crypt(this.__get('password')));
+}
+
+User.prototype.createNew = async function () {
+    let validate = this.validate();
+    if (validate !== true) {
+        throw Error(JSON.stringify(validate));
+    }
+    else {
+        let pairs = await this.checkForPairs('email', this.__get('email'));
+
+        if (pairs.length > 0)
+            return false;
+
+        await this.encryptPassword();
+        let usr = await this.save();
+
+        if (usr === false)
+            return false;
+
+        let res = rbac.addRoleToUser(usr.insertId, AppConfig.common_user_id);
+
+        if (res === false)
+            return false;
+
+        return true;
+    }
 }
 
 User.prototype.table = 'user';
