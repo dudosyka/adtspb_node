@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack",
-    "start": "sudo nodemon ./main.js"
+    "start": "sudo nodemon ./main.js",
+	"winStart": "nodemon ./main.js"
   },
   "author": "",
   "license": "ISC",

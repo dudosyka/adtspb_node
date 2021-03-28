@@ -78,19 +78,33 @@ Rbac.prototype.minimize = async function ()
 
 Rbac.prototype.auth = async function (user_id)
 {
-   let role = await db.query('SELECT `auth_role_id` FROM `user_role` WHERE `user_id` = ?', [ user_id ]).then(data => {
-       return data[0].auth_role_id;
-   });
+
+   //Get all roles
+   let roles = await db.query('SELECT `auth_role_id` FROM `user_role` WHERE `user_id` = ?', [ user_id ]).then(data => data.map(el => el.auth_role_id));
+   let rules = [];
+
+   //Get rule for every role
+   for (role in roles) {
+       rules.push(await db.query("SELECT `rule` FROM `auth_assignment_min` WHERE `role` = ?", [ roles[role] ])
+        .then(data => data.map(el => el.rule))
+        .catch(err => {
+           return false;
+       }));
+   }
+
+   //Remove nested arrays
+   let res = [];
+   for (rule in rules) {
+       res = res.concat(rules[rule], res);
+   }
+
+   //Get only unique rules
+   rules = res.filter((value, index, self) => (self.indexOf(value) === index));
+
+   //Return roles and rules
    return {
-       role: role, rules:  await db.query("SELECT `rule` FROM `auth_assignment_min` WHERE `role` = ?", [ role ])
-            .then(data => {
-                return data.map(el => {
-                    return el.rule;
-                });
-            })
-            .catch(err => {
-               return false;
-            })
+       role: roles,
+       rules: rules
    };
 }
 
@@ -155,7 +169,9 @@ Rbac.prototype.removeRole = async function (id)
 
 Rbac.prototype.addRoleToUser = async function (user_id, role_id)
 {
-    await db.query('INSERT INTO `user_role` (`user_id`, `auth_role_id`) VALUES (?, ?)', [ user_id, role_id ]);
+    let res = await db.query('INSERT INTO `user_role` (`user_id`, `auth_role_id`) VALUES (?, ?)', [ user_id, role_id ]);
+    if (res === null)
+        return false;
     return true;
 }
 
