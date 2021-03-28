@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
+import SignUp from '../views/SignUp.vue'
 import Page2 from '../views/Page2.vue'
 
 Vue.use(VueRouter)
@@ -15,7 +16,14 @@ const routes = [
   {
     path: '/login',
     name: 'Authorization',
+    meta: { layout: 'AuthLayout' },
     component: Login
+  },
+  {
+    path: '/signup',
+    name: 'Registration',
+    meta: { layout: 'AuthLayout' },
+    component: SignUp
   },
   {
     path: '/page',
