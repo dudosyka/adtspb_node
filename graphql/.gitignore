@@ -2,3 +2,4 @@
 /dist/
 /config/database.js
 /config/jwt.js
+/config/AppConfig.js
