@@ -28,7 +28,9 @@
 
           <div class="buttons">
             <button class="dark-button" @click="auth()" tabindex="4">Войти</button>
+
             <button class="light-button" tabindex="5">Регистрация</button>
+
           </div>
       </div>
 
@@ -62,6 +64,9 @@
         pass: null,
         remember: false //not is parm
       }
+    },
+    components: {
+
     },
     methods: {
       auth()
