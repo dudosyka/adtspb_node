@@ -15,7 +15,7 @@
 
           <div class="checkbox-container" v-on:click="remember = !remember">
             <input type="checkbox" v-model="remember" class="checkbox" tabindex="3">
-            <label class="air-dark-button">Запомнить меня</label>
+            <label class="air-dark-button checkbox">Запомнить меня</label>
           </div>
 
           <div class="buttons">
