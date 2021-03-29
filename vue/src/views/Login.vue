@@ -1,14 +1,6 @@
 <template>
-  <div class="login">
-
-    <a class="main-link">
-      <div class="row-left"></div>
-      <span>Академия цифровых технологий</span>
-    </a>
-
-    <main class="main-content">
+  <main class="main-content">
       <div class="auth">
-
           <div class="input-container">
             <label class="label" v-bind:class="{'label-up': login}">номер телефона/электронная почта</label><br>
             <input type="text" v-model="login" class="type" tabindex="1">
@@ -23,33 +15,36 @@
 
           <div class="checkbox-container" v-on:click="remember = !remember">
             <input type="checkbox" v-model="remember" class="checkbox" tabindex="3">
-            <label class="air-dark-button">Запомнить меня</label>
+            <label class="air-dark-button checkbox">Запомнить меня</label>
           </div>
 
           <div class="buttons">
             <button class="dark-button" @click="auth()" tabindex="4">Войти</button>
-            <button class="light-button" tabindex="5">Регистрация</button>
+            <router-link to="/signup" tabindex="5" class="light-button">Регистрация</router-link>
           </div>
       </div>
 
       <div class="plate">
         <h1 class="title">Добро<br> пожаловать<br> в личный кабинет</h1>
-        <!--
-        <aside class="social-media">
-          <a href="#" class="link-icon link-tl"></a>
-          <a href="#" class="link-icon link-vk"></a>
-          <a href="#" class="link-icon link-fb"></a>
-          <a href="#" class="link-icon link-in"></a>
+        <aside class="social-media-list container">
+          <ul class="social-media-list ul">
+              <li class="social-media-list li">
+                <a href="https://t.me/adtspb" class="fab fa-telegram-plane social-media-link" target="_blank"></a>
+              </li>
+              <li class="social-media-list li">
+                <a href="https://vk.com/adtspb" class="fab fa-vk social-media-link" target="_blank"></a>
+              </li>
+              <li class="social-media-list li">
+                <a href="https://www.facebook.com/adtspb" class="fab fa-facebook-square social-media-link" target="_blank"></a>
+              </li>
+              <li class="social-media-list li">
+                <a href="https://www.instagram.com/adtspb" class="fab fa-instagram social-media-link" target="_blank"></a>
+              </li>
+          </ul>
         </aside>
-        !-->
+
       </div>
-    </main>
-    <!--
-    <input type="text" v-model="login" placeholder="Email or phone">
-    <input type="pass" v-model="pass" placeholder="pass">
-    <button @click="auth()">Token</button>
-    !-->
-  </div>
+  </main>
 </template>
 <script>
   import axios from "axios"
@@ -62,6 +57,9 @@
         pass: null,
         remember: false //not is parm
       }
+    },
+    components: {
+
     },
     methods: {
       auth()
