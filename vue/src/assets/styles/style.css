@@ -188,7 +188,7 @@ body {
   .input-container {
     width: 100%;
     position: relative;
-    margin-bottom: 10px
+    margin-bottom: 20px
   }
 
   .type {
@@ -229,15 +229,40 @@ body {
 
   .checkbox-container {
     margin-bottom: 50px;
-
     color: #006394;
+    height: 20px
   }
   .checkbox-container:hover {
     cursor: pointer;
   }
+  label.checkbox {
+    position: relative;
+    margin-left: 30px;
+  }
+  input[type=checkbox] {
+    display: none;
+  }
 
-  .checkbox {
+  input[type=checkbox] ~ label.checkbox::before {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: -30px;
+    width: 15px;
+    height: 15px;
+
     margin-right: 10px;
+
+    border: 3px solid #1a7099;
+    transition: 0.5s;
+  }
+  input[type=checkbox]:checked ~ label.checkbox::before {
+    transform: rotate(-45deg);
+    height: 10px;
+    border-right-style: none;
+    border-top-style: none;
+    border-width: 3px;
   }
 
 /* buttons */
