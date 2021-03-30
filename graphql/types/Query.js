@@ -1,4 +1,4 @@
-const {GraphQLBoolean, GraphQLObjectType, GraphQLString, GraphQLID} = require("graphql");
+const {GraphQLBoolean, GraphQLObjectType, GraphQLString, GraphQLID, GraphQLInt} = require("graphql");
 const Db = require('../utils/Db');
 const User = require('../Entity/User');
 const UserType = require('./EntityTypes/User');
@@ -27,26 +27,51 @@ module.exports = new GraphQLObjectType({
             }
         },
         association: {
-                type: AssociationType,
-                args: {
-                    id: {
-                        type: GraphQLID
-                    }
-                },
-                async resolve(obj, { id }) {
-                    return (await Association.createFrom({id: id})).fields;
+            type: AssociationType,
+            args: {
+                id: {
+                    type: GraphQLID
                 }
+            },
+            async resolve(obj, { id }) {
+                return (await Association.createFrom({id: id})).fields;
+            }
         },
         validToken: {
-          type: GraphQLBoolean,
-          args: {
-            token: {
-              type: GraphQLString
-            }
-          },
-          async resolve(obj, { token }) {
+            type: GraphQLBoolean,
+            args: {
+                token: {
+                    type: GraphQLString
+                }
+            },
+            async resolve(obj, { token }) {
               return (await jwt.parse(token) !== false);
-          }
+            }
+        },
+        restorePasswordRequest: {
+            type: GraphQLBoolean,
+            args: {
+                email: {
+                    type: GraphQLString
+                }
+            },
+            async resolve(obj, { email }) {
+                return await User.restorePasswordRequest(email);
+            }
+        },
+        checkRestoreCode: {
+            type: GraphQLBoolean,
+            args: {
+                email: {
+                    type: GraphQLString
+                },
+                code: {
+                    type: GraphQLInt
+                }
+            },
+            async resolve(obj, { email, code }) {
+                return User.checkRestoreCode(email, code);
+            }
         }
     },
 });

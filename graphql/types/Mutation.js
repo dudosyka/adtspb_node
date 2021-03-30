@@ -1,4 +1,4 @@
-const {GraphQLObjectType, GraphQLString, GraphQLBoolean} = require("graphql");
+const {GraphQLObjectType, GraphQLString, GraphQLBoolean, GraphQLInt} = require("graphql");
 
 const UserType = require("./EntityTypes/User");
 const UserInput = require("./EntityTypes/InputTypes/User");
@@ -48,6 +48,23 @@ module.exports = new GraphQLObjectType({
             async resolve(obj, { proposal }) {
                 let model = await Proposal.createFromInput(proposal);
                 return model.createNew();
+            }
+        },
+        restorePassword: {
+            type: GraphQLBoolean,
+            args: {
+                email: {
+                    type: GraphQLString
+                },
+                code: {
+                    type: GraphQLInt
+                },
+                password: {
+                    type: GraphQLString
+                }
+            },
+            async resolve(obj, { email, code, password }) {
+                return User.restorePassword(email, code, password);
             }
         }
     }
