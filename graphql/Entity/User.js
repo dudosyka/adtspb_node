@@ -117,6 +117,66 @@ User.prototype.getChildren = async function () {
     .catch(err => { throw new Error('Internal server error.'); });
 }
 
+User.prototype.restorePasswordRequest = async function (email) {
+    //Search for user
+    let user = await this.db.select(this, '`email` = ?', [ email ]);
+    if (user.length <= 0)
+        return false;
+
+    let user_id = user[0].id;
+    // Code format XXX-XXX
+    let code = Math.floor( Math.random() * (999999 - 100000) + 100000 );
+
+    let query = await this.db.query('SELECT * FROM `restore_password` WHERE `user_id` = ?', [ user_id ]);
+
+    // If already exists set new code and resend email
+    if (query.length > 0) {
+        query = await this.db.query('UPDATE `restore_password` SET `code` = ? WHERE `user_id` = ?', [ code, user_id ]);
+        return (query !== null);
+        //call send mail function
+    }
+
+    let res = await this.db.query('INSERT INTO `restore_password` (`user_id`, `code`) VALUES (?, ?)', [ user_id, code ]);
+    //call send mail function
+    return (res !== null);
+}
+
+User.prototype.checkRestoreCode = async function (email, code) {
+    let user = await this.db.select(this, '`email` = ?', [ email ]);
+    if (user.length <= 0)
+        return false;
+
+    let user_id = user[0].id;
+
+    let query = await this.db.query('SELECT * FROM `restore_password` WHERE `user_id` = ?', [ user_id ]);
+    if (query.length <= 0)
+        return false;
+
+    return (query[0].code == code);
+}
+
+User.prototype.restorePassword = async function (email, code, password) {
+    if (!(await this.checkRestoreCode(email, code)))
+        return false;
+
+    let user = await this.db.select(this, '`email` = ?', [ email ]);
+    let user_id = user[0].id;
+
+    user = await this.createFrom({id: user_id});
+
+    user.__set('password', password);
+    await user.encryptPassword();
+
+    let res = await user.update();
+
+    if (res === false)
+        return false;
+
+    res = await this.db.query('DELETE FROM `restore_password` WHERE `user_id` = ?', [ user_id ]);
+
+    return (res !== false);
+}
+
 User.prototype.table = 'user';
 
 module.exports = (new User());

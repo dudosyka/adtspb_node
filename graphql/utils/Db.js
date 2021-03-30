@@ -122,14 +122,20 @@ Db.prototype.deleteWhere = async function (entity, query, bindings)
  */
 Db.prototype.update = async function (entity)
 {
+    let columns = await this.query("SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`= ?  AND `TABLE_NAME`= ?",[ db_cnf.database, entity.table ]).then(data => data.map(el => el.COLUMN_NAME));
+
+    let fields = Object.keys(entity.fields).filter(el => columns.includes(el));
+    let values = fields.map(el => entity.fields[el]);
+
+
     //Build SET part of request (SET id = ?, field = ?, fieldN = ?.....)
-    const set = 'SET ' + Object.keys(entity.fields).join(' = ?,') + ' = ?';
+    const set = 'SET ' + fields.join(' = ?,') + ' = ?';
 
     //Build full request like UPDATE `XXX` SET id = XX, {...} WHERE `id` = XX
     const query = "UPDATE " + entity.table + " " + set + " WHERE id = ?";
 
     //Get entity`s fields value and put it in the array
-    const bindings = Object.values(entity.fields);
+    const bindings = values.concat([ entity.fields['id'] ]);
 
     return await this.query(query, bindings)
 }
