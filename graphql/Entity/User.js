@@ -111,6 +111,12 @@ User.prototype.createNew = async function () {
     }
 }
 
+User.prototype.getChildren = async function () {
+    return await this.db.query('SELECT `child_id` FROM `user_child` WHERE `parent_id` = ?', [ this.__get('id') ])
+    .then(data => data.map(el => el.child_id))
+    .catch(err => { throw new Error('Internal server error.'); });
+}
+
 User.prototype.table = 'user';
 
 module.exports = (new User());

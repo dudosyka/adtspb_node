@@ -157,35 +157,35 @@ Db.prototype.updateWhere = async function (entity, fields = false, query = false
 //TODO Create insert method (SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`='xxx'  AND `TABLE_NAME`='xxx';)
 Db.prototype.insert = async function (entity)
 {
-    let columns = await this.query("SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`= ?  AND `TABLE_NAME`= ?",[ db_cnf.database, entity.table ]);
+    let columns = await this.query("SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`= ?  AND `TABLE_NAME`= ?",[ db_cnf.database, entity.table ]).then(data => data.map(el => el.COLUMN_NAME));
+
     let req = "INSERT INTO " + entity.table + " (";
+    let reqSecondPart = ") VALUES (";
+
+    let fields = Object.keys(entity.fields);
+    let data = [];
     let i = 0;
-    columns.map(el => {
-        if (el.COLUMN_NAME !== 'id')
+
+    fields.map(el => {
+        if (el !== 'id')
         {
-            req += el.COLUMN_NAME;
-            if (i + 1 != columns.length)
+            if (!columns.includes(el))
+                return;
+            req += el;
+            reqSecondPart += "?";
+            data.push(entity.fields[el]);
+            if (i + 1 != fields.length)
+            {
                 req += ",";
+                reqSecondPart += ",";
+            }
+
         }
         i++;
     });
-    req += ") VALUES (";
-    let j = 0;
-    columns.map(el => {
-        if (el.COLUMN_NAME !== 'id')
-        {
-            req += "?";
-            if (j + 1 != columns.length)
-                req += ",";
-        }
-        j++;
-    });
-    req += ")";
-    let data = [];
-    Object.keys(entity.fields).map(el => {
-        if (el !== 'id')
-            data.push(entity.fields[el]);
-    });
+
+    reqSecondPart += ")";
+    req += reqSecondPart;
     return this.query(req, data);
 }
 

@@ -16,11 +16,11 @@ baseEntity.prototype.construct = function (data) {
             .then(data => {
                 if (data.length)
                     return data[0];
-                return [];
+                return {};
             })
             .catch(err => {
                 console.error(err);
-                return [];
+                return {};
             });
     }
     return data;
@@ -39,27 +39,44 @@ baseEntity.prototype.createFrom = function (data) {
     return this.baseCreateFrom(data);
 }
 
-baseEntity.prototype.createFrom = async function (data, inside = true) {
-}
-
 baseEntity.prototype.fields = {};
 
-baseEntity.prototype.validateRules = {};
+baseEntity.prototype.validateRules = function () {
+    return [];
+};
+
+baseEntity.prototype.aliases = {};
 
 baseEntity.prototype.__get = function (field) {
     let res = this.fields[field];
+    let sec = null;
+
+    if (this.aliases[field])
+        sec = this.fields[this.aliases[field]];
 
     if (typeof res === 'undefined')
-        return null;
+        if (sec === null)
+            return null;
+        else
+            return sec;
     else
         return res;
 };
 
 baseEntity.prototype.__set = function (field, value) {
     let res = this.fields[field];
+    let sec = null;
+
+    if (this.aliases[field])
+        sec = this.fields[this.aliases[field]];
 
     if (typeof res === 'undefined')
-        return null;
+        if (sec === null)
+            return null;
+        else {
+            this.fields[this.aliases[field]] = value;
+            return sec;
+        }
     else {
         this.fields[field] = value;
         return value;
@@ -69,6 +86,7 @@ baseEntity.prototype.__set = function (field, value) {
 baseEntity.prototype.table = "";
 
 baseEntity.prototype.save = async function () {
+    console.log(this.fields);
     if (this.validate())
         return await db.insert(this);
     else
