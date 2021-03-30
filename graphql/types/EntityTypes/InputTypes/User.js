@@ -4,6 +4,9 @@ module.exports = new graphql.GraphQLInputObjectType({
     name: "UserInput",
 
     fields: () => ({
+        id: {
+            type: graphql.GraphQLID
+        },
         name: {
             type: graphql.GraphQLString,
         },

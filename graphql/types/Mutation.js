@@ -1,14 +1,18 @@
 const {GraphQLObjectType, GraphQLString, GraphQLBoolean} = require("graphql");
+
 const UserType = require("./EntityTypes/User");
 const UserInput = require("./EntityTypes/InputTypes/User");
 const User = require('../Entity/User');
 
+const ProposalType = require('./EntityTypes/Proposal');
+const ProposalInput = require('./EntityTypes/InputTypes/Proposal');
+const Proposal = require('../Entity/Proposal');
+
 const Rbac = require("../utils/Rbac");
+const rbac = new Rbac();
 
 const Db = require("../utils/Db");
 const db = new Db();
-const rbac = new Rbac();
-
 
 const { client } = require('../utils/Redis');
 
@@ -29,9 +33,21 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve(obj, { user }) {
-                let check = await User.createFrom(user);
-                console.log(check.fields);
-                return check.createNew();
+                let usr = await User.createFrom(user);
+                return usr.createNew();
+            }
+        },
+        createProposal: {
+            // type: ProposalType,
+            type: GraphQLBoolean,
+            args: {
+                proposal: {
+                    type: ProposalInput
+                }
+            },
+            async resolve(obj, { proposal }) {
+                let model = await Proposal.createFromInput(proposal);
+                return model.createNew();
             }
         }
     }
