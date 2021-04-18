@@ -2,7 +2,7 @@
   <main class="main-content">
       <div class="auth">
           <div class="input-container">
-            <label class="label" v-bind:class="{'label-up': login}">номер телефона/электронная почта</label><br>
+            <label class="label" v-bind:class="{'label-up': login}">Номер телефона/Электронная почта</label><br>
             <input type="text" v-model="login" class="type" tabindex="1">
           </div>
 
