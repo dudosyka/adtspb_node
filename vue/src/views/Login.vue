@@ -6,7 +6,7 @@
             <input type="text" v-model="login" class="type" tabindex="1">
           </div>
 
-          <button class="air-dark-button pass-rest">Забыли пароль ?</button>
+          <router-link class="air-dark-button pass-rest" to="/passreset">Забыли пароль ?</router-link>
 
           <div class="input-container">
             <label class="label" v-bind:class="{'label-up': pass}">Пароль</label><br>

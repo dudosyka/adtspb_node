@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import SignUp from '../views/SignUp.vue'
+import PassReset from '../views/PassReset.vue'
 import Page2 from '../views/Page2.vue'
 
 Vue.use(VueRouter)
@@ -24,6 +25,12 @@ const routes = [
     name: 'Registration',
     meta: { layout: 'AuthLayout' },
     component: SignUp
+  },
+  {
+    path: '/passreset',
+    name: 'PasswordReset',
+    meta: { layout: 'AuthLayout' },
+    component: PassReset
   },
   {
     path: '/page',
