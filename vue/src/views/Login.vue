@@ -51,6 +51,7 @@
 
   export default {
     name: 'Login',
+    
     data() {
       return {
         login: null,
