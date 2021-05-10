@@ -21,12 +21,12 @@ npm run lint
 ```
 
 ### How edit
-1. master fetch^pull
-   patch_front fetch^pull
-2. work in master
-3. Stage All
-4. change branch on patch_front
-5. create commit and push
+   1. master fetch^pull
+   2. patch_front fetch^pull
+   3. work in master
+   4. Stage All
+   5. change branch on patch_front
+   6. create commit and push
 
 
 ### Customize configuration
