@@ -49,7 +49,7 @@ router.afterEach(async (to, from) => {
     if (to.path == '/login' && isLogin)
       redirectTo('Home');
 
-    if (!isLogin && to.path != "/signup")
+    if (!isLogin && to.path != "/signup" && to.path != "/passreset")
       redirectTo('Authorization');
 });
 
