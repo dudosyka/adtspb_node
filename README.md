@@ -20,9 +20,9 @@ npm run build
 npm run lint
 ```
 
-##How edit
+### How edit
 1. master fetch^pull
-   patch_front fetch^pull 
+   patch_front fetch^pull
 2. work in master
 3. Stage All
 4. change branch on patch_front
