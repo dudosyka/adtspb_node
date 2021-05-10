@@ -6,9 +6,8 @@
             <input type="text" v-model="login" class="type" tabindex="1">
           </div>
 
-          <div class="buttons">
-            <button class="dark-button" @click="" tabindex="2">Отправить</button>
-          </div>
+          <button class="dark-button" @click="" tabindex="2">Отправить</button>
+
       </div>
 
       <div class="plate">

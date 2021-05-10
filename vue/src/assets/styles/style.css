@@ -228,9 +228,12 @@ body {
   }
 
   .checkbox-container {
-    margin-bottom: 50px;
+    margin: 10px 0;
     color: #006394;
-    height: 20px
+
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
   }
   .checkbox-container:hover {
     cursor: pointer;
@@ -238,6 +241,7 @@ body {
   label.checkbox {
     position: relative;
     margin-left: 30px;
+    margin-bottom: 30px;
   }
   input[type=checkbox] {
     display: none;
