@@ -48,11 +48,11 @@
 </template>
 <script>
   import axios from "axios"
-  import { * as AppConfig } from './config/AppConfig'
+  import * as AppConfig from './config/AppConfig'
 
   export default {
     name: 'Login',
-    
+
     data() {
       return {
         login: null,
