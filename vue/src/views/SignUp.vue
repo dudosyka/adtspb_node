@@ -2,45 +2,45 @@
     <main class="main-content">
         <div class="auth">
             <div class="input-container">
-              <label class="label" v-bind:class="{'label-up': login}">Фамилия</label><br>
-              <input type="text" v-model="secondName" class="type" tabindex="1">
+              <label class="label" v-bind:class="{'label-up': user.secondName}">Фамилия</label><br>
+              <input type="text" v-model="user.secondName" class="type" tabindex="1">
             </div>
 
             <div class="input-container">
-              <label class="label" v-bind:class="{'label-up': login}">Имя</label><br>
-              <input type="text" v-model="name" class="type" tabindex="1">
+              <label class="label" v-bind:class="{'label-up': user.name}">Имя</label><br>
+              <input type="text" v-model="user.name" class="type" tabindex="1">
             </div>
 
             <div class="input-container">
-              <label class="label" v-bind:class="{'label-up': login}">Отчество</label><br>
-              <input type="text" v-model="oldName" class="type" tabindex="1">
+              <label class="label" v-bind:class="{'label-up': user.oldName}">Отчество</label><br>
+              <input type="text" v-model="user.oldName" class="type" tabindex="1">
             </div>
 
             <div class="input-container">
-              <label class="label" v-bind:class="{'label-up': login}">Email</label><br>
-              <input type="text" v-model="email" class="type" tabindex="1">
+              <label class="label" v-bind:class="{'label-up': user.email}">Email</label><br>
+              <input type="text" v-model="user.email" class="type" tabindex="1">
             </div>
 
             <div class="input-container">
-              <label class="label" v-bind:class="{'label-up': login}">Номер телефона</label><br>
-              <input type="text" v-model="phone" class="type" tabindex="1">
+              <label class="label" v-bind:class="{'label-up': user.phone}">Номер телефона</label><br>
+              <input type="text" v-model="user.phone" class="type" tabindex="1">
             </div>
 
-            <div class="input-container" v-on:click="remember = !remember">
+            <div class="input-container" v-on:click="user.sex = !user.sex">
               <label class="air-dark-button">Пол</label>
               <div class="checkbox-container">
                 <div>
-                  <input type="checkbox" v-model="sex" class="checkbox" tabindex="3">
+                  <input type="checkbox" v-model="user.sex" class="checkbox" tabindex="3">
                   <label class="air-dark-button checkbox">Мужской</label>
                 </div>
                 <div>
-                  <input type="checkbox" v-model="sex" class="checkbox" tabindex="3">
+                  <input type="checkbox" v-model="user.sex" class="checkbox" tabindex="3">
                   <label class="air-dark-button checkbox">Женский</label>
                 </div>
               </div>
             </div>
 
-            <button class="dark-button" @click="" tabindex="2">Зарегистрироваться</button>
+            <button class="dark-button" @click="registration" tabindex="2">Зарегистрироваться</button>
         </div>
 
         <div class="plate">
@@ -74,31 +74,28 @@
 
     data() {
       return {
-        name: null,
-        secondName: null,
-        oldName: null,
-        email: null,
-        phone: null,
-        sex: null
+        user: {
+          name: null,
+          surname: null,
+          lastname: null,
+          email: null,
+          phone: null,
+          sex: null
+        }
       }
     },
     components: {
 
     },
     methods: {
-      auth()
-      {
-        axios.post("http://localhost:8080/auth", {
-          user: this.login,
-          pass: this.pass
-        }).then(res => {
-          localStorage.setItem('token', res.data);
-          window.location = window.location;
-          this.$router.push({path: "/"});
-        }).catch(err => {
-          console.log(err);
-        });
-      },
+      registration() {
+        let request = `
+          mutation($user: UserInput) {
+            createUser(user: $user)
+          }
+        `;
+        api.request(request, { user: this.user }).then(res => { console.log(res); } ).catch(err => { console.error(err); } );
+      }
     },
   }
 </script>
