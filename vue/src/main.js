@@ -2,15 +2,16 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import { request, GraphQLClient } from "graphql-request"
+import { * as AppConfig } from './config/AppConfig'
 
 console.log(localStorage);
 
 // localStorage.removeItem('token');
 
 // TODO:Change localhost to real domain when publish
-const graphql = new GraphQLClient("http://localhost:8080/api", {
+const graphql = new GraphQLClient(, {
     headers: {
-        Authorization: "Bearer " + localStorage.getItem('token'),
+        Authorization: "Bearer " + AppConfig.graphql_url + localStorage.getItem('token'),
     }
 });
 

@@ -48,6 +48,7 @@
 </template>
 <script>
   import axios from "axios"
+  import { * as AppConfig } from './config/AppConfig'
 
   export default {
     name: 'Login',
@@ -65,7 +66,7 @@
     methods: {
       auth()
       {
-        axios.post("http://localhost:8080/auth", {
+        axios.post(AppConfig.auth_url, {
           user: this.login,
           pass: this.pass
         }).then(res => {
