@@ -28,6 +28,7 @@ let Db = function ()
 Db.prototype.query = function (query, data = [], entity = null) {
     return new Promise((resolve, reject) => {
         this.connection.query(query, data, async (err, res) => {
+            console.log(query);
             //If any errs returns them
             if (err) reject(err);
 
@@ -185,13 +186,12 @@ Db.prototype.insert = async function (entity)
                 req += ",";
                 reqSecondPart += ",";
             }
-
         }
         i++;
     });
 
-    reqSecondPart += ")";
-    req += reqSecondPart;
+    reqSecondPart = reqSecondPart.replace(/(^,)|(,$)/g, "") + ")";
+    req = req.replace(/(^,)|(,$)/g, "") + reqSecondPart;
     return this.query(req, data);
 }
 
