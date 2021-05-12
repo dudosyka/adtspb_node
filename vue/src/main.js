@@ -9,9 +9,9 @@ console.log(localStorage);
 // localStorage.removeItem('token');
 
 // TODO:Change localhost to real domain when publish
-const graphql = new GraphQLClient(, {
+const graphql = new GraphQLClient(AppConfig.graphql_url, {
     headers: {
-        Authorization: "Bearer " + AppConfig.graphql_url + localStorage.getItem('token'),
+        Authorization: "Bearer " + localStorage.getItem('token'),
     }
 });
 
