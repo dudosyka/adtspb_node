@@ -66,16 +66,21 @@
     methods: {
       auth()
       {
-        axios.post(AppConfig.auth_url, {
-          user: this.login,
-          pass: this.pass
-        }).then(res => {
-          localStorage.setItem('token', res.data);
-          window.location = window.location;
-          this.$router.push({path: "/"});
-        }).catch(err => {
-          console.log(err);
-        });
+            let req = `
+                mutation($login: String, $password: String) {
+                    login(login: $login, password: $password)
+                }
+            `;
+            let data = {
+                login: this.login,
+                password: this.pass
+            }
+            endoor.request(req, data).then(data => {
+                console.log(data);
+            }).
+            catch(err => {
+                console.error(err);
+            })
       },
     },
   }

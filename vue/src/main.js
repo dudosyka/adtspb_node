@@ -9,13 +9,17 @@ console.log(localStorage);
 // localStorage.removeItem('token');
 
 // TODO:Change localhost to real domain when publish
-const graphql = new GraphQLClient(AppConfig.graphql_url, {
+const graphql = new GraphQLClient(AppConfig.api_url, {
     headers: {
         Authorization: "Bearer " + localStorage.getItem('token'),
     }
 });
 
 global.api = graphql;
+
+const endoor  = new GraphQLClient(AppConfig.endoor_url, {});
+
+global.endoor = endoor;
 
 let token = localStorage.getItem('token');
 

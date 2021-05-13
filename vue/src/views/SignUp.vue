@@ -94,7 +94,7 @@
             createUser(user: $user)
           }
         `;
-        api.request(request, { user: this.user }).then(res => { console.log(res); } ).catch(err => { console.error(err); } );
+        endoor.request(request, { user: this.user }).then(res => { console.log(res); } ).catch(err => { console.error(err); } );
       }
     },
   }
