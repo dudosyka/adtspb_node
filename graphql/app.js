@@ -23,6 +23,11 @@ let schema = new GraphQLSchema({
     mutation: require('./types/Mutation'),
 });
 
+let schemaForNonLogin = new GraphQLSchema({
+    mutation: require('./types/NonLogin/Mutation'),
+    query: require('./types/NonLogin/Query'),
+});
+
 let rootValue = {
     viewer: null
 };
@@ -41,44 +46,6 @@ let rootValue = {
 //   res.send();
 // });
 
-app.use('/auth', bodyParser.json());
-
-app.use('/auth', bodyParser.urlencoded({ extended: true }));
-
-app.use('/auth', upload.array());
-
-app.use('/auth', express.static('public'));
-
-app.use('/auth', bodyParser.urlencoded({ extended: true }));
-
-//Auth port. Check user credentials. If valid -> return token, invalid -> HTTP 403.
-app.use('/auth', async (req, res, next) =>
-{
-    let data = req.body;
-    if (typeof data['user'] !== 'undefined' && typeof data['pass'] !== 'undefined')
-    {
-        await User.auth(data)
-            .then(data => {
-              try {
-                  res.send(jwt.sign({id: data['id']}));
-              } catch (err) {
-                  console.log(err);
-              }
-            })
-            .catch(err => {
-              console.log(err);
-                if (!res.headerSent)
-                {
-                    res.sendStatus(403);
-                }
-            });
-    }
-    else
-    {
-        res.sendStatus(403);
-    }
-});
-
 //Check user token. If valid -> next(), invalid -> HTTP 403
 app.use('/api', async (req, res, next) =>
 {
@@ -95,12 +62,11 @@ app.use('/api', async (req, res, next) =>
         console.log(token);
         let data = await jwt.parse(token);
         console.log(data);
-        if (data !== false)
+        if (data !== false && Object.keys(data).length != 1)
         {
-            let count = 0;
             rootValue = {
                 ...rootValue,
-                viewer: await User.createFrom(data)
+                viewer: await User.createFrom(data),
             };
         }
         else {
@@ -111,11 +77,19 @@ app.use('/api', async (req, res, next) =>
     next();
 });
 
-// GraphQLSchema port.
 app.use('/api', graphqlHTTP({
     schema: schema,
     rootValue: () => {
         return rootValue;
+    },
+    graphiql: true
+}));
+
+app.use('/endoor', graphqlHTTP({
+    schema: schemaForNonLogin,
+    rootValue: () => {
+        return {};
+        // return rootValue;
     },
     graphiql: true
 }));
