@@ -190,6 +190,18 @@ body {
     position: relative;
     margin-bottom: 20px
   }
+  .password-container {
+    display: grid;
+    grid-template-columns: 1fr 30px;
+  }
+  .password-container div {
+    width: 100%;
+    position: relative;
+  }
+  .password-container button {
+    height: 36px;
+    align-self: end;
+  }
 
   .type {
     border: none;
@@ -246,7 +258,6 @@ body {
   input[type=checkbox] {
     display: none;
   }
-
   input[type=checkbox] ~ label.checkbox::before {
     content: '';
     display: inline-block;
@@ -258,7 +269,7 @@ body {
 
     margin-right: 10px;
 
-    border: 3px solid #1a7099;
+    border: 3px solid #0086C9;
     transition: 0.5s;
   }
   input[type=checkbox]:checked ~ label.checkbox::before {
@@ -267,6 +278,30 @@ body {
     border-right-style: none;
     border-top-style: none;
     border-width: 3px;
+  }
+
+  label.radio {
+    position: relative;
+  }
+  input[type=radio] {
+    display: none;
+  }
+  input[type=radio] ~ label.radio::before {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: -30px;
+    width: 15px;
+    height: 15px;
+
+    margin-right: 10px;
+
+    border: 3px solid #0086C9;
+    border-radius: 50%;
+  }
+  input[type=radio]:checked ~ label.radio::before {
+    background-color: #0086C9;
   }
 
 /* buttons */
