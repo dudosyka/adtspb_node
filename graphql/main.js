@@ -1,6 +1,8 @@
+const AppConfig = require('./config/AppConfig');
+
 try {
   const app = require('./app');
-  app.listen(8080);
+  app.listen(AppConfig.port);
 
   console.log("App listen on localhost:8080");
 }
