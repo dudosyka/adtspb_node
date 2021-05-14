@@ -4,14 +4,19 @@
         <form class="form">
           <div class="input-container">
             <label class="label" v-bind:class="{'label-up': login}">Номер телефона/Электронная почта</label><br>
-            <input type="text" v-model="login" class="type" tabindex="1">
+            <input type="email" v-model="login" class="type" tabindex="1">
           </div>
 
           <router-link class="air-button dark pass-rest" to="/passreset">Забыли пароль ?</router-link>
 
           <div class="input-container">
-            <label class="label" v-bind:class="{'label-up': pass}">Пароль</label><br>
-            <input type="text" v-model="pass" class="type" tabindex="2">
+            <div class="password-container">
+              <div>
+                <label class="label" v-bind:class="{'label-up': pass}">Пароль</label><br>
+                <input :type="passwordFieldType" v-model="pass" class="type" tabindex="1">
+              </div>
+              <button @click="switchVisibility" class="dark-box darken">0</button>
+            </div>
           </div>
 
           <div class="checkbox-container" v-on:click="remember = !remember">
@@ -57,6 +62,7 @@
 
     data() {
       return {
+        passwordFieldType: "password",
         login: null,
         pass: null,
         remember: false //not is parm
@@ -84,6 +90,9 @@
                 console.error(err);
             })
       },
+      switchVisibility() {
+        this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
+      }
     },
   }
 </script>
