@@ -1,7 +1,7 @@
 .DS_Store
 node_modules
 /dist
-
+/src/config/AppConfig.js
 
 # local env files
 .env.local
@@ -14,8 +14,7 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Editor directories and files
-/../.idea/
-/../.idea/workspace.xml
+.idea
 .vscode
 *.suo
 *.ntvs*

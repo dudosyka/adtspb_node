@@ -1,30 +1,46 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div id="app">
+    <div id="nav">
+      <router-link to="/">Home</router-link> |
+      <router-link to="/page">Page</router-link> |
+      <router-link to="/signup">SignUp</router-link>
+    </div>
+
+    <component :is="layout">
+        <router-view />
+    </component>
   </div>
-  <router-view/>
 </template>
 
-<style lang="less">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
+<style>
+@import "./assets/styles/style.css";
+/*  hj */
 #nav {
   padding: 30px;
+}
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}s
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+#nav a.router-link-exact-active {
+  color: #42b983;
 }
 </style>
+
+<script type="text/javascript">
+  import AuthLayout from '@/layouts/AuthLayout'
+  import HomeLayout from '@/layouts/HomeLayout'
+
+  export default {
+    computed: {
+      layout() {
+        return (this.$route.meta.layout || 'AuthLayout' )
+      }
+    },
+    components: {
+      AuthLayout, HomeLayout
+    }
+  }
+</script>

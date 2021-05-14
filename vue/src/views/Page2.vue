@@ -1,7 +1,6 @@
 <template>
-  <div class="home">
-    <h1>Home Page</h1>
-    <button onclick='localStorage.removeItem("token");window.location = window.location;'>LOGOUT</button>
+  <div class="page2">
+    <h1>Page2 Page</h1>
   </div>
 </template>
 
@@ -9,7 +8,7 @@
 // @ is an alias to /src
 
 export default {
-  name: 'Home',
+  name: 'Page2',
   components: {
   },
   data() {
@@ -20,7 +19,6 @@ export default {
   },
   async created()
   {
-      this.token = localStorage.getItem('token');
   }
 }
 </script>
