@@ -1,6 +1,7 @@
 <template>
     <main class="main-content">
         <div class="auth">
+          <form class="form">
             <div class="input-container">
               <label class="label" v-bind:class="{'label-up': user.surname}">Фамилия</label><br>
               <input type="text" v-model="user.surname" class="type" tabindex="1">
@@ -21,23 +22,23 @@
               <masked-input
                 v-model="rawPhone"
                 mask="\+\7 (111) 1111-111"
-                @input="user.phone = '8' + arguments[1]"
+                @input="user.phone = arguments[1]"
                 type="tel"
                 class="type" />
             </div>
 
             <div class="input-container">
-              <label class="air-dark-button">Пол</label>
-              <div>
-                <div class="checkbox-container">
+              <h3 class="radio-heading dark">Пол</h3>
+              <ul class="radio-list">
+                <div class="radio-container">
                   <input type="radio" v-model.number="user.sex" value="1" class="radio" tabindex="3" id="man">
-                  <label class="air-dark-button radio" for="man">Мужской</label>
+                  <label class="dark radio" for="man">Мужской</label>
                 </div>
-                <div class="checkbox-container">
+                <div class="radio-container">
                   <input type="radio" v-model.number="user.sex" value="0" class="radio" tabindex="3" id="woman">
-                  <label class="air-dark-button radio" for="woman">Женский</label>
+                  <label class="dark radio" for="woman">Женский</label>
                 </div>
-              </div>
+              </ul>
             </div>
 
             <div class="input-container">
@@ -51,11 +52,14 @@
                   <label class="label" v-bind:class="{'label-up': user.password}">Пароль</label><br>
                   <input :type="passwordFieldType" v-model="user.password" class="type" tabindex="1">
                 </div>
-                <button @click="switchVisibility">0</button>
+                <button @click="switchVisibility" class="dark-box darken">0</button>
               </div>
             </div>
 
-            <button class="dark-button" @click="registration" tabindex="2">Зарегистрироваться</button>
+            <div class="buttons">
+              <button class="dark-button" @click="registration" tabindex="2">Зарегистрироваться</button>
+            </div>
+          </form>
         </div>
 
         <div class="plate">
@@ -111,6 +115,9 @@
     },
     methods: {
       registration() {
+        if (this.user.phone.length != 11) {
+            this.user.phone = '8' + this.user.phone
+        }
 
         let request = `
           mutation($user: UserInput) {

@@ -1,12 +1,13 @@
 <template>
   <main class="main-content">
       <div class="auth">
+        <form class="form">
           <div class="input-container">
             <label class="label" v-bind:class="{'label-up': login}">Номер телефона/Электронная почта</label><br>
             <input type="text" v-model="login" class="type" tabindex="1">
           </div>
 
-          <router-link class="air-dark-button pass-rest" to="/passreset">Забыли пароль ?</router-link>
+          <router-link class="air-button dark pass-rest" to="/passreset">Забыли пароль ?</router-link>
 
           <div class="input-container">
             <label class="label" v-bind:class="{'label-up': pass}">Пароль</label><br>
@@ -15,13 +16,14 @@
 
           <div class="checkbox-container" v-on:click="remember = !remember">
             <input type="checkbox" v-model="remember" class="checkbox" tabindex="3">
-            <label class="air-dark-button checkbox">Запомнить меня</label>
+            <label class="checkbox">Запомнить меня</label>
           </div>
 
           <div class="buttons">
             <button class="dark-button" @click="auth()" tabindex="4">Войти</button>
             <router-link to="/signup" tabindex="5" class="light-button">Регистрация</router-link>
           </div>
+        </form>
       </div>
 
       <div class="plate">

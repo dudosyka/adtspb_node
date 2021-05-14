@@ -6,9 +6,7 @@
       <router-link to="/signup">SignUp</router-link>
     </div>
 
-    <component :is="layout">
-        <router-view />
-    </component>
+    <router-view />
   </div>
 </template>
 
@@ -30,17 +28,13 @@
 </style>
 
 <script type="text/javascript">
-  import AuthLayout from '@/layouts/AuthLayout'
-  import HomeLayout from '@/layouts/HomeLayout'
 
   export default {
     computed: {
-      layout() {
-        return (this.$route.meta.layout || 'AuthLayout' )
-      }
+
     },
     components: {
-      AuthLayout, HomeLayout
+
     }
   }
 </script>
