@@ -1,12 +1,13 @@
 <template>
   <div id="app">
+    <router-view />
+
     <div id="nav">
+      <b>Temporary nav bar!</b> <br>
       <router-link to="/">Home</router-link> |
       <router-link to="/page">Page</router-link> |
       <router-link to="/signup">SignUp</router-link>
     </div>
-
-    <router-view />
   </div>
 </template>
 
@@ -15,6 +16,8 @@
 /*  hj */
 #nav {
   padding: 30px;
+  border-top: 5px dashed #ab2d2d;
+  background-color: #ffd1d1;
 }
 
 #nav a {
