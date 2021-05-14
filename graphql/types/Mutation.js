@@ -8,6 +8,8 @@ const ProposalType = require('./EntityTypes/Proposal');
 const ProposalInput = require('./EntityTypes/InputTypes/Proposal');
 const Proposal = require('../Entity/Proposal');
 
+const EmailValidation = require('../Entity/EmailValidation');
+
 const Rbac = require("../utils/Rbac");
 const rbac = new Rbac();
 
@@ -66,6 +68,22 @@ module.exports = new GraphQLObjectType({
             async resolve(obj, { email, code, password }) {
                 return User.restorePassword(email, code, password);
             }
-        }
+        },
+        confirmUser: {
+            type: GraphQLBoolean,
+            args: {
+                code: {
+                    type: GraphQLString
+                }
+            },
+            async resolve (obj, { code }) {
+                console.log(obj().viewer.__get('id'));
+                return await EmailValidation.confirmUser(code, obj().viewer.__get('id'));
+            }
+        },
+        //If we need system which could make user`s token unrelaible.....
+        // setUserOnConfirmation: {
+
+        // }
     }
 });

@@ -86,7 +86,6 @@ baseEntity.prototype.__set = function (field, value) {
 baseEntity.prototype.table = "";
 
 baseEntity.prototype.save = async function () {
-    console.log(this.fields);
     if (this.validate())
         return await db.insert(this);
     else

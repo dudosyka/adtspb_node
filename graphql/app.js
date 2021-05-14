@@ -64,10 +64,16 @@ app.use('/api', async (req, res, next) =>
         console.log(data);
         if (data !== false && Object.keys(data).length != 1)
         {
-            rootValue = {
-                ...rootValue,
-                viewer: await User.createFrom(data),
-            };
+            // let usr = await User.createFrom(data);
+            // if (usr.__get("isConfirmed")) {
+                rootValue = {
+                    ...rootValue,
+                    viewer: await User.createFrom(data),
+                };
+            // }
+            // else {
+                // res.status(403).send();
+            // }
         }
         else {
             res.status(403).send();

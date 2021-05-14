@@ -1,9 +1,15 @@
-const {GraphQLBoolean, GraphQLObjectType, GraphQLString, GraphQLID, GraphQLInt} = require("graphql");
+const { GraphQLObjectType, GraphQLBoolean, GraphQLString, GraphQLID, GraphQLInt } = require("graphql");
 const Db = require('../utils/Db');
+
 const User = require('../Entity/User');
 const UserType = require('./EntityTypes/User');
+
 const Association = require('../Entity/Association');
 const AssociationType = require('./EntityTypes/Association');
+
+const EmailValidation = require('../Entity/EmailValidation');
+const EmailValidationType = require('./EntityTypes/EmailValidation');
+
 const Rbac = require('../utils/Rbac');
 const Jwt = require('../utils/Jwt');
 
@@ -71,6 +77,14 @@ module.exports = new GraphQLObjectType({
             },
             async resolve(obj, { email, code }) {
                 return User.checkRestoreCode(email, code);
+            }
+        },
+        checkUserConfirmation: {
+            type: EmailValidationType,
+            args: {},
+            async resolve(obj, {}) {
+                console.log(obj().viewer.__get('id'));
+                return obj().viewer.__get('isConfirmed').fields;
             }
         }
     },

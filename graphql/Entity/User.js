@@ -2,6 +2,10 @@ const baseEntity = require('./BaseEntity');
 const Rbac = require('../utils/Rbac');
 const { crypt, compare } = require('../utils/Crypt');
 const AppConfig = require('../config/AppConfig');
+const EmailValidation = require('./EmailValidation');
+
+const Jwt = require('../utils/Jwt');
+const jwt = new Jwt();
 
 let rbac = new Rbac();
 
@@ -14,6 +18,7 @@ User.prototype.createFrom = async function (data) {
     let { role, rules } = await rbac.auth(this.__get('id'));
     this.fields.__role = role;
     this.fields.__accessible = rules;
+    this.fields.isConfirmed = await EmailValidation.checkConfirmation(this.__get('id'));
     return this;
 }
 
@@ -94,20 +99,22 @@ User.prototype.createNew = async function () {
         let pairs = await this.checkForPairs('email', this.__get('email'));
 
         if (pairs.length > 0)
-            return false;
+            return "failed";
 
         await this.encryptPassword();
         let usr = await this.save();
 
+        EmailValidation.setOnConfirmation(usr.insertId);
+
         if (usr === false)
-            return false;
+            return "failed";
 
         let res = rbac.addRoleToUser(usr.insertId, AppConfig.common_user_id);
 
         if (res === false)
-            return false;
+            return "failed";
 
-        return true;
+        return await jwt.sign({id: usr.insertId});
     }
 }
 
