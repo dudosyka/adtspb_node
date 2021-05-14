@@ -64,15 +64,15 @@ app.use('/api', async (req, res, next) =>
         console.log(data);
         if (data !== false && Object.keys(data).length != 1)
         {
-            // let usr = await User.createFrom(data);
-            // if (usr.__get("isConfirmed")) {
+            let usr = await User.createFrom(data);
+            // if (usr.__get("isConfirmed").code == null) {
                 rootValue = {
                     ...rootValue,
-                    viewer: await User.createFrom(data),
+                    viewer: usr,
                 };
             // }
             // else {
-                // res.status(403).send();
+                // res.status(403).send("acount is not confirmed");
             // }
         }
         else {
