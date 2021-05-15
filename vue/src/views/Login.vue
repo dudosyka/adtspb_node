@@ -86,7 +86,7 @@
             endoor.request(req, data).then(data => {
                 console.log(data);
 		localStorage.setItem('token', data.login);
-		//window.location = window.location;
+		window.location = window.location;
             }).
             catch(err => {
                 console.error(err);
