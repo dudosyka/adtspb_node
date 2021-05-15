@@ -1,14 +1,13 @@
 <template>
   <div id="app">
+    <router-view />
+
     <div id="nav">
+      <b>Temporary nav bar!</b> <br>
       <router-link to="/">Home</router-link> |
       <router-link to="/page">Page</router-link> |
       <router-link to="/signup">SignUp</router-link>
     </div>
-
-    <component :is="layout">
-        <router-view />
-    </component>
   </div>
 </template>
 
@@ -17,6 +16,8 @@
 /*  hj */
 #nav {
   padding: 30px;
+  border-top: 5px dashed #ab2d2d;
+  background-color: #ffd1d1;
 }
 
 #nav a {
@@ -30,17 +31,13 @@
 </style>
 
 <script type="text/javascript">
-  import AuthLayout from '@/layouts/AuthLayout'
-  import HomeLayout from '@/layouts/HomeLayout'
 
   export default {
     computed: {
-      layout() {
-        return (this.$route.meta.layout || 'AuthLayout' )
-      }
+
     },
     components: {
-      AuthLayout, HomeLayout
+
     }
   }
 </script>

@@ -1,9 +1,10 @@
 <template>
     <main class="main-content">
         <div class="auth">
+          <form class="form">
             <div class="input-container">
-              <label class="label" v-bind:class="{'label-up': user.secondName}">Фамилия</label><br>
-              <input type="text" v-model="user.secondName" class="type" tabindex="1">
+              <label class="label" v-bind:class="{'label-up': user.surname}">Фамилия</label><br>
+              <input type="text" v-model="user.surname" class="type" tabindex="1">
             </div>
 
             <div class="input-container">
@@ -12,35 +13,53 @@
             </div>
 
             <div class="input-container">
-              <label class="label" v-bind:class="{'label-up': user.oldName}">Отчество</label><br>
-              <input type="text" v-model="user.oldName" class="type" tabindex="1">
-            </div>
-
-            <div class="input-container">
-              <label class="label" v-bind:class="{'label-up': user.email}">Email</label><br>
-              <input type="text" v-model="user.email" class="type" tabindex="1">
+              <label class="label" v-bind:class="{'label-up': user.lastname}">Отчество</label><br>
+              <input type="text" v-model="user.lastname" class="type" tabindex="1">
             </div>
 
             <div class="input-container">
               <label class="label" v-bind:class="{'label-up': user.phone}">Номер телефона</label><br>
-              <input type="text" v-model="user.phone" class="type" tabindex="1">
+              <masked-input
+                v-model="rawPhone"
+                mask="\+\7 (111) 1111-111"
+                @input="user.phone = arguments[1]"
+                type="tel"
+                class="type" />
             </div>
 
-            <div class="input-container" v-on:click="user.sex = !user.sex">
-              <label class="air-dark-button">Пол</label>
-              <div class="checkbox-container">
-                <div>
-                  <input type="checkbox" v-model="user.sex" class="checkbox" tabindex="3">
-                  <label class="air-dark-button checkbox">Мужской</label>
+            <div class="input-container">
+              <h3 class="radio-heading dark">Пол</h3>
+              <ul class="radio-list">
+                <div class="radio-container">
+                  <input type="radio" v-model.number="user.sex" value="1" class="radio" tabindex="3" id="man">
+                  <label class="dark radio" for="man">Мужской</label>
                 </div>
-                <div>
-                  <input type="checkbox" v-model="user.sex" class="checkbox" tabindex="3">
-                  <label class="air-dark-button checkbox">Женский</label>
+                <div class="radio-container">
+                  <input type="radio" v-model.number="user.sex" value="0" class="radio" tabindex="3" id="woman">
+                  <label class="dark radio" for="woman">Женский</label>
                 </div>
+              </ul>
+            </div>
+
+            <div class="input-container">
+              <label class="label" v-bind:class="{'label-up': user.email}">Email</label><br>
+              <input type="email" v-model="user.email" class="type" tabindex="1">
+            </div>
+
+            <div class="input-container">
+              <div class="password-container">
+                <div>
+                  <label class="label" v-bind:class="{'label-up': user.password}">Пароль</label><br>
+                  <input :type="passwordFieldType" v-model="user.password" class="type" tabindex="1">
+                </div>
+                <button @click="switchVisibility" class="dark-box darken">0</button>
               </div>
             </div>
 
-            <button class="dark-button" @click="registration" tabindex="2">Зарегистрироваться</button>
+            <div class="buttons">
+              <button class="dark-button" @click="registration" tabindex="2">Зарегистрироваться</button>
+            </div>
+          </form>
         </div>
 
         <div class="plate">
@@ -68,33 +87,47 @@
 
 <script>
   import axios from "axios"
+  import MaskedInput from 'vue-masked-input'
 
   export default {
     name: 'SignUp',
 
     data() {
       return {
+        rawPhone: null,
+        passwordFieldType: "password",
         user: {
           name: null,
           surname: null,
           lastname: null,
           email: null,
+          password: null,
           phone: null,
           sex: null
         }
       }
     },
     components: {
+      MaskedInput
+    },
+    computed: {
 
     },
     methods: {
       registration() {
+        if (this.user.phone.length != 11) {
+            this.user.phone = '8' + this.user.phone
+        }
+
         let request = `
           mutation($user: UserInput) {
             createUser(user: $user)
           }
         `;
         endoor.request(request, { user: this.user }).then(res => { console.log(res); } ).catch(err => { console.error(err); } );
+      },
+      switchVisibility() {
+        this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
       }
     },
   }

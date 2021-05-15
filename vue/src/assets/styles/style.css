@@ -26,7 +26,8 @@ body {
   .auth {
     grid-area: auth;
 
-    background: #a0D1e8;
+    align-items: center;
+    background: #fff;
     text-align: left;
     padding: 50px;
   }
@@ -185,10 +186,32 @@ body {
   }
 
 /* Form */
+  .form {
+    min-width: 300px;
+    max-width: 500px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
   .input-container {
     width: 100%;
     position: relative;
     margin-bottom: 20px
+  }
+  .password-container {
+    display: grid;
+    grid-template-columns: 1fr 30px;
+  }
+  .password-container div {
+    width: 100%;
+    position: relative;
+  }
+  .password-container button {
+    height: 36px;
+    align-self: end;
   }
 
   .type {
@@ -199,8 +222,10 @@ body {
     width: inherit;
     box-sizing: border-box;
 
-    padding: 10px;
+    padding: 10px 0;
     transition-duration: 0.3s;
+
+    border-bottom: 3px solid #0086C9;
   }
 
   .label {
@@ -208,7 +233,7 @@ body {
 
     position: absolute;
     top: 50%;
-    left: 10px;
+    left: 0px;
 
     width: inherit;
 
@@ -222,18 +247,14 @@ body {
     transition-duration: 0.3s;
   }
   .label-up {
-    transform: translateY(-30px) translateX(-5px);
+    transform: translateY(-30px);
     font-size: 0.9em;
-    color: #006394;
+    color: #0086C9;
   }
 
   .checkbox-container {
-    margin: 10px 0;
-    color: #006394;
-
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-gap: 10px;
+    margin: 20px 0;
+    color: #0086C9;
   }
   .checkbox-container:hover {
     cursor: pointer;
@@ -246,7 +267,6 @@ body {
   input[type=checkbox] {
     display: none;
   }
-
   input[type=checkbox] ~ label.checkbox::before {
     content: '';
     display: inline-block;
@@ -258,7 +278,7 @@ body {
 
     margin-right: 10px;
 
-    border: 3px solid #1a7099;
+    border: 3px solid #0086C9;
     transition: 0.5s;
   }
   input[type=checkbox]:checked ~ label.checkbox::before {
@@ -269,10 +289,58 @@ body {
     border-width: 3px;
   }
 
+  .radio-heading {
+    margin: 0;
+    margin-bottom: 5px;
+    margin-top: 40px;
+    font-weight: normal;
+  }
+  .radio-list {
+    display: grid;
+    grid-gap: 10px;
+
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .radio-container {
+    padding-left: 35px;
+  }
+  .radio-container:hover {
+    cursor: pointer;
+  }
+  label.radio {
+    position: relative;
+  }
+  label.radio:hover {
+    cursor: pointer;
+  }
+  input[type=radio] {
+    display: none;
+  }
+  input[type=radio] ~ label.radio::before {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: -30px;
+    width: 15px;
+    height: 15px;
+
+    margin-right: 10px;
+
+    border: 3px solid #0086C9;
+    border-radius: 50%;
+  }
+  input[type=radio]:checked ~ label.radio::before {
+    background-color: #0086C9;
+  }
+
 /* buttons */
   .buttons {
     display: grid;
-    grid-template-columns: 55% auto;
+    grid-template-columns: 1fr;
+
     grid-gap: 10px;
 
     width: 100%;
@@ -291,35 +359,69 @@ body {
     padding: 10px;
     margin-bottom: 10px;
 
+    justify-self: center;
+    min-width: 200px;
+
     font-weight: bold;
     font-size: 1rem;
     text-decoration: none;
     text-align: center;
-    transition-duration: 0.3s;
+    transition: transform 0.3s;
   }
   .dark-button:hover, .light-button:hover {
-    transform: translateY(-5px);
+    transform: scale(1.1);
     cursor: pointer;
-    box-shadow: 0 5px 10px 2px #135473;
   }
   .dark-button {
     color: #fff;
-    background: #1a7099;
+    background: #0086C9;
   }
   .light-button {
-    color: #1a7099;
+    color: #0086C9;
     background: #fff;
   }
 
-  .air-dark-button {
-    color: #006394;
+  .dark {
+    color: #0086C9;
+  }
+  .dark-box {
+    border: none;
+    outline: none;
+
+    padding: 10px;
+
+    justify-self: center;
+
+    color: #fff;
+
+    font-weight: bold;
+    font-size: 1rem;
+    text-decoration: none;
+    text-align: center;
+  }
+/*Hovers*/
+  .darken {
+    background-color: #0086C9;
+    transition: background-color 0.3s;
+  }
+  .darken:hover {
+    background-color: #025680;
+    cursor: pointer;
+  }
+
+/*Actives*/
+
+  .air-button {
+    color: #0086C9;
     background: none;
     outline: none;
     border: none;
     text-decoration: none;
     font-size: 1rem;
+    transition: transform 0.3s;
   }
-  .air-dark-button:hover {
+  .air-button:hover {
+    transform: translateY(-5px);
     cursor: pointer;
   }
 

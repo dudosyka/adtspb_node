@@ -17,19 +17,16 @@ const routes = [
   {
     path: '/login',
     name: 'Authorization',
-    meta: { layout: 'AuthLayout' },
     component: Login
   },
   {
     path: '/signup',
     name: 'Registration',
-    meta: { layout: 'AuthLayout' },
     component: SignUp
   },
   {
     path: '/passreset',
     name: 'PasswordReset',
-    meta: { layout: 'AuthLayout' },
     component: PassReset
   },
   {
