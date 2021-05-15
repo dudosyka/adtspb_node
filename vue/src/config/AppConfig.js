@@ -1,4 +1,4 @@
 module.exports = {
-    api_url: "http://localhost:8080/api",
-    endoor_url: "http://localhost:8080/endoor"
+    api_url: "http://test.lk.adtspb.ru/api",
+    endoor_url: "http://test.lk.adtspb.ru/endoor"
 }

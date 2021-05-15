@@ -4,7 +4,7 @@ try {
   const app = require('./app');
   app.listen(AppConfig.port);
 
-  console.log("App listen on localhost:8080");
+  console.log("App listen on localhost:" + AppConfig.port);
 }
 catch (err) {
   console.log(err);

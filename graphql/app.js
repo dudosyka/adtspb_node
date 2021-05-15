@@ -32,6 +32,8 @@ let rootValue = {
     viewer: null
 };
 
+//console.log("WORK!");
+
 // TEMP: Uncommented to generate test role and rule.
 // const Rbac = require('./utils/Rbac');
 //
@@ -90,6 +92,8 @@ app.use('/api', graphqlHTTP({
     },
     graphiql: true
 }));
+
+//app.use('/endoor', (req, res, next) => { console.log('WORK!'); res.end("RESPONSE"); });
 
 app.use('/endoor', graphqlHTTP({
     schema: schemaForNonLogin,
