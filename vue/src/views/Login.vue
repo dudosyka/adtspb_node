@@ -1,10 +1,10 @@
 <template>
   <main class="main-content">
       <div class="auth">
-        <form class="form">
+        <div class="form">
           <div class="input-container">
             <label class="label" v-bind:class="{'label-up': login}">Номер телефона/Электронная почта</label><br>
-            <input type="email" v-model="login" class="type" tabindex="1">
+            <input type="text" v-model="login" class="type" tabindex="1">
           </div>
 
           <router-link class="air-button dark pass-rest" to="/passreset">Забыли пароль ?</router-link>
@@ -15,7 +15,7 @@
                 <label class="label" v-bind:class="{'label-up': pass}">Пароль</label><br>
                 <input :type="passwordFieldType" v-model="pass" class="type" tabindex="1">
               </div>
-              <button @click="switchVisibility" class="dark-box darken">0</button>
+              <button @click="switchVisibility()" class="dark-box darken">0</button>
             </div>
           </div>
 
@@ -28,7 +28,7 @@
             <button class="dark-button" @click="auth()" tabindex="4">Войти</button>
             <router-link to="/signup" tabindex="5" class="light-button">Регистрация</router-link>
           </div>
-        </form>
+        </div>
       </div>
 
       <div class="plate">
@@ -85,6 +85,8 @@
             }
             endoor.request(req, data).then(data => {
                 console.log(data);
+		localStorage.setItem('token', data.login);
+		//window.location = window.location;
             }).
             catch(err => {
                 console.error(err);

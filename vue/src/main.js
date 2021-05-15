@@ -51,7 +51,7 @@ router.afterEach(async (to, from) => {
         console.log(isLogin);
     }
 
-    if (to.path == '/login' && isLogin)
+    if ((to.path == '/login' || to.path == '/signup') && isLogin)
       redirectTo('Home');
 
     if (!isLogin && to.path != "/signup" && to.path != "/passreset")
@@ -62,6 +62,6 @@ new Vue({
   router,
   render: h => h(App),
   created: () => {
-    console.log(11);
+    //console.log(11);
   }
 }).$mount('#app');

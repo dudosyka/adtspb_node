@@ -6,7 +6,8 @@
       <b>Temporary nav bar!</b> <br>
       <router-link to="/">Home</router-link> |
       <router-link to="/page">Page</router-link> |
-      <router-link to="/signup">SignUp</router-link>
+      <router-link to="/signup">SignUp</router-link> | 
+      <span onclick="localStorage.removeItem('token'); window.location = window.location;">Logout</span>
     </div>
   </div>
 </template>
