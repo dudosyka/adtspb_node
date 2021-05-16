@@ -24,7 +24,8 @@ module.exports = new GraphQLObjectType({
         viewer: {
             type: UserType,
             async resolve(obj, data) {
-                return obj().viewer.fields;
+                const viewer = await User.baseCreateFrom(obj().viewer);
+                return viewer.fields;
             }
         },
         createUser: {
@@ -77,8 +78,8 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve (obj, { code }) {
-                console.log(obj().viewer.__get('id'));
-                return await EmailValidation.confirmUser(code, obj().viewer.__get('id'));
+                // console.log(viewer.__get('id'));
+                return await EmailValidation.confirmUser(code, obj().viewer.id);
             }
         },
         //If we need system which could make user`s token unrelaible.....

@@ -83,8 +83,9 @@ module.exports = new GraphQLObjectType({
             type: EmailValidationType,
             args: {},
             async resolve(obj, {}) {
-                console.log(obj().viewer.__get('id'));
-                return obj().viewer.__get('isConfirmed').fields;
+                const viewer = User.createFrom(obj().viewer);
+                // console.log(viewer.__get('id'));
+                return viewer.__get('isConfirmed').fields;
             }
         }
     },
