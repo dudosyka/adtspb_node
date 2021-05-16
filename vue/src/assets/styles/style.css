@@ -37,9 +37,9 @@ body {
 
     padding: 80px 0 0px 80px;
 
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     background: #0086c9;
     background-image: url('../images/layer.svg');
@@ -67,9 +67,17 @@ body {
     }
   }
 
+/* transitions */
+  .fade-enter-active, .fade-leave-active {
+    transition: transform .5s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    transform: translateX(-100%);
+  }
+
 /* social media link */
   .social-media-list.container {
-    z-index: 1;
+    z-index: 3;
     height: 100%;
     box-sizing: border-box;
 
@@ -79,6 +87,8 @@ body {
     display: flex;
     justify-content: flex-end;
     align-items: flex-end;
+
+    align-self: flex-end;
   }
   .social-media-list.ul {
     list-style: none;
@@ -194,6 +204,11 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
+  }
+  .form-heading {
+    margin: 0;
+    font-size: 28px;
+    color: #0086C9;
   }
 
   .input-container {
@@ -399,6 +414,43 @@ body {
     text-decoration: none;
     text-align: center;
   }
+
+  /* Arrows */
+    .left-arrow {
+      position: absolute;
+      top: 25px;
+      left: 25px;
+
+      border: none;
+      outline: none;
+      background-color: inherit;
+
+      display: block;
+      width: 30px;
+      height: 12px;
+
+      border-bottom: 5px solid #0086C9;
+      transition: transform 0.3s;
+    }
+    .left-arrow::before {
+      content: '';
+      position: absolute;
+      top: 0px;
+      left: 0px;
+
+      width: 15px;
+      height: 15px;
+      border-bottom: 5px solid #0086C9;
+      border-left: 5px solid #0086C9;
+      transform: rotate(45deg);
+    }
+    .left-arrow:hover {
+      cursor: pointer;
+      transform: translateX(-5px);
+    }
+    .left-arrow:active {
+      transform: translateX(-20px);
+    }
 /*Hovers*/
   .darken {
     background-color: #0086C9;

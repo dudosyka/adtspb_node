@@ -9,12 +9,12 @@
 
             <div class="input-container">
               <label class="label" v-bind:class="{'label-up': user.name}">Имя</label><br>
-              <input type="text" v-model="user.name" class="type" tabindex="1">
+              <input type="text" v-model="user.name" class="type" tabindex="2">
             </div>
 
             <div class="input-container">
               <label class="label" v-bind:class="{'label-up': user.lastname}">Отчество</label><br>
-              <input type="text" v-model="user.lastname" class="type" tabindex="1">
+              <input type="text" v-model="user.lastname" class="type" tabindex="3">
             </div>
 
             <div class="input-container">
@@ -24,7 +24,8 @@
                 mask="\+\7 (111) 111-11-11"
                 @input="user.phone = arguments[1]"
                 type="tel"
-                class="type" />
+                class="type"
+                tabindex="4" />
             </div>
 
             <div class="input-container">
@@ -32,32 +33,32 @@
               <ul class="radio-list">
                 <div class="radio-container">
                   <input type="radio" v-model.number="user.sex" value="1" class="radio" tabindex="3" id="man">
-                  <label class="dark radio" for="man">Мужской</label>
+                  <label class="dark radio" for="man" tabindex="5">Мужской</label>
                 </div>
                 <div class="radio-container">
                   <input type="radio" v-model.number="user.sex" value="0" class="radio" tabindex="3" id="woman">
-                  <label class="dark radio" for="woman">Женский</label>
+                  <label class="dark radio" for="woman" tabindex="6">Женский</label>
                 </div>
               </ul>
             </div>
 
             <div class="input-container">
               <label class="label" v-bind:class="{'label-up': user.email}">Email</label><br>
-              <input type="email" v-model="user.email" class="type" tabindex="1">
+              <input type="email" v-model="user.email" class="type" tabindex="7">
             </div>
 
             <div class="input-container">
               <div class="password-container">
                 <div>
                   <label class="label" v-bind:class="{'label-up': user.password}">Пароль</label><br>
-                  <input :type="passwordFieldType" v-model="user.password" class="type" tabindex="1">
+                  <input :type="passwordFieldType" v-model="user.password" class="type" tabindex="8">
                 </div>
                 <button @click="switchVisibility()" class="dark-box darken">0</button>
               </div>
             </div>
 
             <div class="buttons">
-              <button class="dark-button" @click="registration()" tabindex="2">Зарегистрироваться</button>
+              <button class="dark-button" @click="registration" tabindex="9">Зарегистрироваться</button>
             </div>
           </div>
         </div>
@@ -130,9 +131,9 @@
 			localStorage.setItem('token', res.createUser);
 			window.location = window.location;
 		}
-		console.log(res); 
-	}).catch(err => { 
-		console.error(err); 
+		console.log(res);
+	}).catch(err => {
+		console.error(err);
 	});
       },
       switchVisibility() {
