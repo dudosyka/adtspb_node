@@ -78,15 +78,22 @@
                 mutation($login: String, $password: String) {
                     login(login: $login, password: $password)
                 }
-            `;
+            `
+
             let data = {
                 login: this.login,
                 password: this.pass
             }
+            
             endoor.request(req, data).then(data => {
                 console.log(data);
-		localStorage.setItem('token', data.login);
-		window.location = window.location;
+            		localStorage.setItem('token', data.login);
+
+                //checkConfirmation
+                //if true windowlocation
+                //else to sendCode
+
+            		window.location = window.location;
             }).
             catch(err => {
                 console.error(err);

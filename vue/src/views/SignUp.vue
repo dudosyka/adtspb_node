@@ -119,7 +119,7 @@
         if (this.user.phone.length != 11) {
             this.user.phone = '8' + this.user.phone
         }
-	console.log(this.user);
+	      console.log(this.user);
         let request = `
           mutation($user: UserInput) {
             createUser(user: $user)

@@ -45,12 +45,12 @@ let redirectTo = (name) => {
 router.afterEach(async (to, from) => {
     let isLogin = true;
     isLogin = (token !== null);
-
+    console.log(isLogin)
     if (isLogin) {
         isLogin = await validToken();
         console.log(isLogin);
     }
-
+    console.log(to.path);
     if ((to.path == '/login' || to.path == '/signup') && isLogin)
       redirectTo('Home');
 

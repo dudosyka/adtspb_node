@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
 	"start": "vue-cli-service serve",
+  "winStart": "vue-cli-service serve",
 	"build": "vue-cli-service build"
   },
   "dependencies": {
