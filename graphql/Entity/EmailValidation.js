@@ -57,7 +57,7 @@ EmailValidation.prototype.setOnConfirmation = async function (user_id) {
     this.__set('user_id', user_id);
     this.__set('timestamp', Math.floor(Date.now() / 1000));
     await this.save();
-    return true;
+    return this;
 }
 
 EmailValidation.prototype.table = "email_validation";
