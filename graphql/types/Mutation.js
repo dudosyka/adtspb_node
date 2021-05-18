@@ -9,6 +9,7 @@ const ProposalInput = require('./EntityTypes/InputTypes/Proposal');
 const Proposal = require('../Entity/Proposal');
 
 const EmailValidation = require('../Entity/EmailValidation');
+const EmailValidationType = require('./EntityTypes/EmailValidation');
 
 const Rbac = require("../utils/Rbac");
 const rbac = new Rbac();
@@ -24,7 +25,8 @@ module.exports = new GraphQLObjectType({
         viewer: {
             type: UserType,
             async resolve(obj, data) {
-                return obj().viewer.fields;
+                const viewer = await User.baseCreateFrom(obj().viewer);
+                return viewer.fields;
             }
         },
         createUser: {
@@ -70,17 +72,48 @@ module.exports = new GraphQLObjectType({
             }
         },
         confirmUser: {
-            type: GraphQLBoolean,
+            type: EmailValidationType,
             args: {
                 code: {
                     type: GraphQLString
                 }
             },
             async resolve (obj, { code }) {
-                console.log(obj().viewer.__get('id'));
-                return await EmailValidation.confirmUser(code, obj().viewer.__get('id'));
+                // console.log(viewer.__get('id'));
+                return await EmailValidation.confirmUser(code, obj().viewer.id);
             }
         },
+        generateNewConfirmationCode: {
+                type: EmailValidationType,
+                args: {},
+                async resolve(obj, { }) {
+                    return (await EmailValidation.setOnConfirmation(obj().viewer.id)).fields;
+                }
+        },
+        // upgradeUser: {
+        //     type: GraphQLBoolean,
+        //     args: {
+        //         data: {
+        //             type: UserInput,
+        //         }
+        //     },
+        //     async resolve(obj, { data }) {
+        //         console.log(data);
+        //         return true;
+        //     }
+        // },
+        // addChild: {
+        //     type: GraphQLBoolean,
+        //     args: {
+        //         child: {
+        //             type: GraphQLInt
+        //         }
+        //     },
+        //     async resolve(obj, { child }) {
+        //         console.log(child);
+        //         return true;
+        //     }
+        // },
         //If we need system which could make user`s token unrelaible.....
         // setUserOnConfirmation: {
 
