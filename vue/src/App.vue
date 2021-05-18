@@ -6,7 +6,7 @@
       <b>Temporary nav bar!</b> <br>
       <router-link to="/">Home</router-link> |
       <router-link to="/page">Page</router-link> |
-      <router-link to="/signup">SignUp</router-link> | 
+      <router-link to="/signup">SignUp</router-link> |
       <!--span onclick="localStorage.removeItem('token'); window.location = window.location;">Logout</span-->
     </div>
   </div>
@@ -14,6 +14,10 @@
 
 <style>
 @import "./assets/styles/style.css";
+@import "./assets/styles/input.css";
+@import "./assets/styles/button.css";
+@import "./assets/styles/text.css";
+
 /*  hj */
 #nav {
   padding: 30px;

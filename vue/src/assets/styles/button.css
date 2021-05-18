@@ -1,0 +1,145 @@
+/* buttons */
+  .buttons {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+
+    width: 100%;
+  }
+
+  .dark-button, .light-button {
+    border: none;
+    outline: none;
+
+    padding: 10px;
+    margin-bottom: 10px;
+
+    justify-self: center;
+    min-width: 200px;
+
+    font-weight: bold;
+    font-size: 1rem;
+    text-decoration: none;
+    text-align: center;
+    transition: transform 0.3s;
+  }
+  .dark-button {
+    color: #fff;
+    background: #0086C9;
+  }
+  .light-button {
+    color: #0086C9;
+    background: #fff;
+  }
+  .dark-button:hover, .light-button:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+  }
+
+  .dark {
+    color: #0086C9;
+  }
+  .dark-box {
+    border: none;
+    outline: none;
+    user-select: none;
+
+    padding: 10px;
+
+    justify-self: center;
+
+    color: #fff;
+
+    font-weight: bold;
+    font-size: 1rem;
+    text-decoration: none;
+    text-align: center;
+  }
+
+  .light {
+    color: #fff;
+  }
+  .light-box {
+    border: none;
+    outline: none;
+    user-select: none;
+
+    padding: 10px;
+
+    justify-self: center;
+
+    color: #0086C9;
+
+    font-weight: bold;
+    font-size: 1rem;
+    text-decoration: none;
+    text-align: center;
+  }
+
+  /*Hovers*/
+    .darken {
+      background-color: #0086C9;
+      transition: background-color 0.3s;
+    }
+    .darken:hover {
+      background-color: #025680;
+      cursor: pointer;
+    }
+
+  /* Arrows */
+    .left-arrow {
+      position: absolute;
+      top: 25px;
+      left: 25px;
+
+      border: none;
+      outline: none;
+      background-color: inherit;
+
+      display: block;
+      width: 30px;
+      height: 12px;
+
+      border-bottom: 5px solid #0086C9;
+      transition: transform 0.3s;
+    }
+    .left-arrow::before {
+      content: '';
+      position: absolute;
+      top: 0px;
+      left: 0px;
+
+      width: 15px;
+      height: 15px;
+      border-bottom: 5px solid #0086C9;
+      border-left: 5px solid #0086C9;
+      transform: rotate(45deg);
+    }
+    .left-arrow:hover {
+      cursor: pointer;
+      transform: translateX(-5px);
+    }
+    .left-arrow:active {
+      transform: translateX(-20px);
+    }
+
+/*Actives*/
+
+  .air-button {
+    color: #0086C9;
+    background: none;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: transform 0.3s;
+  }
+  .air-button:hover {
+    transform: translateY(-5px);
+    cursor: pointer;
+  }
+
+  .pass-rest {
+    align-self: flex-end;
+    margin-top: 30px;
+  }

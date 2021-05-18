@@ -2,22 +2,22 @@
     <main class="main-content">
         <div class="auth">
           <div class="form">
-            <div class="input-container">
+            <div class="input-container required">
               <label class="label" v-bind:class="{'label-up': user.surname}">Фамилия</label><br>
-              <input type="text" v-model="user.surname" class="type" tabindex="1">
+              <input type="text" v-model="user.surname" class="type" tabindex="1" required>
             </div>
 
-            <div class="input-container">
+            <div class="input-container required">
               <label class="label" v-bind:class="{'label-up': user.name}">Имя</label><br>
               <input type="text" v-model="user.name" class="type" tabindex="2">
             </div>
 
-            <div class="input-container">
+            <div class="input-container required">
               <label class="label" v-bind:class="{'label-up': user.lastname}">Отчество</label><br>
               <input type="text" v-model="user.lastname" class="type" tabindex="3">
             </div>
 
-            <div class="input-container">
+            <div class="input-container required">
               <label class="label" v-bind:class="{'label-up': user.phone}">Номер телефона</label><br>
               <masked-input
                 v-model="rawPhone"
@@ -28,7 +28,7 @@
                 tabindex="4" />
             </div>
 
-            <div class="input-container">
+            <div class="input-container required">
               <h3 class="radio-heading dark">Пол</h3>
               <ul class="radio-list">
                 <div class="radio-container">
@@ -42,12 +42,12 @@
               </ul>
             </div>
 
-            <div class="input-container">
+            <div class="input-container required">
               <label class="label" v-bind:class="{'label-up': user.email}">Email</label><br>
               <input type="email" v-model="user.email" class="type" tabindex="7">
             </div>
 
-            <div class="input-container">
+            <div class="input-container required">
               <div class="password-container">
                 <div>
                   <label class="label" v-bind:class="{'label-up': user.password}">Пароль</label><br>
@@ -111,9 +111,6 @@
     components: {
       MaskedInput
     },
-    computed: {
-
-    },
     methods: {
       registration() {
         if (this.user.phone.length != 11) {
@@ -126,15 +123,15 @@
           }
         `;
         endoor.request(request, { user: this.user }).then( res => {
-		if (res.createUser != 'failed')
-		{
-			localStorage.setItem('token', res.createUser);
-			window.location = window.location;
-		}
-		console.log(res);
-	}).catch(err => {
-		console.error(err);
-	});
+      		if (res.createUser != 'failed')
+      		{
+      			localStorage.setItem('token', res.createUser);
+      			window.location = window.location;
+      		}
+      		console.log(res);
+      	   }).catch(err => {
+      		console.error(err);
+      	});
       },
       switchVisibility() {
         this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";

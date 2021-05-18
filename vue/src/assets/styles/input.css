@@ -1,0 +1,205 @@
+/* Form */
+  .form {
+    min-width: 300px;
+    max-width: 400px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .form-heading {
+    margin: 0;
+    font-size: 28px;
+    color: #0086C9;
+  }
+
+  .input-container {
+    width: 100%;
+    position: relative;
+    margin-bottom: 20px
+  }
+
+  /* REQUIRED */
+  /*.input-container.required::before {
+    content: '*';
+    position: absolute;
+    top: 50%;
+    left: -20px;
+    z-index: 3;
+
+    width: 5px;
+    height: 5px;
+
+    color: #C90000;
+    font-size: 20px;
+  }
+  .input-container.required::after {
+    display: none;
+    content: 'Обязательное поле';
+    position: absolute;
+    top: 50%;
+    right: 110%;
+    z-index: 3;
+
+    color: #C90000;
+    font-size: 15px;
+  }
+  .input-container:hover.required::after {
+
+  }
+  */
+
+  /* INVALID */
+
+  /* DISABLED */
+
+  /* READONLY */
+
+  .password-container {
+    display: grid;
+    grid-template-columns: 1fr 30px;
+  }
+  .password-container div {
+    width: 100%;
+    position: relative;
+  }
+  .password-container button {
+    height: 36px;
+    align-self: end;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[tupe="tel"],
+  input[type="password"],
+  input[type="url"] {
+    position: relative;
+    z-index: 1;
+  }
+  .type {
+    border: none;
+    outline: none;
+    user-select: none;
+
+    width: inherit;
+    box-sizing: border-box;
+
+    padding: 10px 0;
+    transition-duration: 0.3s;
+
+    border-bottom: 3px solid #0086C9;
+  }
+  .type.invalid {
+    border-bottom: 3px solid #c90000;
+  }
+
+  .label {
+    display: inline-block;
+
+    position: absolute;
+    top: 50%;
+    left: 0px;
+
+    z-index: 2;
+
+    width: inherit;
+
+    margin-bottom: 5px;
+
+    pointer-events: none;
+
+    color: #cecece;
+    font-size: 1rem;
+
+    transition-duration: 0.3s;
+  }
+  .label-up {
+    transform: translateY(-30px);
+    font-size: 0.9em;
+    color: #0086C9;
+  }
+
+  .checkbox-container {
+    margin: 20px 0;
+    color: #0086C9;
+  }
+  .checkbox-container:hover {
+    cursor: pointer;
+  }
+  label.checkbox {
+    position: relative;
+    margin-left: 30px;
+    margin-bottom: 30px;
+  }
+  input[type=checkbox] {
+    display: none;
+  }
+  input[type=checkbox] ~ label.checkbox::before {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: -30px;
+    width: 15px;
+    height: 15px;
+
+    margin-right: 10px;
+
+    border: 3px solid #0086C9;
+    transition: 0.5s;
+  }
+  input[type=checkbox]:checked ~ label.checkbox::before {
+    transform: rotate(-45deg);
+    height: 10px;
+    border-right-style: none;
+    border-top-style: none;
+    border-width: 3px;
+  }
+
+  .radio-heading {
+    margin: 0;
+    margin-bottom: 5px;
+    margin-top: 40px;
+    font-weight: normal;
+  }
+  .radio-list {
+    display: grid;
+    grid-gap: 10px;
+
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .radio-container {
+    padding-left: 35px;
+  }
+  .radio-container:hover {
+    cursor: pointer;
+  }
+  label.radio {
+    position: relative;
+  }
+  label.radio:hover {
+    cursor: pointer;
+  }
+  input[type=radio] {
+    display: none;
+  }
+  input[type=radio] ~ label.radio::before {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: -30px;
+    width: 15px;
+    height: 15px;
+
+    margin-right: 10px;
+
+    border: 3px solid #0086C9;
+    border-radius: 50%;
+  }
+  input[type=radio]:checked ~ label.radio::before {
+    background-color: #0086C9;
+  }

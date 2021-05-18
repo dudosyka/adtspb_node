@@ -84,16 +84,15 @@
                 login: this.login,
                 password: this.pass
             }
-            
+
             endoor.request(req, data).then(data => {
-                console.log(data);
             		localStorage.setItem('token', data.login);
 
-                //checkConfirmation
-                //if true windowlocation
-                //else to sendCode
-
-            		window.location = window.location;
+                if (data.checkConfirmation) {
+                  window.location = '/home'
+                } else {
+                  window.location = '/confirmation'
+                }
             }).
             catch(err => {
                 console.error(err);

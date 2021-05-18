@@ -5,6 +5,7 @@ import Login from '../views/Login.vue'
 import SignUp from '../views/SignUp.vue'
 import PassReset from '../views/PassReset.vue'
 import Page2 from '../views/Page2.vue'
+import Confirmation from '../views/Confirmation.vue'
 
 Vue.use(VueRouter)
 
@@ -23,6 +24,11 @@ const routes = [
     path: '/signup',
     name: 'Registration',
     component: SignUp
+  },
+  {
+    path: '/confirmation',
+    name: 'Confirmation',
+    component: Confirmation
   },
   {
     path: '/passreset',
