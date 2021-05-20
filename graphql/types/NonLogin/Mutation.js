@@ -2,6 +2,7 @@ const {GraphQLObjectType, GraphQLString, GraphQLBoolean, GraphQLInt} = require("
 
 const UserInput = require("../EntityTypes/InputTypes/User");
 const User = require('../../Entity/User');
+const SignUpOutput = require('../OutputTypes/SignUp');
 
 const Jwt = require('../../utils/Jwt');
 const jwt = new Jwt();
@@ -27,7 +28,7 @@ module.exports = new GraphQLObjectType({
             }
         },
         createUser: {
-            type: GraphQLString,
+            type: SignUpOutput,
             args: {
                 user: {
                     type: UserInput,

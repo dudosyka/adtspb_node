@@ -98,23 +98,34 @@ User.prototype.createNew = async function () {
     else {
         let pairs = await this.checkForPairs('email', this.__get('email'));
 
+        let answ = {
+            id: null,
+            token: null,
+            status: "failed"
+        }
+
         if (pairs.length > 0)
-            return "failed";
+            return answ;
 
         await this.encryptPassword();
-        let usr = await this.save();
+        const usr = await this.save();
+        const id = usr.insertId;
 
-        EmailValidation.setOnConfirmation(usr.insertId);
+        EmailValidation.setOnConfirmation(id);
 
         if (usr === false)
-            return "failed";
+            return answ;
 
-        let res = rbac.addRoleToUser(usr.insertId, AppConfig.common_user_id);
+        let res = rbac.addRoleToUser(id, AppConfig.common_user_id);
 
         if (res === false)
-            return "failed";
+            return answ;
 
-        return await jwt.sign({id: usr.insertId});
+        answ.id = id;
+        answ.token = await jwt.sign({id: id});
+        answ.status = "success";
+
+        return answ;
     }
 }
 
