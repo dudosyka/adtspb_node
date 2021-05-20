@@ -113,22 +113,23 @@
     },
     methods: {
       registration() {
+
         if (this.user.phone.length != 11) {
             this.user.phone = '8' + this.user.phone
         }
 
-	      console.log(this.user);
-
         let request = `
           mutation($user: UserInput) {
-            createUser(user: $user)
+            createUser(user: $user) {
+              token, id, status
+            }
           }
         `
 
         endoor.request(request, { user: this.user })
           .then( res => {
-        		if (res.createUser != 'failed') {
-        			localStorage.setItem('token', res.createUser);
+        		if (res.createUser.status != 'failed') {
+        			localStorage.setItem('token', res.createUser.token);
         			window.location = window.location;
         		}
         		console.log(res);

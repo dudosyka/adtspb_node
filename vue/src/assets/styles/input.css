@@ -103,6 +103,7 @@
     border-bottom: 3px solid #0086C9;
   }
   .type.invalid {
+    background-color: #FFE4E4;
     border-bottom: 3px solid #c90000;
   }
 

@@ -168,19 +168,6 @@ body {
   }
 
 /* sprites */
-  .row-left {
-    width: 20px;
-    height: 20px;
-
-    margin-right: 10px;
-
-    background-image: url('../files/row-left.svg');
-    background-repeat: no-repeat;
-    background-size: 20px 20px;
-
-    transotion-property: transform;
-    transition-duration: 0.2s;
-  }
 
 /* Plate */
   .title {

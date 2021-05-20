@@ -109,7 +109,7 @@
                   .then(check => {
 
                     if (check.checkUserConfirmation.isConfirmed) {
-                      window.location = '/home'
+                      window.location = '/'
                     } else {
                       window.location = '/confirmation'
                     }

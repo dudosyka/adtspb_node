@@ -2,14 +2,15 @@
   <main class="main-content">
       <div class="auth">
         <div class="form">
-          <h1 class="heading-form dark">Вам на почту был отправлен код подтверждения</h1>
+          <h1 class="heading-form dark">Вам на почту был отправлен {{ this.new }} код подтверждения</h1>
           <div class="input-container">
             <label class="label" :class="{'label-up': code}">Код с почты</label><br>
-            <input type="text" v-model="code" class="type" tabindex="1">
+            <input type="text" v-model="code" class="type" :class="{invalid: isInvalid}" tabindex="1">
           </div>
 
           <div class="buttons">
             <button class="dark-button" @click="sendCode" tabindex="2">Отправить код</button>
+            <button class="light-button" @click="getNewCode" tabindex="3">Получить новый код</button>
           </div>
         </div>
       </div>
@@ -44,7 +45,9 @@
     name: 'Confirmation',
     data() {
       return {
-        code: null
+        code: null,
+        isInvalid: false,
+        new: ''
       }
     },
     methods: {
@@ -63,18 +66,32 @@
 
         api.request(req, data)
           .then(data => {
-            console.log(data.confirmUser.isConfirmed)
 
-            /*
-            if (data.confirmUser) {
+            if (data.confirmUser.isConfirmed) {
               window.location = '/'
             } else {
-              console.log('invalid code')
+              this.isInvalid = true
             }
-            */
 
           })
           .catch(err => { console.error(err) })
+      },
+      getNewCode() {
+        let req = `
+          mutation {
+            generateNewConfirmationCode {
+                isConfirmed
+            }
+          }
+        `
+
+        api.request(req)
+          .then(res => {
+            this.new = 'новый'
+          })
+          .catch(err => { console.log(err) })
+
+
       }
     }
   }
