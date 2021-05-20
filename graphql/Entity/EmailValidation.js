@@ -27,20 +27,25 @@ EmailValidation.prototype.checkConfirmation = async function (user_id) {
 }
 
 EmailValidation.prototype.confirmUser = async function (code, user_id) {
-    let res = await this.db.select(this, '`user_id` = ? AND `code` = ?', [ user_id, code ]);
+    let res = await this.db.select(this, '`user_id` = ?', [ user_id ]);
+    let answ = {
+        code: null,
+        user_id: user_id
+    }
     if (res.length > 0)
     {
         if (res[0].code == code)
         {
             this.db.query('DELETE FROM `email_validation` WHERE `user_id` = ?', [ user_id ]);
-            return true;
+            return answ;
         }
         else
         {
-            return false;
+            answ.code = code;
+            return answ;
         }
     }
-    return true;
+    return answ;
 }
 
 EmailValidation.prototype.generateToken = function (l) {
@@ -54,7 +59,7 @@ EmailValidation.prototype.generateToken = function (l) {
         while (typeof symbol == 'undefined')
         {
             symbol = getRandomSymbol();
-        } 
+        }
         res += symbol;
     }
     return res;
