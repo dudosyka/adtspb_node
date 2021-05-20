@@ -93,36 +93,35 @@
             }
 
             endoor.request(req, data)
-              .then(checking => {
+              .then(data => {
             		localStorage.setItem('token', data.login)
+                refreshApiToken()
 
                 let req = `
                   query {
                     checkUserConfirmation {
-                        code, user_id, isConfirmed
+                        isConfirmed
                     }
                   }
                 `
 
-                endoor.request(req)
-                  .then(emailValidation => {
-                    console.log('hi')
+                api.request(req)
+                  .then(check => {
+
+                    if (check.checkUserConfirmation.isConfirmed) {
+                      window.location = '/home'
+                    } else {
+                      window.location = '/confirmation'
+                    }
+
                   })
                   .catch(err => { console.error(err) })
-
-                  /*
-                  if (data.checkConfirmation) {
-                    window.location = '/home'
-                  } else {
-                    window.location = '/confirmation'
-                  }
-                  */
             })
             .catch(err => { console.error(err) })
       },
-      switchVisibility() {
-        this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
-      }
+        switchVisibility() {
+          this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
+        }
     },
   }
 </script>

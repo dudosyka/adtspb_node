@@ -51,7 +51,9 @@
       sendCode() {
         let req = `
           mutation($code: String) {
-            confirmUser(code: $code)
+              confirmUser(code: $code) {
+                  isConfirmed
+              }
           }
         `
 
@@ -61,13 +63,15 @@
 
         api.request(req, data)
           .then(data => {
-            console.log(data.confirmUser)
-            
+            console.log(data.confirmUser.isConfirmed)
+
+            /*
             if (data.confirmUser) {
               window.location = '/'
             } else {
               console.log('invalid code')
             }
+            */
 
           })
           .catch(err => { console.error(err) })

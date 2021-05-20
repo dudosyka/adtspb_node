@@ -8,7 +8,15 @@ console.log(localStorage);
 
 // localStorage.removeItem('token');
 
-// TODO:Change localhost to real domain when publish
+let refreshApiToken = () => {
+    global.api = new GraphQLClient(AppConfig.api_url, {
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem('token'),
+        }
+    });
+}
+global.refreshApiToken = refreshApiToken;
+
 const graphql = new GraphQLClient(AppConfig.api_url, {
     headers: {
         Authorization: "Bearer " + localStorage.getItem('token'),

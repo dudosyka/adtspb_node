@@ -116,22 +116,26 @@
         if (this.user.phone.length != 11) {
             this.user.phone = '8' + this.user.phone
         }
+
 	      console.log(this.user);
+
         let request = `
           mutation($user: UserInput) {
             createUser(user: $user)
           }
-        `;
-        endoor.request(request, { user: this.user }).then( res => {
-      		if (res.createUser != 'failed')
-      		{
-      			localStorage.setItem('token', res.createUser);
-      			window.location = window.location;
-      		}
-      		console.log(res);
-      	   }).catch(err => {
-      		console.error(err);
-      	});
+        `
+
+        endoor.request(request, { user: this.user })
+          .then( res => {
+        		if (res.createUser != 'failed') {
+        			localStorage.setItem('token', res.createUser);
+        			window.location = window.location;
+        		}
+        		console.log(res);
+        	})
+          .catch(err => {
+        		console.error(err);
+        	});
       },
       switchVisibility() {
         this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
