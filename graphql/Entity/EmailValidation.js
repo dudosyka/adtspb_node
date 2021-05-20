@@ -27,27 +27,40 @@ EmailValidation.prototype.checkConfirmation = async function (user_id) {
 }
 
 EmailValidation.prototype.confirmUser = async function (code, user_id) {
-    let res = await this.db.select(this, '`user_id` = ? AND `code` = ?', [ user_id, code ]);
+    let res = await this.db.select(this, '`user_id` = ?', [ user_id ]);
+    let answ = {
+        code: null,
+        user_id: user_id
+    }
     if (res.length > 0)
     {
         if (res[0].code == code)
         {
             this.db.query('DELETE FROM `email_validation` WHERE `user_id` = ?', [ user_id ]);
-            return true;
+            return answ;
         }
         else
         {
-            return false;
+            answ.code = code;
+            return answ;
         }
     }
-    return true;
+    return answ;
 }
 
 EmailValidation.prototype.generateToken = function (l) {
-    const symbols = "a,b,c,d,e,f,g,h,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,1,2,3,4,5,6,7,8,9".split(",");
     let res = "";
+    let getRandomSymbol = () => {
+        const symbols = "a,b,c,d,e,f,g,h,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,1,2,3,4,5,6,7,8,9".split(",");
+        return symbols[Math.floor(0 + Math.random() * (symbols.length + 1 - 0))];
+    }
     for (let i = 0; i < l; i++) {
-        res += symbols[Math.floor(0 + Math.random() * (symbols.length + 1 - 0))];
+        let symbol = getRandomSymbol();
+        while (typeof symbol == 'undefined')
+        {
+            symbol = getRandomSymbol();
+        }
+        res += symbol;
     }
     return res;
 }
