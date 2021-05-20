@@ -30,6 +30,8 @@ body {
     background: #fff;
     text-align: left;
     padding: 50px;
+
+    overflow-y: auto;
   }
 
   .plate {

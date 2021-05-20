@@ -65,8 +65,20 @@
     position: relative;
   }
   .password-container button {
+    width: 28px;
     height: 36px;
     align-self: end;
+  }
+  .hidden-pass, .show-pass {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 80%;
+  }
+  .hidden-pass {
+    background-image: url("../files/close-eye.svg");
+  }
+  .show-pass {
+    background-image: url("../files/open-eye.svg");
   }
 
   input[type="text"],

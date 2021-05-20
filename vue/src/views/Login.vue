@@ -15,7 +15,14 @@
                 <label class="label" v-bind:class="{'label-up': pass}">Пароль</label><br>
                 <input :type="passwordFieldType" v-model="pass" class="type" tabindex="1">
               </div>
-              <button @click="switchVisibility()" class="dark-box darken">0</button>
+              <button
+                @click="switchVisibility()"
+                class="dark-box darken"
+                :class="{
+                  'hidden-pass': this.passwordFieldType === 'password',
+                  'show-pass': this.passwordFieldType !== 'password'
+                }">
+              </button>
             </div>
           </div>
 
@@ -85,18 +92,33 @@
                 password: this.pass
             }
 
-            endoor.request(req, data).then(data => {
-            		localStorage.setItem('token', data.login);
+            endoor.request(req, data)
+              .then(checking => {
+            		localStorage.setItem('token', data.login)
 
-                if (data.checkConfirmation) {
-                  window.location = '/home'
-                } else {
-                  window.location = '/confirmation'
-                }
-            }).
-            catch(err => {
-                console.error(err);
+                let req = `
+                  query {
+                    checkUserConfirmation {
+                        code, user_id, isConfirmed
+                    }
+                  }
+                `
+
+                endoor.request(req)
+                  .then(emailValidation => {
+                    console.log('hi')
+                  })
+                  .catch(err => { console.error(err) })
+
+                  /*
+                  if (data.checkConfirmation) {
+                    window.location = '/home'
+                  } else {
+                    window.location = '/confirmation'
+                  }
+                  */
             })
+            .catch(err => { console.error(err) })
       },
       switchVisibility() {
         this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
