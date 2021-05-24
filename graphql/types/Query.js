@@ -1,8 +1,12 @@
 const { GraphQLObjectType, GraphQLBoolean, GraphQLString, GraphQLID, GraphQLInt } = require("graphql");
+const graphql = require('graphql');
+
 const Db = require('../utils/Db');
 
 const User = require('../Entity/User');
 const UserType = require('./EntityTypes/User');
+
+const UserChild = require('../Entity/UserChild');
 
 const Association = require('../Entity/Association');
 const AssociationType = require('./EntityTypes/Association');
@@ -20,6 +24,13 @@ let jwt = new Jwt();
 module.exports = new GraphQLObjectType({
     name: 'Query',
     fields: {
+        viewer: {
+            type: UserType,
+            async resolve(obj, data) {
+                const viewer = await User.baseCreateFrom(obj().viewer);
+                return viewer.fields;
+            }
+        },
         user: {
             type: UserType,
             args: {
@@ -86,6 +97,30 @@ module.exports = new GraphQLObjectType({
                 const viewer = await User.createFrom(obj().viewer);
                 // console.log(viewer.__get('id'));
                 return viewer.__get('isConfirmed').fields;
+            }
+        },
+        getChildren: {
+            type: graphql.GraphQLList(UserType),
+            args: {},
+            async resolve(obj, {}) {
+                const userChild = await UserChild.baseCreateFrom({ parent_id: obj().viewer.id });
+                return await userChild.getChildren(true, 1);
+            }
+        },
+        getChildRequests: {
+            type: graphql.GraphQLList(UserType),
+            args: {},
+            async resolve(obj, {}) {
+                const userChild = await UserChild.baseCreateFrom({ parent_id: obj().viewer.id });
+                return await userChild.getChildRequests();
+            }
+        },
+        getParentRequests: {
+            type: graphql.GraphQLList(UserType),
+            args: {},
+            async resolve(obj, {}) {
+                const userChild = await UserChild.baseCreateFrom({ child_id: obj().viewer.id });
+                return await userChild.getParentRequests();
             }
         }
     },

@@ -116,6 +116,8 @@ Rbac.prototype.addItem = async function (name, description, role = false)
 
     let res = await db.query("INSERT INTO `"+ table + "` ( name, description ) VALUES ( ?, ? ) ", [ name, description ]);
 
+    await this.minimize();
+
     return res.insertId;
 }
 
@@ -167,6 +169,11 @@ Rbac.prototype.removeRole = async function (id)
     return await this.removeItem(id, true);
 }
 
+Rbac.prototype.removeRule = async function (id)
+{
+    return await this.removeItem(id, false);
+}
+
 Rbac.prototype.addRoleToUser = async function (user_id, role_id)
 {
     let res = await db.query('INSERT INTO `user_role` (`user_id`, `auth_role_id`) VALUES (?, ?)', [ user_id, role_id ]);
@@ -175,9 +182,9 @@ Rbac.prototype.addRoleToUser = async function (user_id, role_id)
     return true;
 }
 
-Rbac.prototype.removeRule = async function (id)
-{
-    return await this.removeItem(id, false);
+Rbac.prototype.hasAccess = async function (role, rule) {
+    const res = await db.query('SELECT * FROM `auth_assignment_min` WHERE `role` = ? AND `rule` = ?', [ role, rule ]);
+    return res.length;
 }
 
 module.exports = Rbac;
