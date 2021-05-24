@@ -55,6 +55,34 @@ module.exports = new GraphQLObjectType({
             async resolve(obj, { email, code, password }) {
                 return User.restorePassword(email, code, password);
             }
-        }
+        },
+        confirmUser: {
+            type: EmailValidationType,
+            args: {
+                code: {
+                    type: GraphQLString
+                },
+                user_id: {
+                    type: GraphQLInt
+                }
+            },
+            async resolve (obj, { code, user_id }) {
+                // console.log(viewer.__get('id'));
+                const result = await EmailValidation.confirmUser(code, user_id);
+                console.log(result);
+                return result;
+            }
+        },
+        generateNewConfirmationCode: {
+                type: EmailValidationType,
+                args: {
+                    user_id: {
+                        type: GraphQLInt
+                    }
+                },
+                async resolve(obj, { user_id }) {
+                    return (await EmailValidation.setOnConfirmation(user_id)).fields;
+                }
+        },
     }
 });
