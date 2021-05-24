@@ -128,11 +128,32 @@
 
         endoor.request(request, { user: this.user })
           .then( res => {
-        		if (res.createUser.status != 'failed') {
-        			localStorage.setItem('token', res.createUser.token);
-        			window.location = window.location;
-        		}
-        		console.log(res);
+		    if (res.createUser.status != 'failed')
+            {
+              const reqData = {
+                  user_id: data.login.id
+              };
+
+              let req = `
+                query ($user_id: Int) {
+                  checkUserConfirmation (user_id: $user_id) {
+                      isConfirmed
+                  }
+                }
+              `;
+
+              endoor.request(req, reqData)
+                .then(check => {
+
+                  if (check.checkUserConfirmation.isConfirmed) {
+                      localStorage.setItem('token', res.createUser.token)
+                      window.location = window.location;
+                  } else {
+                    window.location = '/confirmation'
+                  }
+
+              }).catch(err => { console.error(err) });
+    		}
         	})
           .catch(err => {
         		console.error(err);

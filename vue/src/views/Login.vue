@@ -83,7 +83,9 @@
       {
             let req = `
                 mutation($login: String, $password: String) {
-                    login(login: $login, password: $password)
+                    login(login: $login, password: $password) {
+                        token, id
+                    }
                 }
             `
 
@@ -94,28 +96,30 @@
 
             endoor.request(req, data)
               .then(data => {
-            		localStorage.setItem('token', data.login)
-                refreshApiToken()
+
+                const reqData = {
+                    user_id: data.login.id
+                };
 
                 let req = `
-                  query {
-                    checkUserConfirmation {
+                  query ($user_id: Int) {
+                    checkUserConfirmation (user_id: $user_id) {
                         isConfirmed
                     }
                   }
-                `
+                `;
 
-                api.request(req)
+                endoor.request(req, reqData)
                   .then(check => {
 
                     if (check.checkUserConfirmation.isConfirmed) {
-                      window.location = '/'
+                        localStorage.setItem('token', data.login.token)
+                        window.location = window.location;
                     } else {
                       window.location = '/confirmation'
                     }
 
-                  })
-                  .catch(err => { console.error(err) })
+                }).catch(err => { console.error(err) });
             })
             .catch(err => { console.error(err) })
       },
