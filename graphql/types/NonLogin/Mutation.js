@@ -3,6 +3,7 @@ const {GraphQLObjectType, GraphQLString, GraphQLBoolean, GraphQLInt} = require("
 const UserInput = require("../EntityTypes/InputTypes/User");
 const User = require('../../Entity/User');
 const SignUpOutput = require('../OutputTypes/SignUp');
+const LoginOutput = require('../OutputTypes/Login');
 
 const Jwt = require('../../utils/Jwt');
 const jwt = new Jwt();
@@ -11,7 +12,7 @@ module.exports = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
         login: {
-            type: GraphQLString,
+            type: LoginOutput,
             args: {
                 login: {
                     type: GraphQLString
@@ -24,7 +25,10 @@ module.exports = new GraphQLObjectType({
                 const res = await User.auth({ user: login, pass: password });
                 const id = res.id;
 
-                return await jwt.sign({ id: id });
+                return {
+                    token: await jwt.sign({ id: id }),
+                    id: id,
+                };
             }
         },
         createUser: {
