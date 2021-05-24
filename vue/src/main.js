@@ -15,6 +15,23 @@ let refreshApiToken = () => {
         }
     });
 }
+
+let refreshUserRoles = () => {
+
+    let req = `
+    query {
+        viewer {
+            rules
+        }
+    }
+    `;
+
+    api.request(req).then(el => {
+        global.rules = req.viewer.rules;
+    });
+}
+
+global.refreshUserRoles = refreshUserRoles;
 global.refreshApiToken = refreshApiToken;
 
 const graphql = new GraphQLClient(AppConfig.api_url, {
