@@ -3,6 +3,7 @@ const {GraphQLObjectType, GraphQLString, GraphQLBoolean, GraphQLInt} = require("
 const UserType = require("./EntityTypes/User");
 const UserInput = require("./EntityTypes/InputTypes/User");
 const User = require('../Entity/User');
+const UserExtraData = require('../Entity/UserExtraData');
 
 const ProposalType = require('./EntityTypes/Proposal');
 const ProposalInput = require('./EntityTypes/InputTypes/Proposal');
@@ -22,13 +23,6 @@ const { client } = require('../utils/Redis');
 module.exports = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
-        viewer: {
-            type: UserType,
-            async resolve(obj, data) {
-                const viewer = await User.baseCreateFrom(obj().viewer);
-                return viewer.fields;
-            }
-        },
         createUser: {
             type: GraphQLString,
             args: {
@@ -80,7 +74,9 @@ module.exports = new GraphQLObjectType({
             },
             async resolve (obj, { code }) {
                 // console.log(viewer.__get('id'));
-                return await EmailValidation.confirmUser(code, obj().viewer.id);
+                const result = await EmailValidation.confirmUser(code, obj().viewer.id);
+                console.log(result);
+                return result;
             }
         },
         generateNewConfirmationCode: {
@@ -90,30 +86,71 @@ module.exports = new GraphQLObjectType({
                     return (await EmailValidation.setOnConfirmation(obj().viewer.id)).fields;
                 }
         },
-        // upgradeUser: {
-        //     type: GraphQLBoolean,
-        //     args: {
-        //         data: {
-        //             type: UserInput,
-        //         }
-        //     },
-        //     async resolve(obj, { data }) {
-        //         console.log(data);
-        //         return true;
-        //     }
-        // },
-        // addChild: {
-        //     type: GraphQLBoolean,
-        //     args: {
-        //         child: {
-        //             type: GraphQLInt
-        //         }
-        //     },
-        //     async resolve(obj, { child }) {
-        //         console.log(child);
-        //         return true;
-        //     }
-        // },
+        //TODO: Logs
+        upgradeUser: {
+            type: GraphQLBoolean,
+            args: {
+                data: {
+                    type: UserInput,
+                }
+            },
+            async resolve(obj, { data }) {
+                let id = obj().viewer.id;
+                // data.user_id = id;
+                // if (data.id)
+                // {
+                //     data.user_id = data.id;
+                // }
+                const usrData = await UserExtraData.createFrom(data)
+                usrData.save();
+                return true;
+            }
+        },
+        //New request from parent to child
+        //(1. Child already signed up, 2. Child must agree request - agreeParentRequest)
+        addChild: {
+            type: GraphQLBoolean,
+            args: {
+                child: {
+                    type: GraphQLInt,
+                }
+            },
+            async resolve(obj, { child }) {
+                const viewer = await User.createFrom(obj().viewer);
+                return await viewer.addChild(child);
+            }
+        },
+        //Child agree parent request and add some information (specific child data) to account
+        agreeParentRequest: {
+            type: GraphQLBoolean,
+            args: {
+                request_id: {
+                    type: GraphQLInt,
+                },
+                newData: {
+                    type: UserInput
+                }
+            },
+            async resolve(obj, { request_id, newData }) {
+                const viewer = await User.baseCreateFrom(obj().viewer);
+                // console.log('FIELDS', viewer.fields);
+                // console.log('Input', newData);
+                return await viewer.agreeParentRequest(request_id, newData);
+            }
+        },
+        //Parent create child account and automaticly add it to your children list
+        createChild: {
+            type: GraphQLBoolean,
+            args: {
+                child: {
+                    type: UserInput
+                }
+            },
+            async resolve(obj, { child }) {
+                const viewer = await User.createFrom({id: obj().viewer.id});
+                return viewer.createChild(child);
+            }
+        },
         //If we need system which could make user`s token unrelaible.....
         // setUserOnConfirmation: {
 

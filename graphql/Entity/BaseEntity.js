@@ -133,7 +133,6 @@ baseEntity.prototype.validator = function (field, onErr = "Validate error") {
             val: this.__get(el),
         };
     });
-    console.log(values);
     return (new Validator(values, onErr));
 }
 
