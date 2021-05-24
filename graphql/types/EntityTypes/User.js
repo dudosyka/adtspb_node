@@ -1,5 +1,6 @@
 const graphql = require("graphql");
 const Proposal = require('../../Entity/Proposal');
+const RuleType = require('./Rule');
 
 module.exports = new graphql.GraphQLObjectType({
     name: "User",
@@ -35,6 +36,9 @@ module.exports = new graphql.GraphQLObjectType({
                 console.log('USER OBJ: ', obj);
                 return await Proposal.selectByUser(obj);
             }
+        },
+        rules: {
+            type: graphql.GraphQLList(graphql.GraphQLInt)
         }
     })
 });

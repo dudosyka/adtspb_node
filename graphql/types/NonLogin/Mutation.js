@@ -4,6 +4,8 @@ const UserInput = require("../EntityTypes/InputTypes/User");
 const User = require('../../Entity/User');
 const SignUpOutput = require('../OutputTypes/SignUp');
 const LoginOutput = require('../OutputTypes/Login');
+const EmailValidationType = require('../EntityTypes/EmailValidation');
+
 
 const Jwt = require('../../utils/Jwt');
 const jwt = new Jwt();

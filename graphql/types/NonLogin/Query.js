@@ -1,5 +1,6 @@
 const {GraphQLBoolean, GraphQLObjectType, GraphQLString, GraphQLID, GraphQLInt} = require("graphql");
 const User = require('../../Entity/User');
+const EmailValidationType = require('../EntityTypes/EmailValidation');
 
 module.exports = new GraphQLObjectType({
     name: 'Query',

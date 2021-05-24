@@ -27,7 +27,9 @@ module.exports = new GraphQLObjectType({
         viewer: {
             type: UserType,
             async resolve(obj, data) {
-                const viewer = await User.baseCreateFrom(obj().viewer);
+                let viewer = await User.createFrom(obj().viewer);
+                viewer.fields.rules = viewer.__get('__accessible');
+                console.log(viewer.fields); 
                 return viewer.fields;
             }
         },
