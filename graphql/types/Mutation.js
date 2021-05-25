@@ -138,6 +138,19 @@ module.exports = new GraphQLObjectType({
                 return await viewer.agreeParentRequest(request_id, newData);
             }
         },
+        //Check what data need to be child
+        checkChildData: {
+            type: GraphQLString,
+            args: {},
+            async resolve(obj, {  }) {
+                const userData = await UserExtraData.createFrom({ user_id: obj().viewer.id });
+                const res = userData.checkChildData();
+                if (res !== true)
+                    return JSON.stringify(res);
+                else
+                    return "success";
+            }
+        },
         //Parent create child account and automaticly add it to your children list
         createChild: {
             type: GraphQLBoolean,
@@ -151,6 +164,19 @@ module.exports = new GraphQLObjectType({
                 return viewer.createChild(child);
             }
         },
+        //Parent remove child
+        removeChild: {
+            type: GraphQLBoolean,
+            args: {
+                child_id: {
+                    type: GraphQLInt
+                }
+            },
+            async resolve(obj, { child_id }) {
+                const viewer = await User.createFrom(obj().viewer);
+                return viewer.removeChild(child_id);
+            }
+        }
         //If we need system which could make user`s token unrelaible.....
         // setUserOnConfirmation: {
 

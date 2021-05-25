@@ -8,6 +8,8 @@ let baseEntity = function () {};
 
 baseEntity.prototype.db = db;
 
+baseEntity.prototype.getInstance = () => baseEntity;
+
 baseEntity.prototype.construct = function (data) {
     this.fields = {};
     if (data.id !== undefined && data.id !== null)
@@ -81,6 +83,11 @@ baseEntity.prototype.__set = function (field, value) {
         this.fields[field] = value;
         return value;
     }
+}
+
+baseEntity.prototype.newModel = function () {
+        let instance = this.getInstance();
+        return (new instance());
 }
 
 baseEntity.prototype.table = "";

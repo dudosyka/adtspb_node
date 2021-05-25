@@ -16,6 +16,16 @@ UserChild.prototype.fields = {
     id: null,
 };
 
+UserChild.prototype.checkRelationship = async function () {
+    console.log(this.fields);
+    const req = await this.db.select(this, '`child_id` = ? AND `parent_id` = ?', [ this.__get('child_id'), this.__get('parent_id') ]);
+    return (req.length > 0);
+}
+
+UserChild.prototype.removeChild = async function () {
+    return this.db.deleteWhere(this, '`child_id` = ? AND `parent_id` = ?', [ this.__get('child_id'), this.__get('parent_id') ]);
+}
+
 UserChild.prototype.addParentRequest = async function () {
     const check = await this.db.select(this, '`parent_id` = ? AND `child_id` = ?', [this.__get('parent_id'), this.__get('child_id')]);
     if (check.length) {

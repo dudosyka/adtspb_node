@@ -10,14 +10,20 @@ UserExtraData.prototype.createFrom = async function (data) {
     if (data.user_id) {
         const req = await this.db.select(this, '`user_id` = ?', [ data.user_id ]);
         if (req.length) {
+            const model = this.newModel();
             const newData = Object.assign(req[0], data);
-            this.fields = newData;
-            return this;
+            model.fields = newData;
+            return model;
         }
         else
             return await this.baseCreateFrom(data);
     }
     return this.baseCreateFrom(data);
+}
+
+UserExtraData.prototype.createNew = async function (data) {
+    this.fields = data;
+    this.__save();
 }
 
 UserExtraData.prototype.validateRules = function () {
@@ -30,17 +36,19 @@ UserExtraData.prototype.fields = {
 };
 
 UserExtraData.prototype.__save = async function () {
-    this.__set('ovz_type', this.__get('ovz_type').id);
-    this.__set('disability_group', this.__get('disability_group').id);
+    if (this.__get('ovz_type') !== null && typeof this.__get('ovz_type') == 'object')
+        this.__set('ovz_type', this.__get('ovz_type').id);
+    if (this.__get('disability_group') !== null && typeof this.__get('disability_group') == 'object')
+        this.__set('disability_group', this.__get('disability_group').id);
     // console.log('onSave', this.fields);
+    // console.log(this.fields);
     if (this.fields.id)
         return await this.update();
     else
         return await this.save();
 }
 
-UserExtraData.prototype.setChildData = async function () {
-    // console.log(this.fields);
+UserExtraData.prototype.checkChildData = function () {
     this.validateRules = function () {
         return [
             this.validator(
@@ -67,8 +75,12 @@ UserExtraData.prototype.setChildData = async function () {
             ).match(/^[A-Za-zА-Яа-яЕеЁёЫыЙйЪъЬьЖжЗз]{1,}[0-9]{6}$/),
         ];
     }
-    let validate = this.validate();
-    if (validate !== true) {
+    return this.validate();
+}
+
+UserExtraData.prototype.setChildData = async function () {
+    // console.log(this.fields);
+    if (this.checkChildData() !== true) {
         throw Error(JSON.stringify(validate));
     }
     return this.__save() !== false;

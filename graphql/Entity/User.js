@@ -125,6 +125,8 @@ User.prototype.createNew = async function (roles = []) {
 
         let res = rbac.addRoleToUser(id, AppConfig.common_user_id);
 
+        UserExtraData.createNew({ user_id: id });
+
         if (res === false)
             throw Error('Saving data failed');
 
@@ -245,8 +247,7 @@ User.prototype.agreeParentRequest = async function (request_id, newData) {
 }
 
 User.prototype.createChild = async function (data) {
-    let instance = this.getInstance();
-    instance = (new instance());
+    const instance = this.newModel();
     const childData = await instance.baseCreateFrom(
         data
     // {
@@ -273,6 +274,21 @@ User.prototype.createChild = async function (data) {
 
     const request_id = await this.addChild(child.__get('id'));
     return await child.agreeParentRequest(request_id, data);
+}
+
+User.prototype.removeChild = async function (child_id) {
+    if (!this.hasAccess(11))
+        throw Error('Forbidden');
+    const userChild = await UserChild.baseCreateFrom({ parent_id: this.__get('id'), child_id: child_id });
+    const checkRelationship = await userChild.checkRelationship();
+    if (!checkRelationship)
+        throw Error('Child not found');
+
+    await userChild.removeChild().catch(err => {
+        throw Error(err);
+    });
+
+    return true;
 }
 
 User.prototype.table = 'user';
