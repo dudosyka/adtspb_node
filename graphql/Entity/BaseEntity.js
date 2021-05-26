@@ -69,6 +69,9 @@ baseEntity.prototype.__set = function (field, value) {
     let res = this.fields[field];
     let sec = null;
 
+    console.log('field', this.fields['id']);
+    console.log(typeof res);
+
     if (this.aliases[field])
         sec = this.fields[this.aliases[field]];
 
@@ -86,8 +89,8 @@ baseEntity.prototype.__set = function (field, value) {
 }
 
 baseEntity.prototype.newModel = function () {
-        let instance = this.getInstance();
-        return (new instance());
+    let instance = this.getInstance();
+    return (new instance());
 }
 
 baseEntity.prototype.table = "";

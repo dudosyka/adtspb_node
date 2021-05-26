@@ -8,6 +8,7 @@ const Jwt = require('../utils/Jwt');
 const jwt = new Jwt();
 
 const UserChild = require('../Entity/UserChild');
+const UserChildOnDelete = require('../Entity/UserChildOnDelete');
 const UserExtraData = require('../Entity/UserExtraData');
 
 let rbac = new Rbac();
@@ -231,8 +232,8 @@ User.prototype.addChild = async function (child_id) {
 User.prototype.agreeParentRequest = async function (request_id, newData) {
     newData.user_id = this.__get('id');
     // console.log(newData);
-    const request = await UserChild.baseCreateFrom({id: request_id, child_id: this.__get('id')});
-    const requestExists = await request.parentRequestExists();
+    const request = await UserChild.baseCreateFrom({id: request_id});
+    const requestExists = await request.parentRequestExists(this.__get('id'));
     if (requestExists !== true)
         throw Error(requestExists);
 
@@ -281,7 +282,7 @@ User.prototype.removeChild = async function (child_id) {
         throw Error('Forbidden');
     const userChild = await UserChild.baseCreateFrom({ parent_id: this.__get('id'), child_id: child_id });
     const checkRelationship = await userChild.checkRelationship();
-    if (!checkRelationship)
+    if (checkRelationship === false)
         throw Error('Child not found');
 
     await userChild.removeChild().catch(err => {
@@ -289,6 +290,17 @@ User.prototype.removeChild = async function (child_id) {
     });
 
     return true;
+}
+
+User.prototype.confirmRemoveChild = async function (link) {
+    if (!this.hasAccess(12))
+        throw Error('Forbidden');
+    const userChildOnDelete = await UserChildOnDelete.baseCreateFrom({ id: link });
+    if (userChildOnDelete.__get('user_child_id') == null)
+        throw Error('Link not found');
+    const userChild = await UserChild.baseCreateFrom({ id: userChildOnDelete.__get('user_child_id') });
+    console.log(userChild.fields);
+    return await userChildOnDelete.confirmRemoveChild(userChild, this.__get('id'));
 }
 
 User.prototype.table = 'user';

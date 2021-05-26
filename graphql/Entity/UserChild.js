@@ -1,4 +1,6 @@
 const baseEntity = require('./BaseEntity');
+const UserChildLog = require('./UserChildLog');
+const UserChildOnDelete = require('./UserChildOnDelete');
 
 let UserChild = function () {}
 
@@ -17,13 +19,19 @@ UserChild.prototype.fields = {
 };
 
 UserChild.prototype.checkRelationship = async function () {
-    console.log(this.fields);
+    // console.log(this.fields);
     const req = await this.db.select(this, '`child_id` = ? AND `parent_id` = ?', [ this.__get('child_id'), this.__get('parent_id') ]);
-    return (req.length > 0);
+    if (req.length > 0) {
+        this.fields['id'] = req[0].id;
+        return true;
+    } else {
+        return false
+    };
 }
 
 UserChild.prototype.removeChild = async function () {
-    return this.db.deleteWhere(this, '`child_id` = ? AND `parent_id` = ?', [ this.__get('child_id'), this.__get('parent_id') ]);
+    console.log("TATATATA", this.fields);
+    UserChildOnDelete.setOnDelete(this.__get('id'));
 }
 
 UserChild.prototype.addParentRequest = async function () {
@@ -34,28 +42,25 @@ UserChild.prototype.addParentRequest = async function () {
     return await this.save();
 }
 
-UserChild.prototype.parentRequestExists = async function () {
-    const request = await this.db.select(this, '`id` = ?', [ this.__get('id') ]);
-    if (request.length !== 0) {
-         const data = request[0];
-         if (data.agreed == 1)
+UserChild.prototype.parentRequestExists = async function (child_id) {
+    //Check if parent_id is not null then request exists
+    if (this.__get('parent_id') != null) {
+         if (this.__get('agreed') == 1)
             return 'Request had already agreed';
-         let instance = this.getInstance();
-         instance = (new instance());
-         instance = await instance.baseCreateFrom(data);
-         if (instance.__get('child_id') == this.__get('child_id'))
+         if (this.__get('child_id') == child_id)
          {
              return true;
          }
-         return 'Child (' + this.__get('child_id') + ') not found in this request (' + this.__get('id') + ')';
+         return 'Child (' + child_id + ') not found in this request (' + this.__get('id') + ')';
     }
     return 'Request not found';
 }
 
 UserChild.prototype.agreeParentRequest = async function () {
+    const userChildLog = await UserChildLog.createFromUserChild(this);
     this.__set('agreed', 1);
-     // TODO: Put logs into user_edit_data (author - child or parent?)
-     await this.update();
+    userChildLog.addChild();
+    await this.update();
 }
 
 UserChild.prototype.getChildren = async function (child = true, agreed = 0) {

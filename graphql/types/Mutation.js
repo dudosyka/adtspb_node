@@ -4,6 +4,7 @@ const UserType = require("./EntityTypes/User");
 const UserInput = require("./EntityTypes/InputTypes/User");
 const User = require('../Entity/User');
 const UserExtraData = require('../Entity/UserExtraData');
+const UserChildOnDelete = require('../Entity/UserChildOnDelete');
 
 const ProposalType = require('./EntityTypes/Proposal');
 const ProposalInput = require('./EntityTypes/InputTypes/Proposal');
@@ -176,7 +177,21 @@ module.exports = new GraphQLObjectType({
                 const viewer = await User.createFrom(obj().viewer);
                 return viewer.removeChild(child_id);
             }
+        },
+        //Admin confirm parent`s request to remove child
+        confirmRemoveChild: {
+            type: GraphQLBoolean,
+            args: {
+                link: {
+                    type: GraphQLInt
+                }
+            },
+            async resolve(obj, { link }) {
+                const viewer = await User.createFrom(obj().viewer);
+                return await viewer.confirmRemoveChild(link);
+            }
         }
+
         //If we need system which could make user`s token unrelaible.....
         // setUserOnConfirmation: {
 
