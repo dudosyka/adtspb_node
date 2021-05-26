@@ -7,6 +7,10 @@ import PassReset from '../views/PassReset.vue'
 import Page2 from '../views/Page2.vue'
 import Confirmation from '../views/Confirmation.vue'
 
+import Child from '../views/home/Child.vue'
+import Ducument from '../views/home/Document.vue'
+import Proposal from '../views/home/Proposal.vue'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -39,7 +43,23 @@ const routes = [
     path: '/page',
     name: 'Page2',
     component: Page2
-  }
+  },
+
+  {
+    path: '/child',
+    name: 'Child',
+    component: Child
+  },
+  {
+    path: '/document',
+    name: 'Ducument',
+    component: Ducument
+  },
+  {
+    path: '/proposal',
+    name: 'proposal',
+    component: Proposal
+  },
 ]
 
 const router = new VueRouter({

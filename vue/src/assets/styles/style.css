@@ -2,8 +2,11 @@ body {
   margin: 0;
   font-family: sans-serif;
 }
+h1,h2,h3,h4,h5,h6 {
+  font-weight: normal;
+}
 
-/* Main */
+/* Auth */
   .login {
     position: relative;
   }
@@ -183,3 +186,13 @@ body {
       font-size: 2em;
     }
   }
+
+/* Home */
+.home {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+}
+.home-content {
+  background-color: #D6EEFA;
+  height: 100vh;
+}
