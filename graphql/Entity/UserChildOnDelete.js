@@ -1,5 +1,4 @@
 const baseEntity = require('./BaseEntity');
-const User = require('./User');
 const UserChildLog = require('./UserChildLog');
 
 
@@ -11,11 +10,13 @@ UserChildOnDelete.prototype.getInstance = () => UserChildOnDelete;
 
 UserChildOnDelete.prototype.fields = {
     id: null,
-    user_child_id: null
+    user_child_id: null,
+    remove_account: null
 };
 
-UserChildOnDelete.prototype.setOnDelete = function (id) {
+UserChildOnDelete.prototype.setOnDelete = function (id, removeAccount) {
     this.__set('user_child_id', id);
+    this.__set('remove_account', removeAccount ? 1 : 0);
     this.save();
 }
 
@@ -23,6 +24,8 @@ UserChildOnDelete.prototype.confirmRemoveChild = async function (userChild, admi
     const userChildLog = await UserChildLog.createFromUserChild(userChild);
     userChildLog.removeChild(admin_id);
     userChild.delete();
+    if (this.__get('remove_account') == 1)
+        this.db.query('DELETE FROM `user` WHERE `id` = ?', [ userChild.__get('child_id') ]);
     this.delete();
     return true;
 }

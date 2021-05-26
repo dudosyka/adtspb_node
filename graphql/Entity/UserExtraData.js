@@ -75,12 +75,14 @@ UserExtraData.prototype.checkChildData = function () {
             ).match(/^[A-Za-zА-Яа-яЕеЁёЫыЙйЪъЬьЖжЗз]{1,}[0-9]{6}$/),
         ];
     }
+    
     return this.validate();
 }
 
 UserExtraData.prototype.setChildData = async function () {
     // console.log(this.fields);
-    if (this.checkChildData() !== true) {
+    const validate = this.checkChildData();
+    if (validate !== true) {
         throw Error(JSON.stringify(validate));
     }
     return this.__save() !== false;

@@ -29,9 +29,8 @@ UserChild.prototype.checkRelationship = async function () {
     };
 }
 
-UserChild.prototype.removeChild = async function () {
-    console.log("TATATATA", this.fields);
-    UserChildOnDelete.setOnDelete(this.__get('id'));
+UserChild.prototype.removeChild = async function (removeAccount) {
+    UserChildOnDelete.setOnDelete(this.__get('id'), removeAccount);
 }
 
 UserChild.prototype.addParentRequest = async function () {
