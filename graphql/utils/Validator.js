@@ -1,4 +1,6 @@
-let Validator  = function (fields, onErr) {
+const AppConfig = require('../config/AppConfig');
+
+let Validator = function (fields, onErr) {
     this.fields = fields;
     this.onErr = onErr;
     this.errs = [];
@@ -9,9 +11,8 @@ Validator.prototype.result = true;
 Validator.prototype.errs = {};
 
 Validator.prototype.reject = function (field) {
-        this.errs[field] = this.onErr;
+    this.errs[field] = this.onErr;
     this.result = false;
-
 }
 
 Validator.prototype.fields = null;
@@ -100,6 +101,19 @@ Validator.prototype.len = function (max = null, min = null) {
         });
     }
 
+    return this;
+}
+
+Validator.prototype.age = function (minAge) {
+    this.fields.map(el => {
+        const dayFrom = (new Date(AppConfig.year + "-09-01")).getTime();
+        console.log("DAY FROM:::", dayFrom);
+        const birth = el.val;
+        const diff = dayFrom - birth;
+        const age = Math.floor(diff / 31557600000);
+        if (age < minAge)
+            this.reject(el.name);
+    });
     return this;
 }
 

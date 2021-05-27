@@ -32,6 +32,9 @@ module.exports = new graphql.GraphQLInputObjectType({
         },
 
         //Extra data
+        birthday: {
+            type: graphql.GraphQLFloat
+        },
         relationship: {
             type: graphql.GraphQLString,
         },

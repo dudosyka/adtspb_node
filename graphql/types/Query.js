@@ -172,6 +172,17 @@ module.exports = new GraphQLObjectType({
             async resolve(obj, { child_id }) {
                 return await Proposal.selectByChild(child_id);
             }
+        },
+        getChildStudyLoad: {
+            type: graphql.GraphQLList(AssociationType),
+            args: {
+                child_id: {
+                    type: GraphQLInt
+                }
+            },
+            async resolve(obj, { child_id }) {
+                //TODO: Select associations where proposal status is `enlisted`
+            }
         }
 
     },
