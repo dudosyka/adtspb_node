@@ -11,6 +11,8 @@ const UserChild = require('../Entity/UserChild');
 const UserChildOnDelete = require('../Entity/UserChildOnDelete');
 const UserExtraData = require('../Entity/UserExtraData');
 
+const AssociationExtraData = require('./AssociationExraData');
+
 let rbac = new Rbac();
 
 let User = function () {  }
@@ -27,12 +29,13 @@ User.prototype.createFrom = async function (data) {
 }
 
 User.prototype.createFromUnique = async function (data) {
+    console.log("DATA", data);
     const usr = await this.db.select(this, '`phone` = ? OR `email` = ?', [ data, data ]);
+    console.log(usr);
     if (usr.length)
     {
         const model = this.newModel();
-        model.fields = Object.assign(model.fields, req[0]);
-        return model;
+        return await model.createFrom(usr[0]);
     }
     return null;
 }
@@ -46,6 +49,10 @@ User.prototype.validateRules = function () {
         this.validator(['email'], 'Should be valid email.').email(),
         this.validator(['sex'], 'Invalid format').match(/^[0-1]{1}$/),
     ];
+}
+
+User.prototype.fields = {
+    id: null
 }
 
 User.prototype.getRole = async function () {
@@ -229,12 +236,12 @@ User.prototype.addChild = async function (child_data) {
         const child = await this.createFromUnique(child_data);
         if (child == null)
             throw Error('Child not found')
-        // console.log(child.fields);
+        console.log(child.fields);
         // console.log(this.fields);
         if ((await child.checkRole(AppConfig.child_role_id)) === false)
             throw Error('You can`t send addChild request to user who is not a child');
 
-        const usrChild = await UserChild.baseCreateFrom({ parent_id: this.__get('id'), child_id: child_id })
+        const usrChild = await UserChild.baseCreateFrom({ parent_id: this.__get('id'), child_id: child.__get('id') })
         const request = await usrChild.addParentRequest();
         if (request === false)
             throw Error('Request had already sent');
@@ -247,8 +254,10 @@ User.prototype.addChild = async function (child_data) {
 }
 
 User.prototype.agreeParentRequest = async function (request_id, newData) {
+    if (this.__get('id') == null)
+        throw Error('Token is gone');
+
     newData.user_id = this.__get('id');
-    // console.log(newData);
     const request = await UserChild.baseCreateFrom({id: request_id});
     const requestExists = await request.parentRequestExists(this.__get('id'));
     if (requestExists !== true)

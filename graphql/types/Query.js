@@ -5,6 +5,7 @@ const Db = require('../utils/Db');
 
 const User = require('../Entity/User');
 const UserType = require('./EntityTypes/User');
+const UserExtraData = require('../Entity/UserExtraData');
 
 const UserChild = require('../Entity/UserChild');
 
@@ -13,6 +14,9 @@ const AssociationType = require('./EntityTypes/Association');
 
 const EmailValidation = require('../Entity/EmailValidation');
 const EmailValidationType = require('./EntityTypes/EmailValidation');
+
+const Proposal = require('../Entity/Proposal');
+const ProposalType = require('./EntityTypes/Proposal');
 
 const Rbac = require('../utils/Rbac');
 const Jwt = require('../utils/Jwt');
@@ -137,6 +141,38 @@ module.exports = new GraphQLObjectType({
                 const userChild = await UserChild.baseCreateFrom({ child_id: obj().viewer.id });
                 return await userChild.getParentRequests();
             }
+        },
+        getAssociations: {
+            type: graphql.GraphQLList(AssociationType),
+            args: {
+            },
+            async resolve(obj, {  }) {
+                return await Association.getAssociations();
+            }
+        },
+        getAssociationsForChild: {
+            type: graphql.GraphQLList(AssociationType),
+            args: {
+                child_id: {
+                    type: GraphQLInt
+                }
+            },
+            async resolve(obj, { child_id }) {
+                const usr = await UserExtraData.createFrom({user_id: child_id});
+                return await Association.getAssociations(usr.calculateAge());
+            }
+        },
+        getChildProposals: {
+            type: graphql.GraphQLList(ProposalType),
+            args: {
+                child_id: {
+                    type: GraphQLInt
+                }
+            },
+            async resolve(obj, { child_id }) {
+                return await Proposal.selectByChild(child_id);
+            }
         }
+
     },
 });

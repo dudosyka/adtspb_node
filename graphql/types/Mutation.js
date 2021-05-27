@@ -46,6 +46,7 @@ module.exports = new GraphQLObjectType({
             },
             async resolve(obj, { proposal }) {
                 let model = await Proposal.createFromInput(proposal);
+                console.log(model.fields);
                 return model.createNew();
             }
         },
@@ -116,9 +117,9 @@ module.exports = new GraphQLObjectType({
                     type: GraphQLString,
                 }
             },
-            async resolve(obj, { child }) {
+            async resolve(obj, { child_data }) {
                 const viewer = await User.createFrom(obj().viewer);
-                return await viewer.addChild(child);
+                return await viewer.addChild(child_data);
             }
         },
         //Child agree parent request and add some information (specific child data) to account
@@ -137,19 +138,6 @@ module.exports = new GraphQLObjectType({
                 // console.log('FIELDS', viewer.fields);
                 // console.log('Input', newData);
                 return await viewer.agreeParentRequest(request_id, newData);
-            }
-        },
-        //Check what data need to be child
-        checkChildData: {
-            type: GraphQLString,
-            args: {},
-            async resolve(obj, {  }) {
-                const userData = await UserExtraData.createFrom({ user_id: obj().viewer.id });
-                const res = userData.checkChildData();
-                if (res !== true)
-                    return JSON.stringify(res);
-                else
-                    return "success";
             }
         },
         //Parent create child account and automaticly add it to your children list
