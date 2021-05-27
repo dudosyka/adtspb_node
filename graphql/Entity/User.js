@@ -296,10 +296,15 @@ User.prototype.createChild = async function (data) {
     data.user_id = child.__get('id');
     const childExtraData = await UserExtraData.createFrom(data);
     createResult = await childExtraData.setChildData();
-    if (!createResult)
-        throw Error("User extra data adding failed");
+    if (createResult !== true) {
+        child.delete();
+        if (createResult === false)
+            throw Error('Saving data failed');
+        else
+            throw Error(createResult);
+    }
 
-    const request_id = await this.addChild(child.__get('id'));
+    const request_id = await this.addChild(child.__get('email'));
     return await child.agreeParentRequest(request_id, data);
 }
 

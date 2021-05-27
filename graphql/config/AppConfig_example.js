@@ -4,4 +4,5 @@ module.exports = {
     child_role_id: 10, //Id of `child` role in your `role` table
     common_user_id: 9, //Id of `simmple user` role in your `role` table
     port: 8080,
+    year: 2021
 }

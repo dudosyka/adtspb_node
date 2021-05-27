@@ -48,8 +48,6 @@ UserExtraData.prototype.__save = async function () {
         this.__set('ovz_type', this.__get('ovz_type').id);
     if (this.__get('disability_group') !== null && typeof this.__get('disability_group') == 'object')
         this.__set('disability_group', this.__get('disability_group').id);
-    // console.log('onSave', this.fields);
-    // console.log(this.fields);
     if (this.fields.id)
         return await this.update();
     else
@@ -65,7 +63,7 @@ UserExtraData.prototype.checkChildData = function () {
                     'registration_address', 'registration_flat',
                     'residence_address', 'residence_flat',
                     'birth_certificate', 'ovz', 'ovz_type',
-                    'disability', 'disability_group'
+                    'disability', 'disability_group', 'birthday'
                 ],
                 'Can`t be empty'
             ).notNull(),
@@ -81,6 +79,12 @@ UserExtraData.prototype.checkChildData = function () {
                 ],
                 'Invalid format'
             ).match(/^[A-Za-zА-Яа-яЕеЁёЫыЙйЪъЬьЖжЗз]{1,}[0-9]{6}$/),
+            this.validator(
+                [
+                    'birthday'
+                ],
+                'Student should be older than 6 yo'
+            ).age(6)
         ];
     }
 
@@ -88,10 +92,9 @@ UserExtraData.prototype.checkChildData = function () {
 }
 
 UserExtraData.prototype.setChildData = async function () {
-    // console.log(this.fields);
     const validate = this.checkChildData();
     if (validate !== true) {
-        throw Error(JSON.stringify(validate));
+        return JSON.stringify(validate);
     }
     return this.__save() !== false;
 }
