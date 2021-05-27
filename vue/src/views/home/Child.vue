@@ -24,13 +24,23 @@
           </section>
         </article>
 
-        <button class="air-button" @click="addChild">+ Добавить ребёнка</button>
+        <button class="air-button" @click="addChild" v-if="!show.addChild">+ Добавить ребёнка</button>
+
+        <article class="add" v-if="show.addChild">
+          <h2 class="form-heading">Введите номер телефона или электронную почту ребёнка</h2>
+          <div class="input-container">
+            <label class="label" v-bind:class="{'label-up': childId}">Номер телефона/Электронная почта</label><br>
+            <input type="text" v-model="childId" class="type" tabindex="1">
+          </div>
+          <button class="dark-box dark-button">Добавить</button>
+        </article>
+
       </article>
   </main>
 </template>
 
 <style scoped>
-  .card {
+  .card, .add {
     background-color: #fff;
     padding: 30px;
     width: 100%;
@@ -56,6 +66,10 @@
     margin: 0;
   }
 
+  .add {
+    width: 500px;
+  }
+
   .air-button {
     font-size: 17px;
     margin-top: 50px;
@@ -71,6 +85,7 @@
     color: #9E9E9E;
     padding:
   }
+
 </style>
 
 <script>
@@ -84,6 +99,10 @@
     data() {
       return {
         children: [],
+        childId: null,
+        show: {
+          addChild: false,
+        }
       }
     },
     created() {
@@ -103,6 +122,8 @@
     },
     methods: {
       addChild() {
+        this.addChildShow = true
+
         let req = `
           mutation($child_id: Int) {
             addChild(child_id: $child_id)

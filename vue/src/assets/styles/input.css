@@ -10,13 +10,14 @@
   }
   .form-heading {
     margin: 0;
-    font-size: 28px;
+    font-size: 20px;
     color: #0086C9;
   }
 
   .input-container {
     width: 100%;
     position: relative;
+    margin-top: 15px;
     margin-bottom: 20px
   }
 
