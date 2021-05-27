@@ -1,6 +1,13 @@
 const baseEntity = require('./BaseEntity');
+
 const User = require('./User');
+const UserExtraData = require('./UserExtraData');
+
 const Association = require('./Association');
+const AssociationExraData = require('./AssociationExraData');
+
+const Status = require('./Status');
+
 const AppConfig = require('../config/AppConfig');
 
 let Proposal = function () {}
@@ -50,25 +57,84 @@ Proposal.prototype.selectByParent = async function (parent) {
     return await this.db.select(this, "`parent_id` = ?", [ parent.id ]).then(data => data).catch(err => { console.error(err); });
 };
 
+Proposal.prototype.checkProposalExists = async function () {
+    return (await this.db.select(this, '`child_id` = ? AND `association_id` = ?', [ this.__get('child'), this.__get('association') ])).length > 0;
+}
+
+Proposal.prototype.checkStudyLoad = async function () {
+    const proposals = await this.selectByChild({id: this.__get('child')});
+    let association_ids = [];
+
+    proposals.map(el => {
+        association_ids.push({id: el.id});
+    });
+
+    const associations = await AssociationExraData.getList(association_ids);
+    let hours = 0;
+
+    associations.map(el => {
+        hours += el.hours_week;
+    });
+
+    console.log(hours);
+
+    return hours;
+}
+
 Proposal.prototype.createNew = async function () {
     if (this.__get('parent') == null || this.__get('child') == null || this.__get('association') == null)
-        return false;
+        throw Error('Bad request');
 
     let data = {
         id: this.__get('parent')
     };
 
-    let parent = await User.createFrom(data);
-    let children = await parent.getChildren();
+    const parent = await User.createFrom(data);
+    const children = await parent.getChildren();
 
+    //Check can parent create proposals
+    if (!parent.hasAccess(13)) {
+        throw Error('Forbidden');
+    }
+
+    //Check relation
     if (!children.includes(this.__get('child')))
-        return false;
+        throw Error("Child not found");
 
-    // TODO: Check if proposal already created
+    const child = await UserExtraData.createFrom({user_id: this.__get('child')});
+    const age = child.calculateAge();
 
-    // TODO: Check can child join association
+    //Check if proposal had already created
+    if (await this.checkProposalExists())
+        throw Error('Proposal had already created');
 
-    return await this.save() !== false ? true : false;
+    const associationData = await AssociationExraData.createFrom({association_id: this.__get('association_id')});
+    const canJoin = await associationData.canJoinAssociation();
+
+    //Check does child pass by age
+    if (canJoin !== true)
+        throw Error(canJoin);
+
+    //Check hours at week
+    const loadCheck = await this.checkStudyLoad();
+
+    if (age < 14) {
+        if (loadCheck > 10)
+            throw Error('Too many hours');
+    } else {
+        if (loadCheck > 12)
+            throw Error('Too many hours')
+    }
+
+    const proposal = await this.save();
+
+    if (proposal === false)
+        throw Error('Saving data failed');
+
+    const status = await Status.createFrom({ proposal_id: proposal.insertId });
+    await status.setToCreate();
+
+    return true;
 };
 
 module.exports = (new Proposal());

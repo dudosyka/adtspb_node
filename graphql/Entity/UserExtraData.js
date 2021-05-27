@@ -32,8 +32,16 @@ UserExtraData.prototype.validateRules = function () {
 }
 
 UserExtraData.prototype.fields = {
-
+    id: null,
+    birthday: null
 };
+
+UserExtraData.prototype.calculateAge = function (birthday = 0) {
+    const now = Date.now();
+    const birth = (birthday == 0) ? this.__get('birthday') : birthday;
+    const diff = now - birth;
+    return Math.floor(diff / 31557600000);
+}
 
 UserExtraData.prototype.__save = async function () {
     if (this.__get('ovz_type') !== null && typeof this.__get('ovz_type') == 'object')
@@ -75,7 +83,7 @@ UserExtraData.prototype.checkChildData = function () {
             ).match(/^[A-Za-zА-Яа-яЕеЁёЫыЙйЪъЬьЖжЗз]{1,}[0-9]{6}$/),
         ];
     }
-    
+
     return this.validate();
 }
 
