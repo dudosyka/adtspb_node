@@ -8,6 +8,7 @@ const Jwt = require('../utils/Jwt');
 const jwt = new Jwt();
 
 const UserChild = require('../Entity/UserChild');
+const UserChildOnDelete = require('../Entity/UserChildOnDelete');
 const UserExtraData = require('../Entity/UserExtraData');
 
 let rbac = new Rbac();
@@ -23,6 +24,17 @@ User.prototype.createFrom = async function (data) {
     this.fields.__accessible = rules;
     this.fields.isConfirmed = await EmailValidation.checkConfirmation(this.__get('id'));
     return this;
+}
+
+User.prototype.createFromUnique = async function (data) {
+    const usr = await this.db.select(this, '`phone` = ? OR `email` = ?', [ data, data ]);
+    if (usr.length)
+    {
+        const model = this.newModel();
+        model.fields = Object.assign(model.fields, req[0]);
+        return model;
+    }
+    return null;
 }
 
 User.prototype.getInstance = () => User;
@@ -103,16 +115,21 @@ User.prototype.createNew = async function (roles = []) {
         throw Error(JSON.stringify(validate));
     }
     else {
-        let pairs = await this.checkForPairs('email', this.__get('email'));
-
         let answ = {
             id: null,
             token: null,
             status: "success"
         }
 
+        let pairs = await this.checkForPairs('email', this.__get('email'));
+
         if (pairs.length > 0)
             throw Error('Email must be unique');
+
+        pairs = await this.checkForPairs('phone', this.__get('phone'));
+
+        if (pairs.length > 0)
+            throw Error('Phone must be unique');
 
         await this.encryptPassword();
         const usr = await this.save();
@@ -124,6 +141,8 @@ User.prototype.createNew = async function (roles = []) {
             throw Error('Saving data failed');
 
         let res = rbac.addRoleToUser(id, AppConfig.common_user_id);
+
+        UserExtraData.createNew({ user_id: id });
 
         if (res === false)
             throw Error('Saving data failed');
@@ -205,10 +224,11 @@ User.prototype.restorePassword = async function (email, code, password) {
     return (res !== false);
 }
 
-User.prototype.addChild = async function (child_id) {
+User.prototype.addChild = async function (child_data) {
     if (this.hasAccess(11)) {
-        // console.log(child_id);
-        const child = await this.getInstance().prototype.createFrom({id: child_id});
+        const child = await this.createFromUnique(child_data);
+        if (child == null)
+            throw Error('Child not found')
         // console.log(child.fields);
         // console.log(this.fields);
         if ((await child.checkRole(AppConfig.child_role_id)) === false)
@@ -229,8 +249,8 @@ User.prototype.addChild = async function (child_id) {
 User.prototype.agreeParentRequest = async function (request_id, newData) {
     newData.user_id = this.__get('id');
     // console.log(newData);
-    const request = await UserChild.baseCreateFrom({id: request_id, child_id: this.__get('id')});
-    const requestExists = await request.parentRequestExists();
+    const request = await UserChild.baseCreateFrom({id: request_id});
+    const requestExists = await request.parentRequestExists(this.__get('id'));
     if (requestExists !== true)
         throw Error(requestExists);
 
@@ -245,8 +265,7 @@ User.prototype.agreeParentRequest = async function (request_id, newData) {
 }
 
 User.prototype.createChild = async function (data) {
-    let instance = this.getInstance();
-    instance = (new instance());
+    const instance = this.newModel();
     const childData = await instance.baseCreateFrom(
         data
     // {
@@ -273,6 +292,31 @@ User.prototype.createChild = async function (data) {
 
     const request_id = await this.addChild(child.__get('id'));
     return await child.agreeParentRequest(request_id, data);
+}
+
+User.prototype.removeChild = async function (child_id, removeAccount) {
+    if (!this.hasAccess(11))
+        throw Error('Forbidden');
+    const userChild = await UserChild.baseCreateFrom({ parent_id: this.__get('id'), child_id: child_id });
+    const checkRelationship = await userChild.checkRelationship();
+    if (checkRelationship === false)
+        throw Error('Child not found');
+
+    await userChild.removeChild(removeAccount).catch(err => {
+        throw Error(err);
+    });
+
+    return true;
+}
+
+User.prototype.confirmRemoveChild = async function (link) {
+    if (!this.hasAccess(12))
+        throw Error('Forbidden');
+    const userChildOnDelete = await UserChildOnDelete.baseCreateFrom({ id: link });
+    if (userChildOnDelete.__get('user_child_id') == null)
+        throw Error('Link not found');
+    const userChild = await UserChild.baseCreateFrom({ id: userChildOnDelete.__get('user_child_id') });
+    return await userChildOnDelete.confirmRemoveChild(userChild, this.__get('id'));
 }
 
 User.prototype.table = 'user';

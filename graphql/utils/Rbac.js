@@ -69,7 +69,7 @@ Rbac.prototype.minimize = async function ()
     let {query, data} = await createQuery(res);
     await db.query('DELETE FROM `auth_assignment_min` WHERE `id` != -1', []);
     return await db.query(query, data).catch(err => {
-        // console.error(err);
+        console.error(err);
         return true;
     }).then(data => {
         return true;
