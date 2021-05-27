@@ -15,6 +15,9 @@ const AssociationType = require('./EntityTypes/Association');
 const EmailValidation = require('../Entity/EmailValidation');
 const EmailValidationType = require('./EntityTypes/EmailValidation');
 
+const Proposal = require('../Entity/Proposal');
+const ProposalType = require('./EntityTypes/Proposal');
+
 const Rbac = require('../utils/Rbac');
 const Jwt = require('../utils/Jwt');
 
@@ -167,7 +170,7 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve(obj, { child_id }) {
-                // return Proposal.selectByChild()
+                return await Proposal.selectByChild(child_id);
             }
         }
 

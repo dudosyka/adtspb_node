@@ -46,11 +46,11 @@ Proposal.prototype.selectByAssociation = async function (association) {
 Proposal.prototype.selectByUser = async function (user) {
     return (User.checkRole(AppConfig.parent_role_id, user.__role))
     ? await this.selectByParent(user)
-    : await this.selectByChild(user);
+    : await this.selectByChild(user.__get('id'));
 }
 
-Proposal.prototype.selectByChild = async function (child) {
-    return await this.db.select(this, "`child_id` = ?", [ child.id ]).then(data => data).catch(err => { console.error(err); });
+Proposal.prototype.selectByChild = async function (child_id) {
+    return await this.db.select(this, "`child_id` = ?", [ child_id ]).then(data => data).catch(err => { console.error(err); });
 };
 
 Proposal.prototype.selectByParent = async function (parent) {
@@ -62,7 +62,7 @@ Proposal.prototype.checkProposalExists = async function () {
 }
 
 Proposal.prototype.checkStudyLoad = async function () {
-    const proposals = await this.selectByChild({id: this.__get('child')});
+    const proposals = await this.selectByChild(this.__get('child'));
     let association_ids = [];
 
     proposals.map(el => {

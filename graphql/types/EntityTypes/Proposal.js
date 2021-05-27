@@ -1,6 +1,7 @@
 const graphql = require("graphql");
 const Status = require('../../Entity/Status');
 const User = require('../../Entity/User');
+const Association = require('../../Entity/Association');
 
 module.exports = new graphql.GraphQLObjectType({
     name: "Proposal",
@@ -11,6 +12,9 @@ module.exports = new graphql.GraphQLObjectType({
         },
         association: {
             type: AssociationType,
+            async resolve (obj, data) {
+                return (await Association.baseCreateFrom({id: obj.association_id})).fields;
+            }
         },
         child: {
             type: UserType,
@@ -52,7 +56,7 @@ const UserType = require('./User');
 
 
 
-// 
+//
 //
 // let Validator  = function (value, onErr = "Validate error") {
 //     this.value = value;
