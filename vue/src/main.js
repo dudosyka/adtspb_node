@@ -16,7 +16,7 @@ let refreshApiToken = () => {
     });
 }
 
-let refreshUserRoles = () => {
+let refreshUserRoles = async () => {
 
     let req = `
     query {
@@ -26,7 +26,7 @@ let refreshUserRoles = () => {
     }
     `;
 
-    api.request(req).then(el => {
+    return api.request(req).then(el => {
         global.rules = req.viewer.rules;
     });
 }

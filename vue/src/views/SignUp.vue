@@ -138,7 +138,7 @@
 		    if (res.createUser.status != 'failed')
             {
               const reqData = {
-                  user_id: data.login.id
+                  user_id: res.createUser.id
               };
 
               let req = `

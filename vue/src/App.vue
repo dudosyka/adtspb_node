@@ -46,6 +46,10 @@
     },
     methods: {
 
+    },
+    created() {
+      global.refreshUserRoles()
+      console.log(global.refreshUserRoles.then + ' rules')
     }
   }
 </script>
