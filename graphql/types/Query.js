@@ -29,7 +29,7 @@ module.exports = new GraphQLObjectType({
             async resolve(obj, data) {
                 let viewer = await User.createFrom(obj().viewer);
                 viewer.fields.rules = viewer.__get('__accessible');
-                console.log(viewer.fields); 
+                console.log(viewer.fields);
                 return viewer.fields;
             }
         },
@@ -99,6 +99,19 @@ module.exports = new GraphQLObjectType({
                 const viewer = await User.createFrom(obj().viewer);
                 // console.log(viewer.__get('id'));
                 return viewer.__get('isConfirmed').fields;
+            }
+        },
+        //Check what data need to be child
+        checkChildData: {
+            type: GraphQLString,
+            args: {},
+            async resolve(obj, {  }) {
+                const userData = await UserExtraData.createFrom({ user_id: obj().viewer.id });
+                const res = userData.checkChildData();
+                if (res !== true)
+                    return JSON.stringify(res);
+                else
+                    return "success";
             }
         },
         getChildren: {

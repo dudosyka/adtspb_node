@@ -112,8 +112,8 @@ module.exports = new GraphQLObjectType({
         addChild: {
             type: GraphQLBoolean,
             args: {
-                child: {
-                    type: GraphQLInt,
+                child_data: {
+                    type: GraphQLString,
                 }
             },
             async resolve(obj, { child }) {

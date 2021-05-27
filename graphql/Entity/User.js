@@ -26,6 +26,17 @@ User.prototype.createFrom = async function (data) {
     return this;
 }
 
+User.prototype.createFromUnique = async function (data) {
+    const usr = await this.db.select(this, '`phone` = ? OR `email` = ?', [ data, data ]);
+    if (usr.length)
+    {
+        const model = this.newModel();
+        model.fields = Object.assign(model.fields, req[0]);
+        return model;
+    }
+    return null;
+}
+
 User.prototype.getInstance = () => User;
 
 User.prototype.validateRules = function () {
@@ -104,16 +115,21 @@ User.prototype.createNew = async function (roles = []) {
         throw Error(JSON.stringify(validate));
     }
     else {
-        let pairs = await this.checkForPairs('email', this.__get('email'));
-
         let answ = {
             id: null,
             token: null,
             status: "success"
         }
 
+        let pairs = await this.checkForPairs('email', this.__get('email'));
+
         if (pairs.length > 0)
             throw Error('Email must be unique');
+
+        pairs = await this.checkForPairs('phone', this.__get('phone'));
+
+        if (pairs.length > 0)
+            throw Error('Phone must be unique');
 
         await this.encryptPassword();
         const usr = await this.save();
@@ -208,10 +224,11 @@ User.prototype.restorePassword = async function (email, code, password) {
     return (res !== false);
 }
 
-User.prototype.addChild = async function (child_id) {
+User.prototype.addChild = async function (child_data) {
     if (this.hasAccess(11)) {
-        // console.log(child_id);
-        const child = await this.getInstance().prototype.createFrom({id: child_id});
+        const child = await this.createFromUnique(child_data);
+        if (child == null)
+            throw Error('Child not found')
         // console.log(child.fields);
         // console.log(this.fields);
         if ((await child.checkRole(AppConfig.child_role_id)) === false)
