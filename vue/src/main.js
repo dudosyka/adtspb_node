@@ -16,7 +16,10 @@ let refreshApiToken = () => {
     });
 }
 
-let refreshUserRoles = async () => {
+let refreshUserRules = async () => {
+
+    if (localStorage.getItem('token') === null)
+        return;
 
     let req = `
     query {
@@ -27,11 +30,20 @@ let refreshUserRoles = async () => {
     `;
 
     return api.request(req).then(el => {
-        global.rules = req.viewer.rules;
+        console.log(el);
+        localStorage.setItem('rules', el.viewer.rules);
     });
 }
 
-global.refreshUserRoles = refreshUserRoles;
+let hasAccess = id => {
+    const rules = localStorage.getItem('rules');
+    if (rules === null)
+        return false;
+
+    return rules.includes(id);
+}
+
+global.refreshUserRules = refreshUserRules;
 global.refreshApiToken = refreshApiToken;
 
 const graphql = new GraphQLClient(AppConfig.api_url, {
@@ -86,7 +98,14 @@ router.afterEach(async (to, from) => {
 new Vue({
   router,
   render: h => h(App),
-  created: () => {
-    //console.log(11);
+  created: async () => {
+      if (localStorage.getItem('token') === null) {
+          localStorage.removeItem('rules');
+      }
+      else {
+          if (localStorage.getItem('rules') === null) {
+              await refreshUserRules();
+          }
+      }
   }
 }).$mount('#app');
