@@ -45,6 +45,7 @@ let hasAccess = id => {
 
 global.refreshUserRules = refreshUserRules;
 global.refreshApiToken = refreshApiToken;
+global.hasAccess = hasAccess;
 
 const graphql = new GraphQLClient(AppConfig.api_url, {
     headers: {
