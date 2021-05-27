@@ -81,12 +81,12 @@ User.prototype.auth = async function (data) {
         {
             let user = await res[0];
             if (await compare(data['pass'], user.password).catch(err => { console.error(err); }))
-              resolve(user);
+              resolve({status: true, res: user});
             else
-              resolve(false);
+             resolve({status: false, res: 'password incorrect'});
         }
         else
-            resolve(false);
+         resolve({status: false, res: 'login incorrect'});
     });
 };
 

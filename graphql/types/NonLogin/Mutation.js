@@ -24,9 +24,11 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve (obj, { login, password }) {
-                const res = await User.auth({ user: login, pass: password });
-                const id = res.id;
-
+                const auth = await User.auth({ user: login, pass: password });
+                if (auth.status !== true)
+                    throw new Error(auth.res);
+                const id = auth.res.id;
+                console.log(res.id);
                 return {
                     token: await jwt.sign({ id: id }),
                     id: id,
