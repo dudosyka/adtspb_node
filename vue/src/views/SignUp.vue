@@ -47,13 +47,20 @@
               <input type="email" v-model="user.email" class="type" tabindex="7">
             </div>
 
-            <div class="input-container required">
+            <div class="input-container">
               <div class="password-container">
                 <div>
                   <label class="label" v-bind:class="{'label-up': user.password}">Пароль</label><br>
                   <input :type="passwordFieldType" v-model="user.password" class="type" tabindex="8">
                 </div>
-                <button @click="switchVisibility()" class="dark-box darken">0</button>
+                <button
+                  @click="switchVisibility()"
+                  class="dark-box darken"
+                  :class="{
+                    'hidden-pass': this.passwordFieldType === 'password',
+                    'show-pass': this.passwordFieldType !== 'password'
+                  }">
+                </button>
               </div>
             </div>
 
