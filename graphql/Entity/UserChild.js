@@ -73,7 +73,12 @@ UserChild.prototype.getChildren = async function (child = true, agreed = 0) {
     const res = await this.db.select(this, field + " = ? AND `agreed` = ?", [ this.__get(field), agreed ]);
     if (res.length) {
         const range = this.db.createRangeQuery(rangeField, res);
-        return await this.db.query("SELECT * FROM `user` WHERE " + range.query, range.ids);
+        const children = await this.db.query("SELECT * FROM `user` as `main` LEFT JOIN `user_extra_data` AS `data` ON `main`.`id` = `data`.`user_id` WHERE `main`." + range.query, range.ids);
+        children.map(el => {
+            el.id = el.user_id;
+            return el;
+        })
+        return children;
     } else {
         return [];
     }

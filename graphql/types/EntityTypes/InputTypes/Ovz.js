@@ -1,7 +1,7 @@
 const graphql = require("graphql");
 
-module.exports = new graphql.GraphQLObjectType({
-    name: "Ovz",
+module.exports = new graphql.GraphQLInputObjectType({
+    name: "OvzInput",
     fields: {
         id: {
             type: graphql.GraphQLID,
