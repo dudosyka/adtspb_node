@@ -5,21 +5,22 @@
 
         <article class="card" v-for="child in children">
           <header class="card-header">
-            <h2 class="card-name dark">{{ this.child[name] + ' ' + this.child[surname] }}</h2>
-            <button class="dark-box darken">К данным</button>
+            <h2 class="card-name dark">{{ child.name + ' ' + child.surname }}</h2>
+            <button @click='child.showData = !child.showData' class="dark-box darken">{{ child.showData ? "Скрыть" : "К данным" }}</button>
           </header>
 
-          <section class="child-data">
+          <section v-if='child.showData' class="child-data">
             <table class="child-data_table">
               <tr>
-                <td>Дата рождения</td><td>00.00.0000</td>
+                <td>Дата рождения</td><td>{{ child.birthday }}</td>
               </tr>
               <tr>
-                <td>ОВЗ</td><td>Есть</td>
+                <td>ОВЗ</td><td>{{child.ovz == 1 ? "Есть" : "Нет" }}</td>
               </tr>
-              <tr>
+              <!--tr>
+                    Пока что комменчу, так как в апи нет метода, который бы вернул тебе объединения в которые ребенок зачислен
                 <td>Объединения</td><td></td>
-              </tr>
+              </tr-->
             </table>
           </section>
         </article>
@@ -98,7 +99,12 @@
     },
     data() {
       return {
-        children: [],
+        children: [
+            {
+                name: null,
+                surname: null,
+            }
+        ],
         childId: null,
         show: {
           addChild: false,
@@ -108,16 +114,37 @@
     created() {
       let req = `
         query {
-          getChildRequests {
-            id, name, surname, phone
+          getChildren {
+            id, name, surname, phone, birthday, ovz
           }
         }
       `
 
       let data = {}
 
-      api.request(req, this.children)
-        .then(data => { console.log(this.children) })
+      api.request(req)
+        .then(data => {
+            console.log(data);
+            if (data.getChildren.length < 1)
+                this.children = [];
+            data.getChildren.map(el => {
+                el.showData = false;
+                const birth = el.birthday;
+                const date = new Date(birth);
+                const year = date.getFullYear();
+
+                let month = date.getMonth() + 1;
+                let day = date.getDate();
+
+                month = (month > 9) ? month : "0" + month;
+                day = (day > 9) ? day : "0" + day;
+
+                el.birthday = year + "-" + month + "-" + day;
+
+                return el;
+            });
+            this.children = data.getChildren;
+        })
         .catch(err => { console.log(err) })
     },
     methods: {
