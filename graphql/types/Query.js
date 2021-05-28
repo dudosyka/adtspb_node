@@ -6,6 +6,7 @@ const Db = require('../utils/Db');
 const User = require('../Entity/User');
 const UserType = require('./EntityTypes/User');
 const UserExtraData = require('../Entity/UserExtraData');
+const UserFullDataType = require('./OutputTypes/UserFullData');
 
 const UserChild = require('../Entity/UserChild');
 
@@ -119,11 +120,12 @@ module.exports = new GraphQLObjectType({
             }
         },
         getChildren: {
-            type: graphql.GraphQLList(UserType),
+            type: graphql.GraphQLList(UserFullDataType),
             args: {},
             async resolve(obj, {}) {
                 const userChild = await UserChild.baseCreateFrom({ parent_id: obj().viewer.id });
-                return await userChild.getChildren(true, 1);
+                const children = await userChild.getChildren(true, 1);
+                return children;
             }
         },
         getChildRequests: {
