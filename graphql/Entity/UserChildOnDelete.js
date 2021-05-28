@@ -22,7 +22,7 @@ UserChildOnDelete.prototype.setOnDelete = function (id, removeAccount) {
 
 UserChildOnDelete.prototype.confirmRemoveChild = async function (userChild, admin_id) {
     const userChildLog = await UserChildLog.createFromUserChild(userChild);
-    userChildLog.removeChild(admin_id);
+    await userChildLog.removeChild(admin_id);
     userChild.delete();
     if (this.__get('remove_account') == 1)
         this.db.query('DELETE FROM `user` WHERE `id` = ?', [ userChild.__get('child_id') ]);

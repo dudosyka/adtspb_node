@@ -6,12 +6,6 @@ let UserChild = function () {}
 
 UserChild.prototype = Object.assign(UserChild.prototype, baseEntity.prototype);
 
-// UserChild.prototype.createFrom = async function (data) {
-//     if (data.id) {
-//         return await this.baseCreateFrom(data);
-//     }
-// }
-
 UserChild.prototype.getInstance = () => UserChild;
 
 UserChild.prototype.fields = {
