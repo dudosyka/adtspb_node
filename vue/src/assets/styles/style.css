@@ -12,11 +12,12 @@ h1,h2,h3,h4,h5,h6 {
   }
   .main-content {
     display: grid;
-    grid-template-columns: minmax(400px, 600px) minmax(750px, 1fr);
+    grid-template-columns: minmax(400px, 500px) 1fr;
     grid-template-rows: 100vh;
     grid-template-areas:
       "auth plate";
     position: relative;
+    height: 100vh;
   }
 
   .auth, .plate {
@@ -175,7 +176,6 @@ h1,h2,h3,h4,h5,h6 {
 /* Plate */
   .title {
     font-size: 4rem;
-    width: 580px;
     color: #fff;
     text-align: left;
     align-self: center;
@@ -192,14 +192,12 @@ h1,h2,h3,h4,h5,h6 {
   display: grid;
   grid-template-columns: 300px 1fr;
 }
+
 .home-content {
-  background-color: #D6EEFA;
-  height: 100vh;
+  background-color: #EFEFEF;
   padding: 30px;
+}
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  overflow-y: auto;
+.shadow {
+  box-shadow: 0 0 10px 0 #aeaeae;
 }

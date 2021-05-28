@@ -3,111 +3,233 @@
       <navigation />
       <article class="home-content">
 
-        <article class="card" v-for="child in children">
-          <header class="card-header">
-            <h2 class="card-name dark">{{ child.name + ' ' + child.surname }}</h2>
-            <button @click='child.showData = !child.showData' class="dark-box darken">{{ child.showData ? "Скрыть" : "К данным" }}</button>
+        <section class="children">
+
+          <header class="card child shadow" v-for="(child, id) in children">
+            <h2 class="child-name dark">{{ child.name + ' ' + child.surname }}</h2>
+            <button @click="showData(id)" class="dark-box darken child-to-data">К данным</button>
           </header>
 
-          <section v-if='child.showData' class="child-data">
-            <table class="child-data_table">
-              <tr>
-                <td>Дата рождения</td><td>{{ child.birthday }}</td>
-              </tr>
-              <tr>
-                <td>ОВЗ</td><td>{{child.ovz == 1 ? "Есть" : "Нет" }}</td>
-              </tr>
-              <!--tr>
-                    Пока что комменчу, так как в апи нет метода, который бы вернул тебе объединения в которые ребенок зачислен
-                <td>Объединения</td><td></td>
-              </tr-->
+        </section>
+
+        <section class="children-data card">
+
+          <article class="child-data" v-for="(child, id) in children">
+            <table class="child-data_table" v-show="show.childData === id">
+              <tbody class="child-data_table-group">
+                <tr>
+                  <td>
+                    <inputField
+                      label="Имя"
+                      :value="child.name"
+                      :readonly="true"
+                    />
+                  </td>
+                  <td>
+                    <inputField
+                      label="Фамилия"
+                      :value="child.surname"
+                      :readonly="true"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <inputField
+                      label="Отчество"
+                      :value="child.lastname"
+                      :readonly="true"
+                    />
+                  </td>
+                  <td>
+                    <inputField
+                      label="Дата рождения"
+                      :value="child.birthday"
+                      :readonly="true"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+              <tbody class="child-data_table-group">
+                <tr>
+                  <td>
+                    <inputField
+                      label="Электронная почта"
+                      :value="child.email"
+                      :readonly="true"
+                    />
+                  </td>
+                  <td>
+                    <inputField
+                      label="Номер телефона"
+                      :value="child.phone"
+                      :readonly="true"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+              <tbody class="child-data_table-group">
+                <tr>
+                  <td colspan="2">
+                    <inputField
+                      type="sex"
+                      :value="child.sex"
+                      :readonly="true"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+              <tbody class="child-data_table-group">
+                <tr>
+                  <td>
+                    <inputField
+                      label="Гражданство"
+                      :value="child"
+                      :readonly="true"
+                    />
+                  </td>
+                  <td>
+                    <inputField
+                      label="Степень родства"
+                      :value="child"
+                      :readonly="true"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+              <tbody class="child-data_table-group">
+                <tr>
+                  <td>
+                    <inputField
+                      label="ОВЗ"
+                      :value="child.ovz ? 'есть' : 'нету'"
+                      :readonly="true"
+                    />
+                  </td>
+                  <td>
+                    <inputField
+                      label="Инвалидность"
+                      :value="child"
+                      :readonly="true"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+              <tbody class="child-data_table-group">
+                <tr>
+                  <td colspan="2">
+                    <inputField
+                      label="Образовательное учреждение"
+                      :value="child"
+                      :readonly="true"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <inputField
+                      label="Класс \ группа"
+                      :value="child"
+                      :readonly="true"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+              <tbody class="child-data_table-group">
+                <tr>
+                  <td colspan="2">
+                    <inputField
+                      label="Адрес регистрации"
+                      :value="child"
+                      :readonly="true"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+              <tbody class="child-data_table-group">
+                <tr>
+                  <td colspan="2">
+                    <inputField
+                      label="Адрес проживания"
+                      :value="child"
+                      :readonly="true"
+                    />
+                  </td>
+                </tr>
+              </tbody>
             </table>
-          </section>
-        </article>
+          </article>
 
-        <button class="air-button" @click="addChild" v-if="!show.addChild">+ Добавить ребёнка</button>
-
-        <article class="add" v-if="show.addChild">
-          <h2 class="form-heading">Введите номер телефона или электронную почту ребёнка</h2>
-          <div class="input-container">
-            <label class="label" v-bind:class="{'label-up': childId}">Номер телефона/Электронная почта</label><br>
-            <input type="text" v-model="childId" class="type" tabindex="1">
-          </div>
-          <button class="dark-box dark-button">Добавить</button>
-        </article>
+        </section>
 
       </article>
   </main>
 </template>
 
 <style scoped>
-  .card, .add {
-    background-color: #fff;
-    padding: 30px;
-    width: 100%;
-    max-width: 750px;
-    box-sizing: border-box;
+  .home-content {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-gap: 10px;
   }
-  .card-header {
+
+  .card {
+    padding: 20px;
+    margin-bottom: 10px;
+    background: #fff;
+  }
+  .child {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between
   }
-  .card-header button::after {
-    content: '';
-    display: inline-block;
-    width: 0;
-    height: 0;
-    border: 10px solid #fff;
-    border-top-width: 0;
-    border-left-color: rgba(0,0,0,0);
-    border-right-color: rgba(0,0,0,0);
-    margin-left: 10px;
-  }
-  .card-name {
+  .child-name {
     margin: 0;
   }
+  .child-to-data {
 
-  .add {
-    width: 500px;
   }
+  .child-to-data::after {
+    content: '';
+    display: inline-block;
+    width: 0px;
+    height: 0px;
+    margin-left: 10px;
 
-  .air-button {
-    font-size: 17px;
-    margin-top: 50px;
+    border: 8px solid #fff;
+    border-top-color: rgba(0,0,0,0);
+    border-bottom-color: rgba(0,0,0,0);
+    border-left-style: none;
   }
-
   .child-data_table {
-    margin-top: 40px;
+    width: 100%;
   }
   .child-data_table td {
-    padding: 20px 10px;
+    padding-right: 20px;
   }
-  .child-data_table td:first-child {
-    color: #9E9E9E;
-    padding:
+  .child-data_table td:last-child {
+    padding-right: 0;
+  }
+  .child-data_table-group {
+    margin: 5px 0;
   }
 
 </style>
 
 <script>
   import navigation from '../../components/Navigation.vue'
+  import inputField from '../../components/InputField.vue'
 
   export default {
-    name: '',
+    name: 'Child',
     components: {
-      navigation,
+      navigation, inputField
     },
     data() {
       return {
-        children: [
-            {
-                name: null,
-                surname: null,
-            }
-        ],
-        childId: null,
+        children: [],
         show: {
           addChild: false,
+          childData: 0,
         }
       }
     },
@@ -125,24 +247,25 @@
       api.request(req)
         .then(data => {
             console.log(data);
+
             if (data.getChildren.length < 1)
                 this.children = [];
-            data.getChildren.map(el => {
-                el.showData = false;
-                const birth = el.birthday;
-                const date = new Date(birth);
-                const year = date.getFullYear();
+                data.getChildren.map(el => {
+                  el.showData = false;
+                  const birth = el.birthday;
+                  const date = new Date(birth);
+                  const year = date.getFullYear();
 
-                let month = date.getMonth() + 1;
-                let day = date.getDate();
+                  let month = date.getMonth() + 1;
+                  let day = date.getDate();
 
-                month = (month > 9) ? month : "0" + month;
-                day = (day > 9) ? day : "0" + day;
+                  month = (month > 9) ? month : "0" + month;
+                  day = (day > 9) ? day : "0" + day;
 
-                el.birthday = year + "-" + month + "-" + day;
+                  el.birthday = year + "-" + month + "-" + day;
 
-                return el;
-            });
+                  return el;
+                });
             this.children = data.getChildren;
         })
         .catch(err => { console.log(err) })
@@ -161,6 +284,9 @@
 
         }
       },
+      showData(id) {
+        this.show.childData = id
+      }
     },
     computed: {
 
