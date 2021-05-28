@@ -1,6 +1,6 @@
 const graphql = require("graphql");
 
-module.exports = new graphql.GraphQLInputObjectType({
+module.exports = new graphql.GraphQLObjectType({
     name: "DisabilityGroup",
     fields: {
         id: {

@@ -28,7 +28,7 @@ module.exports = new GraphQLObjectType({
                 if (auth.status !== true)
                     throw new Error(auth.res);
                 const id = auth.res.id;
-                console.log(res.id);
+                // console.log(auth.res.id);
                 return {
                     token: await jwt.sign({ id: id }),
                     id: id,

@@ -1,10 +1,10 @@
-const graphql = require("graphql");
-const OvzType = require('./Ovz');
-const DisabilityGroupType = require('./DisabilityGroup');
+const graphql = require('graphql');
+const OvzType = require('../EntityTypes/Ovz');
+const DisabilityGroupType = require('../EntityTypes/DisabilityGroup');
 
-module.exports = new graphql.GraphQLInputObjectType({
-    name: "UserInput",
-
+module.exports = new graphql.GraphQLObjectType({
+    name: "UserFullData",
+    //Arrow func to prevent 'use before initialization' err
     fields: () => ({
         id: {
             type: graphql.GraphQLID
@@ -64,12 +64,24 @@ module.exports = new graphql.GraphQLInputObjectType({
         },
         ovz_type: {
             type: OvzType,
+            async resolve(obj, data) {
+                return {
+                    id: null,
+                    name: null
+                }
+            }
         },
         disability: {
             type: graphql.GraphQLInt,
         },
         disability_group: {
             type: DisabilityGroupType,
+            async resolve(obj, data) {
+                return {
+                    id: null,
+                    name: null
+                }
+            }
         },
     })
 });
