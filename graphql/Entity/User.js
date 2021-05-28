@@ -308,7 +308,7 @@ User.prototype.createChild = async function (data) {
     return await child.agreeParentRequest(request_id, data);
 }
 
-User.prototype.removeChild = async function (child_id, removeAccount) {
+User.prototype.removeChild = async function (child_id, removeAccount, comment) {
     if (!this.hasAccess(11))
         throw Error('Forbidden');
     const userChild = await UserChild.baseCreateFrom({ parent_id: this.__get('id'), child_id: child_id });
@@ -316,7 +316,7 @@ User.prototype.removeChild = async function (child_id, removeAccount) {
     if (checkRelationship === false)
         throw Error('Child not found');
 
-    await userChild.removeChild(removeAccount).catch(err => {
+    await userChild.removeChild(removeAccount, comment).catch(err => {
         throw Error(err);
     });
 

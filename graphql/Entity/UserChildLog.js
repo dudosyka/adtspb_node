@@ -36,21 +36,23 @@ UserChildLog.prototype.fields = {
     parent_id: null,
     parent_email: null,
     description: null,
+    parent_comment: null,
     confirmed: null,
     admin_id: null,
     timestamp: null
 };
 
-UserChildLog.prototype.log = async function (description, confirmed = 0, admin = null) {
+UserChildLog.prototype.log = async function (description, confirmed = 0, admin = null, comment = null) {
     this.__set('description', description);
     this.__set('confirmed', confirmed);
     this.__set('timestamp', Date.now());
     this.__set('admin_id', admin);
+    this.__set('parent_comment', comment);
     await this.save();
 }
 
-UserChildLog.prototype.removeChild = async function (admin_id) {
-    return await this.log('remove', 1, admin_id);
+UserChildLog.prototype.removeChild = async function (admin_id, comment) {
+    return await this.log('remove', 1, admin_id, comment);
 }
 
 UserChildLog.prototype.addChild = async function () {

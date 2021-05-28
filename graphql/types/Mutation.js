@@ -162,11 +162,14 @@ module.exports = new GraphQLObjectType({
                 },
                 removeAccount: {
                     type: GraphQLBoolean
+                },
+                comment: {
+                    type: GraphQLString
                 }
             },
-            async resolve(obj, { child_id, removeAccount }) {
+            async resolve(obj, { child_id, removeAccount, comment }) {
                 const viewer = await User.createFrom(obj().viewer);
-                return viewer.removeChild(child_id, removeAccount);
+                return viewer.removeChild(child_id, removeAccount, comment);
             }
         },
         //Admin confirm parent`s request to remove child

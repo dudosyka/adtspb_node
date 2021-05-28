@@ -23,8 +23,8 @@ UserChild.prototype.checkRelationship = async function () {
     };
 }
 
-UserChild.prototype.removeChild = async function (removeAccount) {
-    UserChildOnDelete.setOnDelete(this.__get('id'), removeAccount);
+UserChild.prototype.removeChild = async function (removeAccount, comment) {
+    UserChildOnDelete.setOnDelete(this.__get('id'), removeAccount, comment);
 }
 
 UserChild.prototype.addParentRequest = async function () {

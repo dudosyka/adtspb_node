@@ -11,18 +11,20 @@ UserChildOnDelete.prototype.getInstance = () => UserChildOnDelete;
 UserChildOnDelete.prototype.fields = {
     id: null,
     user_child_id: null,
-    remove_account: null
+    remove_account: null,
+    comment: null
 };
 
-UserChildOnDelete.prototype.setOnDelete = function (id, removeAccount) {
+UserChildOnDelete.prototype.setOnDelete = function (id, removeAccount, comment) {
     this.__set('user_child_id', id);
     this.__set('remove_account', removeAccount ? 1 : 0);
+    this.__set('comment', comment);
     this.save();
 }
 
 UserChildOnDelete.prototype.confirmRemoveChild = async function (userChild, admin_id) {
     const userChildLog = await UserChildLog.createFromUserChild(userChild);
-    await userChildLog.removeChild(admin_id);
+    await userChildLog.removeChild(admin_id, this.__get('comment'));
     userChild.delete();
     if (this.__get('remove_account') == 1)
         this.db.query('DELETE FROM `user` WHERE `id` = ?', [ userChild.__get('child_id') ]);
