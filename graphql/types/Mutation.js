@@ -184,6 +184,22 @@ module.exports = new GraphQLObjectType({
                 const viewer = await User.createFrom(obj().viewer);
                 return await viewer.confirmRemoveChild(link);
             }
+        },
+
+        editUserMainData: {
+            type: GraphQLBoolean,
+            args: {
+                newData: {
+                    type: UserInput
+                },
+                target_id: {
+                    type: GraphQLInt
+                }
+            },
+            async resolve(obj, { newData, target_id }) {
+                const viewer = await User.createFrom(obj().viewer);
+                return (await viewer.setDataOnEdit(newData, target_id)) !== false;
+            }
         }
 
         //If we need system which could make user`s token unrelaible.....

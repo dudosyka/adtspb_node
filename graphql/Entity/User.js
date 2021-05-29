@@ -10,6 +10,7 @@ const jwt = new Jwt();
 const UserChild = require('../Entity/UserChild');
 const UserChildOnDelete = require('../Entity/UserChildOnDelete');
 const UserExtraData = require('../Entity/UserExtraData');
+const UserDataOnEdit = require('../Entity/UserDataOnEdit');
 
 const AssociationExtraData = require('./AssociationExraData');
 
@@ -52,7 +53,14 @@ User.prototype.validateRules = function () {
 }
 
 User.prototype.fields = {
-    id: null
+    id: null,
+    name: null,
+    surname: null,
+    lastname: null,
+    email: null,
+    phone: null,
+    sex: null,
+    password: null,
 }
 
 User.prototype.getRole = async function () {
@@ -88,7 +96,7 @@ User.prototype.auth = async function (data) {
         else
          resolve({status: false, res: 'login incorrect'});
     });
-};
+}
 
 User.prototype.checkRole = function (checkFor, target = false) {
     //If target not provided then check...
@@ -308,15 +316,21 @@ User.prototype.createChild = async function (data) {
     return await child.agreeParentRequest(request_id, data);
 }
 
+User.prototype.checkRelationship = async function (child_id) {
+    const userChild = await UserChild.baseCreateFrom({ parent_id: this.__get('id'), child_id: child_id });
+    const checkRelationship = await userChild.checkRelationship();
+    return checkRelationship === false ? false : userChild;
+}
+
 User.prototype.removeChild = async function (child_id, removeAccount, comment) {
     if (!this.hasAccess(11))
         throw Error('Forbidden');
-    const userChild = await UserChild.baseCreateFrom({ parent_id: this.__get('id'), child_id: child_id });
-    const checkRelationship = await userChild.checkRelationship();
+
+    const checkRelationship = await this.checkRelationship(child_id);
     if (checkRelationship === false)
         throw Error('Child not found');
 
-    await userChild.removeChild(removeAccount, comment).catch(err => {
+    await checkRelationship.removeChild(removeAccount, comment).catch(err => {
         throw Error(err);
     });
 
@@ -331,6 +345,25 @@ User.prototype.confirmRemoveChild = async function (link) {
         throw Error('Link not found');
     const userChild = await UserChild.baseCreateFrom({ id: userChildOnDelete.__get('user_child_id') });
     return await userChildOnDelete.confirmRemoveChild(userChild, this.__get('id'));
+}
+
+User.prototype.setDataOnEdit = async function (data, target_id) {
+    let target = this;
+
+    if (target_id !== 0) {
+        if (!this.hasAccess(13))
+            throw Error('Forbidden');
+        const userChild = await UserChild.baseCreateFrom({ parent_id: this.__get('id'), child_id: target_id });
+        const checkRelationship = await this.checkRelationship()
+        if (checkRelationship === false)
+            throw Error('Child not found');
+
+        const model = this.newModel();
+        target = await model.baseCreateFrom({ id: target_id });
+
+    }
+
+    return await UserDataOnEdit.setUserMainOnEdit(this.__get('id'), target, data);
 }
 
 User.prototype.table = 'user';
