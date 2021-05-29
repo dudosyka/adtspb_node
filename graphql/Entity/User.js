@@ -11,6 +11,7 @@ const UserChild = require('../Entity/UserChild');
 const UserChildOnDelete = require('../Entity/UserChildOnDelete');
 const UserExtraData = require('../Entity/UserExtraData');
 const UserDataOnEdit = require('../Entity/UserDataOnEdit');
+const UserDataLog = require('../Entity/UserDataLog');
 
 const AssociationExtraData = require('./AssociationExraData');
 
@@ -353,8 +354,7 @@ User.prototype.setDataOnEdit = async function (data, target_id) {
     if (target_id !== 0) {
         if (!this.hasAccess(13))
             throw Error('Forbidden');
-        const userChild = await UserChild.baseCreateFrom({ parent_id: this.__get('id'), child_id: target_id });
-        const checkRelationship = await this.checkRelationship()
+        const checkRelationship = await this.checkRelationship(target_id)
         if (checkRelationship === false)
             throw Error('Child not found');
 
@@ -364,6 +364,17 @@ User.prototype.setDataOnEdit = async function (data, target_id) {
     }
 
     return await UserDataOnEdit.setUserMainOnEdit(this.__get('id'), target, data);
+}
+
+User.prototype.confirEditData = async function (request_id) {
+    if (!this.hasAccess(14))
+        throw Error('Forbidden');
+
+    const request = await UserDataLog.confirmEditRequest(request_id, this.__get('id'));
+
+    this.db.query('UPDATE `' + request.__get('edited_table') + '` SET `' + request.__get('field') + '` = ? WHERE `id` = ?', [ request.__get('new_value'), request.__get('target_id') ]);
+
+    return (await request.delete()) !== false;
 }
 
 User.prototype.table = 'user';

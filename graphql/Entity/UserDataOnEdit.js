@@ -46,4 +46,15 @@ UserDataOnEdit.prototype.setUserMainOnEdit = async function (requester_id, targe
     return await this.setOnEdit(requester_id, target, data, 'user');
 }
 
+UserDataOnEdit.prototype.getRequest = async function (request_id) {
+    const model = this.newModel();
+    const request = await this.db.select(this, '`id` = ?', [ request_id ]);
+    if (request.length < 1)
+        throw Error('Request not found');
+
+    model.fields = Object.assign(model.fields, request[0]);
+
+    return model;
+}
+
 module.exports = (new UserDataOnEdit());
