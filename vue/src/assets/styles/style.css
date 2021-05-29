@@ -210,7 +210,6 @@ h1,h2,h3,h4,h5,h6 {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 3;
 
   width: 100%;
   height: 100vh;
@@ -220,6 +219,14 @@ h1,h2,h3,h4,h5,h6 {
   align-items: center;
 
   background: #EFEFEF;
+}
+
+.z {
+  z-index: 5;
+}
+
+.zz {
+  z-index: 10;
 }
 
 .shadow {

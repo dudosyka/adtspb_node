@@ -2,6 +2,7 @@
   <main class="home">
     <article class="home-content">
       <router-link tag="button" class="left-arrow" to="/child"></router-link>
+
       <article class="card shadow" v-if="show.question">
         <h2 class="form-heading">Как вы хотите добавить ребёнка?</h2>
         <div class="buttons">
@@ -10,23 +11,33 @@
         </div>
       </article>
 
-      <article class="card" v-if="show.add">
-        <button class="left-arrow" @click="show.add = false; show.question = true"></button>
+      <article class="card_wrapper z" v-if="show.childReg">
+        <section class="card shadow">
+          <h2 class="form-heading">{{ message }}</h2>
+          <div class="buttons">
+            <router-link class="dark-button dark-box" to="/child">Вернуться в "Мои дети"</router-link>
+          </div>
+        </section>
       </article>
+
+      <div class="card_wrapper" v-if="show.add">
+        <article class="card shadow">
+          <button class="left-arrow" @click="show.add = false; show.question = true"></button>
+
+          <h2 class="form-heading">Введите номер телефона или почту ребёнка</h2>
+          <p class="form-error">{{ show.error }}</p>
+          <inputField
+            label="Номер телефона / почта"
+            v-model="childPhoneOrEmail"
+          />
+          <button class="dark-box dark-button" @click="addChild">Добавить</button>
+        </article>
+      </div>
 
       <article class="child-data card" v-if="show.registration">
         <button class="left-arrow" @click="show.registration = false; show.question = true"></button>
 
-        <section class="card_wrapper" v-show="show.childReg">
-          <section class="card shadow">
-            <h2 class="form-heading">Регистрация прошла успешно</h2>
-            <div class="buttons">
-              <router-link class="dark-button dark-box" to="/child">Вернуться в "Мои дети"</router-link>
-            </div>
-          </section>
-        </section>
-
-        <section class="card_wrapper" v-show="show.childNotReg">
+        <section class="card_wrapper z" v-show="show.childNotReg">
           <section class="card shadow">
             <h2 class="form-heading">Ошибка регистрации. Пожалуйста проверьте введённые данные</h2>
             <div class="buttons">
@@ -305,7 +316,7 @@
   }
   .form-heading {
     text-align: center;
-    margin-top: 50px;
+    margin-top: 30px;
   }
   .form-heading.left {
     text-align: left;
@@ -370,13 +381,16 @@
         },
         ovzTypes: ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'],
         disabilityTypes: ['I', 'II', 'III'],
+        childPhoneOrEmail: null,
         show: {
           question: true,
           registration: false,
           add: false,
           childReg: false,
-          childNotReg: false
-        }
+          childNotReg: false,
+          error: '',
+        },
+        message: ''
       }
     },
     methods: {
@@ -404,20 +418,43 @@
         let data = {
           user: this.child
         }
-        console.log(this.child)
 
         api.request(req, data)
           .then(data => {
             console.log(data)
+
+            this.message = 'Ребёнок успешно добавлен'
             this.show.childReg = true
-
-
           })
           .catch(err => {
             console.error(err)
             this.show.childNotReg = true
 
 
+          })
+      },
+      addChild() {
+        let req = `
+          mutation ($child_data: String) {
+            addChild(child_data: $child_data)
+          }
+        `
+
+        let data = {
+          child_data: this.childPhoneOrEmail
+        }
+
+        api.request(req, data)
+          .then(data => {
+            console.log(data)
+
+            this.message = 'Запрос на подтверждение родства ребёнку успешно отпрвлен'
+            this.show.childReg = true
+          })
+          .catch(err => {
+            console.log(err)
+
+            this.show.error = 'не удалось найти ребёнка'
           })
       }
     }

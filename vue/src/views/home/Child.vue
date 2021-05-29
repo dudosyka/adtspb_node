@@ -244,7 +244,6 @@
       return {
         children: [],
         show: {
-          addChild: false,
           childData: 0,
         }
       }
@@ -267,7 +266,6 @@
             if (data.getChildren.length < 1)
                 this.children = [];
                 data.getChildren.map(el => {
-                  el.showData = false;
                   const birth = el.birthday;
                   const date = new Date(birth);
                   const year = date.getFullYear();
