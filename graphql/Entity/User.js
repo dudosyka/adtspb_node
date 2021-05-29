@@ -10,7 +10,7 @@ const jwt = new Jwt();
 const UserChild = require('../Entity/UserChild');
 const UserChildOnDelete = require('../Entity/UserChildOnDelete');
 const UserExtraData = require('../Entity/UserExtraData');
-const UserDataOnEdit = require('../Entity/UserDataOnEdit');
+const DataOnEdit = require('../Entity/DataOnEdit');
 const UserDataLog = require('../Entity/UserDataLog');
 
 const AssociationExtraData = require('./AssociationExraData');
@@ -348,8 +348,8 @@ User.prototype.confirmRemoveChild = async function (link) {
     return await userChildOnDelete.confirmRemoveChild(userChild, this.__get('id'));
 }
 
-User.prototype.setDataOnEdit = async function (data, target_id) {
-    let target = this;
+User.prototype.getTargetOfEditing = async function (target_id) {
+    let target = false;
 
     if (target_id !== 0) {
         if (!this.hasAccess(13))
@@ -358,12 +358,35 @@ User.prototype.setDataOnEdit = async function (data, target_id) {
         if (checkRelationship === false)
             throw Error('Child not found');
 
-        const model = this.newModel();
-        target = await model.baseCreateFrom({ id: target_id });
-
+        target = target_id;
+        // const model = this.newModel();
+        // target = await model.baseCreateFrom({ id: target_id });
     }
 
-    return await UserDataOnEdit.setUserMainOnEdit(this.__get('id'), target, data);
+    return target;
+}
+
+User.prototype.setMainDataOnEdit = async function (data, target_id) {
+    let target = await this.getTargetOfEditing(target_id);
+
+    if (target !== false) {
+        const model = this.newModel();
+        target = await model.baseCreateFrom({ id: target_id });
+    } else {
+        target = this;
+    }
+
+    return DataOnEdit.setUserOnEdit(this.__get('id'), target, data, 'user');
+}
+
+User.prototype.setExtraDataOnEdit = async function (data, target_id) {
+    let target = await this.getTargetOfEditing(target_id);
+
+    target = await UserExtraData.createFrom({ user_id: target === false ? this.__get('id') : target});
+
+    console.log(target.fields);
+
+    return await DataOnEdit.setUserOnEdit(this.__get('id'), target, data, 'user_extra_data', target.__get('user_id'));
 }
 
 User.prototype.confirEditData = async function (request_id) {
@@ -372,7 +395,11 @@ User.prototype.confirEditData = async function (request_id) {
 
     const request = await UserDataLog.confirmEditRequest(request_id, this.__get('id'));
 
-    this.db.query('UPDATE `' + request.__get('edited_table') + '` SET `' + request.__get('field') + '` = ? WHERE `id` = ?', [ request.__get('new_value'), request.__get('target_id') ]);
+    const key = request.__get('edited_table') !== this.table
+        ? 'user_id'
+        : 'id';
+
+    this.db.query('UPDATE `' + request.__get('edited_table') + '` SET `' + request.__get('field') + '` = ? WHERE `' + key + '` = ?', [ request.__get('new_value'), request.__get('target_id') ]);
 
     return (await request.delete()) !== false;
 }

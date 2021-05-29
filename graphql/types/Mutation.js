@@ -186,7 +186,7 @@ module.exports = new GraphQLObjectType({
             }
         },
 
-        editUserMainData: {
+        editMainUserData: {
             type: GraphQLBoolean,
             args: {
                 newData: {
@@ -198,7 +198,22 @@ module.exports = new GraphQLObjectType({
             },
             async resolve(obj, { newData, target_id }) {
                 const viewer = await User.createFrom(obj().viewer);
-                return (await viewer.setDataOnEdit(newData, target_id)) !== false;
+                return (await viewer.setMainDataOnEdit(newData, target_id)) !== false;
+            }
+        },
+        editExtraUserData: {
+            type: GraphQLBoolean,
+            args: {
+                newData: {
+                    type: UserInput
+                },
+                target_id: {
+                    type: GraphQLInt
+                }
+            },
+            async resolve(obj, { newData, target_id }) {
+                const viewer = await User.createFrom(obj().viewer);
+                return (await viewer.setExtraDataOnEdit(newData, target_id)) !== false;
             }
         },
 
