@@ -2,7 +2,7 @@
   <main class="home">
     <article class="home-content">
       <router-link tag="button" class="left-arrow" to="/child"></router-link>
-      <article class="card" v-if="show.question">
+      <article class="card shadow" v-if="show.question">
         <h2 class="form-heading">Как вы хотите добавить ребёнка?</h2>
         <div class="buttons">
           <button class="dark-box dark-button" @click="show.question = false; show.registration = true">Зарегистрировать новый аккаунт</button>
@@ -17,8 +17,22 @@
       <article class="child-data card" v-if="show.registration">
         <button class="left-arrow" @click="show.registration = false; show.question = true"></button>
 
-        <section class="card_wrapper">
-          <h2 class="form-heading"></h2>
+        <section class="card_wrapper" v-show="show.childReg">
+          <section class="card shadow">
+            <h2 class="form-heading">Регистрация прошла успешно</h2>
+            <div class="buttons">
+              <router-link class="dark-button dark-box" to="/child">Вернуться в "Мои дети"</router-link>
+            </div>
+          </section>
+        </section>
+
+        <section class="card_wrapper" v-show="show.childNotReg">
+          <section class="card shadow">
+            <h2 class="form-heading">Ошибка регистрации. Пожалуйста проверьте введённые данные</h2>
+            <div class="buttons">
+              <button class="dark-button dark-box" @click="show.childNotReg = false">Вернуться</button>
+            </div>
+          </section>
         </section>
 
         <table class="child-data_table">
@@ -360,7 +374,6 @@
           question: true,
           registration: false,
           add: false,
-
           childReg: false,
           childNotReg: false
         }
@@ -402,7 +415,7 @@
           })
           .catch(err => {
             console.error(err)
-            this.show.childReg = true
+            this.show.childNotReg = true
 
 
           })
