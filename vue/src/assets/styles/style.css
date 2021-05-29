@@ -4,6 +4,7 @@ body {
 }
 h1,h2,h3,h4,h5,h6 {
   font-weight: normal;
+  margin: 0
 }
 
 /* Auth */
@@ -192,10 +193,16 @@ h1,h2,h3,h4,h5,h6 {
   display: grid;
   grid-template-columns: 300px 1fr;
 }
-
 .home-content {
   background-color: #EFEFEF;
   padding: 30px;
+  min-height: 100vh;
+}
+
+.card {
+  padding: 30px;
+  margin-bottom: 10px;
+  background: #fff;
 }
 
 .shadow {

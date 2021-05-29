@@ -61,6 +61,9 @@
     position: relative;
     opacity: 0.5;
   }
+  input[readonly]:hover {
+    cursor: not-allowed;
+  }
   input[readonly]:hover::before {
     content: "Только для просмотра";
     display: block;

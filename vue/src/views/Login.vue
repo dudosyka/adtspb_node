@@ -2,14 +2,9 @@
   <main class="main-content">
       <div class="auth">
         <div class="form">
-          <div class="input-container">
-            <label class="label" v-bind:class="{'label-up': login}">Номер телефона/Электронная почта</label><br>
-            <input type="text" v-model="login" class="type" tabindex="1">
-          </div>
-
           <InputField
             label="Номер телефона/Электронная почта"
-            :value="login"
+            v-model="login"
           />
 
           <router-link class="air-button dark pass-rest" to="/passreset">Забыли пароль ?</router-link>

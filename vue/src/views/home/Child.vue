@@ -6,13 +6,19 @@
         <section class="children">
 
           <header class="card child shadow" v-for="(child, id) in children">
-            <h2 class="child-name dark">{{ child.name + ' ' + child.surname }}</h2>
-            <button @click="showData(id)" class="dark-box darken child-to-data">К данным</button>
+            <h2 class="child-name">{{ child.name + ' ' + child.surname }}</h2>
+            <button
+              @click="showData(id)"
+              class="dark-box darken child-to-data"
+              :class="{'child-from-data': id === show.childData}"
+            >К данным</button>
           </header>
+
+          <router-link to="/child/add" class="dark-box dark-button child-add">+ Добавить ребёнка</router-link>
 
         </section>
 
-        <section class="children-data card">
+        <section class="children-data card shadow">
 
           <article class="child-data" v-for="(child, id) in children">
             <table class="child-data_table" v-show="show.childData === id">
@@ -84,14 +90,14 @@
                   <td>
                     <inputField
                       label="Гражданство"
-                      :value="child"
+                      :value="child.state"
                       :readonly="true"
                     />
                   </td>
                   <td>
                     <inputField
                       label="Степень родства"
-                      :value="child"
+                      :value="child.relationship"
                       :readonly="true"
                     />
                   </td>
@@ -172,11 +178,10 @@
     grid-template-columns: auto auto;
     grid-gap: 10px;
   }
+  .children {
+    display: flex;
+    flex-direction: column;
 
-  .card {
-    padding: 20px;
-    margin-bottom: 10px;
-    background: #fff;
   }
   .child {
     display: flex;
@@ -184,6 +189,8 @@
   }
   .child-name {
     margin: 0;
+    color: #142732;
+    align-self: center;
   }
   .child-to-data {
 
@@ -199,6 +206,15 @@
     border-top-color: rgba(0,0,0,0);
     border-bottom-color: rgba(0,0,0,0);
     border-left-style: none;
+  }
+  .child-from-data::after {
+    border-left-style: solid;
+    border-right-style: none;
+  }
+  .child-add {
+    align-self: center;
+    max-width: 150px;
+    margin-top: 20px;
   }
   .child-data_table {
     width: 100%;
