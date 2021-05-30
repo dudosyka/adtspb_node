@@ -440,8 +440,30 @@
           }
         `
 
-        let data = {
-          child_data: this.childPhoneOrEmail
+        let data = {}
+
+        if (this.childPhoneOrEmail.indexOf('@') !== -1) {
+          console.log('email')
+
+          data.child_data = this.childPhoneOrEmail
+        } else {
+          console.log('phone')
+
+          if (this.childPhoneOrEmail.indexOf('+7') !== -1) {
+            this.childPhoneOrEmail = this.childPhoneOrEmail.split('')
+            this.childPhoneOrEmail.splice(0,2)
+            this.childPhoneOrEmail = this.childPhoneOrEmail.join('')
+
+            console.log(this.childPhoneOrEmail)
+          }
+
+          if (this.childPhoneOrEmail.length < 11) {
+            this.childPhoneOrEmail = '8' + this.childPhoneOrEmail
+
+            console.log(this.childPhoneOrEmail)
+          }
+
+          data.child_data = this.childPhoneOrEmail
         }
 
         api.request(req, data)
