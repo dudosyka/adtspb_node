@@ -20,9 +20,11 @@
     },
     data() {
         return {
+
         }
     },
     methods: {
+
     },
     async created()
     {

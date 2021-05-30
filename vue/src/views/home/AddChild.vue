@@ -223,6 +223,10 @@
                     v-model="childRaw.registration_address.city"
                   />
                   <inputField
+                    label="Район"
+                    v-model="childRaw.registration_address.district"
+                  />
+                  <inputField
                     label="Улица"
                     v-model="childRaw.registration_address.street"
                   />
@@ -250,6 +254,10 @@
                   <inputField
                     label="Город"
                     v-model="childRaw.residence_address.city"
+                  />
+                  <inputField
+                    label="Район"
+                    v-model="childRaw.residence_address.district"
                   />
                   <inputField
                     label="Улица"
@@ -311,7 +319,7 @@
   }
   .child-data_input-row {
     display: grid;
-    grid-template-columns: repeat(4, auto);
+    grid-template-columns: repeat(3, auto) 30px 150px;
     grid-gap: 10px;
   }
   .form-heading {
@@ -370,11 +378,13 @@
           birthday: null,
           registration_address: {
             city: null,
+            district: null,
             street: null,
             house: null,
           },
           residence_address: {
             city: null,
+            district: null,
             street: null,
             house: null
           }
@@ -399,10 +409,10 @@
           mutation ($user: UserInput) {
             createChild(child: $user)
           }
-        `
+        `;
 
-        this.child.registration_address = this.childRaw.registration_address.city + ' ' + this.childRaw.registration_address.street + ' ' + this.childRaw.registration_address.house
-        this.child.residence_address = this.childRaw.residence_address.city + ' ' + this.childRaw.residence_address.street + ' ' + this.childRaw.residence_address.house
+        this.child.registration_address = this.childRaw.registration_address.city + ' ' + this.childRaw.registration_address.city + ' ' + this.childRaw.registration_address.street + ' ' + this.childRaw.registration_address.house
+        this.child.residence_address = this.childRaw.residence_address.city + ' ' + this.childRaw.residence_address.city + ' ' + this.childRaw.residence_address.street + ' ' + this.childRaw.residence_address.house
 
         if (this.child.phone != 11) {
             this.child.phone = 8 + this.child.phone
@@ -444,7 +454,7 @@
 
         if (this.childPhoneOrEmail.indexOf('@') !== -1) {
           data.child_data = this.childPhoneOrEmail
-          
+
         } else {
 
           if (this.childPhoneOrEmail.indexOf('+7') !== -1) {
