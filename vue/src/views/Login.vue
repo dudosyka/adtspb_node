@@ -74,8 +74,26 @@
             `
 
             let data = {
-                login: this.login,
+                login: null,
                 password: this.pass
+            }
+
+            if (this.login.indexOf('@') !== -1) {
+              data.login = this.login
+              
+            } else {
+
+              if (this.login.indexOf('+7') !== -1) {
+                this.login = this.login.split('')
+                this.login.splice(0,2)
+                this.login = this.login.join('')
+              }
+
+              if (this.login.length < 11) {
+                this.login = '8' + this.login
+              }
+
+              data.login = this.login
             }
 
             endoor.request(req, data)
