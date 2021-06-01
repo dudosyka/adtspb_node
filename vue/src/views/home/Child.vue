@@ -30,14 +30,14 @@
                     <inputField
                       label="Имя"
                       v-model="child.name"
-                      :readonly="show.readonly"
+                      :readonly="child.readonly"
                     />
                   </div>
                   <div>
                     <inputField
                       label="Фамилия"
                       v-model="child.surname"
-                      :readonly="show.readonly"
+                      :readonly="child.readonly"
                     />
                   </div>
                 </div>
@@ -47,19 +47,19 @@
                     <inputField
                       label="Отчество"
                       v-model="child.lastname"
-                      :readonly="show.readonly"
+                      :readonly="child.readonly"
                     />
                   </div>
                   <div>
                     <div class="input-container">
-                      <label class="label" v-bind:class="{'label-up': childRaw.birthday}">Дата рождения</label><br>
+                      <label class="label" v-bind:class="{'label-up': child.birthday}">Дата рождения</label><br>
                       <masked-input
                         class="type"
-                        v-model="childRaw.birthday"
+                        v-model="child.birthday"
                         mask="11 / 11 / 11"
                         @input="child.birthday = arguments[1]"
                         tabindex="1"
-                        :readonly="show.readonly"
+                        :readonly="child.readonly"
                       />
                     </div>
                   </div>
@@ -69,7 +69,7 @@
                   <inputField
                     label="Номер свидетельства о рождении"
                     v-model="child.birth_certificate"
-                    :readonly="show.readonly"
+                    :readonly="child.readonly"
                   />
                 </div>
               </article>
@@ -80,7 +80,7 @@
                     <inputField
                       label="Электронная почта"
                       v-model="child.email"
-                      :readonly="show.readonly"
+                      :readonly="child.readonly"
                     />
                   </div>
                   <div>
@@ -93,7 +93,7 @@
                         type="tel"
                         class="type"
                         tabindex="4"
-                        :readonly="show.readonly"
+                        :readonly="child.readonly"
                         />
                     </div>
                   </div>
@@ -105,11 +105,11 @@
                   <h3 class="radio-heading dark">Пол</h3>
                   <ul class="radio-list">
                     <div class="radio-container">
-                      <input type="radio" v-model.number="child.sex" value="1" class="radio" tabindex="3" id="man" :disabled="!readonly">
+                      <input type="radio" v-model.number="child.sex" value="1" class="radio" tabindex="3" id="man" :disabled="child.readonly">
                       <label class="dark radio" for="man" tabindex="5">Мужской</label>
                     </div>
                     <div class="radio-container">
-                      <input type="radio" v-model.number="child.sex" value="0" class="radio" tabindex="3" id="woman" :disabled="!readonly">
+                      <input type="radio" v-model.number="child.sex" value="0" class="radio" tabindex="3" id="woman" :disabled="child.readonly">
                       <label class="dark radio" for="woman" tabindex="6">Женский</label>
                     </div>
                   </ul>
@@ -122,14 +122,14 @@
                     <inputField
                       label="Гражданство"
                       v-model="child.state"
-                      :readonly="show.readonly"
+                      :readonly="child.readonly"
                     />
                   </div>
                   <div>
                     <inputField
                       label="Степень родства"
                       v-model="child.relationship"
-                      :readonly="show.readonly"
+                      :readonly="child.readonly"
                     />
                   </div>
                 </div>
@@ -139,14 +139,14 @@
                 <div class="child-data_row">
                   <div>
                     <h2 class="form-heading child-data_heading">ОВЗ</h2>
-                    <select class="dark-box darken" v-model.number="child.ovz" :disabled="show.readonly">
+                    <select class="dark-box darken" v-model.number="child.ovz" :disabled="child.readonly">
                       <option value="0">Нету</option>
                       <option value="1">Есть</option>
                     </select>
                   </div>
                   <div v-if="child.ovz">
                     <h2 class="form-heading left">Тип ОВЗ</h2>
-                    <select class="dark-box darken" v-model="child.ovz_type.id" :disabled="show.readonly">
+                    <select class="dark-box darken" v-model="child.ovz_type.id" :disabled="child.readonly">
                       <option v-for="(type, id) in ovzTypes" :value="id">{{ type }}</option>
                     </select>
                   </div>
@@ -155,14 +155,14 @@
                 <div class="child-data_row">
                   <div>
                     <h2 class="form-heading child-data_heading">Инвалидность</h2>
-                    <select class="dark-box darken" v-model.number="child.disability" :disabled="show.readonly">
+                    <select class="dark-box darken" v-model.number="child.disability" :disabled="child.readonly">
                       <option value="0">Нету</option>
                       <option value="1">Есть</option>
                     </select>
                   </div>
                   <div v-if="child.disability">
                     <h2 class="form-heading left">Группа нвалидности</h2>
-                    <select class="dark-box darken" v-model="child.disability_group.id" :disabled="show.readonly">
+                    <select class="dark-box darken" v-model="child.disability_group.id" :disabled="child.readonly">
                       <option v-for="(type, id) in disabilityTypes" :value="id">{{ type }}</option>
                     </select>
                   </div>
@@ -174,7 +174,7 @@
                   label="Образовательное учреждение"
                   v-model="child.studyPlace"
                   type="text"
-                  :readonly="show.readonly"
+                  :readonly="child.readonly"
                 />
                 <div class="child-data_row">
                   <!--
@@ -195,27 +195,27 @@
                     <inputField
                       label="Город"
                       v-model="childRaw.registration_address.city"
-                      :readonly="show.readonly"
+                      :readonly="child.readonly"
                     />
                     <inputField
                       label="Район"
                       v-model="childRaw.registration_address.district"
-                      :readonly="show.readonly"
+                      :readonly="child.readonly"
                     />
                     <inputField
                       label="Улица"
                       v-model="childRaw.registration_address.street"
-                      :readonly="show.readonly"
+                      :readonly="child.readonly"
                     />
                     <inputField
                       label="Дом"
                       v-model="childRaw.registration_address.house"
-                      :readonly="show.readonly"
+                      :readonly="child.readonly"
                     />
                     <inputField
                       label="Номер квартиры"
                       v-model="child.registration_flat"
-                      :readonly="show.readonly"
+                      :readonly="child.readonly"
                     />
                   </div>
               </article>
@@ -225,27 +225,27 @@
                   <inputField
                     label="Город"
                     v-model="childRaw.residence_address.city"
-                    :readonly="show.readonly"
+                    :readonly="child.readonly"
                   />
                   <inputField
                     label="Район"
                     v-model="childRaw.residence_address.district"
-                    :readonly="show.readonly"
+                    :readonly="child.readonly"
                   />
                   <inputField
                     label="Улица"
                     v-model="childRaw.residence_address.street"
-                    :readonly="show.readonly"
+                    :readonly="child.readonly"
                   />
                   <inputField
                     label="Дом"
                     v-model="childRaw.residence_address.house"
-                    :readonly="show.readonly"
+                    :readonly="child.readonly"
                   />
                   <inputField
                     label="Номер квартиры"
                     v-model="child.residence_flat"
-                    :readonly="show.readonly"
+                    :readonly="child.readonly"
                   />
                 </div>
               </article>
@@ -256,7 +256,7 @@
                     label="Пароль"
                     type="password"
                     v-model="child.password"
-                    :readonly="show.readonly"
+                    :readonly="child.readonly"
                   />
                 </div>
               </div>
@@ -387,7 +387,6 @@
         disabilityTypes: ['I', 'II', 'III'],
         show: {
           childData: 0,
-          readonly: true
         },
         remove: {
           comment: null,
@@ -400,7 +399,25 @@
       let req = `
         query {
           getChildren {
-            id, name, surname, phone, birthday, ovz
+              id,
+              name,
+              surname,
+              lastname,
+              email,
+              phone,
+
+              birthday,
+              birth_certificate,
+              sex,
+              state,
+              relationship,
+              studyPlace,
+
+              ovz, ovz_type { id },
+              disability, disability_group { id },
+
+              registration_address, registration_flat,
+              residence_address, residence_flat
           }
         }
       `
@@ -426,6 +443,8 @@
 
                   el.birthday = year + "-" + month + "-" + day;
 
+                  el.readonly = true
+
                   return el;
                 });
             this.children = data.getChildren;
@@ -439,6 +458,8 @@
 
       editChild(id) {
         console.log('edit hi')
+
+
       },
 
       removeChild(id) {
@@ -448,6 +469,7 @@
           }
         `
 
+        this.children[id].id = Number(this.children[id].id)
         let data = {
           child_id: this.children[id].id,
           removeAccount: false,
@@ -458,7 +480,7 @@
 
         api.request(req, data)
           .then(data => {
-            this.remove.hidden = true
+            this.remove.hidden = false
             this.remove.message = 'Запрос на удаление успешно отправлен'
           })
           .catch(err => {
@@ -468,7 +490,6 @@
       },
     },
     computed: {
-
     }
   }
 </script>

@@ -5,12 +5,12 @@
       <div class="home-content">
         <section>
 
-          <article class="card" v-if="haveParentRequest" v-for="req in parentRequest">
+          <article class="card shadow" v-if="haveParentRequest" v-for="(req, id) in parentRequest">
             <h1 class="form-heading">{{req.surname}} {{req.name}}</h1>
             <p>{{ req.phone }}</p>
             <p>Хочет стать вашим родителем</p>
-            <button class="dark-box dark-button" @="accept(req)">Принять</button>
-            <button class="light-box light-button" @="cancell(req)">Отклонить</button>
+            <button class="dark-box dark-button" @click="accept(id)">Принять</button>
+            <button class="light-box light-button" @click="cancell(id)">Отклонить</button>
           </article>
         </section>
       </div>
@@ -46,7 +46,7 @@
       let req = `
         query {
           getParentRequests {
-              name, surname, phone
+              id, name, surname, phone
           }
         }
       `
@@ -67,10 +67,19 @@
         .catch(err => { console.log(err) })
     },
     methods: {
-      accept(req) {
+      accept(id) {
+        console.log(this.parentRequest[id])
+        let req = `
+          mutation ($request_id: Int, $userData: UserInput) {
+            agreeParentRequest(request_id: $request_id, newData: $userData)
+          }
+        `
 
+        let data = {
+          request_id
+        }
       },
-      cancell(req) {
+      cancell(id) {
 
       }
     }
