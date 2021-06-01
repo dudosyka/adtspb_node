@@ -405,7 +405,7 @@
     },
     methods: {
       childRegistration() {
-        let req = `
+        const req = `
           mutation ($user: UserInput) {
             createChild(child: $user)
           }
@@ -418,7 +418,17 @@
             this.child.phone = 8 + this.child.phone
         }
 
-        this.child.birthday = Number(this.child.birthday)
+        console.log(this.child);
+
+        //TODO: Refactor
+        const birth = this.child.birthday;
+        const days = Math.floor(birth / 10000);
+        const month = (Math.floor(((birth / 10000) - days) * 100));
+        const years = Math.floor(((((birth / 10000) - days) * 100) - month) * 100) + 2000;
+
+        const dateStr = years + '-' + month + "-" + days;
+
+        this.child.birthday = (new Date(dateStr)).getTime();
 
         this.child.ovz = Number(this.child.ovz)
         this.child.ovz_type.id = Number(this.child.ovz_type.id)
