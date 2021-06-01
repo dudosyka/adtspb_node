@@ -1,4 +1,5 @@
 const baseEntity = require('./BaseEntity');
+const DataOnEdit = require('./DataOnEdit');
 
 let UserExtraData = function () {}
 
@@ -48,6 +49,12 @@ UserExtraData.prototype.__save = async function () {
         this.__set('ovz_type', this.__get('ovz_type').id);
     if (this.__get('disability_group') !== null && typeof this.__get('disability_group') == 'object')
         this.__set('disability_group', this.__get('disability_group').id);
+    if (this.__get('ovz_type') == 0)
+        this.__set('ovz_type', null);
+    if (this.__get('disability_group') == 0)
+        this.__set('disability_group', null);
+    console.log(this.__get('ovz_type'));
+    console.log(this.__get('disability_group'));
     if (this.fields.id)
         return await this.update();
     else
@@ -91,12 +98,15 @@ UserExtraData.prototype.checkChildData = function () {
     return this.validate();
 }
 
-UserExtraData.prototype.setChildData = async function () {
+UserExtraData.prototype.setChildData = async function (fromParent = false) {
     const validate = this.checkChildData();
     if (validate !== true) {
         return JSON.stringify(validate);
     }
-    return this.__save() !== false;
+
+    // const requester_id = fromParent !== false ? fromParent : this.__get('user_id');
+    // const onEdit = DataOnEdit.setUserOnEdit(requester_id, );
+    return (await this.__save().catch(err => { throw Error("Saving data failed") })) !== false;
 }
 
 UserExtraData.prototype.table = "user_extra_data";
