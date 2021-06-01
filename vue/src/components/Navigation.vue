@@ -1,12 +1,13 @@
-<template>
-  <div class="nav">
+<template id="nav">
+  <div class="nav shadow">
     <header class="header">
       <img src="../assets/files/logo.svg" width="50" alt="">
       <h1 class="dark">Личный кабинет</h1>
     </header>
     <nav class="nav-container">
         <router-link to="/" class="link">Главная</router-link>
-        <router-link to="/child" class="link">Мои дети</router-link>
+        <router-link to="/parent" v-if="isChild" class="link">Мои родители</router-link>
+        <router-link to="/child" v-if="manageChildren" class="link">Мои дети</router-link>
         <router-link to="/proposal" class="link">Заявления</router-link>
         <router-link to="/document" class="link">Подача документов</router-link>
     </nav>
@@ -23,6 +24,7 @@
 
   .header {
     display: flex;
+    align-items: center;
   }
   .header h1 {
     margin-left: 10px;
@@ -37,3 +39,23 @@
     grid-gap: 20px;
   }
 </style>
+
+<script>
+  export default {
+    data() {
+      return {
+        isChild: false,
+        manageChildren: false,
+      }
+    },
+    created() {
+      if (hasAccess(11) === true) {
+        this.manageChildren = true
+      }
+
+      if (hasAccess(11) === false) {
+        this.isChild = true
+      }
+    }
+  }
+</script>

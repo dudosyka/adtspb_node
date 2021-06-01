@@ -21,33 +21,36 @@
         <section class="children-data card shadow">
 
           <article class="child-data" v-for="(child, id) in children" v-show="show.childData === id">
-            <table class="child-data_table">
-              <tbody class="child-data_table-group">
-                <tr>
-                  <td>
+            <article class="child-data_table">
+
+              <article class="child-data_table-group">
+
+                <div class="child-data_row">
+                  <div>
                     <inputField
                       label="Имя"
                       v-model="child.name"
                       :readonly="show.readonly"
                     />
-                  </td>
-                  <td>
+                  </div>
+                  <div>
                     <inputField
                       label="Фамилия"
                       v-model="child.surname"
                       :readonly="show.readonly"
                     />
-                  </td>
-                </tr>
-                <tr>
-                  <td>
+                  </div>
+                </div>
+
+                <div class="child-data_row">
+                  <div>
                     <inputField
                       label="Отчество"
                       v-model="child.lastname"
                       :readonly="show.readonly"
                     />
-                  </td>
-                  <td>
+                  </div>
+                  <div>
                     <div class="input-container">
                       <label class="label" v-bind:class="{'label-up': childRaw.birthday}">Дата рождения</label><br>
                       <masked-input
@@ -59,28 +62,28 @@
                         :readonly="show.readonly"
                       />
                     </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <inputField
-                      label="Номер свидетельства о рождении"
-                      v-model="child.birth_certificate"
-                      :readonly="show.readonly"
-                    />
-                  </td>
-                </tr>
-              </tbody>
-              <tbody class="child-data_table-group">
-                <tr>
-                  <td>
+                  </div>
+                </div>
+
+                <div>
+                  <inputField
+                    label="Номер свидетельства о рождении"
+                    v-model="child.birth_certificate"
+                    :readonly="show.readonly"
+                  />
+                </div>
+              </article>
+
+              <article class="child-data_table-group">
+                <div class="child-data_row">
+                  <div>
                     <inputField
                       label="Электронная почта"
                       v-model="child.email"
                       :readonly="show.readonly"
                     />
-                  </td>
-                  <td>
+                  </div>
+                  <div>
                     <div class="input-container required">
                       <label class="label" v-bind:class="{'label-up': child.phone}">Номер телефона</label><br>
                       <masked-input
@@ -93,191 +96,183 @@
                         :readonly="show.readonly"
                         />
                     </div>
-                  </td>
-                </tr>
-              </tbody>
-              <tbody class="child-data_table-group">
-                <tr>
-                  <td colspan="2">
-                    <div class="input-container required">
-                      <h3 class="radio-heading dark">Пол</h3>
-                      <ul class="radio-list">
-                        <div class="radio-container">
-                          <input type="radio" v-model.number="child.sex" value="1" class="radio" tabindex="3" id="man" :disabled="readonly">
-                          <label class="dark radio" for="man" tabindex="5">Мужской</label>
-                        </div>
-                        <div class="radio-container">
-                          <input type="radio" v-model.number="child.sex" value="0" class="radio" tabindex="3" id="woman" :disabled="readonly">
-                          <label class="dark radio" for="woman" tabindex="6">Женский</label>
-                        </div>
-                      </ul>
+                  </div>
+                </div>
+              </article>
+
+              <article class="child-data_table-group">
+                <div class="input-container required">
+                  <h3 class="radio-heading dark">Пол</h3>
+                  <ul class="radio-list">
+                    <div class="radio-container">
+                      <input type="radio" v-model.number="child.sex" value="1" class="radio" tabindex="3" id="man" :disabled="!readonly">
+                      <label class="dark radio" for="man" tabindex="5">Мужской</label>
                     </div>
-                  </td>
-                </tr>
-              </tbody>
-              <tbody class="child-data_table-group">
-                <tr>
-                  <td>
+                    <div class="radio-container">
+                      <input type="radio" v-model.number="child.sex" value="0" class="radio" tabindex="3" id="woman" :disabled="!readonly">
+                      <label class="dark radio" for="woman" tabindex="6">Женский</label>
+                    </div>
+                  </ul>
+                </div>
+              </article>
+
+              <article class="child-data_table-group">
+                <div class="child-data_row">
+                  <div>
                     <inputField
                       label="Гражданство"
                       v-model="child.state"
                       :readonly="show.readonly"
                     />
-                  </td>
-                  <td>
+                  </div>
+                  <div>
                     <inputField
                       label="Степень родства"
                       v-model="child.relationship"
                       :readonly="show.readonly"
                     />
-                  </td>
-                </tr>
-              </tbody>
-              <tbody class="child-data_table-group">
-                <tr>
-                  <td>
-                    <h2 class="form-heading left">ОВЗ</h2>
+                  </div>
+                </div>
+              </article>
+
+              <article class="child-data_table-group">
+                <div class="child-data_row">
+                  <div>
+                    <h2 class="form-heading child-data_heading">ОВЗ</h2>
                     <select class="dark-box darken" v-model.number="child.ovz" :disabled="show.readonly">
                       <option value="0">Нету</option>
                       <option value="1">Есть</option>
                     </select>
-                  </td>
-                  <td v-if="child.ovz">
+                  </div>
+                  <div v-if="child.ovz">
                     <h2 class="form-heading left">Тип ОВЗ</h2>
                     <select class="dark-box darken" v-model="child.ovz_type.id" :disabled="show.readonly">
                       <option v-for="(type, id) in ovzTypes" :value="id">{{ type }}</option>
                     </select>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <h2 class="form-heading left">Инвалидность</h2>
+                  </div>
+                </div>
+
+                <div class="child-data_row">
+                  <div>
+                    <h2 class="form-heading child-data_heading">Инвалидность</h2>
                     <select class="dark-box darken" v-model.number="child.disability" :disabled="show.readonly">
                       <option value="0">Нету</option>
                       <option value="1">Есть</option>
                     </select>
-                  </td>
-                  <td v-if="child.disability">
+                  </div>
+                  <div v-if="child.disability">
                     <h2 class="form-heading left">Группа нвалидности</h2>
                     <select class="dark-box darken" v-model="child.disability_group.id" :disabled="show.readonly">
                       <option v-for="(type, id) in disabilityTypes" :value="id">{{ type }}</option>
                     </select>
-                  </td>
-                </tr>
-              </tbody>
-              <tbody class="child-data_table-group">
-                <tr>
-                  <td colspan="2">
-                    <inputField
-                      label="Образовательное учреждение"
-                      v-model="child.studyPlace"
-                      type="text"
-                      :readonly="show.readonly"
-                    />
-                  </td>
-                </tr>
-                <tr>
+                  </div>
+                </div>
+              </article>
+
+              <article class="child-data_table-group">
+                <inputField
+                  label="Образовательное учреждение"
+                  v-model="child.studyPlace"
+                  type="text"
+                  :readonly="show.readonly"
+                />
+                <div class="child-data_row">
                   <!--
-                  <td>
+                  <div>
                     <inputField
                       label="Класс \ группа"
                       v-model="child.class"
                       type="text"
                     />
-                  </td>
+                  </div>
                   !-->
-                </tr>
-              </tbody>
-              <tbody class="child-data_table-group">
-                <tr>
-                  <td colspan="2">
-                    <h2 class="form-heading">Адрес регистрации</h2>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2">
-                    <div class="child-data_input-row">
-                      <inputField
-                        label="Город"
-                        v-model="childRaw.registration_address.city"
-                        :readonly="show.readonly"
-                      />
-                      <inputField
-                        label="Район"
-                        v-model="childRaw.registration_address.district"
-                        :readonly="show.readonly"
-                      />
-                      <inputField
-                        label="Улица"
-                        v-model="childRaw.registration_address.street"
-                        :readonly="show.readonly"
-                      />
-                      <inputField
-                        label="Дом"
-                        v-model="childRaw.registration_address.house"
-                        :readonly="show.readonly"
-                      />
-                      <inputField
-                        label="Номер кваритиры"
-                        v-model="child.registration_flat"
-                        :readonly="show.readonly"
-                      />
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-              <tbody class="child-data_table-group">
-                <tr>
-                  <td colspan="2">
-                    <h2 class="form-heading">Адрес проживания</h2>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2">
-                    <div class="child-data_input-row">
-                      <inputField
-                        label="Город"
-                        v-model="childRaw.residence_address.city"
-                        :readonly="show.readonly"
-                      />
-                      <inputField
-                        label="Район"
-                        v-model="childRaw.residence_address.district"
-                        :readonly="show.readonly"
-                      />
-                      <inputField
-                        label="Улица"
-                        v-model="childRaw.residence_address.street"
-                        :readonly="show.readonly"
-                      />
-                      <inputField
-                        label="Дом"
-                        v-model="childRaw.residence_address.house"
-                        :readonly="show.readonly"
-                      />
-                      <inputField
-                        label="Номер кваритиры"
-                        v-model="child.residence_flat"
-                        :readonly="show.readonly"
-                      />
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-              <tr>
-                <td>
+                </div>
+              </article>
+
+              <article class="child-data_table-group">
+                <h2 class="form-heading child-data_heading">Адрес регистрации</h2>
+                  <div class="child-data_addres">
+                    <inputField
+                      label="Город"
+                      v-model="childRaw.registration_address.city"
+                      :readonly="show.readonly"
+                    />
+                    <inputField
+                      label="Район"
+                      v-model="childRaw.registration_address.district"
+                      :readonly="show.readonly"
+                    />
+                    <inputField
+                      label="Улица"
+                      v-model="childRaw.registration_address.street"
+                      :readonly="show.readonly"
+                    />
+                    <inputField
+                      label="Дом"
+                      v-model="childRaw.registration_address.house"
+                      :readonly="show.readonly"
+                    />
+                    <inputField
+                      label="Номер квартиры"
+                      v-model="child.registration_flat"
+                      :readonly="show.readonly"
+                    />
+                  </div>
+              </article>
+              <article class="child-data_table-group">
+                <h2 class="form-heading child-data_heading">Адрес проживания</h2>
+                <div class="child-data_addres">
+                  <inputField
+                    label="Город"
+                    v-model="childRaw.residence_address.city"
+                    :readonly="show.readonly"
+                  />
+                  <inputField
+                    label="Район"
+                    v-model="childRaw.residence_address.district"
+                    :readonly="show.readonly"
+                  />
+                  <inputField
+                    label="Улица"
+                    v-model="childRaw.residence_address.street"
+                    :readonly="show.readonly"
+                  />
+                  <inputField
+                    label="Дом"
+                    v-model="childRaw.residence_address.house"
+                    :readonly="show.readonly"
+                  />
+                  <inputField
+                    label="Номер квартиры"
+                    v-model="child.residence_flat"
+                    :readonly="show.readonly"
+                  />
+                </div>
+              </article>
+
+              <div class="child-data_row">
+                <div>
                   <inputField
                     label="Пароль"
                     type="password"
                     v-model="child.password"
                     :readonly="show.readonly"
                   />
-                </td>
-              </tr>
-            </table>
+                </div>
+              </div>
+            </article>
+
             <div class="buttons">
-              <button class="dark-box dark-button" @="editChild(id)">Редактировать</button>
-              <button class="light-box light-button" @="removeChild(id)">Удалить</button>
+              <button class="dark-box dark-button" @click="editChild(id)">Редактировать</button>
+
+              <h2 class="form-heading"> {{ remove.message }} </h2>
+              <inputField
+                label="Комментарий к удалению"
+                v-if="remove.hidden"
+                v-model="remove.comment"
+              />
+              <button class="light-box light-button" v-if="!remove.hidden" @click="remove.hidden = true">Удалить</button>
+              <button class="light-box light-button" v-if="remove.hidden" @click="removeChild(id)">Удалить</button>
             </div>
           </article>
 
@@ -296,7 +291,6 @@
   .children {
     display: flex;
     flex-direction: column;
-
   }
   .child {
     display: flex;
@@ -331,22 +325,31 @@
     max-width: 150px;
     margin-top: 20px;
   }
+
   .child-data_table {
     width: 100%;
+    display: grid;
+    grid-gap: 20px;
   }
-  .child-data_table td {
-    padding-right: 20px;
-  }
-  .child-data_table td:last-child {
-    padding-right: 0;
+  .child-data_heading {
+    margin-bottom: 5px;
+    margin-top: 20px;
   }
   .child-data_table-group {
     margin: 5px 0;
   }
-  .child-data_input-row {
+  .child-data_row {
     display: grid;
-    grid-template-columns: repeat(5, auto);
+    grid-template-columns: repeat(auto-fill, minmax(100px, 200px));
+    grid-gap: 20px;
+  }
+  .child-data_addres {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 200px));
     grid-gap: 10px;
+  }
+  .buttons {
+    margin-top: 30px;
   }
 </style>
 
@@ -386,6 +389,11 @@
           childData: 0,
           readonly: true
         },
+        remove: {
+          comment: null,
+          message: '',
+          hidden: false
+        }
       }
     },
     created() {
@@ -425,28 +433,39 @@
         .catch(err => { console.log(err) })
     },
     methods: {
-      addChild() {
-        this.addChildShow = true
+      showData(id) {
+        this.show.childData = id
+      },
 
+      editChild(id) {
+        console.log('edit hi')
+      },
+
+      removeChild(id) {
         let req = `
-          mutation($child_id: Int) {
-            addChild(child_id: $child_id)
+          mutation ($child_id: Int, $removeAccount: Boolean, $comment: String) {
+            removeChild(child_id: $child_id, removeAccount: $removeAccount, comment: $comment)
           }
         `
 
         let data = {
-
+          child_id: this.children[id].id,
+          removeAccount: false,
+          comment: this.remove.comment
         }
+
+        console.log(data)
+
+        api.request(req, data)
+          .then(data => {
+            this.remove.hidden = true
+            this.remove.message = 'Запрос на удаление успешно отправлен'
+          })
+          .catch(err => {
+            console.log(err)
+            this.remove.message = 'Произошла ошибка('
+          })
       },
-      showData(id) {
-        this.show.childData = id
-      },
-      eiditChild(id) {
-        console.log('edit hi')
-      },
-      removeChild(id) {
-        console.log('remove hi')
-      }
     },
     computed: {
 

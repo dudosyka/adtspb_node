@@ -31,11 +31,11 @@
       <h3 class="radio-heading dark">Пол</h3>
       <ul class="radio-list">
         <div class="radio-container">
-          <input type="radio" v-model="value" value="1" class="radio" v-on="listeners" tabindex="3" id="man" readonly="readonly">
+          <input type="radio" v-model="value" value="1" class="radio" v-on="listeners" tabindex="3" id="man">
           <label class="dark radio" for="man" tabindex="5">Мужской</label>
         </div>
         <div class="radio-container">
-          <input type="radio" v-model="value" value="0" class="radio" v-on="listeners" tabindex="3" id="woman" readonly="readonly">
+          <input type="radio" v-model="value" value="0" class="radio" v-on="listeners" tabindex="3" id="woman">
           <label class="dark radio" for="woman" tabindex="6">Женский</label>
         </div>
       </ul>
@@ -51,7 +51,7 @@
     <div class="password-container" v-if="type === 'password'">
       <div>
         <label class="label" v-bind:class="{'label-up': value}">{{label}}</label><br>
-        <input :type="passwordFieldType" :value="value" v-on="listeners" class="type" tabindex="1">
+        <input :type="passwordFieldType" :value="value" v-on="listeners" class="type" tabindex="1" :readonly="readonly">
       </div>
       <button
         @click="switchVisibility()"

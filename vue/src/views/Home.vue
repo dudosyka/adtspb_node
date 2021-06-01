@@ -3,11 +3,25 @@
     <navigation />
 
     <article class="home-content">
-      <h1>Home Page</h1>
-      <button onclick='localStorage.removeItem("token");window.location = window.location;'>LOGOUT</button>
+      <section class="card shadow">
+        <h1 class="main-heading">Добро пожаловать</h1>
+        <button class="dark-box dark-button" onclick='localStorage.removeItem("token");window.location = window.location;'>Выйти</button>
+
+      </section>
+
     </article>
+
+
   </main>
 </template>
+
+<style scoped>
+  .main-heading {
+    font-size: 1.5rem;
+    color: #142732;
+    margin-bottom: 20px;
+  }
+</style>
 
 <script>
   // @ is an alias to /src
@@ -20,8 +34,14 @@
     },
     data() {
         return {
-
+          cards: [],
+          user: {
+            name: null
+          }
         }
+    },
+    created() {
+
     },
     methods: {
 

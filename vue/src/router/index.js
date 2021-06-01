@@ -9,6 +9,7 @@ import Confirmation from '../views/Confirmation.vue'
 
 import Child from '../views/home/Child.vue'
 import AddChild from '../views/home/AddChild.vue'
+import Parent from '../views/home/Parent.vue'
 import Ducument from '../views/home/Document.vue'
 import Proposal from '../views/home/Proposal.vue'
 
@@ -55,6 +56,11 @@ const routes = [
     path: '/child/add',
     name: 'AddChild',
     component: AddChild
+  },
+  {
+    path: '/parent',
+    name: 'Parent',
+    component: Parent
   },
   {
     path: '/document',

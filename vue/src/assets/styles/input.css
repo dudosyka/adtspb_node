@@ -147,6 +147,9 @@
 
     pointer-events: none;
 
+    white-space: nowrap;
+    text-overflow: clip;
+
     color: #cecece;
     font-size: 1rem;
 

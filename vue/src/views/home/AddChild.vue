@@ -235,7 +235,7 @@
                     v-model="childRaw.registration_address.house"
                   />
                   <inputField
-                    label="Номер кваритиры"
+                    label="Номер квартиры"
                     v-model="child.registration_flat"
                   />
                 </div>
@@ -268,7 +268,7 @@
                     v-model="childRaw.residence_address.house"
                   />
                   <inputField
-                    label="Номер кваритиры"
+                    label="Номер квартиры"
                     v-model="child.residence_flat"
                   />
                 </div>
@@ -411,8 +411,8 @@
           }
         `;
 
-        this.child.registration_address = this.childRaw.registration_address.city + ' ' + this.childRaw.registration_address.city + ' ' + this.childRaw.registration_address.street + ' ' + this.childRaw.registration_address.house
-        this.child.residence_address = this.childRaw.residence_address.city + ' ' + this.childRaw.residence_address.city + ' ' + this.childRaw.residence_address.street + ' ' + this.childRaw.residence_address.house
+        this.child.registration_address = this.childRaw.registration_address.city + ', ' + this.childRaw.registration_address.city + ', ' + this.childRaw.registration_address.street + ', ' + this.childRaw.registration_address.house
+        this.child.residence_address = this.childRaw.residence_address.city + ', ' + this.childRaw.residence_address.city + ', ' + this.childRaw.residence_address.street + ', ' + this.childRaw.residence_address.house
 
         if (this.child.phone != 11) {
             this.child.phone = 8 + this.child.phone
