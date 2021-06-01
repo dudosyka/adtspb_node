@@ -10,6 +10,8 @@ const jwt = new Jwt();
 const UserChild = require('../Entity/UserChild');
 const UserChildOnDelete = require('../Entity/UserChildOnDelete');
 const UserExtraData = require('../Entity/UserExtraData');
+const DataOnEdit = require('../Entity/DataOnEdit');
+const UserDataLog = require('../Entity/UserDataLog');
 
 const AssociationExtraData = require('./AssociationExraData');
 
@@ -52,7 +54,14 @@ User.prototype.validateRules = function () {
 }
 
 User.prototype.fields = {
-    id: null
+    id: null,
+    name: null,
+    surname: null,
+    lastname: null,
+    email: null,
+    phone: null,
+    sex: null,
+    password: null,
 }
 
 User.prototype.getRole = async function () {
@@ -88,7 +97,7 @@ User.prototype.auth = async function (data) {
         else
          resolve({status: false, res: 'login incorrect'});
     });
-};
+}
 
 User.prototype.checkRole = function (checkFor, target = false) {
     //If target not provided then check...
@@ -308,15 +317,21 @@ User.prototype.createChild = async function (data) {
     return await child.agreeParentRequest(request_id, data);
 }
 
-User.prototype.removeChild = async function (child_id, removeAccount) {
-    if (!this.hasAccess(11))
-        throw Error('Forbidden');
+User.prototype.checkRelationship = async function (child_id) {
     const userChild = await UserChild.baseCreateFrom({ parent_id: this.__get('id'), child_id: child_id });
     const checkRelationship = await userChild.checkRelationship();
+    return checkRelationship === false ? false : userChild;
+}
+
+User.prototype.removeChild = async function (child_id, removeAccount, comment) {
+    if (!this.hasAccess(11))
+        throw Error('Forbidden');
+
+    const checkRelationship = await this.checkRelationship(child_id);
     if (checkRelationship === false)
         throw Error('Child not found');
 
-    await userChild.removeChild(removeAccount).catch(err => {
+    await checkRelationship.removeChild(removeAccount, comment).catch(err => {
         throw Error(err);
     });
 
@@ -331,6 +346,62 @@ User.prototype.confirmRemoveChild = async function (link) {
         throw Error('Link not found');
     const userChild = await UserChild.baseCreateFrom({ id: userChildOnDelete.__get('user_child_id') });
     return await userChildOnDelete.confirmRemoveChild(userChild, this.__get('id'));
+}
+
+User.prototype.getTargetOfEditing = async function (target_id) {
+    let target = false;
+
+    if (target_id !== 0) {
+        if (!this.hasAccess(13))
+            throw Error('Forbidden');
+        const checkRelationship = await this.checkRelationship(target_id)
+        if (checkRelationship === false)
+            throw Error('Child not found');
+
+        target = target_id;
+        // const model = this.newModel();
+        // target = await model.baseCreateFrom({ id: target_id });
+    }
+
+    return target;
+}
+
+User.prototype.setMainDataOnEdit = async function (data, target_id) {
+    let target = await this.getTargetOfEditing(target_id);
+
+    if (target !== false) {
+        const model = this.newModel();
+        target = await model.baseCreateFrom({ id: target_id });
+    } else {
+        target = this;
+    }
+
+    return DataOnEdit.setUserOnEdit(this.__get('id'), target, data, 'user');
+}
+
+User.prototype.setExtraDataOnEdit = async function (data, target_id) {
+    let target = await this.getTargetOfEditing(target_id);
+
+    target = await UserExtraData.createFrom({ user_id: target === false ? this.__get('id') : target});
+
+    console.log(target.fields);
+
+    return await DataOnEdit.setUserOnEdit(this.__get('id'), target, data, 'user_extra_data', target.__get('user_id'));
+}
+
+User.prototype.confirEditData = async function (request_id) {
+    if (!this.hasAccess(14))
+        throw Error('Forbidden');
+
+    const request = await UserDataLog.confirmEditRequest(request_id, this.__get('id'));
+
+    const key = request.__get('edited_table') !== this.table
+        ? 'user_id'
+        : 'id';
+
+    this.db.query('UPDATE `' + request.__get('edited_table') + '` SET `' + request.__get('field') + '` = ? WHERE `' + key + '` = ?', [ request.__get('new_value'), request.__get('target_id') ]);
+
+    return (await request.delete()) !== false;
 }
 
 User.prototype.table = 'user';

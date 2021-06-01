@@ -162,11 +162,14 @@ module.exports = new GraphQLObjectType({
                 },
                 removeAccount: {
                     type: GraphQLBoolean
+                },
+                comment: {
+                    type: GraphQLString
                 }
             },
-            async resolve(obj, { child_id, removeAccount }) {
+            async resolve(obj, { child_id, removeAccount, comment }) {
                 const viewer = await User.createFrom(obj().viewer);
-                return viewer.removeChild(child_id, removeAccount);
+                return viewer.removeChild(child_id, removeAccount, comment);
             }
         },
         //Admin confirm parent`s request to remove child
@@ -180,6 +183,50 @@ module.exports = new GraphQLObjectType({
             async resolve(obj, { link }) {
                 const viewer = await User.createFrom(obj().viewer);
                 return await viewer.confirmRemoveChild(link);
+            }
+        },
+
+        editMainUserData: {
+            type: GraphQLBoolean,
+            args: {
+                newData: {
+                    type: UserInput
+                },
+                target_id: {
+                    type: GraphQLInt
+                }
+            },
+            async resolve(obj, { newData, target_id }) {
+                const viewer = await User.createFrom(obj().viewer);
+                return (await viewer.setMainDataOnEdit(newData, target_id)) !== false;
+            }
+        },
+        editExtraUserData: {
+            type: GraphQLBoolean,
+            args: {
+                newData: {
+                    type: UserInput
+                },
+                target_id: {
+                    type: GraphQLInt
+                }
+            },
+            async resolve(obj, { newData, target_id }) {
+                const viewer = await User.createFrom(obj().viewer);
+                return (await viewer.setExtraDataOnEdit(newData, target_id)) !== false;
+            }
+        },
+
+        confirmUserEditData: {
+            type: GraphQLBoolean,
+            args: {
+                request_id: {
+                    type: GraphQLInt
+                }
+            },
+            async resolve(obj, { request_id }) {
+                const viewer = await User.createFrom(obj().viewer);
+                return await viewer.confirEditData(request_id)
             }
         }
 

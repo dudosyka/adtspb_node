@@ -28,7 +28,10 @@ let Db = function ()
 Db.prototype.query = function (query, data = [], entity = null) {
     return new Promise((resolve, reject) => {
         this.connection.query(query, data, async (err, res) => {
-            console.log(query);
+            console.log("DB_LOG: ", {
+                query: query,
+                data: data
+            });
             //If any errs returns them
             if (err) reject(err);
 
