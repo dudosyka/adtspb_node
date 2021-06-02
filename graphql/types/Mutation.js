@@ -3,6 +3,7 @@ const {GraphQLObjectType, GraphQLString, GraphQLBoolean, GraphQLInt} = require("
 const UserType = require("./EntityTypes/User");
 const UserInput = require("./EntityTypes/InputTypes/User");
 const User = require('../Entity/User');
+const UserChild = require('../Entity/UserChild');
 const UserExtraData = require('../Entity/UserExtraData');
 const UserChildOnDelete = require('../Entity/UserChildOnDelete');
 
@@ -134,10 +135,22 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve(obj, { request_id, newData }) {
-                const viewer = await User.baseCreateFrom(obj().viewer);
+                const viewer = await User.createFrom(obj().viewer);
                 // console.log('FIELDS', viewer.fields);
                 // console.log('Input', newData);
                 return await viewer.agreeParentRequest(request_id, newData);
+            }
+        },
+        removeChildRequest: {
+            type: GraphQLBoolean,
+            args: {
+                request_id: {
+                    type: GraphQLInt
+                },
+            },
+            async resolve(obj, { request_id }) {
+                const userChild = await UserChild.baseCreateFrom({id: request_id});
+                return await userChild.removeRequest();
             }
         },
         //Parent create child account and automaticly add it to your children list
@@ -149,7 +162,7 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve(obj, { child }) {
-                const viewer = await User.createFrom({id: obj().viewer.id});
+                const viewer = await User.createFrom(obj().viewer);
                 return viewer.createChild(child);
             }
         },

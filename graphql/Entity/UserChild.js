@@ -35,6 +35,16 @@ UserChild.prototype.addParentRequest = async function () {
     return await this.save();
 }
 
+UserChild.prototype.removeRequest = async function () {
+    if (Object.keys(this.fields).length < 4)
+        throw Error('Request not found');
+
+    const log = await UserChildLog.createFromUserChild(this);
+    await log.log("cancel", 1);
+    await this.delete();
+    return true;
+}
+
 UserChild.prototype.parentRequestExists = async function (child_id) {
     //Check if parent_id is not null then request exists
     if (this.__get('parent_id') != null) {

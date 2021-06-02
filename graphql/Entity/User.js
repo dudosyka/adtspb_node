@@ -257,8 +257,33 @@ User.prototype.addChild = async function (child_data) {
 
         return request.insertId;
     }
-    else {
-        throw Error(403);
+    else
+        throw Error("Forbidden");
+}
+
+User.prototype.setChildData = async function (childId, data, deleteChild = false, entity = false, log = true, autoConfirm = false) {
+    data.user_id = childId;
+    const childExtraData = await UserExtraData.createFrom(data);
+    createResult = await childExtraData.setChildData();
+
+    if (createResult !== true) {
+        if (deleteChild)
+            entity.delete();
+        if (createResult === false)
+            throw Error('Saving data failed');
+        else
+            throw Error(createResult);
+    }
+
+    if (data.id)
+        delete data.id;
+    if (data.user_id)
+        delete data.user_id;
+
+    if (log) {
+        const res = await this.setExtraDataOnEdit(data, childId, autoConfirm);
+        if (autoConfirm)
+            await UserDataLog.autoConfirm(res);
     }
 }
 
@@ -266,54 +291,33 @@ User.prototype.agreeParentRequest = async function (request_id, newData) {
     if (this.__get('id') == null)
         throw Error('Token is gone');
 
-    newData.user_id = this.__get('id');
+
     const request = await UserChild.baseCreateFrom({id: request_id});
     const requestExists = await request.parentRequestExists(this.__get('id'));
     if (requestExists !== true)
         throw Error(requestExists);
 
-    const userData = await UserExtraData.createFrom(newData);
-    if ((await userData.setChildData())) {
-        await request.agreeParentRequest();
-        return true;
-    }
-    else {
-        throw Error("Saving data failed");
-    }
+    await this.setChildData(this.__get('id'), newData);
+    await request.agreeParentRequest();
+
+    return true;
 }
 
 User.prototype.createChild = async function (data) {
+    if (!this.hasAccess(11))
+        throw Error('Forbidden');
+
     const instance = this.newModel();
-    const childData = await instance.baseCreateFrom(
-        data
-    // {
-        // name: data.name,
-        // surname: data.surname,
-        // lastname: data.lastname,
-        // email: data.email,
-        // sex: data.sex,
-        // phone: data.phone,
-        // password: data.password
-    // }
-    );
-    // console.log("OBJECT", childData);
+    const childData = await instance.baseCreateFrom(data);
+
     let createResult = await childData.createNew([ AppConfig.child_role_id ]);
     if (createResult.status != 'success')
         throw Error("User creating failed");
+
     const child = await instance.createFrom({id: createResult.id});
-
-    data.user_id = child.__get('id');
-    const childExtraData = await UserExtraData.createFrom(data);
-    createResult = await childExtraData.setChildData();
-    if (createResult !== true) {
-        child.delete();
-        if (createResult === false)
-            throw Error('Saving data failed');
-        else
-            throw Error(createResult);
-    }
-
     const request_id = await this.addChild(child.__get('email'));
+    await this.setChildData(child.__get('id'), data, true, child, false);
+
     return await child.agreeParentRequest(request_id, data);
 }
 
@@ -352,11 +356,14 @@ User.prototype.getTargetOfEditing = async function (target_id) {
     let target = false;
 
     if (target_id !== 0) {
+        if (target_id == this.__get('id')) {
+            return target;
+        }
         if (!this.hasAccess(13))
             throw Error('Forbidden');
         const checkRelationship = await this.checkRelationship(target_id)
         if (checkRelationship === false)
-            throw Error('Child not found');
+            throw Error('Child not found2');
 
         target = target_id;
         // const model = this.newModel();
@@ -379,14 +386,12 @@ User.prototype.setMainDataOnEdit = async function (data, target_id) {
     return DataOnEdit.setUserOnEdit(this.__get('id'), target, data, 'user');
 }
 
-User.prototype.setExtraDataOnEdit = async function (data, target_id) {
+User.prototype.setExtraDataOnEdit = async function (data, target_id, autoConfirm = false) {
     let target = await this.getTargetOfEditing(target_id);
 
     target = await UserExtraData.createFrom({ user_id: target === false ? this.__get('id') : target});
 
-    console.log(target.fields);
-
-    return await DataOnEdit.setUserOnEdit(this.__get('id'), target, data, 'user_extra_data', target.__get('user_id'));
+    return await DataOnEdit.setUserOnEdit(this.__get('id'), target, data, 'user_extra_data', target.__get('user_id'), autoConfirm);
 }
 
 User.prototype.confirEditData = async function (request_id) {

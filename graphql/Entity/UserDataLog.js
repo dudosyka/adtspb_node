@@ -16,6 +16,7 @@ UserDataLog.prototype.fields = {
     edit_timestamp: null,
     admin_id: null,
     target_id: null,
+    requester_id: null,
     confirm_timestamp: null
 };
 
@@ -36,6 +37,25 @@ UserDataLog.prototype.confirmEditRequest = async function (request_id, admin_id)
         throw Error('Saving data error');
 
     return request;
+}
+
+UserDataLog.prototype.autoConfirm = async function (inObj) {
+    query = "";
+    data = [];
+    inObj.map(el => {
+        el.confirm_timestamp = Date.now(),
+        query += "INSERT INTO "+this.table+" (edited_table, field, old_value, new_value, edit_timestamp, target_id, requester_id) VALUES (?,?,?,?,?,?,?);"
+
+        data.push(el.edited_table);
+        data.push(el.field);
+        data.push(el.old_value);
+        data.push(el.new_value);
+        data.push(el.edit_timestamp);
+        data.push(el.target_id);
+        data.push(el.requester_id);
+    });
+    const res = await this.db.query(query, data).catch(err => { console.error(err); });
+    console.log("RES", res);
 }
 
 module.exports = (new UserDataLog());

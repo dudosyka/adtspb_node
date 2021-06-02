@@ -42,9 +42,10 @@ DataOnEdit.prototype.setOnEdit = async function (requester_id, target, data, tab
     });
 }
 
-DataOnEdit.prototype.setUserOnEdit = async function (requester_id, target, data, table, target_id = null) {
+DataOnEdit.prototype.setUserOnEdit = async function (requester_id, target, data, table, target_id = null, autoConfirm = false) {
     let query = "";
     let onEdit = [];
+    let inObj = [];
     Object.keys(data).map(key => {
         const el = data[key];
         query += "INSERT INTO `" + this.table + "` (`edited_table`, `field`, `old_value`, `new_value`, `timestamp`, `target_id`, `requester_id`) VALUES (?, ?, ?, ?, ?, ?, ?);";
@@ -55,11 +56,21 @@ DataOnEdit.prototype.setUserOnEdit = async function (requester_id, target, data,
         onEdit.push(Date.now());
         onEdit.push(target_id === null ? target.__get('id') : target_id);
         onEdit.push(requester_id);
+        inObj.push({
+            edited_table: table,
+            field: key,
+            old_value: target.__get(key),
+            new_value: el,
+            edit_timestamp: Date.now(),
+            target_id: target_id === null ? target.__get('id') : target_id,
+            requester_id: requester_id
+
+        });
     });
 
-    return await this.db.query(query, onEdit).catch(err => {
-        console.error(err);
-    });
+    return (!autoConfirm)
+        ? await this.db.query(query, onEdit).catch(err => { console.error(err); })
+        : inObj;
 }
 
 // DataOnEdit.prototype.setUserMainOnEdit = async function (requester_id, target, data) {

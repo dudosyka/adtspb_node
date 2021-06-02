@@ -33,7 +33,6 @@ module.exports = new graphql.GraphQLObjectType({
         proposals: {
             type: graphql.GraphQLList(ProposalType),
             async resolve (obj, data) {
-                console.log('USER OBJ: ', obj);
                 return await Proposal.selectByUser(obj);
             }
         },
