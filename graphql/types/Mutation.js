@@ -135,7 +135,7 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve(obj, { request_id, newData }) {
-                const viewer = await User.baseCreateFrom(obj().viewer);
+                const viewer = await User.createFrom(obj().viewer);
                 // console.log('FIELDS', viewer.fields);
                 // console.log('Input', newData);
                 return await viewer.agreeParentRequest(request_id, newData);
@@ -162,7 +162,7 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve(obj, { child }) {
-                const viewer = await User.createFrom({id: obj().viewer.id});
+                const viewer = await User.createFrom(obj().viewer);
                 return viewer.createChild(child);
             }
         },

@@ -98,14 +98,11 @@ UserExtraData.prototype.checkChildData = function () {
     return this.validate();
 }
 
-UserExtraData.prototype.setChildData = async function (fromParent = false) {
+UserExtraData.prototype.setChildData = async function () {
     const validate = this.checkChildData();
     if (validate !== true) {
         return JSON.stringify(validate);
     }
-
-    // const requester_id = fromParent !== false ? fromParent : this.__get('user_id');
-    // const onEdit = DataOnEdit.setUserOnEdit(requester_id, );
     return (await this.__save().catch(err => { throw Error("Saving data failed") })) !== false;
 }
 
