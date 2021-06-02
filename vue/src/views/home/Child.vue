@@ -20,8 +20,7 @@
 
         <section class="children-data card shadow">
 
-          <article class="child-data" v-for="(child, id) in children" v-show="show.childData === id">
-            <!--
+          <article class="child-data" v-for="(child, id) in childrenRaw" v-show="show.childData === id">
             <article class="child-data_table">
 
               <article class="child-data_table-group">
@@ -30,15 +29,15 @@
                   <div>
                     <inputField
                       label="Имя"
-                      v-model="childRaw.name"
-                      :readonly="childRaw.readonly"
+                      v-model="child.name"
+                      :readonly="child.readonly"
                     />
                   </div>
                   <div>
                     <inputField
                       label="Фамилия"
-                      v-model="childRaw.surname"
-                      :readonly="childRaw.readonly"
+                      v-model="child.surname"
+                      :readonly="child.readonly"
                     />
                   </div>
                 </div>
@@ -47,8 +46,8 @@
                   <div>
                     <inputField
                       label="Отчество"
-                      v-model="childRaw.lastname"
-                      :readonly="childRaw.readonly"
+                      v-model="child.lastname"
+                      :readonly="child.readonly"
                     />
                   </div>
 
@@ -59,21 +58,21 @@
                 <div>
                   <inputField
                     label="Номер свидетельства о рождении"
-                    v-model="childRaw.birth_certificate"
-                    :readonly="childRaw.readonly"
+                    v-model="child.birth_certificate"
+                    :readonly="child.readonly"
                   />
                 </div>
 
                 <div>
                   <div class="input-container">
-                    <label class="label" v-bind:class="{'label-up': childRaw.birthday}">Дата рождения</label><br>
+                    <label class="label" v-bind:class="{'label-up': child.birthday}">Дата рождения</label><br>
                     <masked-input
                       class="type"
-                      v-model="masked.bithday"
+                      v-model="masked.birthday"
                       mask="11 / 11 / 11"
-                      @input="childRaw.birthday = arguments[1]"
+                      @input="child.birthday = arguments[1]"
                       tabindex="1"
-                      :readonly="childRaw.readonly"
+                      :readonly="child.readonly"
                     />
                   </div>
                 </div>
@@ -84,21 +83,21 @@
                   <div>
                     <inputField
                       label="Электронная почта"
-                      v-model="childRaw.email"
-                      :readonly="childRaw.readonly"
+                      v-model="child.email"
+                      :readonly="child.readonly"
                     />
                   </div>
                   <div>
                     <div class="input-container required">
-                      <label class="label" v-bind:class="{'label-up': childRaw.phone}">Номер телефона</label><br>
+                      <label class="label" v-bind:class="{'label-up': child.phone}">Номер телефона</label><br>
                       <masked-input
                         v-model="masked.phone"
                         mask="\+\7 (111) 111-11-11"
-                        @input="childRaw.phone = arguments[1]"
+                        @input="child.phone = arguments[1]"
                         type="tel"
                         class="type"
                         tabindex="4"
-                        :readonly="childRaw.readonly"
+                        :readonly="child.readonly"
                         />
                     </div>
                   </div>
@@ -110,11 +109,11 @@
                   <h3 class="radio-heading dark">Пол</h3>
                   <ul class="radio-list">
                     <div class="radio-container">
-                      <input type="radio" v-model.number="childRaw.sex" value="1" class="radio" tabindex="3" id="man" :disabled="childRaw.readonly">
+                      <input type="radio" v-model.number="child.sex" value="1" class="radio" tabindex="3" id="man" :disabled="child.readonly">
                       <label class="dark radio" for="man" tabindex="5">Мужской</label>
                     </div>
                     <div class="radio-container">
-                      <input type="radio" v-model.number="childRaw.sex" value="0" class="radio" tabindex="3" id="woman" :disabled="childRaw.readonly">
+                      <input type="radio" v-model.number="child.sex" value="0" class="radio" tabindex="3" id="woman" :disabled="child.readonly">
                       <label class="dark radio" for="woman" tabindex="6">Женский</label>
                     </div>
                   </ul>
@@ -126,15 +125,15 @@
                   <div>
                     <inputField
                       label="Гражданство"
-                      v-model="childRaw.state"
-                      :readonly="childRaw.readonly"
+                      v-model="child.state"
+                      :readonly="child.readonly"
                     />
                   </div>
                   <div>
                     <inputField
                       label="Степень родства"
-                      v-model="childRaw.relationship"
-                      :readonly="childRaw.readonly"
+                      v-model="child.relationship"
+                      :readonly="child.readonly"
                     />
                   </div>
                 </div>
@@ -144,14 +143,14 @@
                 <div class="child-data_row">
                   <div>
                     <h2 class="form-heading child-data_heading">ОВЗ</h2>
-                    <select class="dark-box darken" v-model.number="childRaw.ovz" :disabled="childRaw.readonly">
+                    <select class="dark-box darken" v-model.number="child.ovz" :disabled="child.readonly">
                       <option value="0">Нету</option>
                       <option value="1">Есть</option>
                     </select>
                   </div>
-                  <div v-if="childRaw.ovz">
+                  <div v-if="child.ovz">
                     <h2 class="form-heading left">Тип ОВЗ</h2>
-                    <select class="dark-box darken" v-model="childRaw.ovz_type.id" :disabled="childRaw.readonly">
+                    <select class="dark-box darken" v-model="child.ovz_type.id" :disabled="child.readonly">
                       <option v-for="(type, id) in ovzTypes" :value="id">{{ type }}</option>
                     </select>
                   </div>
@@ -160,14 +159,14 @@
                 <div class="child-data_row">
                   <div>
                     <h2 class="form-heading child-data_heading">Инвалидность</h2>
-                    <select class="dark-box darken" v-model.number="childRaw.disability" :disabled="childRaw.readonly">
+                    <select class="dark-box darken" v-model.number="child.disability" :disabled="child.readonly">
                       <option value="0">Нету</option>
                       <option value="1">Есть</option>
                     </select>
                   </div>
-                  <div v-if="childRaw.disability">
+                  <div v-if="child.disability">
                     <h2 class="form-heading left">Группа нвалидности</h2>
-                    <select class="dark-box darken" v-model="childRaw.disability_group.id" :disabled="childRaw.readonly">
+                    <select class="dark-box darken" v-model="child.disability_group.id" :disabled="child.readonly">
                       <option v-for="(type, id) in disabilityTypes" :value="id">{{ type }}</option>
                     </select>
                   </div>
@@ -177,21 +176,20 @@
               <article class="child-data_table-group">
                 <inputField
                   label="Образовательное учреждение"
-                  v-model="childRaw.studyPlace"
+                  v-model="child.studyPlace"
                   type="text"
-                  :readonly="childRaw.readonly"
+                  :readonly="child.readonly"
                 />
                 <div class="child-data_row">
                   <!--
                   <div>
                     <inputField
                       label="Класс \ группа"
-                      v-model="childRaw.class"
+                      v-model="child.class"
                       type="text"
                     />
                   </div>
                   !-->
-                  <!--
                 </div>
               </article>
 
@@ -200,28 +198,28 @@
                   <div class="child-data_addres">
                     <inputField
                       label="Город"
-                      v-model="childRaw.registration_address.city"
-                      :readonly="childRaw.readonly"
+                      v-model="child.registration_address.city"
+                      :readonly="child.readonly"
                     />
                     <inputField
                       label="Район"
-                      v-model="childRaw.registration_address.district"
-                      :readonly="childRaw.readonly"
+                      v-model="child.registration_address.district"
+                      :readonly="child.readonly"
                     />
                     <inputField
                       label="Улица"
-                      v-model="childRaw.registration_address.street"
-                      :readonly="childRaw.readonly"
+                      v-model="child.registration_address.street"
+                      :readonly="child.readonly"
                     />
                     <inputField
                       label="Дом"
-                      v-model="childRaw.registration_address.house"
-                      :readonly="childRaw.readonly"
+                      v-model="child.registration_address.house"
+                      :readonly="child.readonly"
                     />
                     <inputField
                       label="Номер квартиры"
-                      v-model="childRaw.registration_flat"
-                      :readonly="childRaw.readonly"
+                      v-model="child.registration_flat"
+                      :readonly="child.readonly"
                     />
                   </div>
               </article>
@@ -230,28 +228,28 @@
                 <div class="child-data_addres">
                   <inputField
                     label="Город"
-                    v-model="childRaw.residence_address.city"
-                    :readonly="childRaw.readonly"
+                    v-model="child.residence_address.city"
+                    :readonly="child.readonly"
                   />
                   <inputField
                     label="Район"
-                    v-model="childRaw.residence_address.district"
-                    :readonly="childRaw.readonly"
+                    v-model="child.residence_address.district"
+                    :readonly="child.readonly"
                   />
                   <inputField
                     label="Улица"
-                    v-model="childRaw.residence_address.street"
-                    :readonly="childRaw.readonly"
+                    v-model="child.residence_address.street"
+                    :readonly="child.readonly"
                   />
                   <inputField
                     label="Дом"
-                    v-model="childRaw.residence_address.house"
-                    :readonly="childRaw.readonly"
+                    v-model="child.residence_address.house"
+                    :readonly="child.readonly"
                   />
                   <inputField
                     label="Номер квартиры"
-                    v-model="childRaw.residence_flat"
-                    :readonly="childRaw.readonly"
+                    v-model="child.residence_flat"
+                    :readonly="child.readonly"
                   />
                 </div>
               </article>
@@ -261,13 +259,12 @@
                   <inputField
                     label="Пароль"
                     type="password"
-                    v-model="childRaw.password"
-                    :readonly="childRaw.readonly"
+                    v-model="child.password"
+                    :readonly="child.readonly"
                   />
                 </div>
               </div>
             </article>
-            !-->
 
             <div class="buttons">
               <button class="dark-box dark-button" @click="editChild(id)">Редактировать</button>
@@ -378,45 +375,7 @@
 
         masked: {
           phone: null,
-          bithday: null,
-        },
-        rawChildTemplate: {
-          data: {
-            name: null,
-            surname: null,
-            lastname: null,
-            email: null,
-            phone: null,
-            sex: null
-          },
-          extra_data: {
-            birthday: null, //mask
-            birth_certificate: null,
-
-            state: null,
-            relationship: null,
-            studyPlace: null,
-            ovz: null,
-            ovz_type: { id: null },
-            disability: null,
-            disability_group: { id: null },
-
-            registration_address: {
-              city: null,
-              district: null,
-              street: null,
-              house: null,
-            },
-            registration_flat: null,
-
-            residence_address: {
-              city: null,
-              district: null,
-              street: null,
-              house: null
-            },
-            residence_flat: null,
-          }
+          birthday: null,
         },
 
 
@@ -500,8 +459,7 @@
                 street: null,
                 house: null,
               }
-
-              if (this.children[child].registration_address.split(',')) {
+              if (this.children[child].registration_address) {
                 const addres = this.children[child].registration_address.split(',')
 
                 const city = addres[0]
@@ -517,14 +475,13 @@
                 }
               }
 
-              this.childremRaw[child].residence_address = {
+              this.childrenRaw[child].residence_address = {
                 city: null,
                 district: null,
                 street: null,
                 house: null,
               }
-
-              if (this.children[child].residence_address.split(',')) {
+              if (this.children[child].residence_address) {
                 const addres = this.children[child].residence_address.split(',')
 
                 const city = addres[0]
@@ -539,6 +496,10 @@
                   house: house,
                 }
               }
+
+              let formattingPhone = this.children[child].phone.split('')
+              formattingPhone.shift()
+              this.childrenRaw[child].phone = formattingPhone.join()
             }
         })
         .catch(err => { console.log(err) })
