@@ -7,6 +7,12 @@ h1,h2,h3,h4,h5,h6 {
   margin: 0
 }
 
+hr {
+  border: none;
+  background-color: #0086c9;
+  height: 3px;
+}
+
 /* Auth */
   .login {
     position: relative;

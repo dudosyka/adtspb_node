@@ -81,14 +81,18 @@
               <div>
                 <div class="input-container">
                   <label class="label" v-bind:class="{'label-up': childRaw.birthday}">Дата рождения</label><br>
-                  <masked-input
+                  <!--<masked-input
                     class="type"
                     v-model="masked.birthday"
                     mask="11 / 11 / 11"
                     @input="childRaw.birthday = arguments[1]"
                     tabindex="1"
-
-                  />
+                  />!-->
+                  <input
+                    class="type"
+                    type="date"
+                    v-model="childRaw.birthday"
+                  >
                 </div>
               </div>
             </div>
@@ -353,7 +357,7 @@
       return {
         masked: {
           phone: null,
-          bithday: null
+          birthday: null
         },
         childRaw: {
           name: null,
@@ -418,6 +422,7 @@
         for (let key in this.childRaw) {
           this.childFormated[key] = this.childRaw[key]
         }
+        console.log(this.childFormated)
 
         this.childFormated.registration_address = this.childRaw.registration_address.city + ', ' + this.childRaw.registration_address.district + ', ' + this.childRaw.registration_address.street + ', ' + this.childRaw.registration_address.house
         this.childFormated.residence_address = this.childRaw.residence_address.city + ', ' + this.childRaw.residence_address.district + ', ' + this.childRaw.residence_address.street + ', ' + this.childRaw.residence_address.house
@@ -426,14 +431,19 @@
             this.childFormated.phone = 8 + this.childRaw.phone
         }
 
-
+        /*
+        console.log(this.childRaw.birthday)
         const birth = this.childRaw.birthday;
         const days = Math.floor(birth / 10000);
         const month = (Math.floor(((birth / 10000) - days) * 100));
         const years = Math.floor(((((birth / 10000) - days) * 100) - month) * 100) + 2000;
         const dateStr = years + '-' + month + "-" + days;
         this.childFormated.birthday = (new Date(dateStr)).getTime();
+        */
 
+        console.log(this.childRaw.birthday)
+        this.childFormated.birthday = (new Date(this.childRaw.birthday)).getTime()
+        console.log(this.childFormated.birthday)
 
         this.childFormated.ovz = Number(this.childRaw.ovz)
         this.childFormated.ovz_type.id = Number(this.childRaw.ovz_type.id)
@@ -443,6 +453,7 @@
         let data = {
           user: this.childFormated
         }
+
 
         api.request(req, data)
           .then(data => {
