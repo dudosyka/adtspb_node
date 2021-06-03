@@ -10,6 +10,8 @@ const jwt = new Jwt();
 const UserChild = require('../Entity/UserChild');
 const UserChildOnDelete = require('../Entity/UserChildOnDelete');
 const UserExtraData = require('../Entity/UserExtraData');
+const DataOnEdit = require('../Entity/DataOnEdit');
+const UserDataLog = require('../Entity/UserDataLog');
 
 const AssociationExtraData = require('./AssociationExraData');
 
@@ -52,7 +54,14 @@ User.prototype.validateRules = function () {
 }
 
 User.prototype.fields = {
-    id: null
+    id: null,
+    name: null,
+    surname: null,
+    lastname: null,
+    email: null,
+    phone: null,
+    sex: null,
+    password: null,
 }
 
 User.prototype.getRole = async function () {
@@ -88,7 +97,7 @@ User.prototype.auth = async function (data) {
         else
          resolve({status: false, res: 'login incorrect'});
     });
-};
+}
 
 User.prototype.checkRole = function (checkFor, target = false) {
     //If target not provided then check...
@@ -248,8 +257,33 @@ User.prototype.addChild = async function (child_data) {
 
         return request.insertId;
     }
-    else {
-        throw Error(403);
+    else
+        throw Error("Forbidden");
+}
+
+User.prototype.setChildData = async function (childId, data, deleteChild = false, entity = false, log = true, autoConfirm = false) {
+    data.user_id = childId;
+    const childExtraData = await UserExtraData.createFrom(data);
+    createResult = await childExtraData.setChildData();
+
+    if (createResult !== true) {
+        if (deleteChild)
+            entity.delete();
+        if (createResult === false)
+            throw Error('Saving data failed');
+        else
+            throw Error(createResult);
+    }
+
+    if (data.id)
+        delete data.id;
+    if (data.user_id)
+        delete data.user_id;
+
+    if (log) {
+        const res = await this.setExtraDataOnEdit(data, childId, autoConfirm);
+        if (autoConfirm)
+            await UserDataLog.autoConfirm(res);
     }
 }
 
@@ -257,66 +291,51 @@ User.prototype.agreeParentRequest = async function (request_id, newData) {
     if (this.__get('id') == null)
         throw Error('Token is gone');
 
-    newData.user_id = this.__get('id');
+
     const request = await UserChild.baseCreateFrom({id: request_id});
     const requestExists = await request.parentRequestExists(this.__get('id'));
     if (requestExists !== true)
         throw Error(requestExists);
 
-    const userData = await UserExtraData.createFrom(newData);
-    if ((await userData.setChildData())) {
-        await request.agreeParentRequest();
-        return true;
-    }
-    else {
-        throw Error("Saving data failed");
-    }
+    await this.setChildData(this.__get('id'), newData);
+    await request.agreeParentRequest();
+
+    return true;
 }
 
 User.prototype.createChild = async function (data) {
+    if (!this.hasAccess(11))
+        throw Error('Forbidden');
+
     const instance = this.newModel();
-    const childData = await instance.baseCreateFrom(
-        data
-    // {
-        // name: data.name,
-        // surname: data.surname,
-        // lastname: data.lastname,
-        // email: data.email,
-        // sex: data.sex,
-        // phone: data.phone,
-        // password: data.password
-    // }
-    );
-    // console.log("OBJECT", childData);
+    const childData = await instance.baseCreateFrom(data);
+
     let createResult = await childData.createNew([ AppConfig.child_role_id ]);
     if (createResult.status != 'success')
         throw Error("User creating failed");
+
     const child = await instance.createFrom({id: createResult.id});
-
-    data.user_id = child.__get('id');
-    const childExtraData = await UserExtraData.createFrom(data);
-    createResult = await childExtraData.setChildData();
-    if (createResult !== true) {
-        child.delete();
-        if (createResult === false)
-            throw Error('Saving data failed');
-        else
-            throw Error(createResult);
-    }
-
     const request_id = await this.addChild(child.__get('email'));
+    await this.setChildData(child.__get('id'), data, true, child, false);
+
     return await child.agreeParentRequest(request_id, data);
 }
 
-User.prototype.removeChild = async function (child_id, removeAccount) {
-    if (!this.hasAccess(11))
-        throw Error('Forbidden');
+User.prototype.checkRelationship = async function (child_id) {
     const userChild = await UserChild.baseCreateFrom({ parent_id: this.__get('id'), child_id: child_id });
     const checkRelationship = await userChild.checkRelationship();
+    return checkRelationship === false ? false : userChild;
+}
+
+User.prototype.removeChild = async function (child_id, removeAccount, comment) {
+    if (!this.hasAccess(11))
+        throw Error('Forbidden');
+
+    const checkRelationship = await this.checkRelationship(child_id);
     if (checkRelationship === false)
         throw Error('Child not found');
 
-    await userChild.removeChild(removeAccount).catch(err => {
+    await checkRelationship.removeChild(removeAccount, comment).catch(err => {
         throw Error(err);
     });
 
@@ -331,6 +350,63 @@ User.prototype.confirmRemoveChild = async function (link) {
         throw Error('Link not found');
     const userChild = await UserChild.baseCreateFrom({ id: userChildOnDelete.__get('user_child_id') });
     return await userChildOnDelete.confirmRemoveChild(userChild, this.__get('id'));
+}
+
+User.prototype.getTargetOfEditing = async function (target_id) {
+    let target = false;
+
+    if (target_id !== 0) {
+        if (target_id == this.__get('id')) {
+            return target;
+        }
+        if (!this.hasAccess(13))
+            throw Error('Forbidden');
+        const checkRelationship = await this.checkRelationship(target_id)
+        if (checkRelationship === false)
+            throw Error('Child not found2');
+
+        target = target_id;
+        // const model = this.newModel();
+        // target = await model.baseCreateFrom({ id: target_id });
+    }
+
+    return target;
+}
+
+User.prototype.setMainDataOnEdit = async function (data, target_id) {
+    let target = await this.getTargetOfEditing(target_id);
+
+    if (target !== false) {
+        const model = this.newModel();
+        target = await model.baseCreateFrom({ id: target_id });
+    } else {
+        target = this;
+    }
+
+    return DataOnEdit.setUserOnEdit(this.__get('id'), target, data, 'user');
+}
+
+User.prototype.setExtraDataOnEdit = async function (data, target_id, autoConfirm = false) {
+    let target = await this.getTargetOfEditing(target_id);
+
+    target = await UserExtraData.createFrom({ user_id: target === false ? this.__get('id') : target});
+
+    return await DataOnEdit.setUserOnEdit(this.__get('id'), target, data, 'user_extra_data', target.__get('user_id'), autoConfirm);
+}
+
+User.prototype.confirEditData = async function (request_id) {
+    if (!this.hasAccess(14))
+        throw Error('Forbidden');
+
+    const request = await UserDataLog.confirmEditRequest(request_id, this.__get('id'));
+
+    const key = request.__get('edited_table') !== this.table
+        ? 'user_id'
+        : 'id';
+
+    this.db.query('UPDATE `' + request.__get('edited_table') + '` SET `' + request.__get('field') + '` = ? WHERE `' + key + '` = ?', [ request.__get('new_value'), request.__get('target_id') ]);
+
+    return (await request.delete()) !== false;
 }
 
 User.prototype.table = 'user';

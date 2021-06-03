@@ -6,12 +6,6 @@ let UserChild = function () {}
 
 UserChild.prototype = Object.assign(UserChild.prototype, baseEntity.prototype);
 
-// UserChild.prototype.createFrom = async function (data) {
-//     if (data.id) {
-//         return await this.baseCreateFrom(data);
-//     }
-// }
-
 UserChild.prototype.getInstance = () => UserChild;
 
 UserChild.prototype.fields = {
@@ -29,8 +23,8 @@ UserChild.prototype.checkRelationship = async function () {
     };
 }
 
-UserChild.prototype.removeChild = async function (removeAccount) {
-    UserChildOnDelete.setOnDelete(this.__get('id'), removeAccount);
+UserChild.prototype.removeChild = async function (removeAccount, comment) {
+    UserChildOnDelete.setOnDelete(this.__get('id'), removeAccount, comment);
 }
 
 UserChild.prototype.addParentRequest = async function () {
@@ -39,6 +33,16 @@ UserChild.prototype.addParentRequest = async function () {
         return false;
     }
     return await this.save();
+}
+
+UserChild.prototype.removeRequest = async function () {
+    if (Object.keys(this.fields).length < 4)
+        throw Error('Request not found');
+
+    const log = await UserChildLog.createFromUserChild(this);
+    await log.log("cancel", 1);
+    await this.delete();
+    return true;
 }
 
 UserChild.prototype.parentRequestExists = async function (child_id) {

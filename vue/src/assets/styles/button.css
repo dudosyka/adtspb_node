@@ -94,7 +94,7 @@
 
       border: none;
       outline: none;
-      background-color: inherit;
+      background-color: rgba(0,0,0,0);
 
       display: block;
       width: 30px;

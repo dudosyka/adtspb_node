@@ -13,6 +13,9 @@
     font-size: 20px;
     color: #0086C9;
   }
+  .form-error {
+    color: #C90000;
+  }
 
   .input-container {
     width: 100%;
@@ -56,6 +59,27 @@
   /* DISABLED */
 
   /* READONLY */
+
+  input[readonly] {
+    position: relative;
+    opacity: 0.5;
+  }
+  input[readonly]:hover {
+    cursor: not-allowed;
+  }
+  input[readonly]:hover::before {
+    content: "Только для просмотра";
+    display: block;
+    font-size: 10px;
+    height: 100px;
+    width: 100px;
+    padding: 10px;
+    background: #0086C9;
+
+    position: absolute;
+    left: 0;
+    bottom: 0;
+  }
 
   .password-container {
     display: grid;
@@ -122,6 +146,9 @@
     margin-bottom: 5px;
 
     pointer-events: none;
+
+    white-space: nowrap;
+    text-overflow: clip;
 
     color: #cecece;
     font-size: 1rem;

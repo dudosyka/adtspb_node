@@ -3,111 +3,432 @@
       <navigation />
       <article class="home-content">
 
-        <article class="card" v-for="child in children">
-          <header class="card-header">
-            <h2 class="card-name dark">{{ child.name + ' ' + child.surname }}</h2>
-            <button @click='child.showData = !child.showData' class="dark-box darken">{{ child.showData ? "Скрыть" : "К данным" }}</button>
+        <section class="children">
+
+          <header class="card child shadow" v-for="(child, id) in children">
+            <h2 class="child-name">{{ child.name + ' ' + child.surname }}</h2>
+            <button
+              @click="showData(id)"
+              class="dark-box darken child-to-data"
+              :class="{'child-from-data': id === show.childData}"
+            ></button>
           </header>
 
-          <section v-if='child.showData' class="child-data">
-            <table class="child-data_table">
-              <tr>
-                <td>Дата рождения</td><td>{{ child.birthday }}</td>
-              </tr>
-              <tr>
-                <td>ОВЗ</td><td>{{child.ovz == 1 ? "Есть" : "Нет" }}</td>
-              </tr>
-              <!--tr>
-                    Пока что комменчу, так как в апи нет метода, который бы вернул тебе объединения в которые ребенок зачислен
-                <td>Объединения</td><td></td>
-              </tr-->
-            </table>
-          </section>
-        </article>
+          <router-link to="/child/add" class="dark-box dark-button child-add">+ Добавить ребёнка</router-link>
 
-        <button class="air-button" @click="addChild" v-if="!show.addChild">+ Добавить ребёнка</button>
+        </section>
 
-        <article class="add" v-if="show.addChild">
-          <h2 class="form-heading">Введите номер телефона или электронную почту ребёнка</h2>
-          <div class="input-container">
-            <label class="label" v-bind:class="{'label-up': childId}">Номер телефона/Электронная почта</label><br>
-            <input type="text" v-model="childId" class="type" tabindex="1">
-          </div>
-          <button class="dark-box dark-button">Добавить</button>
-        </article>
+        <section class="children-data card shadow">
+
+          <article class="child-data" v-for="(child, id) in children" v-show="show.childData === id">
+            <!--
+            <article class="child-data_table">
+
+              <article class="child-data_table-group">
+
+                <div class="child-data_row">
+                  <div>
+                    <inputField
+                      label="Имя"
+                      v-model="childRaw.name"
+                      :readonly="childRaw.readonly"
+                    />
+                  </div>
+                  <div>
+                    <inputField
+                      label="Фамилия"
+                      v-model="childRaw.surname"
+                      :readonly="childRaw.readonly"
+                    />
+                  </div>
+                </div>
+
+                <div class="child-data_row">
+                  <div>
+                    <inputField
+                      label="Отчество"
+                      v-model="childRaw.lastname"
+                      :readonly="childRaw.readonly"
+                    />
+                  </div>
+
+                </div>
+              </article>
+
+              <article class="child-data_table-group">
+                <div>
+                  <inputField
+                    label="Номер свидетельства о рождении"
+                    v-model="childRaw.birth_certificate"
+                    :readonly="childRaw.readonly"
+                  />
+                </div>
+
+                <div>
+                  <div class="input-container">
+                    <label class="label" v-bind:class="{'label-up': childRaw.birthday}">Дата рождения</label><br>
+                    <masked-input
+                      class="type"
+                      v-model="masked.bithday"
+                      mask="11 / 11 / 11"
+                      @input="childRaw.birthday = arguments[1]"
+                      tabindex="1"
+                      :readonly="childRaw.readonly"
+                    />
+                  </div>
+                </div>
+              </article>
+
+              <article class="child-data_table-group">
+                <div class="child-data_row">
+                  <div>
+                    <inputField
+                      label="Электронная почта"
+                      v-model="childRaw.email"
+                      :readonly="childRaw.readonly"
+                    />
+                  </div>
+                  <div>
+                    <div class="input-container required">
+                      <label class="label" v-bind:class="{'label-up': childRaw.phone}">Номер телефона</label><br>
+                      <masked-input
+                        v-model="masked.phone"
+                        mask="\+\7 (111) 111-11-11"
+                        @input="childRaw.phone = arguments[1]"
+                        type="tel"
+                        class="type"
+                        tabindex="4"
+                        :readonly="childRaw.readonly"
+                        />
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="child-data_table-group">
+                <div class="input-container required">
+                  <h3 class="radio-heading dark">Пол</h3>
+                  <ul class="radio-list">
+                    <div class="radio-container">
+                      <input type="radio" v-model.number="childRaw.sex" value="1" class="radio" tabindex="3" id="man" :disabled="childRaw.readonly">
+                      <label class="dark radio" for="man" tabindex="5">Мужской</label>
+                    </div>
+                    <div class="radio-container">
+                      <input type="radio" v-model.number="childRaw.sex" value="0" class="radio" tabindex="3" id="woman" :disabled="childRaw.readonly">
+                      <label class="dark radio" for="woman" tabindex="6">Женский</label>
+                    </div>
+                  </ul>
+                </div>
+              </article>
+
+              <article class="child-data_table-group">
+                <div class="child-data_row">
+                  <div>
+                    <inputField
+                      label="Гражданство"
+                      v-model="childRaw.state"
+                      :readonly="childRaw.readonly"
+                    />
+                  </div>
+                  <div>
+                    <inputField
+                      label="Степень родства"
+                      v-model="childRaw.relationship"
+                      :readonly="childRaw.readonly"
+                    />
+                  </div>
+                </div>
+              </article>
+
+              <article class="child-data_table-group">
+                <div class="child-data_row">
+                  <div>
+                    <h2 class="form-heading child-data_heading">ОВЗ</h2>
+                    <select class="dark-box darken" v-model.number="childRaw.ovz" :disabled="childRaw.readonly">
+                      <option value="0">Нету</option>
+                      <option value="1">Есть</option>
+                    </select>
+                  </div>
+                  <div v-if="childRaw.ovz">
+                    <h2 class="form-heading left">Тип ОВЗ</h2>
+                    <select class="dark-box darken" v-model="childRaw.ovz_type.id" :disabled="childRaw.readonly">
+                      <option v-for="(type, id) in ovzTypes" :value="id">{{ type }}</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="child-data_row">
+                  <div>
+                    <h2 class="form-heading child-data_heading">Инвалидность</h2>
+                    <select class="dark-box darken" v-model.number="childRaw.disability" :disabled="childRaw.readonly">
+                      <option value="0">Нету</option>
+                      <option value="1">Есть</option>
+                    </select>
+                  </div>
+                  <div v-if="childRaw.disability">
+                    <h2 class="form-heading left">Группа нвалидности</h2>
+                    <select class="dark-box darken" v-model="childRaw.disability_group.id" :disabled="childRaw.readonly">
+                      <option v-for="(type, id) in disabilityTypes" :value="id">{{ type }}</option>
+                    </select>
+                  </div>
+                </div>
+              </article>
+
+              <article class="child-data_table-group">
+                <inputField
+                  label="Образовательное учреждение"
+                  v-model="childRaw.studyPlace"
+                  type="text"
+                  :readonly="childRaw.readonly"
+                />
+                <div class="child-data_row">
+                  <!--
+                  <div>
+                    <inputField
+                      label="Класс \ группа"
+                      v-model="childRaw.class"
+                      type="text"
+                    />
+                  </div>
+                  !-->
+                  <!--
+                </div>
+              </article>
+
+              <article class="child-data_table-group">
+                <h2 class="form-heading child-data_heading">Адрес регистрации</h2>
+                  <div class="child-data_addres">
+                    <inputField
+                      label="Город"
+                      v-model="childRaw.registration_address.city"
+                      :readonly="childRaw.readonly"
+                    />
+                    <inputField
+                      label="Район"
+                      v-model="childRaw.registration_address.district"
+                      :readonly="childRaw.readonly"
+                    />
+                    <inputField
+                      label="Улица"
+                      v-model="childRaw.registration_address.street"
+                      :readonly="childRaw.readonly"
+                    />
+                    <inputField
+                      label="Дом"
+                      v-model="childRaw.registration_address.house"
+                      :readonly="childRaw.readonly"
+                    />
+                    <inputField
+                      label="Номер квартиры"
+                      v-model="childRaw.registration_flat"
+                      :readonly="childRaw.readonly"
+                    />
+                  </div>
+              </article>
+              <article class="child-data_table-group">
+                <h2 class="form-heading child-data_heading">Адрес проживания</h2>
+                <div class="child-data_addres">
+                  <inputField
+                    label="Город"
+                    v-model="childRaw.residence_address.city"
+                    :readonly="childRaw.readonly"
+                  />
+                  <inputField
+                    label="Район"
+                    v-model="childRaw.residence_address.district"
+                    :readonly="childRaw.readonly"
+                  />
+                  <inputField
+                    label="Улица"
+                    v-model="childRaw.residence_address.street"
+                    :readonly="childRaw.readonly"
+                  />
+                  <inputField
+                    label="Дом"
+                    v-model="childRaw.residence_address.house"
+                    :readonly="childRaw.readonly"
+                  />
+                  <inputField
+                    label="Номер квартиры"
+                    v-model="childRaw.residence_flat"
+                    :readonly="childRaw.readonly"
+                  />
+                </div>
+              </article>
+
+              <div class="child-data_row">
+                <div>
+                  <inputField
+                    label="Пароль"
+                    type="password"
+                    v-model="childRaw.password"
+                    :readonly="childRaw.readonly"
+                  />
+                </div>
+              </div>
+            </article>
+            !-->
+
+            <div class="buttons">
+              <button class="dark-box dark-button" @click="editChild(id)">Редактировать</button>
+
+              <h2 class="form-heading"> {{ remove.message }} </h2>
+              <inputField
+                label="Комментарий к удалению"
+                v-if="remove.hidden"
+                v-model="remove.comment"
+              />
+              <button class="light-box light-button" v-if="!remove.hidden" @click="remove.hidden = true">Удалить</button>
+              <button class="light-box light-button" v-if="remove.hidden" @click="removeChild(id)">Удалить</button>
+            </div>
+          </article>
+
+        </section>
 
       </article>
   </main>
 </template>
 
 <style scoped>
-  .card, .add {
-    background-color: #fff;
-    padding: 30px;
-    width: 100%;
-    max-width: 750px;
-    box-sizing: border-box;
+  .home-content {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-gap: 10px;
   }
-  .card-header {
+  .children {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
   }
-  .card-header button::after {
-    content: '';
-    display: inline-block;
-    width: 0;
-    height: 0;
-    border: 10px solid #fff;
-    border-top-width: 0;
-    border-left-color: rgba(0,0,0,0);
-    border-right-color: rgba(0,0,0,0);
+  .child {
+    display: flex;
+    justify-content: space-between
+  }
+  .child-name {
+    margin: 0;
+    color: #142732;
+    align-self: center;
+  }
+  .child-to-data {
     margin-left: 10px;
   }
-  .card-name {
-    margin: 0;
-  }
+  .child-to-data::after {
+    content: '';
+    display: inline-block;
+    width: 0px;
+    height: 0px;
+    margin-left: 10px;
 
-  .add {
-    width: 500px;
+    border: 8px solid #fff;
+    border-top-color: rgba(0,0,0,0);
+    border-bottom-color: rgba(0,0,0,0);
+    border-left-style: none;
   }
-
-  .air-button {
-    font-size: 17px;
-    margin-top: 50px;
+  .child-from-data::after {
+    border-left-style: solid;
+    border-right-style: none;
+  }
+  .child-add {
+    align-self: center;
+    max-width: 150px;
+    margin-top: 20px;
   }
 
   .child-data_table {
-    margin-top: 40px;
+    width: 100%;
+    display: grid;
+    grid-gap: 20px;
   }
-  .child-data_table td {
-    padding: 20px 10px;
+  .child-data_heading {
+    margin-bottom: 5px;
+    margin-top: 20px;
   }
-  .child-data_table td:first-child {
-    color: #9E9E9E;
-    padding:
+  .child-data_table-group {
+    margin: 5px 0;
   }
-
+  .child-data_row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 200px));
+    grid-gap: 20px;
+  }
+  .child-data_addres {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 200px));
+    grid-gap: 10px;
+  }
+  .buttons {
+    margin-top: 30px;
+  }
 </style>
 
 <script>
   import navigation from '../../components/Navigation.vue'
+  import inputField from '../../components/InputField.vue'
+  import MaskedInput from 'vue-masked-input'
 
   export default {
-    name: '',
+    name: 'Child',
     components: {
-      navigation,
+      navigation, inputField, MaskedInput
     },
     data() {
       return {
-        children: [
-            {
-                name: null,
-                surname: null,
-            }
-        ],
-        childId: null,
+        children: [],
+        childrenRaw: [],
+        childrenFormatted: [],
+
+        masked: {
+          phone: null,
+          bithday: null,
+        },
+        rawChildTemplate: {
+          data: {
+            name: null,
+            surname: null,
+            lastname: null,
+            email: null,
+            phone: null,
+            sex: null
+          },
+          extra_data: {
+            birthday: null, //mask
+            birth_certificate: null,
+
+            state: null,
+            relationship: null,
+            studyPlace: null,
+            ovz: null,
+            ovz_type: { id: null },
+            disability: null,
+            disability_group: { id: null },
+
+            registration_address: {
+              city: null,
+              district: null,
+              street: null,
+              house: null,
+            },
+            registration_flat: null,
+
+            residence_address: {
+              city: null,
+              district: null,
+              street: null,
+              house: null
+            },
+            residence_flat: null,
+          }
+        },
+
+
+        ovzTypes: ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'],
+        disabilityTypes: ['I', 'II', 'III'],
         show: {
-          addChild: false,
+          childData: 0,
+        },
+        remove: {
+          comment: null,
+          message: '',
+          hidden: false
         }
       }
     },
@@ -115,7 +436,24 @@
       let req = `
         query {
           getChildren {
-            id, name, surname, phone, birthday, ovz
+              name,
+              surname,
+              lastname,
+              email,
+              phone,
+              sex,
+
+              birthday,
+              birth_certificate,
+              state,
+              relationship,
+              studyPlace,
+
+              ovz, ovz_type { id },
+              disability, disability_group { id },
+
+              registration_address, registration_flat,
+              residence_address, residence_flat
           }
         }
       `
@@ -125,45 +463,125 @@
       api.request(req)
         .then(data => {
             console.log(data);
+
             if (data.getChildren.length < 1)
                 this.children = [];
-            data.getChildren.map(el => {
-                el.showData = false;
-                const birth = el.birthday;
-                const date = new Date(birth);
-                const year = date.getFullYear();
+                data.getChildren.map(el => {
+                  const birth = el.birthday;
+                  const date = new Date(birth);
+                  const year = date.getFullYear();
 
-                let month = date.getMonth() + 1;
-                let day = date.getDate();
+                  let month = date.getMonth() + 1;
+                  let day = date.getDate();
 
-                month = (month > 9) ? month : "0" + month;
-                day = (day > 9) ? day : "0" + day;
+                  month = (month > 9) ? month : "0" + month;
+                  day = (day > 9) ? day : "0" + day;
 
-                el.birthday = year + "-" + month + "-" + day;
+                  el.birthday = year + "-" + month + "-" + day;
 
-                return el;
-            });
+                  el.readonly = true
+
+                  return el;
+                });
             this.children = data.getChildren;
+
+            for (let child in this.children) {
+              this.childrenRaw[child] = {}
+              for (let key in this.children[child]) {
+                this.childrenRaw[child][key] = this.children[child][key]
+              }
+            }
+
+            for (let child in this.childrenRaw) {
+
+              this.childrenRaw[child].registration_address = {
+                city: null,
+                district: null,
+                street: null,
+                house: null,
+              }
+
+              if (this.children[child].registration_address.split(',')) {
+                const addres = this.children[child].registration_address.split(',')
+
+                const city = addres[0]
+                const district = addres[1]
+                const street = addres[2]
+                const house = addres[3]
+
+                this.childrenRaw[child].registration_address = {
+                  city: city,
+                  district: district,
+                  street: street,
+                  house: house,
+                }
+              }
+
+              this.childremRaw[child].residence_address = {
+                city: null,
+                district: null,
+                street: null,
+                house: null,
+              }
+
+              if (this.children[child].residence_address.split(',')) {
+                const addres = this.children[child].residence_address.split(',')
+
+                const city = addres[0]
+                const district = addres[1]
+                const street = addres[2]
+                const house = addres[3]
+
+                this.childrenRaw[child].residence_address = {
+                  city: city,
+                  district: district,
+                  street: street,
+                  house: house,
+                }
+              }
+            }
         })
         .catch(err => { console.log(err) })
     },
     methods: {
-      addChild() {
-        this.addChildShow = true
+      showData(id) {
+        this.show.childData = id
+      },
 
+      editChild(id) {
+        console.log('edit hi')
+
+
+      },
+
+      removeChild(id) {
         let req = `
-          mutation($child_id: Int) {
-            addChild(child_id: $child_id)
+          mutation ($child_id: Int, $removeAccount: Boolean, $comment: String) {
+            removeChild(child_id: $child_id, removeAccount: $removeAccount, comment: $comment)
           }
         `
 
+        this.children[id].id = Number(this.children[id].id)
         let data = {
-
+          child_id: this.children[id].id,
+          removeAccount: false,
+          comment: this.remove.comment
         }
+
+        console.log(data)
+
+        api.request(req, data)
+          .then(data => {
+            this.remove.hidden = false
+            this.remove.message = 'Запрос на удаление успешно отправлен'
+          })
+          .catch(err => {
+            console.log(err)
+            this.remove.message = 'Произошла ошибка('
+          })
       },
     },
     computed: {
-
     }
   }
 </script>

@@ -37,6 +37,8 @@ let refreshUserRules = async () => {
 
 let hasAccess = id => {
     const rules = localStorage.getItem('rules');
+    console.log(localStorage);
+    console.log(id, rules);
     if (rules === null)
         return false;
 
@@ -96,17 +98,22 @@ router.afterEach(async (to, from) => {
       redirectTo('Authorization');
 });
 
-new Vue({
-  router,
-  render: h => h(App),
-  created: async () => {
-      if (localStorage.getItem('token') === null) {
-          localStorage.removeItem('rules');
+(async function () {
+    if (localStorage.getItem('token') === null) {
+        localStorage.removeItem('rules');
+    }
+    else {
+        if (localStorage.getItem('rules') === null) {
+            await refreshUserRules();
+        }
+    }
+    new Vue({
+      router,
+      render: h => h(App),
+      beforeCreate: async () => {
+      },
+      created: async () => {
+
       }
-      else {
-          if (localStorage.getItem('rules') === null) {
-              await refreshUserRules();
-          }
-      }
-  }
-}).$mount('#app');
+    }).$mount('#app');
+})();
