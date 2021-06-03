@@ -363,13 +363,13 @@
           name: null,
           surname: null,
           lastname: null,
-          birthday: null, //mask
-          birth_certificate: null,
-
           email: null,
           phone: null, //mask
           sex: null,
           password: null,
+
+          birthday: null, //mask
+          birth_certificate: null,
 
           state: null,
           relationship: null,

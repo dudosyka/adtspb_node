@@ -121,7 +121,6 @@
           ...this.$listeners,
           // Override input listener to work with v-model
           input: event => this.$emit('input', event.target.value),
-          select: event => this.$emit('selecet', event.target.value)
         }
       }
     }
