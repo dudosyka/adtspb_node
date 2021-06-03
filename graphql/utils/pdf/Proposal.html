@@ -1,0 +1,56 @@
+<style>
+p {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+</style>
+<div style='width: 300px; float: right; display: block;'>
+    <p style='font-size: 14pt;'>Директору</p>
+    <p style=''>ГБНОУ &laquo;Академия цифровых технологий&raquo;<br>
+    Ковалеву Дмитрию Сергеевичу</p>
+    <p style='text-align: left; padding-bottom: 0; margin-bottom: 0;'>От <u>{$parent_surname} {$parent_name} {$parent_midname}</u></p>
+    <p style='font-size: 8pt; margin-top: 0;text-align: center; padding-top: 0;'>(ФИО родителя полностью)</p>
+</div>
+
+<div style='padding-top: 100px; width: 100%;'>
+    <h2 style='text-align: center;'>ЗАЯВЛЕНИЕ</h2>
+    <p style='padding-bottom: 0; margin-bottom: 0;'>Я, <u>{$parent_surname} {$parent_name} {$parent_midname}</u>,</p>
+    <p style='font-size: 8pt; margin-left: 40px; padding-bottom: 0; padding-top: 0; margin-top: 0; margin-bottom: 0;'>(ФИО родителя полностью)</p>
+    <p style='padding-bottom: 0; margin-bottom: 0; padding-top: 0; margin-top: 0;'>являясь (родителем/законным представителем) прошу зачислить моего ребенка</p>
+    <p style='font-size: 8pt; margin-left: 130px; padding-bottom: 0; padding-top: 0; margin-top: 0; margin-bottom: 0;'>(нужное подчеркнуть)</p>
+    <p style='padding-bottom: 0; margin-bottom: 0; padding-top: 0; margin-top: 0;'>в Государственное бюджетное нетиповое образовательное учреждение &laquo;Академия цифровых технологий&raquo; Санкт-Петербурга</p>
+
+    <p>Объединение: <u>{$group_title}</u></p>
+
+    <b>Сведения о ребенке</b>
+
+    <ol>
+        <li><b>Фамилия, имя, отчество:</b> 													<u>{$child_surname} {$child_name} {$child_midname}</u></li>
+        <li><b>Пол</b> <i>(муж/жен)</i><b>:</b> 											<u>{$child_sex}</u></li>
+        <li><b>Дата рождения:</b> 															<u>{$child_birthday}</u></li>
+        <li><b>Гражданство</b> <i>(государство)</i><b>:</b> 								<u>{$child_state}</u></li>
+        <li><b>Регистрация</b> <i>(постоянная/временная)</i><b>:</b> 						<u>{$child_registration_type}</u></li>
+        <li><b>Адрес фактического проживания:</b> 											<u>{$child_residence_address}, кв. {$child_residence_flat}</u></li>
+        <li><b>Адрес регистрации по месту жительства:</b> 									<u>{$child_registration_address}, кв. {$child_registration_flat}</u></li>
+        <li><b>Контактный телефон ребенка:</b> 												<u>{$child_phone_number}</u></li>
+        <li><b>Контактный телефон родителя (законного представителя):</b> 					<u>{$parent_phone_number}</u></li>
+        <li><b>Адрес электронной почты:</b> 												<u>{$parent_email}</u></li>
+        <li><b>Образовательное учреждение по основному месту обучения:</b> 					<u>{$child_study_place}</u></li>
+        <li><b>Класс/группа по основному месту обучения:</b> 								<u>{$child_study_class}</u></li>
+        <li><b>Относится ли ребенок к категории лиц из числа ОВЗ</b> <i>(ДА/НЕТ &ndash; в целях возможности создания соответствующих условий при организации образовательного процесса)</i><b>:</b>
+        <u>{$child_ovz}</u></li>
+    </ol>
+
+    <p>С Уставом, Положением о порядке приема, перевода, отчисления и исключения детей, Правилами внутреннего распорядка учащихся, образовательной программой ознакомлен.</p>
+</div>
+
+
+<div>
+    <div style='margin-top: 40px;'>
+        {$current_day}
+    </div>
+
+    <div style='float: right; display: block; width: 200px; margin-top: -40px;'>
+         <p style='text-align: center;margin-bottom: 0; padding-bottom: 0;'>_______________________</p>
+         <p style='text-align: center; font-size: 8pt; padding-top: 0; margin-top: 0; margin-bottom: 0; padding-bottom: 0;'>Подпись родителя</p>
+    </div>
+</div>
