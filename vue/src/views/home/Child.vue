@@ -544,10 +544,11 @@
 
         api.request(req, data)
           .then(data => {
+            console.error(data)
             this.edit.message = 'Данные отпралены успешно'
           })
           .catch(err => {
-            console.error(err)
+            console.log(err)
             this.edit.message = 'Произошла ошибка('
           })
 
@@ -596,6 +597,7 @@
 
         api.request(req, data)
           .then(data => {
+            console.log(data)
             this.edit.extraMessage = 'Данные отпралены успешно'
           })
           .catch(err => {
