@@ -2,10 +2,10 @@
   <main class="main-content">
       <div class="auth">
         <div class="form">
-          <div class="input-container">
-            <label class="label" v-bind:class="{'label-up': login}">Номер телефона/Электронная почта</label><br>
-            <input type="text" v-model="login" class="type" tabindex="1">
-          </div>
+          <InputField
+            label="Номер телефона/Электронная почта"
+            v-model="login"
+          />
 
           <router-link class="air-button dark pass-rest" to="/passreset">Забыли пароль ?</router-link>
 
@@ -38,31 +38,15 @@
         </div>
       </div>
 
-      <div class="plate">
-        <h1 class="title">Добро<br> пожаловать<br> в личный кабинет</h1>
-        <aside class="social-media-list container">
-          <ul class="social-media-list ul">
-              <li class="social-media-list li">
-                <a href="https://t.me/adtspb" class="fab fa-telegram-plane social-media-link" target="_blank"></a>
-              </li>
-              <li class="social-media-list li">
-                <a href="https://vk.com/adtspb" class="fab fa-vk social-media-link" target="_blank"></a>
-              </li>
-              <li class="social-media-list li">
-                <a href="https://www.facebook.com/adtspb" class="fab fa-facebook-square social-media-link" target="_blank"></a>
-              </li>
-              <li class="social-media-list li">
-                <a href="https://www.instagram.com/adtspb" class="fab fa-instagram social-media-link" target="_blank"></a>
-              </li>
-          </ul>
-        </aside>
-
-      </div>
+      <AuthPlate title="Добро пожаловать в личный кабинет"/>
   </main>
 </template>
 <script>
   import axios from "axios"
   import * as AppConfig from '../config/AppConfig'
+
+  import AuthPlate from '../components/AuthPlate.vue'
+  import InputField from '../components/InputField.vue'
 
   export default {
     name: 'Login',
@@ -76,7 +60,7 @@
       }
     },
     components: {
-
+      AuthPlate, InputField
     },
     methods: {
       auth()
@@ -90,8 +74,26 @@
             `
 
             let data = {
-                login: this.login,
+                login: null,
                 password: this.pass
+            }
+
+            if (this.login.indexOf('@') !== -1) {
+              data.login = this.login
+              
+            } else {
+
+              if (this.login.indexOf('+7') !== -1) {
+                this.login = this.login.split('')
+                this.login.splice(0,2)
+                this.login = this.login.join('')
+              }
+
+              if (this.login.length < 11) {
+                this.login = '8' + this.login
+              }
+
+              data.login = this.login
             }
 
             endoor.request(req, data)

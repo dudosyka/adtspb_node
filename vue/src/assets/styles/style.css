@@ -4,6 +4,14 @@ body {
 }
 h1,h2,h3,h4,h5,h6 {
   font-weight: normal;
+  margin: 0
+}
+
+hr {
+  border: none;
+  background-color: #0086c9;
+  height: 5px;
+  margin: 5px 0 50px;
 }
 
 /* Auth */
@@ -12,11 +20,12 @@ h1,h2,h3,h4,h5,h6 {
   }
   .main-content {
     display: grid;
-    grid-template-columns: minmax(400px, 600px) minmax(750px, 1fr);
+    grid-template-columns: minmax(400px, 500px) 1fr;
     grid-template-rows: 100vh;
     grid-template-areas:
       "auth plate";
     position: relative;
+    height: 100vh;
   }
 
   .auth, .plate {
@@ -40,7 +49,7 @@ h1,h2,h3,h4,h5,h6 {
   .plate {
     grid-area: plate;
 
-    padding: 80px 0 0px 80px;
+    padding: 80px;
 
     display: flex;
     justify-content: center;
@@ -85,9 +94,6 @@ h1,h2,h3,h4,h5,h6 {
     z-index: 3;
     height: 100%;
     box-sizing: border-box;
-
-    padding-right: 50px;
-    padding-bottom: 50px;
 
     display: flex;
     justify-content: flex-end;
@@ -175,7 +181,6 @@ h1,h2,h3,h4,h5,h6 {
 /* Plate */
   .title {
     font-size: 4rem;
-    width: 580px;
     color: #fff;
     text-align: left;
     align-self: center;
@@ -193,13 +198,43 @@ h1,h2,h3,h4,h5,h6 {
   grid-template-columns: 300px 1fr;
 }
 .home-content {
-  background-color: #D6EEFA;
-  height: 100vh;
+  background-color: #EFEFEF;
   padding: 30px;
+  height: 100vh;
+  box-sizing: border-box;
+  overflow-y: scroll;
+}
+
+.card {
+  padding: 30px;
+  margin-bottom: 10px;
+  background: #fff;
+}
+
+/* WARNING: wrapper must have ONE child */
+.card_wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100vh;
 
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
 
-  overflow-y: auto;
+  background: #EFEFEF;
+}
+
+.z {
+  z-index: 5;
+}
+
+.zz {
+  z-index: 10;
+}
+
+.shadow {
+  box-shadow: 0 0 10px 0 #aeaeae;
 }

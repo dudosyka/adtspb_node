@@ -1,5 +1,6 @@
 <template>
     <main class="main-content">
+        <router-link class="left-arrow" to="/login" tag="button" />
         <div class="auth">
           <div class="form">
             <div class="input-container required">
@@ -65,37 +66,26 @@
             </div>
 
             <div class="buttons">
+              <span class="label-error">{{ error.message }}</span>
               <button class="dark-button" @click="registration" tabindex="9">Зарегистрироваться</button>
             </div>
           </div>
         </div>
 
-        <div class="plate">
-          <h1 class="title">Добро<br> пожаловать<br> в личный кабинет</h1>
-          <aside class="social-media-list container">
-            <ul class="social-media-list ul">
-                <li class="social-media-list li">
-                  <a href="https://t.me/adtspb" class="fab fa-telegram-plane social-media-link" target="_blank"></a>
-                </li>
-                <li class="social-media-list li">
-                  <a href="https://vk.com/adtspb" class="fab fa-vk social-media-link" target="_blank"></a>
-                </li>
-                <li class="social-media-list li">
-                  <a href="https://www.facebook.com/adtspb" class="fab fa-facebook-square social-media-link" target="_blank"></a>
-                </li>
-                <li class="social-media-list li">
-                  <a href="https://www.instagram.com/adtspb" class="fab fa-instagram social-media-link" target="_blank"></a>
-                </li>
-            </ul>
-          </aside>
-
-        </div>
+        <AuthPlate title="Добро пожаловать в личный кабинет" />
     </main>
 </template>
+
+<style scoped>
+  .auth {
+    padding-top: 150px;
+  }
+</style>
 
 <script>
   import axios from "axios"
   import MaskedInput from 'vue-masked-input'
+  import AuthPlate from '../components/AuthPlate.vue'
 
   export default {
     name: 'SignUp',
@@ -112,11 +102,14 @@
           password: null,
           phone: null,
           sex: null
+        },
+        error: {
+          messasge: ''
         }
       }
     },
     components: {
-      MaskedInput
+      MaskedInput, AuthPlate
     },
     methods: {
       registration() {
@@ -159,11 +152,15 @@
                     window.location = '/confirmation'
                   }
 
-              }).catch(err => { console.error(err) });
+              }).catch(err => {
+                console.error(err)
+                this.error.message = 'Данные введены неверно'
+              });
     		}
         	})
           .catch(err => {
         		console.error(err);
+            this.error.message = 'Данные введены неверно'
         	});
       },
       switchVisibility() {
