@@ -48,6 +48,9 @@ let hasAccess = id => {
 global.refreshUserRules = refreshUserRules;
 global.refreshApiToken = refreshApiToken;
 global.hasAccess = hasAccess;
+global.getError = (err, id = 0) => {
+    return JSON.parse(err.response.errors[id].message);
+}
 
 const graphql = new GraphQLClient(AppConfig.api_url, {
     headers: {
