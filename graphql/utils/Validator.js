@@ -108,9 +108,12 @@ Validator.prototype.age = function (minAge) {
     this.fields.map(el => {
         const dayFrom = (new Date(AppConfig.year + "-09-01")).getTime();
         console.log("DAY FROM:::", dayFrom);
+        console.log("NOWADAYS:::", Date.now());
+        console.log("Min Age", minAge);
         const birth = el.val;
         const diff = dayFrom - birth;
         const age = Math.floor(diff / 31557600000);
+        console.log("Age", age);
         if (age < minAge)
             this.reject(el.name);
     });
