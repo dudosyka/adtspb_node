@@ -92,6 +92,7 @@
                     class="type"
                     type="date"
                     v-model="childRaw.birthday"
+                    tabindex="1"
                   >
                 </div>
               </div>
@@ -101,6 +102,7 @@
               <inputField
                 label="Номер свидетельства о рождении"
                 v-model="childRaw.birth_certificate"
+                tabindex="1"
               />
             </div>
           </article>
@@ -443,6 +445,7 @@
         let data = {
           user: this.childFormated
         }
+        console.log(data)
 
 
         api.request(req, data)

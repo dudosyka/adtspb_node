@@ -66,6 +66,7 @@
             </div>
 
             <div class="buttons">
+              <span class="label-error">{{ error.message }}</span>
               <button class="dark-button" @click="registration" tabindex="9">Зарегистрироваться</button>
             </div>
           </div>
@@ -101,6 +102,9 @@
           password: null,
           phone: null,
           sex: null
+        },
+        error: {
+          messasge: ''
         }
       }
     },
@@ -148,11 +152,15 @@
                     window.location = '/confirmation'
                   }
 
-              }).catch(err => { console.error(err) });
+              }).catch(err => {
+                console.error(err)
+                this.error.message = 'Данные введены неверно'
+              });
     		}
         	})
           .catch(err => {
         		console.error(err);
+            this.error.message = 'Данные введены неверно'
         	});
       },
       switchVisibility() {
