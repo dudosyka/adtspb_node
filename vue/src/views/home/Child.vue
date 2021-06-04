@@ -22,9 +22,8 @@
 
           <article class="child-data" v-for="(raw, number) in childrenRaw" v-show="show.childData === number">
             <article class="child-data_table">
-              <h2 class="form-heading">Основная информация</h2>
-
               <article class="child-data_table-group">
+                <p class="label-error" v-if="edit.error"> {{ edit.error }} </p>
 
                 <div class="child-data_row">
                   <div>
@@ -95,24 +94,6 @@
                   </ul>
                 </div>
               </article>
-
-              <div class="buttons">
-                <h2 class="form-heading"> {{ edit.message }} </h2>
-                <button class="dark-box dark-button" @click="editChild(number)">Отправить на редактирование</button>
-
-                <h2 class="form-heading"> {{ remove.message }} </h2>
-                <inputField
-                  label="Комментарий к удалению"
-                  v-if="remove.hidden"
-                  v-model="remove.comment"
-                />
-                <button class="light-box light-button" v-if="!remove.hidden" @click="remove.hidden = true">Удалить</button>
-                <button class="light-box light-button" v-if="remove.hidden" @click="removeChild(number)">Удалить</button>
-              </div>
-
-              <hr>
-
-              <h2 class="form-heading">Дополнительная информация</h2>
 
               <article class="child-data_table-group">
                 <div>
@@ -268,8 +249,9 @@
             </article>
 
             <div class="buttons">
-              <h2 class="form-heading"> {{ edit.extraMessage }} </h2>
-              <button class="dark-box dark-button" @click="editChildExtra(number)">Отправить на редактирование</button>
+              <h2 class="form-heading"> {{ edit.message }} </h2>
+              <p class="label-error"> {{ edit.error }} </p>
+              <button class="dark-box dark-button" @click="editChild(number)">Отправить на редактирование</button>
 
               <h2 class="form-heading"> {{ remove.message }} </h2>
               <inputField
@@ -278,7 +260,7 @@
                 v-model="remove.comment"
               />
               <button class="light-box light-button" v-if="!remove.hidden" @click="remove.hidden = true">Удалить</button>
-              <button class="light-box light-button" v-if="remove.hidden" @click="removeChild(id)">Удалить</button>
+              <button class="light-box light-button" v-if="remove.hidden" @click="removeChild(number)">Удалить</button>
             </div>
           </article>
 
@@ -382,7 +364,6 @@
           birthday: null,
         },
 
-
         ovzTypes: ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'],
         disabilityTypes: ['I', 'II', 'III'],
         show: {
@@ -395,7 +376,7 @@
         },
         edit: {
           message: '',
-          extraMessage: '',
+          error: ''
         }
       }
     },
@@ -544,12 +525,15 @@
 
         api.request(req, data)
           .then(data => {
-            console.error(data)
+            console.log(data)
             this.edit.message = 'Данные отпралены успешно'
+
+            this.editChildExtra(id)
           })
           .catch(err => {
             console.log(err)
-            this.edit.message = 'Произошла ошибка('
+
+            this.edit.error = 'Произошла ошибка('
           })
 
         console.log(data)
@@ -563,7 +547,7 @@
 
         this.childrenFormatted[id] = {}
         for (let key in this.childrenRaw[id]) {
-         this.childrenFormatted[id][key] = this.childrenRaw[id][key]
+          this.childrenFormatted[id][key] = this.childrenRaw[id][key]
         }
 
         this.childrenFormatted[id].registration_address = this.childrenRaw[id].registration_address.city + ', ' + this.childrenRaw[id].registration_address.district + ', ' + this.childrenRaw[id].registration_address.street + ', ' + this.childrenRaw[id].registration_address.house
