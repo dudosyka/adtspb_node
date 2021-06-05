@@ -9,6 +9,7 @@ const AssociationExraData = require('./AssociationExraData');
 const Status = require('./Status');
 
 const AppConfig = require('../config/AppConfig');
+const Pdf = require('../utils/pdf/Pdf');
 
 let Proposal = function () {}
 
@@ -136,5 +137,10 @@ Proposal.prototype.createNew = async function () {
 
     return true;
 };
+
+Proposal.prototype.generatePdf = async function () {
+    const pdf = new Pdf(this);
+    return await pdf.generateProposal();
+}
 
 module.exports = (new Proposal());

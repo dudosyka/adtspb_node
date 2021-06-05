@@ -18,6 +18,7 @@ const EmailValidationType = require('./EntityTypes/EmailValidation');
 
 const Proposal = require('../Entity/Proposal');
 const ProposalType = require('./EntityTypes/Proposal');
+const ProposalInput = require('./EntityTypes/InputTypes/Proposal');
 
 const Rbac = require('../utils/Rbac');
 const Jwt = require('../utils/Jwt');
@@ -184,6 +185,18 @@ module.exports = new GraphQLObjectType({
             },
             async resolve(obj, { child_id }) {
                 //TODO: Select associations where proposal status is `enlisted`
+            }
+        },
+        generateProposalPdf: {
+            type: GraphQLString,
+            args: {
+                proposal: {
+                    type: ProposalInput
+                }
+            },
+            async resolve(obj, { proposal }) {
+                const proposalEntity = await Proposal.baseCreateFrom(proposal);
+                return await proposalEntity.generatePdf();
             }
         }
 
