@@ -51,6 +51,21 @@ global.hasAccess = hasAccess;
 global.getError = (err, id = 0) => {
     return JSON.parse(err.response.errors[id].message);
 }
+global.downloadPdfFromBase64 = async (hash, name = "tatui") => {
+    return await fetch("data:application/pdf;base64," + hash)
+        .then(base64 => { base64.blob()
+            .then(blob => {
+              console.log(blob);
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = name + ".pdf";
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+            })
+        });
+}
 
 const graphql = new GraphQLClient(AppConfig.api_url, {
     headers: {
