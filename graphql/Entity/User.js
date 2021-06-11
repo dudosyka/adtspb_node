@@ -363,7 +363,7 @@ User.prototype.getTargetOfEditing = async function (target_id) {
             throw Error('Forbidden');
         const checkRelationship = await this.checkRelationship(target_id)
         if (checkRelationship === false)
-            throw Error('Child not found2');
+            throw Error('Child not found');
 
         target = target_id;
         // const model = this.newModel();

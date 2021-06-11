@@ -29,6 +29,17 @@ Proposal.prototype.aliases = {
 
 Proposal.prototype.table = "proposal";
 
+// Proposal.prototype.createFrom = async function (proposal) {
+//     let data = {
+//         id: proposal["id"] ? proposal["id"] : null,
+//         association_id: proposal["association"] ? proposal["association"]["id"] ? parseInt(proposal["association"]["id"]) : null : null,
+//         parent_id: proposal["parent"] ? proposal["parent"]["id"] ? parseInt(proposal["parent"]["id"]) : null : null,
+//         child_id: proposal["child"] ? proposal["child"]["id"] ? parseInt(proposal["child"]["id"]) : null : null,
+//     };
+//     if (data.id != null)
+//         return
+// }
+
 Proposal.prototype.createFromInput = async function (proposal) {
     let data = {
         id: proposal["id"] ? proposal["id"] : null,
@@ -37,7 +48,7 @@ Proposal.prototype.createFromInput = async function (proposal) {
         child_id: proposal["child"] ? proposal["child"]["id"] ? parseInt(proposal["child"]["id"]) : null : null,
     };
     // console.log("proposal", data);
-    return await this.createFrom(data);
+    return await this.baseCreateFrom(data);
 }
 
 Proposal.prototype.selectByAssociation = async function (association) {
