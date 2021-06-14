@@ -2,50 +2,16 @@
   <div class="container">
 
     <div class="input-container" v-if="type === 'text'">
-      <label class="label" v-bind:class="{'label-up': value}">{{ label }}</label><br>
+      <label class="label" v-bind:class="{'label-up': value, 'label-error': error}">{{ label }}</label><br>
       <input
         :type="type"
         :value="value"
         v-on="listeners"
         class="type"
+        :class="{'input-error': error}"
         tabindex="1"
         :required="required"
         :readonly="readonly">
-    </div>
-
-    <div class="input-container" v-if="type === 'tel'">
-      <label class="label" v-bind:class="{'label-up': value}">{{ label }}</label><br>
-      <masked-input
-        mask="\+\7 (111) 111-11-11"
-        :type="type"
-        :value="value"
-        v-on="listeners"
-        class="type"
-        tabindex="1"
-        :required="required"
-        :readonly="readonly"
-      />
-    </div>
-
-    <div class="input-container required" v-if="type === 'sex'">
-      <h3 class="radio-heading dark">Пол</h3>
-      <ul class="radio-list">
-        <div class="radio-container">
-          <input type="radio" v-model="value" value="1" class="radio" v-on="listeners" tabindex="3" id="man">
-          <label class="dark radio" for="man" tabindex="5">Мужской</label>
-        </div>
-        <div class="radio-container">
-          <input type="radio" v-model="value" value="0" class="radio" v-on="listeners" tabindex="3" id="woman">
-          <label class="dark radio" for="woman" tabindex="6">Женский</label>
-        </div>
-      </ul>
-    </div>
-
-    <div class="input-container required" v-if="type === 'select'">
-      <h2 class="form-heading">{{ label }}</h2>
-      <select class="select dark-box darken" v-on="listeners">
-        <option v-for="(option, id) in options" :value="id" v-model="value" v-on="listeners">{{ option }}</option>
-      </select>
     </div>
 
     <div class="password-container" v-if="type === 'password'">
@@ -84,10 +50,6 @@
         type: String,
         default: ''
       },
-      options: {
-        type: Array,
-        default() {return []}
-      },
       type: {
         type: String,
         default: 'text'
@@ -97,6 +59,10 @@
         default: true
       },
       readonly: {
+        type: Boolean,
+        default: false
+      },
+      error: {
         type: Boolean,
         default: false
       }
@@ -121,7 +87,6 @@
           ...this.$listeners,
           // Override input listener to work with v-model
           input: event => this.$emit('input', event.target.value),
-          select: event => this.$emit('selecet', event.target.value)
         }
       }
     }

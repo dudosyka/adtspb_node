@@ -13,8 +13,14 @@
     font-size: 20px;
     color: #0086C9;
   }
-  .form-error {
+
+  .label-error {
+    color: #C90000 !important;
+  }
+  .input-error {
     color: #C90000;
+    background-color: #FFE4E4;
+    border-bottom-color: #C90000 !important;
   }
 
   .input-container {
@@ -66,19 +72,6 @@
   }
   input[readonly]:hover {
     cursor: not-allowed;
-  }
-  input[readonly]:hover::before {
-    content: "Только для просмотра";
-    display: block;
-    font-size: 10px;
-    height: 100px;
-    width: 100px;
-    padding: 10px;
-    background: #0086C9;
-
-    position: absolute;
-    left: 0;
-    bottom: 0;
   }
 
   .password-container {
@@ -136,7 +129,7 @@
     display: inline-block;
 
     position: absolute;
-    top: 50%;
+    top: 0;
     left: 0px;
 
     z-index: 2;
@@ -150,15 +143,8 @@
     white-space: nowrap;
     text-overflow: clip;
 
-    color: #cecece;
-    font-size: 1rem;
-
-    transition-duration: 0.3s;
-  }
-  .label-up {
-    transform: translateY(-30px);
-    font-size: 0.9em;
     color: #0086C9;
+    font-size: 0.9em;
   }
 
   .checkbox-container {

@@ -10,7 +10,8 @@ h1,h2,h3,h4,h5,h6 {
 hr {
   border: none;
   background-color: #0086c9;
-  height: 3px;
+  height: 5px;
+  margin: 5px 0 50px;
 }
 
 /* Auth */

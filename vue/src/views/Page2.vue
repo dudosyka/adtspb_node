@@ -6,6 +6,7 @@
 
 <script>
 // @ is an alias to /src
+    import {Proposal} from '../models/Proposal';
 
 export default {
   name: 'Page2',
@@ -16,9 +17,13 @@ export default {
       }
   },
   methods: {
+      generatePdf() {
+          Proposal.renderPdf(18);
+      }
   },
   async created()
   {
+      this.generatePdf();
   }
 }
 </script>

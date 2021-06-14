@@ -18,9 +18,12 @@ const EmailValidationType = require('./EntityTypes/EmailValidation');
 
 const Proposal = require('../Entity/Proposal');
 const ProposalType = require('./EntityTypes/Proposal');
+const ProposalInput = require('./EntityTypes/InputTypes/Proposal');
 
 const Rbac = require('../utils/Rbac');
 const Jwt = require('../utils/Jwt');
+
+const fs = require('fs');
 
 let db = new Db();
 let rbac = new Rbac();
@@ -185,6 +188,50 @@ module.exports = new GraphQLObjectType({
             async resolve(obj, { child_id }) {
                 //TODO: Select associations where proposal status is `enlisted`
             }
+        },
+        generateProposalPdf: {
+            type: GraphQLString,
+            args: {
+                proposal: {
+                    type: ProposalInput
+                }
+            },
+            async resolve(obj, { proposal }) {
+                const proposalEntity = await Proposal.createFromInput(proposal);
+                if (proposalEntity.__get('association_id') == null)
+                    throw Error('Proposal not found');
+
+                const buffer = await proposalEntity.generatePdf();
+                return buffer.toString("base64");
+            }
+            // async resolve(obj, { proposal }) {
+            //     return await (new Promise(async (resolve, reject) => {
+            //         const proposalEntity = await Proposal.createFromInput(proposal);
+            //         if (proposalEntity.__get('association_id') == null)
+            //             throw Error('Proposal not found');
+            //
+            //
+            //         const buffer = await proposalEntity.generatePdf();
+            //         resolve(buffer.toString("base64"));
+            //
+            //         const fileName = proposalEntity.__get('id') + '_' + Date.now() + '.pdf';
+            //         const fullPath = __dirname + '/../tmp/' + fileName;
+            //         fs.open(fullPath, 'w+', (err, res) => {
+            //             if (err)
+            //                 reject(err)
+            //             const fd = res;
+            //             fs.write(fd, buffer, (err, res2) => {
+            //                 if (err)
+            //                     reject(err);
+            //                 fs.close(fd, (err, res3) => {
+            //                     if (err)
+            //                         reject(err);
+            //                     resolve(fileName);
+            //                 });
+            //             });
+            //         });
+            //     }));
+            // }
         }
 
     },

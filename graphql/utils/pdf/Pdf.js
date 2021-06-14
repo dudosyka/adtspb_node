@@ -16,7 +16,7 @@ Pdf.prototype.generator = require('html-pdf-node');
 
 Pdf.prototype.generate = async function () {
     return await this.generator.generatePdf(this.file, this.options).then(buffer => {
-        console.log('Buffer: ', buffer);
+        return buffer;
     });
 }
 
@@ -90,7 +90,7 @@ Pdf.prototype.generateProposal = async function () {
                  <p style='text-align: center;margin-bottom: 0; padding-bottom: 0;'>_______________________</p>
                  <p style='text-align: center; font-size: 8pt; padding-top: 0; margin-top: 0; margin-bottom: 0; padding-bottom: 0;'>Подпись родителя</p>
             </div>
-        </div>`;
+        </div>`
     }
     return await this.generate();
 }
@@ -148,7 +148,7 @@ Pdf.prototype.generateResolution = async function () {
             __________________ / <u style='font-size: 8pt; margin-bottom: 0; padding-bottom: 0;'>{$parent_surname} {$parent_name} {$parent_midname}</u> /
             </p>
             <i style='font-size: 6pt; margin-top: 0pt; padding-top: 0;'>&nbsp;подпись&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$padding}&nbsp;&nbsp;&nbsp;расшифровка подписи</i>
-        </p>`;
+        </p>`
     }
     return await this.generate();
 }

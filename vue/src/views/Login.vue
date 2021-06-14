@@ -47,6 +47,7 @@
 
   import AuthPlate from '../components/AuthPlate.vue'
   import InputField from '../components/InputField.vue'
+  import {User} from '../models/User';
 
   export default {
     name: 'Login',
@@ -65,65 +66,24 @@
     methods: {
       auth()
       {
-            let req = `
-                mutation($login: String, $password: String) {
-                    login(login: $login, password: $password) {
-                        token, id
-                    }
-                }
-            `
-
-            let data = {
-                login: null,
-                password: this.pass
-            }
-
-            if (this.login.indexOf('@') !== -1) {
-              data.login = this.login
-              
-            } else {
-
-              if (this.login.indexOf('+7') !== -1) {
-                this.login = this.login.split('')
-                this.login.splice(0,2)
-                this.login = this.login.join('')
-              }
-
-              if (this.login.length < 11) {
-                this.login = '8' + this.login
-              }
-
-              data.login = this.login
-            }
-
-            endoor.request(req, data)
-              .then(data => {
-
-                const reqData = {
-                    user_id: data.login.id
-                };
-
-                let req = `
-                  query ($user_id: Int) {
-                    checkUserConfirmation (user_id: $user_id) {
-                        isConfirmed
-                    }
+          User.login(this).catch(err => {
+              //Ошибка с сервера
+              if (err.response) {
+                  const msg = err.response.errors[0].message;
+                  if (msg === 'login incorrect') {
+                      //......
                   }
-                `;
-
-                endoor.request(req, reqData)
-                  .then(check => {
-
-                    if (check.checkUserConfirmation.isConfirmed) {
-                        localStorage.setItem('token', data.login.token)
-                        window.location = window.location;
-                    } else {
-                      window.location = '/confirmation'
-                    }
-
-                }).catch(err => { console.error(err) });
-            })
-            .catch(err => { console.error(err) })
+                  //.....
+              }
+              //Ошибка с клиента
+              if (err.msg)
+              {
+                  // err.msg это массив, в нём поля, которые не прошли валидацию, примеры ниже:
+                  //['password'] ...
+                  //['password', 'login'] ...
+                  //['login'] ...
+              }
+          });
       },
         switchVisibility() {
           this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";

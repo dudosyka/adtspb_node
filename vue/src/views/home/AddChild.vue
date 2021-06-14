@@ -92,6 +92,7 @@
                     class="type"
                     type="date"
                     v-model="childRaw.birthday"
+                    tabindex="1"
                   >
                 </div>
               </div>
@@ -101,6 +102,7 @@
               <inputField
                 label="Номер свидетельства о рождении"
                 v-model="childRaw.birth_certificate"
+                tabindex="1"
               />
             </div>
           </article>
@@ -363,13 +365,13 @@
           name: null,
           surname: null,
           lastname: null,
-          birthday: null, //mask
-          birth_certificate: null,
-
           email: null,
           phone: null, //mask
           sex: null,
           password: null,
+
+          birthday: null, //mask
+          birth_certificate: null,
 
           state: null,
           relationship: null,
@@ -431,16 +433,6 @@
             this.childFormated.phone = 8 + this.childRaw.phone
         }
 
-        /*
-        console.log(this.childRaw.birthday)
-        const birth = this.childRaw.birthday;
-        const days = Math.floor(birth / 10000);
-        const month = (Math.floor(((birth / 10000) - days) * 100));
-        const years = Math.floor(((((birth / 10000) - days) * 100) - month) * 100) + 2000;
-        const dateStr = years + '-' + month + "-" + days;
-        this.childFormated.birthday = (new Date(dateStr)).getTime();
-        */
-
         console.log(this.childRaw.birthday)
         this.childFormated.birthday = (new Date(this.childRaw.birthday)).getTime()
         console.log(this.childFormated.birthday)
@@ -453,6 +445,7 @@
         let data = {
           user: this.childFormated
         }
+        console.log(data)
 
 
         api.request(req, data)
