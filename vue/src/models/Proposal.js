@@ -35,3 +35,45 @@ Proposal.renderPdf = async function (proposal_id) {
         console.error(err);
     })
 }
+
+Proposal.create = async function (association, parent, child) {
+    const req = `
+    mutation($proposal: ProposalInput) {
+        createProposal(proposal: $proposal)
+    }`;
+
+    const data = {
+        proposal: {
+            association: association,
+            child: child,
+            parent: parent
+        }
+    };
+
+    return await api.request(req, data).then(data => data);
+}
+
+Proposal.getChildProposal = async function (child_id) {
+    const req = `
+    query($child_id: Int) {
+        getChildProposals(child_id: $child_id) {
+            child {
+                name
+            },
+            parent {
+                name
+            },
+            association {
+                name
+            }
+        }
+    }`;
+
+    const data = {
+        child_id: child_id
+    };
+
+    return await api.request(req, data).then(data => data);
+}
+
+Proposal.get
