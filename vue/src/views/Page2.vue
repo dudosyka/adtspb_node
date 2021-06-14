@@ -6,6 +6,7 @@
 
 <script>
 // @ is an alias to /src
+    import {Proposal} from '../models/Proposal';
 
 export default {
   name: 'Page2',
@@ -17,23 +18,7 @@ export default {
   },
   methods: {
       generatePdf() {
-          const req = `
-          query($proposal: ProposalInput) {
-              generateProposalPdf(proposal: $proposal)
-            }
-          `;
-          const data = {
-              proposal: {
-                  id: 18
-              }
-          };
-
-          api.request(req, data).then(async res => {
-              //Получаешь этот татуй и суёшь его в этот гобан
-              await downloadPdfFromBase64(res.generateProposalPdf);
-          }).catch(err => {
-              console.error(err);
-          })
+          Proposal.renderPdf(18);
       }
   },
   async created()

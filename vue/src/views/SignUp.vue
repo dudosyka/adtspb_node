@@ -87,6 +87,8 @@
   import MaskedInput from 'vue-masked-input'
   import AuthPlate from '../components/AuthPlate.vue'
 
+  import {User} from '../models/User';
+
   export default {
     name: 'SignUp',
 
@@ -113,55 +115,20 @@
     },
     methods: {
       registration() {
+          User.signUp(this.user).catch(err => {
+              //Ошибки с клиента
+              if (err.msg) {
 
-        if (this.user.phone.length != 11) {
-            this.user.phone = '8' + this.user.phone
-        }
-
-        let request = `
-          mutation($user: UserInput) {
-            createUser(user: $user) {
-              token, id, status
-            }
-          }
-        `
-
-        endoor.request(request, { user: this.user })
-          .then( res => {
-		    if (res.createUser.status != 'failed')
-            {
-              const reqData = {
-                  user_id: res.createUser.id
-              };
-
-              let req = `
-                query ($user_id: Int) {
-                  checkUserConfirmation (user_id: $user_id) {
-                      isConfirmed
-                  }
-                }
-              `;
-
-              endoor.request(req, reqData)
-                .then(check => {
-
-                  if (check.checkUserConfirmation.isConfirmed) {
-                      localStorage.setItem('token', res.createUser.token)
-                      window.location = window.location;
-                  } else {
-                    window.location = '/confirmation'
-                  }
-
-              }).catch(err => {
-                console.error(err)
-                this.error.message = 'Данные введены неверно'
-              });
-    		}
-        	})
-          .catch(err => {
-        		console.error(err);
-            this.error.message = 'Данные введены неверно'
-        	});
+                  // err.msg это массив, в нём поля, которые не прошли валидацию, примеры ниже:
+                  //['phone', 'email'] ...
+                  //['phone'] ...
+                  //['phone', 'sex', 'name'] ...
+                  console.log(err.msg);
+              }
+              else if (err.response) {
+                  const msg = getError(err);
+              }
+          });
       },
       switchVisibility() {
         this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";

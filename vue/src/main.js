@@ -1,82 +1,28 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import { request, GraphQLClient } from "graphql-request"
-import * as AppConfig from './config/AppConfig'
-
-console.log(localStorage);
-
-// localStorage.removeItem('token');
-
-let refreshApiToken = () => {
-    global.api = new GraphQLClient(AppConfig.api_url, {
-        headers: {
-            Authorization: "Bearer " + localStorage.getItem('token'),
-        }
-    });
-}
-
-let refreshUserRules = async () => {
-
-    if (localStorage.getItem('token') === null)
-        return;
-
-    let req = `
-    query {
-        viewer {
-            rules
-        }
-    }
-    `;
-
-    return api.request(req).then(el => {
-        console.log(el);
-        localStorage.setItem('rules', el.viewer.rules);
-    });
-}
-
-let hasAccess = id => {
-    const rules = localStorage.getItem('rules');
-    console.log(localStorage);
-    console.log(id, rules);
-    if (rules === null)
-        return false;
-
-    return rules.includes(id);
-}
-
-global.refreshUserRules = refreshUserRules;
-global.refreshApiToken = refreshApiToken;
-global.hasAccess = hasAccess;
-global.getError = (err, id = 0) => {
-    return JSON.parse(err.response.errors[id].message);
-}
-global.downloadPdfFromBase64 = async (hash, name = "tatui") => {
-    return await fetch("data:application/pdf;base64," + hash)
-        .then(base64 => { base64.blob()
-            .then(blob => {
-              console.log(blob);
-              const url = window.URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = name + ".pdf";
-              document.body.appendChild(a);
-              a.click();
-              a.remove();
-            })
-        });
-}
+import Vue from 'vue';
+import App from './App.vue';
+import router from './router';
+import { request, GraphQLClient } from "graphql-request";
+import * as AppConfig from './config/AppConfig';
+import {AccessContol} from './utils/AccessControl';
 
 const graphql = new GraphQLClient(AppConfig.api_url, {
     headers: {
         Authorization: "Bearer " + localStorage.getItem('token'),
     }
 });
-
-global.api = graphql;
-
 const endoor  = new GraphQLClient(AppConfig.endoor_url, {});
 
+global.refreshUserRules = AccessContol.refreshUserRules;
+global.refreshApiToken = AccessContol.refreshApiToken;
+global.hasAccess = AccessContol.checkRule;
+global.getError = (err, id = 0) => {
+    try {
+        return JSON.parse(err.response.errors[id].message);
+    } catch (e) {
+        return err.response.errors[id].message;
+    }
+}
+global.api = graphql;
 global.endoor = endoor;
 
 let token = localStorage.getItem('token');
@@ -117,14 +63,7 @@ router.afterEach(async (to, from) => {
 });
 
 (async function () {
-    if (localStorage.getItem('token') === null) {
-        localStorage.removeItem('rules');
-    }
-    else {
-        if (localStorage.getItem('rules') === null) {
-            await refreshUserRules();
-        }
-    }
+    await AccessContol.refreshAccess();
     new Vue({
       router,
       render: h => h(App),

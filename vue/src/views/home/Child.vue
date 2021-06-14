@@ -36,7 +36,7 @@
                   <div>
                     <inputField
                       label="Фамилия"
-                      v-model="childrenRaw[number].surname"
+                      v-model="raw.surname"
                     />
                   </div>
                 </div>
@@ -84,12 +84,12 @@
                   <h3 class="radio-heading dark">Пол</h3>
                   <ul class="radio-list">
                     <div class="radio-container">
-                      <input type="radio" v-model.number="raw.sex" value="1" class="radio" tabindex="3" id="man">
-                      <label class="dark radio" for="man" tabindex="5">Мужской</label>
+                      <input type="radio" v-model.number="raw.sex" value="1" class="radio" tabindex="3" :id="number + 'man'">
+                      <label class="dark radio" :for="number + 'man'" tabindex="5">Мужской</label>
                     </div>
                     <div class="radio-container">
-                      <input type="radio" v-model.number="raw.sex" value="0" class="radio" tabindex="3" id="woman">
-                      <label class="dark radio" for="woman" tabindex="6">Женский</label>
+                      <input type="radio" v-model.number="raw.sex" value="0" class="radio" tabindex="3" :id="number + 'woman'">
+                      <label class="dark radio" :for="number + 'woman'" tabindex="6">Женский</label>
                     </div>
                   </ul>
                 </div>
@@ -349,6 +349,8 @@
   import inputField from '../../components/InputField.vue'
   import MaskedInput from 'vue-masked-input'
 
+  import {User} from '../../models/User';
+
   export default {
     name: 'Child',
     components: {
@@ -364,8 +366,8 @@
           birthday: null,
         },
 
-        ovzTypes: ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'],
-        disabilityTypes: ['I', 'II', 'III'],
+        ovzTypes: ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'],
+        disabilityTypes: ['', 'I', 'II', 'III'],
         show: {
           childData: 0,
         },
@@ -380,113 +382,8 @@
         }
       }
     },
-    created() {
-      let req = `
-        query {
-          getChildren {
-              id,
-              name,
-              surname,
-              lastname,
-              email,
-              phone,
-              sex,
-
-              birthday,
-              birth_certificate,
-              state,
-              relationship,
-              studyPlace,
-
-              ovz, ovz_type { id },
-              disability, disability_group { id },
-
-              registration_address, registration_flat,
-              residence_address, residence_flat
-          }
-        }
-      `
-
-      let data = {}
-
-      api.request(req)
-        .then(data => {
-          console.log(data);
-
-          if (data.getChildren.length > 0) {
-            data.getChildren.map(el => {
-              const birth = el.birthday;
-              const date = new Date(birth);
-              const year = date.getFullYear();
-
-              let month = date.getMonth() + 1;
-              let day = date.getDate();
-
-              month = (month > 9) ? month : "0" + month;
-              day = (day > 9) ? day : "0" + day;
-
-              el.birthday = year + "-" + month + "-" + day;
-
-              if (el.registration_address !== null) {
-                const addres = el.registration_address.split(',')
-
-                const city = addres[0]
-                const district = addres[1]
-                const street = addres[2]
-                const house = addres[3]
-
-                el.registration_address = {
-                  city: city,
-                  district: district,
-                  street: street,
-                  house: house,
-                }
-              } else {
-                el.registration_address = {
-                  city: null,
-                  district: null,
-                  street: null,
-                  house: null,
-                }
-              }
-
-              if (el.residence_address !== null) {
-                const addres = el.residence_address.split(',')
-
-                const city = addres[0]
-                const district = addres[1]
-                const street = addres[2]
-                const house = addres[3]
-
-                el.residence_address = {
-                  city: city,
-                  district: district,
-                  street: street,
-                  house: house,
-                }
-              } else {
-                el.residence_address = {
-                  city: null,
-                  district: null,
-                  street: null,
-                  house: null,
-                }
-              }
-
-              el.masked = {}
-
-              let formattingPhone = el.phone.split('')
-              formattingPhone.shift()
-              el.masked.phone = formattingPhone.join('')
-
-              el.sex = el.sex
-
-              return el;
-          })
-        }
-          this.childrenRaw = data.getChildren
-        })
-        .catch(err => { console.log(err) })
+    async created() {
+      this.childrenRaw = await User.getChildren();
     },
     methods: {
       showData(id) {
@@ -494,117 +391,18 @@
       },
 
       editChild(id) {
-        let req = `
-          mutation ($data: UserInput, $target_id: Int) {
-            editMainUserData(newData: $data, target_id: $target_id)
-          }
-        `
-
-        this.childrenFormatted[id] = {}
-        for (let key in this.childrenRaw[id]) {
-          this.childrenFormatted[id][key] = this.childrenRaw[id][key]
-        }
-
-        if (this.childrenRaw[id].phone != 11) {
-            this.childrenFormatted[id].phone = 8 + this.childrenRaw[id].phone
-        }
-
-        this.childrenFormatted[id].id = Number(this.childrenFormatted[id].id)
-
-        let data = {
-          data: {
-            name: this.childrenFormatted[id].name,
-            surname: this.childrenFormatted[id].surname,
-            lastname: this.childrenFormatted[id].lastname,
-            email: this.childrenFormatted[id].email,
-            phone: this.childrenFormatted[id].phone,
-            sex: this.childrenFormatted[id].sex,
-          },
-          target_id: this.childrenFormatted[id].id
-        }
-
-        api.request(req, data)
+          User.editMainData({...this.childrenRaw[id]}, id)
           .then(data => {
-            console.log(data)
-            this.edit.message = 'Данные отпралены успешно'
-
-            this.editChildExtra(id)
+              console.log(data)
+              this.edit.message = 'Данные отправлены успешно'
           })
           .catch(err => {
-            console.log(err)
-
-            this.edit.error = 'Произошла ошибка('
-          })
-
-        console.log(data)
+              console.log(err)
+              this.edit.error = 'Произошла ошибка('
+          });
       },
-      editChildExtra(id) {
-        let req = `
-          mutation ($data: UserInput, $target_id: Int) {
-            editExtraUserData(newData: $data, target_id: $target_id)
-          }
-        `
-
-        this.childrenFormatted[id] = {}
-        for (let key in this.childrenRaw[id]) {
-          this.childrenFormatted[id][key] = this.childrenRaw[id][key]
-        }
-
-        this.childrenFormatted[id].registration_address = this.childrenRaw[id].registration_address.city + ', ' + this.childrenRaw[id].registration_address.district + ', ' + this.childrenRaw[id].registration_address.street + ', ' + this.childrenRaw[id].registration_address.house
-        this.childrenFormatted[id].residence_address = this.childrenRaw[id].residence_address.city + ', ' + this.childrenRaw[id].residence_address.district + ', ' + this.childrenRaw[id].residence_address.street + ', ' + this.childrenRaw[id].residence_address.house
-
-        this.childrenFormatted[id].birthday = (new Date(this.childrenRaw[id].birthday)).getTime()
-
-        this.childrenFormatted[id].id = Number(this.childrenFormatted[id].id)
-
-        let data = {
-          data: {
-            birthday: this.childrenFormatted[id].birthday,
-            birth_certificate: this.childrenFormatted.birth_certificate,
-
-            state: this.childrenFormatted[id].state,
-            relationship: this.childrenFormatted[id].relationship,
-            studyPlace: this.childrenFormatted[id].studyPlace,
-            ovz: this.childrenFormatted[id].ovz,
-            ovz_type: { id: this.childrenFormatted[id].ovz_type.id },
-            disability: this.childrenFormatted[id].disability,
-            disability_group: { id: this.childrenFormatted[id].disability_group.id },
-
-            registration_address: this.childrenFormatted[id].registration_address,
-            registration_flat: this.childrenFormatted[id].registration_flat,
-
-            residence_address: this.childrenFormatted[id].residence_address,
-            residence_flat: this.childrenFormatted[id].residence_flat,
-          },
-          target_id: this.childrenFormatted[id].id
-        }
-
-        api.request(req, data)
-          .then(data => {
-            console.log(data)
-            this.edit.extraMessage = 'Данные отпралены успешно'
-          })
-          .catch(err => {
-            console.error(err)
-            this.edit.extraMessage = 'Произошла ошибка('
-          })
-      },
-
       removeChild(id) {
-        let req = `
-          mutation ($child_id: Int, $removeAccount: Boolean, $comment: String) {
-            removeChild(child_id: $child_id, removeAccount: $removeAccount, comment: $comment)
-          }
-        `
-
-        this.childrenRaw[id].id = Number(this.childrenRaw[id].id)
-        let data = {
-          child_id: this.childrenRaw[id].id,
-          removeAccount: false,
-          comment: this.remove.comment
-        }
-
-        api.request(req, data)
+          User.removeChild(id, this.remove.comment, false)
           .then(data => {
             this.remove.hidden = false
             this.remove.message = 'Запрос на удаление успешно отправлен'
