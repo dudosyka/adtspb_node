@@ -66,7 +66,7 @@ module.exports = new graphql.GraphQLObjectType({
             type: OvzType,
             async resolve(obj, data) {
                 return {
-                    id: null,
+                    id: obj.ovz_type,
                     name: null
                 }
             }
@@ -77,8 +77,9 @@ module.exports = new graphql.GraphQLObjectType({
         disability_group: {
             type: DisabilityGroupType,
             async resolve(obj, data) {
+                console.log(obj);
                 return {
-                    id: null,
+                    id: obj.disability_group,
                     name: null
                 }
             }
