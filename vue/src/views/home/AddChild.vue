@@ -433,9 +433,9 @@
             this.childFormated.phone = 8 + this.childRaw.phone
         }
 
-        console.log(this.childRaw.birthday)
+        console.log('raw birthday - ' + this.childRaw.birthday)
         this.childFormated.birthday = (new Date(this.childRaw.birthday)).getTime()
-        console.log(this.childFormated.birthday)
+        console.log('formatted birthday - ' + this.childFormated.birthday)
 
         this.childFormated.ovz = Number(this.childRaw.ovz)
         this.childFormated.ovz_type.id = Number(this.childRaw.ovz_type.id)
@@ -456,9 +456,10 @@
             this.show.childReg = true
           })
           .catch(err => {
-            console.error(err)
-            this.show.childNotReg = true
-
+            console.error(err);
+            //this.show.childNotReg = true;
+            if (err.msg)
+              console.log(err.msg + ' - err.msg');
 
           })
       },
@@ -500,6 +501,7 @@
           })
           .catch(err => {
             console.log(err)
+            console.log(err.msg)
 
             this.show.error = 'не удалось найти ребёнка'
           })

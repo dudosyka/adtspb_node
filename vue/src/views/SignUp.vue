@@ -126,7 +126,7 @@
               if (err.msg) {
                   for (let msg of err.msg)
                     if (msg)
-                      this.errors[msg] = true
+                      this.errors[msg] = true;
               }
               else if (err.response) {
                   const msg = getError(err);
