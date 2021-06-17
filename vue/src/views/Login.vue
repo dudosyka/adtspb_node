@@ -5,6 +5,7 @@
           <InputField
             label="Номер телефона/Электронная почта"
             v-model="login"
+            :error="errors.login"
           />
 
           <router-link class="air-button dark pass-rest" to="/passreset">Забыли пароль ?</router-link>
@@ -12,8 +13,17 @@
           <div class="input-container">
             <div class="password-container">
               <div>
-                <label class="label" v-bind:class="{'label-up': pass}">Пароль</label><br>
-                <input :type="passwordFieldType" v-model="pass" class="type" tabindex="1">
+                <label
+                    class="label"
+                    :class="{'label-up': pass, 'label-error': errors.password}"
+                >Пароль</label><br>
+                <input
+                    :type="passwordFieldType"
+                    v-model="pass"
+                    class="type"
+                    :class="{'input-error': errors.password}"
+                    tabindex="1"
+                >
               </div>
               <button
                 @click="switchVisibility()"
@@ -26,10 +36,12 @@
             </div>
           </div>
 
+          <!-- Не используется
           <div class="checkbox-container" v-on:click="remember = !remember">
             <input type="checkbox" v-model="remember" class="checkbox" tabindex="3">
             <label class="checkbox">Запомнить меня</label>
           </div>
+          !-->
 
           <div class="buttons">
             <button class="dark-button" @click="auth()" tabindex="4">Войти</button>
@@ -57,7 +69,11 @@
         passwordFieldType: "password",
         login: null,
         pass: null,
-        remember: false //not is parm
+        remember: false, //не используется
+        errors: {
+          login: false,
+          password: false
+        }
       }
     },
     components: {
@@ -76,8 +92,11 @@
                   //.....
               }
               //Ошибка с клиента
-              if (err.msg)
-              {
+              if (err.msg) {
+                for (let msg of err.msg)
+                  if (msg)
+                    this.errors[msg] = true
+
                   // err.msg это массив, в нём поля, которые не прошли валидацию, примеры ниже:
                   //['password'] ...
                   //['password', 'login'] ...
