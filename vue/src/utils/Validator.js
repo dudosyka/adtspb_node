@@ -1,3 +1,4 @@
+const Parser = require('./Parser');
 const Validator = {};
 
 Validator.validateEmail = function (email) {
@@ -11,14 +12,30 @@ Validator.validateNotEmpty = function (val, obj = false) {
     const errs = [];
     Object.keys(val).map(id => {
         const el = val[id];
-        if (el === null || el === undefined || el === "")
-            errs.push(id);
+        console.log(id, el);
+        if (id == "residence_address" || id == 'registration_address') {
+            const validateRes = this.validateAddressNotEmpty(el);
+            if (validateRes !== true)
+            {
+                errs.push({
+                    [id]: validateRes
+                });
+            }
+        }
+        else {
+            if (el === null || el === undefined || el === "")
+                errs.push(id);
+        }
     });
 
     if (errs.length)
         return errs;
     else
         return true;
+}
+
+Validator.validateAddressNotEmpty = function (address) {
+    return this.validateNotEmpty({...address}, true);
 }
 
 Validator.validatePhone = function (phone) {

@@ -11,6 +11,10 @@
             <p>Хочет стать вашим родителем</p>
             <button class="dark-box dark-button" @click="accept(id)">Принять</button>
             <button class="light-box light-button" @click="cancell(id)">Отклонить</button>
+
+            <section v-if="extraData.show">
+
+            </section>
           </article>
         </section>
       </div>
@@ -38,9 +42,10 @@
     data() {
       return {
         haveParentRequest: null,
-        parentRequest: [
-
-        ]
+        parentRequest: [],
+        extraData: {
+          show: true,
+        }
       }
     },
     async created() {

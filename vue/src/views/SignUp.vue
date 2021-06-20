@@ -4,34 +4,35 @@
         <div class="auth">
           <div class="form">
             <div class="input-container required">
-              <label class="label" v-bind:class="{'label-up': user.surname}">Фамилия</label><br>
-              <input type="text" v-model="user.surname" class="type" tabindex="1" required>
+              <label class="label" v-bind:class="{'label-up': user.surname, 'label-error': errors.surname}">Фамилия</label><br>
+              <input type="text" v-model="user.surname" class="type" :class="{'input-error': errors.surname}" tabindex="1" required>
             </div>
 
             <div class="input-container required">
-              <label class="label" v-bind:class="{'label-up': user.name}">Имя</label><br>
-              <input type="text" v-model="user.name" class="type" tabindex="2">
+              <label class="label" v-bind:class="{'label-up': user.name, 'label-error': errors.name}">Имя</label><br>
+              <input type="text" v-model="user.name" class="type" :class="{'input-error': errors.name}" tabindex="2">
             </div>
 
             <div class="input-container required">
-              <label class="label" v-bind:class="{'label-up': user.lastname}">Отчество</label><br>
-              <input type="text" v-model="user.lastname" class="type" tabindex="3">
+              <label class="label" v-bind:class="{'label-up': user.lastname, 'label-error': errors.lastname}">Отчество</label><br>
+              <input type="text" v-model="user.lastname" class="type" :class="{'input-error': errors.lastname}" tabindex="3">
             </div>
 
             <div class="input-container required">
-              <label class="label" v-bind:class="{'label-up': user.phone}">Номер телефона</label><br>
+              <label class="label" v-bind:class="{'label-up': user.phone, 'label-error': errors.phone}">Номер телефона</label><br>
               <masked-input
                 v-model="rawPhone"
                 mask="\+\7 (111) 111-11-11"
                 @input="user.phone = arguments[1]"
                 type="tel"
                 class="type"
+                :class="{'input-error': errors.phone}"
                 tabindex="4" />
             </div>
 
             <div class="input-container required">
-              <h3 class="radio-heading dark">Пол</h3>
-              <ul class="radio-list">
+              <h3 class="radio-heading dark" :class="{'label-error': errors.sex}">Пол</h3>
+              <ul class="radio-list" :class="{'input-error': errors.sex}">
                 <div class="radio-container">
                   <input type="radio" v-model.number="user.sex" value="1" class="radio" tabindex="3" id="man">
                   <label class="dark radio" for="man" tabindex="5">Мужской</label>
@@ -44,15 +45,15 @@
             </div>
 
             <div class="input-container required">
-              <label class="label" v-bind:class="{'label-up': user.email}">Email</label><br>
-              <input type="email" v-model="user.email" class="type" tabindex="7">
+              <label class="label" v-bind:class="{'label-up': user.email, 'label-error': errors.email}">Email</label><br>
+              <input type="email" v-model="user.email" class="type" :class="{'input-error': errors.email}" tabindex="7">
             </div>
 
             <div class="input-container">
               <div class="password-container">
                 <div>
-                  <label class="label" v-bind:class="{'label-up': user.password}">Пароль</label><br>
-                  <input :type="passwordFieldType" v-model="user.password" class="type" tabindex="8">
+                  <label class="label" v-bind:class="{'label-up': user.password, 'label-error': errors.password}">Пароль</label><br>
+                  <input :type="passwordFieldType" v-model="user.password" class="type" :class="{'input-error': errors.password}" tabindex="8">
                 </div>
                 <button
                   @click="switchVisibility()"
@@ -66,7 +67,6 @@
             </div>
 
             <div class="buttons">
-              <span class="label-error">{{ error.message }}</span>
               <button class="dark-button" @click="registration" tabindex="9">Зарегистрироваться</button>
             </div>
           </div>
@@ -105,9 +105,15 @@
           phone: null,
           sex: null
         },
-        error: {
-          messasge: ''
-        }
+        errors: {
+          name: false,
+          surname: false,
+          lastname: false,
+          email: false,
+          password: false,
+          phone: false,
+          sex: false
+        },
       }
     },
     components: {
@@ -118,12 +124,9 @@
           User.signUp(this.user).catch(err => {
               //Ошибки с клиента
               if (err.msg) {
-
-                  // err.msg это массив, в нём поля, которые не прошли валидацию, примеры ниже:
-                  //['phone', 'email'] ...
-                  //['phone'] ...
-                  //['phone', 'sex', 'name'] ...
-                  console.log(err.msg);
+                  for (let msg of err.msg)
+                    if (msg)
+                      this.errors[msg] = true;
               }
               else if (err.response) {
                   const msg = getError(err);

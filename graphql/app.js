@@ -3,7 +3,7 @@ const cors = require("cors");
 const bodyParcer = require("body-parser");
 let app = express();
 app.use(cors());
-
+app.use(bodyParcer.json());
 const expressWs = require('express-ws')(app);
 const {graphqlHTTP} = require("express-graphql");
 const {GraphQLSchema} = require("graphql");
@@ -51,6 +51,7 @@ let rootValue = {
 //Check user token. If valid -> next(), invalid -> HTTP 403
 app.use('/api', async (req, res, next) =>
 {
+	console.log(req.body);
     //Authorization: Bearer [token]
     let token = req.header("Authorization");
 
@@ -66,7 +67,7 @@ app.use('/api', async (req, res, next) =>
         console.log(data);
         if (data !== false && Object.keys(data).length != 1)
         {
-            // let usr = await User.createFrom(data);
+           // let usr = await User.createFrom(data);
             // if (usr.__get("isConfirmed").code == null) {
                 rootValue = {
                     ...rootValue,
@@ -96,6 +97,11 @@ app.use('/api', graphqlHTTP({
 }));
 
 //app.use('/endoor', (req, res, next) => { console.log('WORK!'); res.end("RESPONSE"); });
+
+app.use('/endoor', (req, res, next) => {
+	console.log(req.body);
+	next();
+});
 
 app.use('/endoor', graphqlHTTP({
     schema: schemaForNonLogin,

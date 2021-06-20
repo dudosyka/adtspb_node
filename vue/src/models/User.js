@@ -143,36 +143,53 @@ User.agreeParentRequest = async function (request_id, userData) {
     });
 }
 
-User.getChildren = async function () {
+User.getChildren = async function (fields = null, parse = true) {
+    if (fields === null) {
+
+        field = {
+           id: null,
+           name: null,
+           surname: null,
+           lastname: null,
+           email: null,
+           phone: null,
+           sex: null,
+           birthday: null,
+           birth_certificate: null,
+           state: null,
+           relationship: null,
+           studyPlace: null,
+           ovz: null,
+           ovz_type: {
+               id: null
+           },
+           disability: null,
+           disability_group: {
+               id: null,
+           },
+           registration_address: null,
+           registration_flat: null,
+           residence_address: null,
+           residence_flat: null
+       };
+    }
+    const fieldsOnGet = Parser.objToGraphQlQuery(fields);
+
     let req = `
       query {
         getChildren {
-            id,
-            name,
-            surname,
-            lastname,
-            email,
-            phone,
-            sex,
-
-            birthday,
-            birth_certificate,
-            state,
-            relationship,
-            studyPlace,
-
-            ovz, ovz_type { id },
-            disability, disability_group { id },
-
-            registration_address, registration_flat,
-            residence_address, residence_flat
+            `+ fieldsOnGet +`
         }
       }
     `;
 
+    console.log(req);
+
     return await api.request(req).then(data => {
         console.log(data);
         data.getChildren.map(el => {
+            if (!parse)
+                return el;
             const birth = Parser.timestampToObj(el.birthday);
             el.birthday = birth.year + "-" + birth.month + "-" + birth.day;
 
@@ -188,7 +205,7 @@ User.getChildren = async function () {
             el.sex = el.sex;
 
             return el;
-        })
+        });
         return data.getChildren;
     });
 }

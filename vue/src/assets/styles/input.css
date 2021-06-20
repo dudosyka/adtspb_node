@@ -196,7 +196,7 @@
 
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: 15px 5px;
   }
   .radio-container {
     padding-left: 35px;
@@ -229,4 +229,10 @@
   }
   input[type=radio]:checked ~ label.radio::before {
     background-color: #0086C9;
+  }
+  .radio-list.input-error label.radio:before {
+    border: 3px solid #C90000;
+  }
+  .radio-list.input-error label.radio {
+    color: #C90000;
   }
