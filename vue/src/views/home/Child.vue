@@ -390,25 +390,25 @@
       this.childrenRaw = await User.getChildren();
 
       //Создание массива, для отображения ошибок
-      let errors = []
 
-      for (let child in this.childrenRaw) {
-        errors[child] = {};
-
-        for (let key in this.childrenRaw[child]) {
-
-          if (typeof this.childrenRaw[child][key] === 'object' && this.childrenRaw[child][key] !== null) {
-            errors[child][key] = {};
-            for (let cheap in this.childrenRaw[child][key]) {
-              errors[child][key][cheap] = false;
-            }
-          } else {
-            errors[child][key] = false;
-          }
-        }
-      }
-
-      this.errors = errors
+      this.childrenRaw.map(child => {
+          let raw = {};
+          Object.keys(child).map(field => {
+             const fieldValue = child[field];
+             if (typeof fieldValue === 'object') {
+                 Object.keys(fieldValue ?? {}).map(subfield => {
+                     if (raw[field])
+                        raw[field][subfield] = false;
+                     else
+                        raw[field] = { [subfield]: false };
+                 });
+             }
+             else {
+                 raw[field] = false;
+             }
+          });
+          this.errors.push(raw);
+      });
     },
     methods: {
       showData(id) {
@@ -421,10 +421,20 @@
               this.edit.message = 'Данные отправлены успешно'
           })
           .catch(err => {
-              console.log(err.msg)
               if (err.msg)
-                for (let msg of err.msg)
-                  this.errors[id][msg] = true;
+                err.msg.map(el => {
+                    // Если поймали ошибку для составного поля обрабатываем каждое
+                    if (typeof el === 'object') {
+                        Object.keys(el ?? {}).map(field => {
+                            el[field].map(subfield => {
+                                this.errors[id][field][subfield] = true;
+                            });
+                        });
+                    }
+                    else {
+                        this.errors[id][el] = true;
+                    }
+                });
               this.edit.error = 'Ошибка заполнения формы';
           });
       },
