@@ -21,18 +21,27 @@ Pdf.prototype.generate = async function () {
 }
 
 Pdf.prototype.generateProposal = async function () {
-    const current_day = this.date.getDate();
-    const parent = await User.baseCreateFrom({id: this.proposal.__get('parent_id')});
-    const child = await User.baseCreateFrom({id: this.proposal.__get('child_id')});
-    const child_extra_data = await UserExtraData.baseCreateFrom({user_id: this.proposal.__get('child_id')});
+    const month = this.date.getMonth() + 1 > 9 ? this.date.getMonth() + 1 : "0" + (this.date.getMonth() + 1);
+    const day = this.date.getDate() > 9 ? this.date.getDate() : "0" + this.date.getDate();
+    const current_day = this.date.getFullYear() + "-" + month + "-" + day;
+    console.log(this.proposal.fields);
+    const parent = {...(await User.baseCreateFrom({id: this.proposal.__get('parent_id')})).fields};
+    const child = {...(await User.baseCreateFrom({id: this.proposal.__get('child_id')})).fields};
+    console.log('FIELDS');
+    console.log(parent);
+    console.log(child);
+    const child_extra_data = await UserExtraData.createFrom({user_id: this.proposal.__get('child_id')});
+    console.log(child_extra_data.fields);
     const association = await Association.baseCreateFrom({id: this.proposal.__get('association_id')});
 
-    const child_sex = child.__get('sex') == 1 ? 'Муж' : 'Жен';
+    const child_sex = child.sex == 1 ? 'Муж' : 'Жен';
 
-    const child_birthday_date = new Date(child_extra_data.__get('birthday'))
-    const child_birthday = child_birthday_date.getFullYear() + '-' + (child_birthday_date.getMonth() + 1) + '-' + child_birthday_date.getDate();
+    const child_birthday_date = new Date(child_extra_data.__get('birthday'));
+    const child_month = (child_birthday_date.getMonth() + 1) > 9 ? (child_birthday_date.getMonth() + 1) : "0" + (child_birthday_date.getMonth() + 1);
+    const child_day = (child_birthday_date.getDate()) > 9 ? (child_birthday_date.getDate()) : "0" + (child_birthday_date.getDate());
+    const child_birthday = child_birthday_date.getFullYear() + '-' + child_month + '-' + child_day;
 
-    const child_ovz = child_extra_data.__get('ovz') == 1 ? 'Да' : 'Нет';
+    const child_ovz = child_extra_data.ovz == 1 ? 'Да' : 'Нет';
 
     this.file = {
         content: `<style>
@@ -44,13 +53,13 @@ Pdf.prototype.generateProposal = async function () {
             <p style='font-size: 14pt;'>Директору</p>
             <p style=''>ГБНОУ &laquo;Академия цифровых технологий&raquo;<br>
             Ковалеву Дмитрию Сергеевичу</p>
-            <p style='text-align: left; padding-bottom: 0; margin-bottom: 0;'>От <u>` + parent.__get('surname') + ' ' + parent.__get('name') + ' ' + parent.__get('lastname') + `</u></p>
+            <p style='text-align: left; padding-bottom: 0; margin-bottom: 0;'>От <u>` + parent.surname + ' ' + parent.name + ' ' + parent.lastname + `</u></p>
             <p style='font-size: 8pt; margin-top: 0;text-align: center; padding-top: 0;'>(ФИО родителя полностью)</p>
         </div>
 
         <div style='padding-top: 100px; width: 100%;'>
             <h2 style='text-align: center;'>ЗАЯВЛЕНИЕ</h2>
-            <p style='padding-bottom: 0; margin-bottom: 0;'>Я, <u>` + parent.__get('surname') + ' ' + parent.__get('name') + ' ' + parent.__get('lastname') + `</u>,</p>
+            <p style='padding-bottom: 0; margin-bottom: 0;'>Я, <u>` + parent.surname + ' ' + parent.name + ' ' + parent.lastname + `</u>,</p>
             <p style='font-size: 8pt; margin-left: 40px; padding-bottom: 0; padding-top: 0; margin-top: 0; margin-bottom: 0;'>(ФИО родителя полностью)</p>
             <p style='padding-bottom: 0; margin-bottom: 0; padding-top: 0; margin-top: 0;'>являясь (родителем/законным представителем) прошу зачислить моего ребенка</p>
             <p style='font-size: 8pt; margin-left: 130px; padding-bottom: 0; padding-top: 0; margin-top: 0; margin-bottom: 0;'>(нужное подчеркнуть)</p>
@@ -61,16 +70,16 @@ Pdf.prototype.generateProposal = async function () {
             <b>Сведения о ребенке</b>
 
             <ol>
-                <li><b>Фамилия, имя, отчество:</b> 													<u>` + child.__get('surname') + ' ' + child.__get('name') + ' ' + child.__get('lastname') + `</u></li>
-                <li><b>Пол</b> <i>(муж/жен)</i><b>:</b> 											<u>` +  + `</u></li>
+                <li><b>Фамилия, имя, отчество:</b> 													<u>` + child.surname + ' ' + child.name + ' ' + child.lastname + `</u></li>
+                <li><b>Пол</b> <i>(муж/жен)</i><b>:</b> 											<u>` + child_sex + `</u></li>
                 <li><b>Дата рождения:</b> 															<u>` + child_birthday + `</u></li>
                 <li><b>Гражданство</b> <i>(государство)</i><b>:</b> 								<u>` + child_extra_data.__get('state') + `</u></li>
                 <li><b>Регистрация</b> <i>(постоянная/временная)</i><b>:</b> 						<u>` + 'Постоянная' + `</u></li>
                 <li><b>Адрес фактического проживания:</b> 											<u>` + child_extra_data.__get('residence_address') + `, кв. ` + child_extra_data.__get('residence_flat') + `</u></li>
                 <li><b>Адрес регистрации по месту жительства:</b> 									<u>` + child_extra_data.__get('registration_address') + `, кв. ` + child_extra_data.__get('registration_flat') + `</u></li>
-                <li><b>Контактный телефон ребенка:</b> 												<u>` + child.__get('phone') + `</u></li>
-                <li><b>Контактный телефон родителя (законного представителя):</b> 					<u>` + parent.__get('phone') + `</u></li>
-                <li><b>Адрес электронной почты:</b> 												<u>` + parent.__get('email') + `</u></li>
+                <li><b>Контактный телефон ребенка:</b> 												<u>` + child.phone + `</u></li>
+                <li><b>Контактный телефон родителя (законного представителя):</b> 					<u>` + parent.phone + `</u></li>
+                <li><b>Адрес электронной почты:</b> 												<u>` + parent.email + `</u></li>
                 <li><b>Образовательное учреждение по основному месту обучения:</b> 					<u>` + child_extra_data.__get('studyPlace') + `</u></li>
                 <li><b>Класс/группа по основному месту обучения:</b> 								<u>` + child_extra_data.__get('study_class') + `</u></li>
                 <li><b>Относится ли ребенок к категории лиц из числа ОВЗ</b> <i>(ДА/НЕТ &ndash; в целях возможности создания соответствующих условий при организации образовательного процесса)</i><b>:</b>
