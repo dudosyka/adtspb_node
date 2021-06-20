@@ -49,4 +49,20 @@ Parser.objToAddress = function (obj) {
     return obj.city + ", " + obj.district + ", " + obj.street + ", " + obj.house;
 }
 
+Parser.objToGraphQlQuery = function (obj) {
+    let arr = [];
+    Object.keys(obj).map(field => {
+        let fieldStr = "";
+        let fieldValue = obj[field];
+        if (typeof fieldValue === 'object' && fieldValue !== null) {
+            fieldStr = field + "{" + this.objToGraphQlQuery(fieldValue) + "}";
+        }
+        else {
+            fieldStr = field;
+        }
+        arr.push(fieldStr);
+    });
+    return arr.join(',');
+}
+
 export {Parser};

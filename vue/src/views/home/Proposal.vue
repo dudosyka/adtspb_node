@@ -9,14 +9,14 @@
 
           <article class="proposals">
 
-            <section class="proposal" v-for="proposal in child.proposals">
+            <section class="proposal" v-for="(proposal, index) in child.proposals">
               <div class="child-stat">
                 <h3 class="proposal_heading">{{ proposal.name }}</h3>
                 <figcaption class="child-stat_heading">Статус: {{ proposal.status }}</figcaption>
               </div>
               <div class="buttons">
-                <button class="dark-button dark-box">Скачать</button>
-                <button class="dark-button dark-box">Печатать</button>
+                <button class="dark-button dark-box" @click="downloadPdf(proposal.id, child, index)">Скачать</button>
+                <button class="dark-button dark-box" @click="downloadPdf(proposal.id, child, index)">Печатать</button>
               </div>
             </section>
 
@@ -52,6 +52,9 @@
 
 <script>
   import navigation from '../../components/Navigation.vue'
+  import {User} from '../../models/User';
+  import {Proposal} from '../../models/Proposal';
+  import {Parser} from '../../utils/Parser';
 
   export default {
     name: '',
@@ -60,45 +63,54 @@
     },
     data() {
       return {
-        children: [
-          {
-            name: 'Гобан',
-            surname: 'Мохонов',
-            proposals: [
-              {
-                name: 'Мехатроника',
-                status: 'Курьер уже в пути',
-                download: '',
-                print: '',
-              },
-              {
-                name: '4D театр',
-                status: 'В печи',
-                download: '',
-                print: '',
-              }
-            ]
-          },
-          {
-            name: 'Татуй',
-            surname: 'Беояев',
-            proposals: [
-              {
-                name: 'Мехатроника',
-                status: 'Курьер уже в пути',
-                download: '',
-                print: '',
-              },
-            ]
-          },
-
-        ]
+        children: []
       }
+    },
+    methods: {
+        downloadPdf(proposal_id, child, proposal_index) {
+            const name = child.surname + "_" + child.name + "_" + child.proposals[proposal_index].name;
+            Proposal.renderPdf(proposal_id, name);
+        }
+    },
+    async created() {
+        console.log(111, User, Proposal);
+        const children = await User.getChildren({
+            id: null,
+            name: null,
+            surname: null,
+            proposals: {
+                id: null,
+                association: {
+                    name: null
+                },
+                status: {
+                    text: null
+                }
+            }
+        }, false).then( data => data );
+        children.map((child, index) => {
+            const proposals = child.proposals.map(el => {
+                return {
+                    id: el.id,
+                    name: el.association.name,
+                    status: el.status[0].text,
+                    download: "",
+                    print: ""
+                }
+            });
+            if (proposals.length > 0)
+                this.children.push({
+                    name: child.name,
+                    surname: child.surname,
+                    proposals: proposals
+                });
+        });
     },
     computed: {
       staus(stroke) {
 
       }
     }
+
   }
 </script>
