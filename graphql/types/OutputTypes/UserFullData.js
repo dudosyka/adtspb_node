@@ -1,6 +1,9 @@
 const graphql = require('graphql');
 const OvzType = require('../EntityTypes/Ovz');
 const DisabilityGroupType = require('../EntityTypes/DisabilityGroup');
+const ProposalType = require('../EntityTypes/Proposal');
+const Proposal = require('../../Entity/Proposal');
+const User = require('../../Entity/User');
 
 module.exports = new graphql.GraphQLObjectType({
     name: "UserFullData",
@@ -82,6 +85,12 @@ module.exports = new graphql.GraphQLObjectType({
                     id: obj.disability_group,
                     name: null
                 }
+            }
+        },
+        proposals: {
+            type: graphql.GraphQLList(ProposalType),
+            async resolve (obj, data) {
+                return await Proposal.selectByChild(obj.id);
             }
         },
     })
