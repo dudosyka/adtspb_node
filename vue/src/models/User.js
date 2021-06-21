@@ -145,8 +145,7 @@ User.agreeParentRequest = async function (request_id, userData) {
 
 User.getChildren = async function (fields = null, parse = true) {
     if (fields === null) {
-
-        field = {
+        fields = {
            id: null,
            name: null,
            surname: null,
