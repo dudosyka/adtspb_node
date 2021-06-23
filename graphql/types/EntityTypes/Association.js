@@ -1,5 +1,6 @@
 const graphql = require("graphql");
 const Proposal = require("../../Entity/Proposal");
+const AppConfig = require('../../config/AppConfig');
 
 module.exports = new graphql.GraphQLObjectType({
     name: "Association",
@@ -39,7 +40,14 @@ module.exports = new graphql.GraphQLObjectType({
             type: graphql.GraphQLString,
         },
         timetable: {
-            type: graphql.GraphQLString
+            type: graphql.GraphQLString,
+        },
+        isRecruiment: {
+            type: graphql.GraphQLBoolean,
+            async resolve(obj, data) {
+                const proposals = await Proposal.selectByAssociation(obj, true);
+                return (proposals.length < (obj.group_count * AppConfig.group_size));
+            }
         },
         proposals: {
             type: graphql.GraphQLList(ProposalType),

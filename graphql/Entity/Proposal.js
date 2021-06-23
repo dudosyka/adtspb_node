@@ -51,8 +51,9 @@ Proposal.prototype.createFromInput = async function (proposal) {
     return await this.baseCreateFrom(data);
 }
 
-Proposal.prototype.selectByAssociation = async function (association) {
-    return await this.db.select(this, "`association_id` = ?", [ association.id ]).then(data => data).catch(err => { console.error(err); });
+Proposal.prototype.selectByAssociation = async function (association, notRevoked = false) {
+    const status = notRevoked ? -1 : 2;
+    return await this.db.query("SELECT * FROM `proposal` as `main` LEFT JOIN `proposal_status` as `status` ON `main`.`id` = `status`.`proposal_id` WHERE `main`.`association_id` = ? AND `status`.id != ?", [ association.id, status ]).then(data => data).catch(err => { console.error(err); });
 };
 
 Proposal.prototype.selectByUser = async function (user) {
