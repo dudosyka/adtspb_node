@@ -39,7 +39,7 @@ baseEntity.prototype.baseCreateFrom = async function (data) {
 
 baseEntity.prototype.createFromField = null;
 
-baseEntity.prototype.createFrom = function (data) {
+baseEntity.prototype.createFrom = async function (data) {
     if (this.createFromField !== null) {
         if (data[this.createFromInput]) {
             const req = await this.db.select(this, '`'+ this.createFromField +'` = ?', [ data[this.createFromInput] ]);
