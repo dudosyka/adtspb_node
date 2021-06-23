@@ -7,20 +7,7 @@ UserExtraData.prototype = Object.assign(UserExtraData.prototype, baseEntity.prot
 
 UserExtraData.prototype.getInstance = () => UserExtraData;
 
-UserExtraData.prototype.createFrom = async function (data) {
-    if (data.user_id) {
-        const req = await this.db.select(this, '`user_id` = ?', [ data.user_id ]);
-        if (req.length) {
-            const model = this.newModel();
-            const newData = Object.assign(req[0], data);
-            model.fields = newData;
-            return model;
-        }
-        else
-            return await this.baseCreateFrom(data);
-    }
-    return this.baseCreateFrom(data);
-}
+UserExtraData.prototype.createFromField = "user_id";
 
 UserExtraData.prototype.createNew = async function (data) {
     this.fields = data;
