@@ -167,6 +167,18 @@ module.exports = new GraphQLObjectType({
                 return await Association.getAssociations(usr.calculateAge());
             }
         },
+        getAssociationTimetable: {
+            type: graphql.GraphQLList(TimetableType),
+            args: {
+                association_id: {
+                    type: graphql.GraphQLInt
+                }
+            },
+            async resolve(obj, data) {
+                const timetable = Timetable.createFrom(data);
+                return timetable.map(el => el.fields);
+            }
+        },
         getChildProposals: {
             type: graphql.GraphQLList(ProposalType),
             args: {
