@@ -37,7 +37,20 @@ baseEntity.prototype.baseCreateFrom = async function (data) {
     return this;
 }
 
+baseEntity.prototype.createFromField = null;
+
 baseEntity.prototype.createFrom = function (data) {
+    if (this.createFromField !== null) {
+        if (data[this.createFromInput]) {
+            const req = await this.db.select(this, '`'+ this.createFromField +'` = ?', [ data[this.createFromInput] ]);
+            if (req.length) {
+                const model = this.newModel();
+                const newData = Object.assign(req[0], data);
+                model.fields = newData;
+                return model;
+            }
+        }
+    }
     return this.baseCreateFrom(data);
 }
 
