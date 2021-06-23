@@ -1,6 +1,7 @@
 const graphql = require("graphql");
 const Proposal = require("../../Entity/Proposal");
 const AppConfig = require('../../config/AppConfig');
+const Timetable = require("../../Entity/Timetable");
 
 module.exports = new graphql.GraphQLObjectType({
     name: "Association",
@@ -49,6 +50,13 @@ module.exports = new graphql.GraphQLObjectType({
                 return (proposals.length < (obj.group_count * AppConfig.group_size));
             }
         },
+        timetable: {
+            type: graphql.GraphQLList(TimetableType),
+            async resolve(obj, data) {
+                const timetable = await Timetable.createFrom({ association_id: obj.id });
+                return timetable.map(el => el.fields);
+            }
+        },
         proposals: {
             type: graphql.GraphQLList(ProposalType),
             async resolve (obj, data) {
@@ -63,3 +71,4 @@ module.exports = new graphql.GraphQLObjectType({
 
 //Moved here to prevent from circular dependence err.
 const ProposalType = require("./Proposal");
+const TimetableType = require("./Timetable");
