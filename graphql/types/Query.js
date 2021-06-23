@@ -189,6 +189,20 @@ module.exports = new GraphQLObjectType({
                 //TODO: Select associations where proposal status is `enlisted`
             }
         },
+        canJoinAssociation: {
+            type: graphql.GraphQLBoolean,
+            args: {
+                data: {
+                    type: ProposalInput
+                }
+            },
+            async resolve(obj, { data }) {
+                data.parent_id = obj().viewer.id;
+                const proposal = await Proposal.createFromInput(data);
+                const canJoin = await proposal.canJoinAssociation();
+                return canJoin;
+            }
+        },
         generateProposalPdf: {
             type: GraphQLString,
             args: {
@@ -204,34 +218,6 @@ module.exports = new GraphQLObjectType({
                 const buffer = await proposalEntity.generatePdf();
                 return buffer.toString("base64");
             }
-            // async resolve(obj, { proposal }) {
-            //     return await (new Promise(async (resolve, reject) => {
-            //         const proposalEntity = await Proposal.createFromInput(proposal);
-            //         if (proposalEntity.__get('association_id') == null)
-            //             throw Error('Proposal not found');
-            //
-            //
-            //         const buffer = await proposalEntity.generatePdf();
-            //         resolve(buffer.toString("base64"));
-            //
-            //         const fileName = proposalEntity.__get('id') + '_' + Date.now() + '.pdf';
-            //         const fullPath = __dirname + '/../tmp/' + fileName;
-            //         fs.open(fullPath, 'w+', (err, res) => {
-            //             if (err)
-            //                 reject(err)
-            //             const fd = res;
-            //             fs.write(fd, buffer, (err, res2) => {
-            //                 if (err)
-            //                     reject(err);
-            //                 fs.close(fd, (err, res3) => {
-            //                     if (err)
-            //                         reject(err);
-            //                     resolve(fileName);
-            //                 });
-            //             });
-            //         });
-            //     }));
-            // }
         }
 
     },

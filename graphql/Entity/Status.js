@@ -13,20 +13,7 @@ Status.prototype.fields = {
     hidden: null
 };
 
-Status.prototype.createFrom = async function (data) {
-    if (data.proposal_id) {
-        const req = await this.db.select(this, '`proposal_id` = ?', [ data.proposal_id ]);
-        if (req.length) {
-            const model = this.newModel();
-            const newData = Object.assign(req[0], data);
-            model.fields = newData;
-            return model;
-        }
-        else
-            return await this.baseCreateFrom(data);
-    }
-    return this.baseCreateFrom(data);
-}
+Status.prototype.createFromField = 'proposal_id';
 
 Status.prototype.selectByProposal = async function (proposal, showHidden = 0) {
     return await this.db.select(this, '`proposal_id` = ? AND (`hidden` = 0 OR `hidden` = ?)' , [ proposal.id, showHidden ]).then(data => data).catch(err => { console.log(err); });
