@@ -307,12 +307,16 @@
     height: 0px;
     margin-left: 10px;
 
-    border: 8px solid #0086c9;
+    border: 10px solid #b4d3f3;
     border-top-color: rgba(0,0,0,0);
     border-bottom-color: rgba(0,0,0,0);
     border-left-style: none;
   }
   .child-from-data::after {
+    border: 10px solid #0086c9;
+    border-top-color: rgba(0,0,0,0);
+    border-bottom-color: rgba(0,0,0,0);
+
     border-left-style: solid;
     border-right-style: none;
   }
