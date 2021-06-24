@@ -46,6 +46,7 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve(obj, { proposal }) {
+                proposal.parent = {id: obj().viewer.id};
                 let model = await Proposal.createFromInput(proposal);
                 console.log(model.fields);
                 return model.createNew();

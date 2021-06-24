@@ -23,6 +23,9 @@ const ProposalInput = require('./EntityTypes/InputTypes/Proposal');
 const Rbac = require('../utils/Rbac');
 const Jwt = require('../utils/Jwt');
 
+const Timetable = require('../Entity/Timetable');
+const TimetableType = require('./EntityTypes/Timetable');
+
 const fs = require('fs');
 
 let db = new Db();
@@ -167,6 +170,18 @@ module.exports = new GraphQLObjectType({
                 return await Association.getAssociations(usr.calculateAge());
             }
         },
+        getAssociationTimetable: {
+            type: graphql.GraphQLList(TimetableType),
+            args: {
+                association_id: {
+                    type: graphql.GraphQLInt
+                }
+            },
+            async resolve(obj, data) {
+                const timetable = Timetable.createFrom(data);
+                return timetable.map(el => el.fields);
+            }
+        },
         getChildProposals: {
             type: graphql.GraphQLList(ProposalType),
             args: {
@@ -197,7 +212,7 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve(obj, { data }) {
-                data.parent_id = obj().viewer.id;
+                data.parent = {id: obj().viewer.id};
                 const proposal = await Proposal.createFromInput(data);
                 const canJoin = await proposal.canJoinAssociation();
                 return canJoin;
