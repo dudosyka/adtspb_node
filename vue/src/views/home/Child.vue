@@ -5,13 +5,12 @@
 
         <section class="children">
 
-          <header class="card child shadow" v-for="(raw, number) in childrenRaw">
+          <header class="card child shadow" v-for="(raw, number) in childrenRaw" @click="showData(number)">
             <h2 class="child-name">{{ raw.name + ' ' + raw.surname }}</h2>
-            <button
-              @click="showData(number)"
-              class="dark-box darken child-to-data"
+            <span
+              class="child-to-data"
               :class="{'child-from-data': number === show.childData}"
-            ></button>
+            ></span>
           </header>
 
           <router-link to="/child/add" class="dark-box dark-button child-add">+ Добавить ребёнка</router-link>
@@ -290,6 +289,9 @@
     display: flex;
     justify-content: space-between
   }
+  .child:hover {
+    cursor: pointer;
+  }
   .child-name {
     margin: 0;
     color: #142732;
@@ -305,7 +307,7 @@
     height: 0px;
     margin-left: 10px;
 
-    border: 8px solid #fff;
+    border: 8px solid #0086c9;
     border-top-color: rgba(0,0,0,0);
     border-bottom-color: rgba(0,0,0,0);
     border-left-style: none;
