@@ -23,6 +23,9 @@ const ProposalInput = require('./EntityTypes/InputTypes/Proposal');
 const Rbac = require('../utils/Rbac');
 const Jwt = require('../utils/Jwt');
 
+const Timetable = require('../Entity/Timetable');
+const TimetableType = require('./EntityTypes/Timetable');
+
 const fs = require('fs');
 
 let db = new Db();

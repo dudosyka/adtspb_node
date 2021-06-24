@@ -43,7 +43,13 @@ module.exports = new graphql.GraphQLObjectType({
                 return statuses;
             },
         },
-        isHiddent: {
+        isDocumentTaken: {
+            type: graphql.GraphQLBoolean,
+            resolve(obj, data) {
+                return obj.document_taken !== 0;
+            }
+        },
+        isHidden: {
             type: graphql.GraphQLBoolean,
         }
     })
