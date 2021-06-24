@@ -5,6 +5,7 @@
           <InputField
             label="Номер телефона/Электронная почта"
             v-model="login"
+            :error="errors.login"
           />
 
           <router-link class="air-button dark pass-rest" to="/passreset">Забыли пароль ?</router-link>
@@ -12,8 +13,17 @@
           <div class="input-container">
             <div class="password-container">
               <div>
-                <label class="label" v-bind:class="{'label-up': pass}">Пароль</label><br>
-                <input :type="passwordFieldType" v-model="pass" class="type" tabindex="1">
+                <label
+                    class="label"
+                    :class="{'label-up': pass, 'label-error': errors.password}"
+                >Пароль</label><br>
+                <input
+                    :type="passwordFieldType"
+                    v-model="pass"
+                    class="type"
+                    :class="{'input-error': errors.password}"
+                    tabindex="1"
+                >
               </div>
               <button
                 @click="switchVisibility()"
@@ -26,10 +36,12 @@
             </div>
           </div>
 
+          <!-- Не используется
           <div class="checkbox-container" v-on:click="remember = !remember">
             <input type="checkbox" v-model="remember" class="checkbox" tabindex="3">
             <label class="checkbox">Запомнить меня</label>
           </div>
+          !-->
 
           <div class="buttons">
             <button class="dark-button" @click="auth()" tabindex="4">Войти</button>
@@ -47,6 +59,7 @@
 
   import AuthPlate from '../components/AuthPlate.vue'
   import InputField from '../components/InputField.vue'
+  import {User} from '../models/User';
 
   export default {
     name: 'Login',
@@ -56,7 +69,11 @@
         passwordFieldType: "password",
         login: null,
         pass: null,
-        remember: false //not is parm
+        remember: false, //не используется
+        errors: {
+          login: false,
+          password: false
+        }
       }
     },
     components: {
@@ -65,65 +82,27 @@
     methods: {
       auth()
       {
-            let req = `
-                mutation($login: String, $password: String) {
-                    login(login: $login, password: $password) {
-                        token, id
-                    }
-                }
-            `
-
-            let data = {
-                login: null,
-                password: this.pass
-            }
-
-            if (this.login.indexOf('@') !== -1) {
-              data.login = this.login
-              
-            } else {
-
-              if (this.login.indexOf('+7') !== -1) {
-                this.login = this.login.split('')
-                this.login.splice(0,2)
-                this.login = this.login.join('')
-              }
-
-              if (this.login.length < 11) {
-                this.login = '8' + this.login
-              }
-
-              data.login = this.login
-            }
-
-            endoor.request(req, data)
-              .then(data => {
-
-                const reqData = {
-                    user_id: data.login.id
-                };
-
-                let req = `
-                  query ($user_id: Int) {
-                    checkUserConfirmation (user_id: $user_id) {
-                        isConfirmed
-                    }
+          User.login(this).catch(err => {
+              //Ошибка с сервера
+              if (err.response) {
+                  const msg = err.response.errors[0].message;
+                  if (msg === 'login incorrect') {
+                      //......
                   }
-                `;
+                  //.....
+              }
+              //Ошибка с клиента
+              if (err.msg) {
+                for (let msg of err.msg)
+                  if (msg)
+                    this.errors[msg] = true
 
-                endoor.request(req, reqData)
-                  .then(check => {
-
-                    if (check.checkUserConfirmation.isConfirmed) {
-                        localStorage.setItem('token', data.login.token)
-                        window.location = window.location;
-                    } else {
-                      window.location = '/confirmation'
-                    }
-
-                }).catch(err => { console.error(err) });
-            })
-            .catch(err => { console.error(err) })
+                  // err.msg это массив, в нём поля, которые не прошли валидацию, примеры ниже:
+                  //['password'] ...
+                  //['password', 'login'] ...
+                  //['login'] ...
+              }
+          });
       },
         switchVisibility() {
           this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
