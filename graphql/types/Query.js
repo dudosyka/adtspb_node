@@ -212,7 +212,7 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve(obj, { data }) {
-                data.parent_id = obj().viewer.id;
+                data.parent = {id: obj().viewer.id};
                 const proposal = await Proposal.createFromInput(data);
                 const canJoin = await proposal.canJoinAssociation();
                 return canJoin;
