@@ -210,6 +210,14 @@ hr {
   margin-bottom: 10px;
   background: #fff;
 }
+.warning-container {
+  background-color: #fff2cf;
+  border-left: 3px solid #615d39;
+}
+.fatal-container {
+  background-color: #ffcfcf;
+  border-left: 3px solid #613939;
+}
 
 /* WARNING: wrapper must have ONE child */
 .card_wrapper {
