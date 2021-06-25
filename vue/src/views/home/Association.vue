@@ -4,7 +4,7 @@
 
     <section class="content">
       <article class="association-cards">
-        <article class="card shadow" v-for="card in associations">
+        <article class="card shadow" v-for="(card, id) in associations">
           <h2 class="association-name" v-text="card.name"></h2>
           <p class="association-description" v-text="card.description"></p>
           <p class="association-description">от {{ card.min_age + ' до ' + card.max_age}} лет</p>
@@ -30,14 +30,14 @@
             <p class="assoc-reserve-description">Идёт набор</p>
           </div>
 
-          <button class="dark-box dark-button">Записать</button>
+          <button class="dark-box dark-button" @click="addAssociation(id)">Записать</button>
         </article>
       </article>
 
       <section class="child shadow">
         <h2 class="child-name">{{ child.name }} {{ child.surname }}</h2>
         <ul class="child-association">
-          <li class="child-association-item" v-for="assoc in proposalParms.associations">{{ assoc }}</li>
+          <li v-for="id of proposalParms.associations" class="child-association-item">{{ associations[id].name }}</li>
         </ul>
 
         <div class="checkbox-container" @click="proposalParms.schedule = !proposalParms.schedule">
@@ -67,7 +67,7 @@ export default {
       associations: [],
       child: {},
       proposalParms: {
-        associations: ['Шитьё', 'Мехатроника'],
+        associations: [],
         schedule: false,
       }
     }
@@ -128,7 +128,18 @@ export default {
     }
   },
   methods: {
-
+    addAssociation(id) {
+      let isUnique = true;
+      for (let el in this.proposalParms.associations) {
+        if (id == el) {
+          isUnique = false;
+          break;
+        }
+      }
+      if (isUnique) {
+        this.proposalParms.associations.push(id);
+      }
+    }
   },
   computed: {
     validWeekText() {
