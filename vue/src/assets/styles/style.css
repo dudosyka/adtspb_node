@@ -210,6 +210,10 @@ hr {
   margin-bottom: 10px;
   background: #fff;
 }
+.accept-container {
+  background-color: #d6ffcf;
+  border-left: 3px solid #426139;
+}
 .warning-container {
   background-color: #fff2cf;
   border-left: 3px solid #615d39;

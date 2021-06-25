@@ -5,13 +5,14 @@
 
         <section class="children">
 
-          <header class="card child shadow" v-for="(raw, number) in childrenRaw" @click="showData(number)">
+          <section class="card child shadow" v-for="(raw, number) in childrenRaw" @click="showData(number)">
             <h2 class="child-name">{{ raw.name + ' ' + raw.surname }}</h2>
             <span
               class="child-to-data"
               :class="{'child-from-data': number === show.childData}"
             ></span>
-          </header>
+            <button @click="toAssociations(raw.id)">Запись</button>
+          </section>
 
           <router-link to="/child/add" class="dark-box dark-button child-add">+ Добавить ребёнка</router-link>
 
@@ -459,6 +460,12 @@
             this.remove.message = 'Произошла ошибка('
           })
       },
+      toAssociations(id) {
+        localStorage.setItem('childInAssociations', id);
+        window.location = 'child/association';
+        console.log(localStorage.getItem('childInAssociations'))
+      }
+
     },
     computed: {
     }

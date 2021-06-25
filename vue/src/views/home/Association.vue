@@ -7,23 +7,27 @@
         <article class="card shadow" v-for="card in associations">
           <h2 class="association-name" v-text="card.name"></h2>
           <p class="association-description" v-text="card.description"></p>
-          <p class="association-description">{{ card.old }} лет</p>
-          <p class="association-description">{{ card.lessonsCount }} раза в неделю</p>
-          <p class="association-description">{{ card.yearsCount }} года обучения</p>
+          <p class="association-description">от {{ card.min_age + ' до ' + card.max_age}} лет</p>
+          <p class="association-description">{{ card.lessons_week }} раза в неделю</p>
+          <p class="association-description">по {{ card.lessons_week }} часов в неделю</p>
+          <p class="association-description">{{ card.study_years }} года обучения</p>
 
           <table class="association-schedule">
             <tr>
               <td>This is schedule </td>
             </tr>
           </table>
-
+          <!--
           <div class="association-test warning-container" v-if="card.test.is">
             <h3 class="assoc-test-heading" v-text="card.test.name"></h3>
             <p class="assoc-test-description" v-text="card.test.description"></p>
           </div>
-
-          <div class="association-reserve fatal-container" v-if="card.set.toReserve">
-            <p class="assoc-reserve-description" v-text="card.set.description"></p>
+          !-->
+          <div class="association-reserve fatal-container" v-if="!card.isRecruiment">
+            <p class="assoc-reserve-description">Идёт набор в резерв</p>
+          </div>
+          <div class="association-reserve accept-container" v-else>
+            <p class="assoc-reserve-description">Идёт набор</p>
           </div>
 
           <button class="dark-box dark-button">Записать</button>
@@ -60,86 +64,77 @@ export default {
   },
   data() {
     return {
-      associations: [
-        {
-          name: 'Шитьё',
-          description: 'Научим шить',
-          test: {
-            is: true,
-            name: 'Тест на котика',
-            description: 'Lorem ipsum',
-          },
-          lessonsCount: 3,
-          yearsCount: 2,
-          old: '12-13',
-          schedule: '',
-          set: {
-            toReserve: true,
-            description: 'Набор в резерв!'
-          },
-        },
-        {
-          name: 'Проверка заголовка на переполнение',
-          description: 'Научим шить',
-          test: {
-            is: false,
-            name: 'Тест на котика',
-            description: 'Lorem ipsum',
-          },
-          lessonsCount: 3,
-          yearsCount: 2,
-          old: '12-13',
-          schedule: '',
-          set: {
-            toReserve: true,
-            description: 'Набор в резерв!'
-          },
-        },
-        {
-          name: 'ОченьДлинноеСловоВЗаголовке',
-          description: 'Научим шить',
-          test: {
-            is: true,
-            name: 'Тест на котика',
-            description: 'Описание на переполнение описания текс гобана для татуйкиной проверки',
-          },
-          lessonsCount: 3,
-          yearsCount: 2,
-          old: '12-13',
-          schedule: '',
-          set: {
-            toReserve: false,
-            description: 'Набор в резерв!'
-          },
-        },
-        {
-          name: 'Шитьё',
-          description: 'Описание на переполнение описания текс гобана для татуйкиной проверки',
-          test: {
-            is: false,
-            name: 'Тест на котика',
-            description: '',
-          },
-          lessonsCount: 3,
-          yearsCount: 2,
-          old: '12-13',
-          schedule: '',
-          set: {
-            toReserve: false,
-            description: 'Набор в резерв!'
-          },
-        },
-      ],
-      child: {
-        name: 'Lorem',
-        surname: 'Ipsum',
-      },
+      associations: [],
+      child: {},
       proposalParms: {
         associations: ['Шитьё', 'Мехатроника'],
         schedule: false,
       }
     }
   },
+  created() {
+    const child = localStorage.getItem('childInAssociations');
+    console.log(child);
+
+    {
+      const req = `
+        query {
+          getAssociations {
+            id,
+            name,
+            description,
+            min_age, max_age,
+            study_years,
+            hours_week, lessons_week,
+            study_form,
+            hours_count,
+            study_period,
+            isRecruiment,
+            timetable { id },
+          }
+        }
+      `; //timetable, proposals
+
+      api.request(req)
+          .then(data => {
+            console.log(data);
+            this.associations = data.getAssociations;
+          })
+          .catch(err => {
+            console.error(err);
+          })
+    }
+    {
+      const req = `
+        query($id: ID) {
+          user(id: $id) {
+            name, surname
+          }
+        }
+      `;
+
+      const data = {
+        id: child
+      }
+
+      api.request(req, data)
+        .then( data => {
+          console.log(data)
+          this.child = data.user
+        })
+        .catch( err => {
+          console.log(err)
+        })
+    }
+  },
+  methods: {
+
+  },
+  computed: {
+    validWeekText() {
+
+    }
+  }
 }
 </script>
 
