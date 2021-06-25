@@ -8,9 +8,9 @@
           <h2 class="association-name" v-text="card.name"></h2>
           <p class="association-description" v-text="card.description"></p>
           <p class="association-description">от {{ card.min_age + ' до ' + card.max_age}} лет</p>
-          <p class="association-description">{{ card.lessons_week }} раза в неделю</p>
-          <p class="association-description">по {{ card.lessons_week }} часов в неделю</p>
-          <p class="association-description">{{ card.study_years }} года обучения</p>
+          <p class="association-description">{{ card.lessons_week + correctLessons(card.lessons_week)}} в неделю</p>
+          <p class="association-description">{{ card.hours_count + correctHours(card.hours_count) }} в неделю</p>
+          <p class="association-description">{{ card.study_years + correctYears(card.study_years) }} обучения</p>
 
           <table class="association-schedule">
             <tr>
@@ -128,6 +128,31 @@ export default {
     }
   },
   methods: {
+    correctYears(years) {
+      if (years > 1) {
+        return ' года'
+      } else {
+        return ' год'
+      }
+    },
+    correctLessons(lessons) {
+      //Методы для правильного склонения слов
+      if (lessons === 1 || lessons > 4) {
+        return ' раз'
+      } else {
+        return ' раза'
+      }
+    },
+    correctHours(hours) {
+      if (hours == 1) {
+        return ' час'
+      } else if (hours < 5) {
+        return ' часа'
+      } else {
+        return ' часов'
+      }
+    },
+
     addAssociation(id) {
       let isUnique = true;
       for (let el in this.proposalParms.associations) {
@@ -142,9 +167,7 @@ export default {
     }
   },
   computed: {
-    validWeekText() {
 
-    }
   }
 }
 </script>
