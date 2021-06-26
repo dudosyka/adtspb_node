@@ -14,6 +14,19 @@ hr {
   margin: 5px 0 50px;
 }
 
+/* sizes */
+.wp100 {
+  width: 100%;
+}
+
+/* transitions */
+slide-fade-enter-active {
+  transition: all .1s ease;
+}
+.slide-fade-leave-active {
+  transition: all .1s ease;
+}
+
 /* Auth */
   .login {
     position: relative;

@@ -88,9 +88,11 @@
     align-self: end;
   }
   .hidden-pass, .show-pass {
-    background-repeat: no-repeat;
-    background-position: center;
     background-size: 80%;
+    background: #fff no-repeat center;
+    border: none;
+    border-bottom: 3px solid #0086c9;
+    outline: none;
   }
   .hidden-pass {
     background-image: url("../files/close-eye.svg");

@@ -3,71 +3,77 @@
         <router-link class="left-arrow" to="/login" tag="button" />
         <div class="auth">
           <div class="form">
-            <div class="input-container required">
-              <label class="label" v-bind:class="{'label-up': user.surname, 'label-error': errors.surname}">Фамилия</label><br>
-              <input type="text" v-model="user.surname" class="type" :class="{'input-error': errors.surname}" tabindex="1" required>
-            </div>
+            <section v-show="step === 1">
+              <div class="input-container required">
+                <label class="label" v-bind:class="{'label-up': user.surname, 'label-error': errors.surname}">Фамилия</label><br>
+                <input type="text" v-model="user.surname" class="type" :class="{'input-error': errors.surname}" tabindex="1" required>
+              </div>
+              <div class="input-container required">
+                <label class="label" v-bind:class="{'label-up': user.name, 'label-error': errors.name}">Имя</label><br>
+                <input type="text" v-model="user.name" class="type" :class="{'input-error': errors.name}" tabindex="2">
+              </div>
 
-            <div class="input-container required">
-              <label class="label" v-bind:class="{'label-up': user.name, 'label-error': errors.name}">Имя</label><br>
-              <input type="text" v-model="user.name" class="type" :class="{'input-error': errors.name}" tabindex="2">
-            </div>
+              <div class="input-container required">
+                <label class="label" v-bind:class="{'label-up': user.lastname, 'label-error': errors.lastname}">Отчество</label><br>
+                <input type="text" v-model="user.lastname" class="type" :class="{'input-error': errors.lastname}" tabindex="3">
+              </div>
+            </section>
+            <section v-show="step === 2">
+              <div class="input-container required">
+                <label class="label" v-bind:class="{'label-up': user.phone, 'label-error': errors.phone}">Номер телефона</label><br>
+                <masked-input
+                    v-model="rawPhone"
+                    mask="\+\7 (111) 111-11-11"
+                    @input="user.phone = arguments[1]"
+                    type="tel"
+                    class="type"
+                    :class="{'input-error': errors.phone}"
+                    tabindex="4" />
+              </div>
 
-            <div class="input-container required">
-              <label class="label" v-bind:class="{'label-up': user.lastname, 'label-error': errors.lastname}">Отчество</label><br>
-              <input type="text" v-model="user.lastname" class="type" :class="{'input-error': errors.lastname}" tabindex="3">
-            </div>
+              <div class="input-container required">
+                <h3 class="radio-heading dark" :class="{'label-error': errors.sex}">Пол</h3>
+                <ul class="radio-list" :class="{'input-error': errors.sex}">
+                  <div class="radio-container">
+                    <input type="radio" v-model.number="user.sex" value="1" class="radio" tabindex="3" id="man">
+                    <label class="dark radio" for="man" tabindex="5">Мужской</label>
+                  </div>
+                  <div class="radio-container">
+                    <input type="radio" v-model.number="user.sex" value="0" class="radio" tabindex="3" id="woman">
+                    <label class="dark radio" for="woman" tabindex="6">Женский</label>
+                  </div>
+                </ul>
+              </div>
+            </section>
+            <section v-show="step === 3">
+              <div class="input-container required">
+                <label class="label" v-bind:class="{'label-up': user.email, 'label-error': errors.email}">Email</label><br>
+                <input type="email" v-model="user.email" class="type" :class="{'input-error': errors.email}" tabindex="7">
+              </div>
 
-            <div class="input-container required">
-              <label class="label" v-bind:class="{'label-up': user.phone, 'label-error': errors.phone}">Номер телефона</label><br>
-              <masked-input
-                v-model="rawPhone"
-                mask="\+\7 (111) 111-11-11"
-                @input="user.phone = arguments[1]"
-                type="tel"
-                class="type"
-                :class="{'input-error': errors.phone}"
-                tabindex="4" />
-            </div>
-
-            <div class="input-container required">
-              <h3 class="radio-heading dark" :class="{'label-error': errors.sex}">Пол</h3>
-              <ul class="radio-list" :class="{'input-error': errors.sex}">
-                <div class="radio-container">
-                  <input type="radio" v-model.number="user.sex" value="1" class="radio" tabindex="3" id="man">
-                  <label class="dark radio" for="man" tabindex="5">Мужской</label>
-                </div>
-                <div class="radio-container">
-                  <input type="radio" v-model.number="user.sex" value="0" class="radio" tabindex="3" id="woman">
-                  <label class="dark radio" for="woman" tabindex="6">Женский</label>
-                </div>
-              </ul>
-            </div>
-
-            <div class="input-container required">
-              <label class="label" v-bind:class="{'label-up': user.email, 'label-error': errors.email}">Email</label><br>
-              <input type="email" v-model="user.email" class="type" :class="{'input-error': errors.email}" tabindex="7">
-            </div>
-
-            <div class="input-container">
-              <div class="password-container">
-                <div>
-                  <label class="label" v-bind:class="{'label-up': user.password, 'label-error': errors.password}">Пароль</label><br>
-                  <input :type="passwordFieldType" v-model="user.password" class="type" :class="{'input-error': errors.password}" tabindex="8">
-                </div>
-                <button
-                  @click="switchVisibility()"
-                  class="dark-box darken"
-                  :class="{
+              <div class="input-container">
+                <div class="password-container">
+                  <div>
+                    <label class="label" v-bind:class="{'label-up': user.password, 'label-error': errors.password}">Пароль</label><br>
+                    <input :type="passwordFieldType" v-model="user.password" class="type" :class="{'input-error': errors.password}" tabindex="8">
+                  </div>
+                  <button
+                      @click="switchVisibility()"
+                      :class="{
                     'hidden-pass': this.passwordFieldType === 'password',
                     'show-pass': this.passwordFieldType !== 'password'
                   }">
-                </button>
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <div class="buttons">
-              <button class="dark-button" @click="registration" tabindex="9">Зарегистрироваться</button>
+              <div class="buttons">
+                <button class="dark-button" @click="registration" tabindex="9">Зарегистрироваться</button>
+              </div>
+            </section>
+            <div class="buttons-row">
+              <button :style="{opacity: (step > 1) ? '100%' : '0%'}" @click="beforeStep" class="light-box light-button">Назад</button>
+              <button :style="{opacity: (step < 3) ? '100%' : '0%'}" @click="nextStep" class="light-box light-button">Далее</button>
             </div>
           </div>
         </div>
@@ -79,6 +85,12 @@
 <style scoped>
   .auth {
     padding-top: 150px;
+  }
+  .form > section {
+    width: 100%;
+  }
+  .buttons-row {
+    margin-top: 20px;
   }
 </style>
 
@@ -96,6 +108,7 @@
       return {
         rawPhone: null,
         passwordFieldType: "password",
+        step: 1,
         user: {
           name: null,
           surname: null,
@@ -135,6 +148,12 @@
       },
       switchVisibility() {
         this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
+      },
+      nextStep() {
+        this.step++
+      },
+      beforeStep() {
+        this.step--
       }
     },
   }

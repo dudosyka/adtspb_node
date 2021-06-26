@@ -21,7 +21,6 @@
       </div>
       <button
         @click="switchVisibility()"
-        class="dark-box darken"
         :class="{
           'hidden-pass': this.passwordFieldType === 'password',
           'show-pass': this.passwordFieldType !== 'password'
