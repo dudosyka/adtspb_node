@@ -23,6 +23,10 @@
     border-bottom-color: #C90000 !important;
   }
 
+  .label-normal {
+    color: #0086c9 !important;
+  }
+
   .input-container {
     width: 100%;
     position: relative;

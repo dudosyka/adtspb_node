@@ -287,10 +287,10 @@
     padding: 60px;
   }
   .child {
-    display: grid;
-    grid-template-columns: 1fr 200px 20px;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    grid-gap: 20px;
+    flex-wrap: wrap;
   }
   .child:hover {
     cursor: pointer;

@@ -67,6 +67,7 @@
       }
     },
     async created() {
+      localStorage.setItem('newProposal', false)
       console.log(111, User, Proposal);
       const children = await User.getChildren({
         id: null,

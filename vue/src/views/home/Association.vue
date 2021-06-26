@@ -60,7 +60,8 @@
           <label class="checkbox">С рассписанием ознакомлен</label>
         </div>
         <div class="buttons">
-          <p class="label-error" v-show="errors.needAssoc">Выберите объединения</p>
+          <p class="label-error" v-if="errors.needAssoc">Выберите объединения</p>
+          <p class="label-normal" v-if="messages.proposalCreated">Заявления составлены</p>
           <button class="dark-box dark-button" @click="createProposal">Составить заявления</button>
         </div>
 
@@ -71,11 +72,11 @@
 
 <script>
 import navigation from '../../components/Navigation.vue';
-import {Proposal} from '../../models/Proposal';
-import {Parser} from '../../utils/Parser';
+import {Proposal} from '../../models/Proposal.js';
+import {Parser} from '../../utils/Parser.js';
 
 export default {
-  name: "Association.vue",
+  name: "Association",
   components: {
     navigation,
   },
@@ -91,6 +92,9 @@ export default {
       errors: {
         schedule: false,
         needAssoc: false,
+      },
+      messages: {
+        proposalCreated: false
       }
     }
   },
@@ -209,7 +213,9 @@ export default {
             console.log(assocId)
 
             Proposal.create(assocId, childId)
-              .then(data => console.log(data))
+              .then(data => {
+                this.messages.proposalCreated = true
+              })
               .catch(err => console.error(err))
           })
         } else {

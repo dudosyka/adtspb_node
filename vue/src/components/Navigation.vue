@@ -9,7 +9,7 @@
 
         <router-link to="/parent" v-if="isChild" class="link">Мои родители</router-link>
         <router-link to="/child" v-if="manageChildren" class="link">Мои дети</router-link>
-        <router-link to="/proposal" class="link">Заявления</router-link>
+        <router-link to="/proposal" class="link" :class="{'link-notification': notification.newProposal}">Заявления</router-link>
         <router-link to="/document" class="link">Подача документов</router-link>
     </nav>
   </div>
@@ -49,7 +49,10 @@ export default {
     return {
       isChild: false,
       manageChildren: false,
-      children: []
+      children: [],
+      notification: {
+        newProposal: false
+      }
     }
   },
   created() {
@@ -59,6 +62,11 @@ export default {
 
     if (hasAccess(11) === false) {
       this.isChild = true
+    }
+  },
+  methods: {
+    newPropoasal() {
+      this.notification.newProposal = true
     }
   }
 }
