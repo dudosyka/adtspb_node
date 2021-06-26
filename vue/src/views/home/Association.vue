@@ -4,12 +4,12 @@
 
     <section class="content">
       <article class="association-cards">
-        <article class="card shadow" v-for="(card, id) in associations">
+        <article class="card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id">
           <h2 class="association-name" v-text="card.name"></h2>
           <p class="association-description" v-text="card.description"></p>
           <p class="association-description">от {{ card.min_age + ' до ' + card.max_age}} лет</p>
-          <p class="association-description">{{ card.lessons_week + correctLessons(card.lessons_week)}} в неделю</p>
-          <p class="association-description">{{ card.hours_count + correctHours(card.hours_count) }} в неделю</p>
+          <p class="association-description">занятия {{ card.lessons_week + correctLessons(card.lessons_week)}} в неделю</p>
+          <p class="association-description">{{ card.hours_week + correctHours(card.hours_week) }} в неделю</p>
           <p class="association-description">{{ card.study_years + correctYears(card.study_years) }} обучения</p>
 
           <table class="association-schedule">
@@ -23,21 +23,35 @@
             <p class="assoc-test-description" v-text="card.test.description"></p>
           </div>
           !-->
-          <div class="association-reserve fatal-container" v-if="!card.isRecruiment">
+          <div v-if="!card.isRecruiment" class="association-reserve fatal-container">
             <p class="assoc-reserve-description">Идёт набор в резерв</p>
           </div>
-          <div class="association-reserve accept-container" v-else>
+          <div v-else class="association-reserve accept-container">
             <p class="assoc-reserve-description">Идёт набор</p>
           </div>
 
-          <button class="dark-box dark-button" @click="addAssociation(id)">Записать</button>
+          <button v-if="!proposalParms.associations[id]" class="dark-box dark-button" @click="addAssociation(id)">Записать</button>
+          <button v-else class="dark-box dark-button" @click="removeAssociation(id)">Отмена</button>
         </article>
       </article>
 
       <section class="child shadow">
         <h2 class="child-name">{{ child.name }} {{ child.surname }}</h2>
+        <section v-if="proposalParms.associations.length !== 0">
+          <div class="child-hours">
+            <header class="child-hours-header">
+              <h3 class="child-hours-heading">Часов в неделю</h3>
+              <h3>{{ weekHours }}</h3>
+            </header>
+            <span></span>
+            <div class="child-hours_speedometr">
+              <span class="child-hours_speedometr-l"></span>
+            </div>
+          </div>
+        </section>
         <ul class="child-association">
-          <li v-for="id of proposalParms.associations" class="child-association-item">{{ associations[id].name }}</li>
+          <!-- Using computed for correct arr rendering !-->
+          <li v-for="association of assocsUser" class="child-association-item">{{ association.name }}</li>
         </ul>
 
         <div class="checkbox-container" @click="proposalParms.schedule = !proposalParms.schedule">
@@ -47,7 +61,6 @@
         <div class="buttons">
           <button class="dark-box dark-button">Составить заявления</button>
         </div>
-
 
       </section>
     </section>
@@ -69,12 +82,12 @@ export default {
       proposalParms: {
         associations: [],
         schedule: false,
+        weekHours: 0
       }
     }
   },
   created() {
     const child = localStorage.getItem('childInAssociations');
-    console.log(child);
 
     {
       const req = `
@@ -97,7 +110,6 @@ export default {
 
       api.request(req)
           .then(data => {
-            console.log(data);
             this.associations = data.getAssociations;
           })
           .catch(err => {
@@ -128,6 +140,7 @@ export default {
     }
   },
   methods: {
+    //Методы для правильного склонения слов
     correctYears(years) {
       if (years > 1) {
         return ' года'
@@ -136,7 +149,6 @@ export default {
       }
     },
     correctLessons(lessons) {
-      //Методы для правильного склонения слов
       if (lessons === 1 || lessons > 4) {
         return ' раз'
       } else {
@@ -154,20 +166,52 @@ export default {
     },
 
     addAssociation(id) {
+      const assocsUser = this.proposalParms.associations
+      const assocsList = this.associations
+
+      /*
+        Have arr[id]?
+        if haven't, then
+        copy arr[id] link to arr with SAME id
+      */
+
       let isUnique = true;
-      for (let el in this.proposalParms.associations) {
-        if (id == el) {
+      for (let el of assocsUser) {
+        if (assocsList[id] === el) {
           isUnique = false;
           break;
         }
       }
       if (isUnique) {
-        this.proposalParms.associations.push(id);
+        assocsUser[id] = assocsList[id] //for correct splice work
+        assocsUser.splice(id, 1, assocsList[id])
       }
+    },
+    removeAssociation(id) {
+      this.proposalParms.associations.splice(id, 1)
+    },
+    createProposal() {
+
     }
   },
   computed: {
-
+    assocsUser() {
+      let arr = []
+      this.proposalParms.associations.map( el => { if (el) arr.push(el) })
+      return arr
+    },
+    weekHours() {
+      //let hours = 0
+      //this.proposalParms.associations.map( el => {
+      //  hours += this.associations[el].hours_week
+      //})
+      //this.proposalParms.weekHours = hours;
+      //return hours;
+      return 5;
+    },
+    weekHoursSpeedometr() {
+      let percent
+    }
   }
 }
 </script>
@@ -199,6 +243,29 @@ export default {
 
     border-left: 3px solid #142732;
     padding: 5px 0px 5px 10px;
+  }
+  .child-hours {
+    margin: 30px 0;
+
+    color: #142732;
+  }
+  .child-hours-header {
+    display: flex;
+    justify-content: space-between;
+  }
+  .child-hours_speedometr {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 5px;
+    margin-top: 10px;
+    background-color: #aeaeae;
+  }
+  .child-hours_speedometr-l {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #0086c9;
   }
 
   .association-cards {

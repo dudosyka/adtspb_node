@@ -17,7 +17,7 @@
           <router-link to="/child/add" class="dark-box dark-button child-add">+ Добавить ребёнка</router-link>
 
         </section>
-
+        <!-- TODO: if children < 1 then section hidden !-->
         <section class="children-data card shadow">
 
           <article class="child-data" v-for="(raw, number) in childrenRaw" v-show="show.childData === number">
