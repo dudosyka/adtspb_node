@@ -54,11 +54,13 @@
           <li v-for="association of assocsUser" class="child-association-item">{{ association.name }}</li>
         </ul>
 
+        <p class="label-error" v-show="errors.schedule">Ознакомтесь с расписанием</p>
         <div class="checkbox-container" @click="proposalParms.schedule = !proposalParms.schedule">
           <input type="checkbox" v-model="proposalParms.schedule" class="checkbox" tabindex="3">
           <label class="checkbox">С рассписанием ознакомлен</label>
         </div>
         <div class="buttons">
+          <p class="label-error" v-show="errors.needAssoc">Выберите объединения</p>
           <button class="dark-box dark-button" @click="createProposal">Составить заявления</button>
         </div>
 
@@ -83,6 +85,10 @@ export default {
         associations: [],
         schedule: false,
         weekHours: 0
+      },
+      errors: {
+        schedule: false,
+        needAssoc: false,
       }
     }
   },
@@ -195,21 +201,28 @@ export default {
             createProposal(proposal: $proposal)
           }
         `;
-      if (this.proposalParms.schedule) {
-        this.proposalParms.associations.map( assoc => {
+      if (this.proposalParms.associations.length > 0) {
+        this.errors.needAssoc = false
+        if (this.proposalParms.schedule) {
+          this.errors.schedule = false
+          this.proposalParms.associations.map( assoc => {
 
-          let data = {
-            association: { id: assoc.id },
-            child: { id: this.child.id },
-          }
-          console.log(data)
+            let data = {
+              association: { id: assoc.id },
+              child: { id: this.child.id },
+            }
+            console.log(data)
 
-          api.request(req, data)
-            .then( data => console.log(data))
-            .catch( err => console.error(err) )
-        })
-      } else
-        console.log(false)
+            api.request(req, data)
+                .then( data => console.log(data))
+                .catch( err => console.error(err) )
+          })
+        } else {
+          this.errors.schedule = true
+        }
+      } else {
+        this.errors.needAssoc = true
+      }
     }
   },
   computed: {
