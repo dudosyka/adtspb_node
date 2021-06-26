@@ -7,11 +7,13 @@
 
           <section class="card child shadow" v-for="(raw, number) in childrenRaw" @click="showData(number)">
             <h2 class="child-name">{{ raw.name + ' ' + raw.surname }}</h2>
-            <button @click="toAssociations(raw.id)" class="dark-box dark-button to-associations">Запись</button>
-            <span
-              class="child-to-data"
-              :class="{'child-from-data': number === show.childData}"
-            ></span>
+            <div class="child-heading">
+              <button @click="toAssociations(raw.id)" class="dark-box dark-button to-associations">Запись</button>
+              <span
+                  class="child-to-data"
+                  :class="{'child-from-data': number === show.childData}"
+              ></span>
+            </div>
           </section>
 
           <router-link to="/child/add" class="dark-box dark-button child-add">+ Добавить ребёнка</router-link>
@@ -155,7 +157,7 @@
                     </select>
                   </div>
                   <div v-if="raw.ovz" :class="{'input-error': errors[number]['ovz_type']['id']}">
-                    <h2 class="form-heading left" :class="{'label-error': errors[number]['ovz_type']['id']}">Тип ОВЗ</h2>
+                    <h2 class="form-heading child-data_heading" :class="{'label-error': errors[number]['ovz_type']['id']}">Тип ОВЗ</h2>
                     <select class="dark-box darken" v-model="raw.ovz_type.id" >
                       <option v-for="(type, id) in ovzTypes" :value="id">{{ type }}</option>
                     </select>
@@ -171,7 +173,7 @@
                     </select>
                   </div>
                   <div v-if="raw.disability" :class="{'input-error': errors[number]['disability_group']['id']}">
-                    <h2 class="form-heading left" :class="{'label-error': errors[number]['disability_group']['id']}">Группа нвалидности</h2>
+                    <h2 class="form-heading child-data_heading" :class="{'label-error': errors[number]['disability_group']['id']}">Группа нвалидности</h2>
                     <select class="dark-box darken" v-model="raw.disability_group.id" >
                       <option v-for="(type, id) in disabilityTypes" :value="id">{{ type }}</option>
                     </select>
@@ -276,7 +278,7 @@
 <style scoped>
   .home-content {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: auto 1fr;
     grid-gap: 10px;
   }
   .children {
@@ -288,9 +290,15 @@
   }
   .child {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .child-heading {
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
+    flex-flow: row;
   }
   .child:hover {
     cursor: pointer;
@@ -301,7 +309,7 @@
     align-self: center;
   }
   .to-associations {
-    margin: 0;
+    margin: 20px;
     opacity: 5%;
     transition: 0.3s;
   }
@@ -333,8 +341,6 @@
     border-right-style: none;
 
     opacity: 100%;
-
-    transition: 0.3s;
   }
   .child-add {
     align-self: center;
