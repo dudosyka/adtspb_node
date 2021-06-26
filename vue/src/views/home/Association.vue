@@ -62,6 +62,7 @@
         <div class="buttons">
           <p class="label-error" v-if="errors.needAssoc">Выберите объединения</p>
           <p class="label-normal" v-if="messages.proposalCreated">Заявления составлены</p>
+          <p class="label-error" v-if="errors.alreadyCreated">Заявления уже составлены</p>
           <button class="dark-box dark-button" @click="createProposal">Составить заявления</button>
         </div>
 
@@ -92,6 +93,7 @@ export default {
       errors: {
         schedule: false,
         needAssoc: false,
+        alreadyCreated: false
       },
       messages: {
         proposalCreated: false
@@ -214,9 +216,12 @@ export default {
 
             Proposal.create(assocId, childId)
               .then(data => {
-                this.messages.proposalCreated = true
+                this.messages.proposalCreated = true;
               })
-              .catch(err => console.error(err))
+              .catch(err => {
+                console.error(err);
+                this.errors.alreadyCreated = true;
+              })
           })
         } else {
           this.errors.schedule = true

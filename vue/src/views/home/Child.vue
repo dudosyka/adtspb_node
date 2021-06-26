@@ -344,7 +344,6 @@
   }
   .child-add {
     align-self: center;
-    max-width: 150px;
     margin-top: 20px;
   }
 
