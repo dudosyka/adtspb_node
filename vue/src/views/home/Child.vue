@@ -7,18 +7,18 @@
 
           <section class="card child shadow" v-for="(raw, number) in childrenRaw" @click="showData(number)">
             <h2 class="child-name">{{ raw.name + ' ' + raw.surname }}</h2>
+            <button @click="toAssociations(raw.id)" class="dark-box dark-button to-associations">Запись</button>
             <span
               class="child-to-data"
               :class="{'child-from-data': number === show.childData}"
             ></span>
-            <button @click="toAssociations(raw.id)">Запись</button>
           </section>
 
           <router-link to="/child/add" class="dark-box dark-button child-add">+ Добавить ребёнка</router-link>
 
         </section>
-        <!-- TODO: if children < 1 then section hidden !-->
-        <section class="children-data card shadow">
+
+        <section class="children-data card shadow" v-show="childrenRaw.length > 0">
 
           <article class="child-data" v-for="(raw, number) in childrenRaw" v-show="show.childData === number">
             <article class="child-data_table">
@@ -287,8 +287,10 @@
     padding: 60px;
   }
   .child {
-    display: flex;
-    justify-content: space-between
+    display: grid;
+    grid-template-columns: 1fr 200px 20px;
+    align-items: center;
+    grid-gap: 20px;
   }
   .child:hover {
     cursor: pointer;
@@ -298,20 +300,29 @@
     color: #142732;
     align-self: center;
   }
+  .to-associations {
+    margin: 0;
+    opacity: 5%;
+    transition: 0.3s;
+  }
+  .child:hover .to-associations {
+    opacity: 100%;
+  }
   .child-to-data {
     margin-left: 10px;
+    transition: 0.3s;
   }
   .child-to-data::after {
     content: '';
-    display: inline-block;
+    display: block;
     width: 0px;
     height: 0px;
-    margin-left: 10px;
 
-    border: 10px solid #b4d3f3;
+    border: 10px solid #0086c9;
     border-top-color: rgba(0,0,0,0);
     border-bottom-color: rgba(0,0,0,0);
     border-left-style: none;
+    opacity: 20%;
   }
   .child-from-data::after {
     border: 10px solid #0086c9;
@@ -320,6 +331,10 @@
 
     border-left-style: solid;
     border-right-style: none;
+
+    opacity: 100%;
+
+    transition: 0.3s;
   }
   .child-add {
     align-self: center;

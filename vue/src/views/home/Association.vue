@@ -59,7 +59,7 @@
           <label class="checkbox">С рассписанием ознакомлен</label>
         </div>
         <div class="buttons">
-          <button class="dark-box dark-button">Составить заявления</button>
+          <button class="dark-box dark-button" @click="createProposal">Составить заявления</button>
         </div>
 
       </section>
@@ -131,7 +131,6 @@ export default {
 
       api.request(req, data)
         .then( data => {
-          console.log(data)
           this.child = data.user
         })
         .catch( err => {
@@ -191,7 +190,26 @@ export default {
       this.proposalParms.associations.splice(id, 1)
     },
     createProposal() {
+      const req = `
+          mutation($proposal: ProposalInput) {
+            createProposal(proposal: $proposal)
+          }
+        `;
+      if (this.proposalParms.schedule) {
+        this.proposalParms.associations.map( assoc => {
 
+          let data = {
+            association: { id: assoc.id },
+            child: { id: this.child.id },
+          }
+          console.log(data)
+
+          api.request(req, data)
+            .then( data => console.log(data))
+            .catch( err => console.error(err) )
+        })
+      } else
+        console.log(false)
     }
   },
   computed: {
@@ -210,7 +228,7 @@ export default {
       return 5;
     },
     weekHoursSpeedometr() {
-      let percent
+
     }
   }
 }

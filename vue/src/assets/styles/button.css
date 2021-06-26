@@ -23,6 +23,9 @@
     text-align: center;
     transition: transform 0.3s;
   }
+  .dark-button:last-child, .light-button:last-child {
+    margin: 0;
+  }
   .dark-button {
     color: #fff;
     background: #0086C9;
@@ -84,6 +87,14 @@
     .darken:hover {
       background-color: #025680;
       cursor: pointer;
+    }
+
+    .ghost-hover {
+      opacity: 0%;
+      transition: opacity 0.3s;
+    }
+    .ghost-hover:hover {
+      opacity: 100%;
     }
 
   /* Arrows */
