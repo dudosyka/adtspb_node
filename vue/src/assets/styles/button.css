@@ -183,3 +183,9 @@ button:disabled, button:hover:disabled {
   .router-link-exact-active {
     color: #1890CD  !important;
   }
+  .link-notification {
+    position: relative;
+  }
+  .link-notification::after {
+    contant:
+  }

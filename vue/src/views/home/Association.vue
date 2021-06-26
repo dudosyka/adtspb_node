@@ -70,7 +70,9 @@
 </template>
 
 <script>
-import navigation from '../../components/Navigation.vue'
+import navigation from '../../components/Navigation.vue';
+import {Proposal} from '../../models/Proposal';
+import {Parser} from '../../utils/Parser';
 
 export default {
   name: "Association.vue",
@@ -126,7 +128,7 @@ export default {
       const req = `
         query($id: ID) {
           user(id: $id) {
-            name, surname
+            name, surname, id
           }
         }
       `;
@@ -189,33 +191,26 @@ export default {
       }
       if (isUnique) {
         assocsUser[id] = assocsList[id] //for correct splice work
-        assocsUser.splice(id, 1, assocsList[id])
+        assocsUser.splice(id, 1, assocsList[id]) //for correct reactive work
       }
     },
     removeAssociation(id) {
       this.proposalParms.associations.splice(id, 1)
     },
+
     createProposal() {
-      const req = `
-          mutation($proposal: ProposalInput) {
-            createProposal(proposal: $proposal)
-          }
-        `;
       if (this.proposalParms.associations.length > 0) {
-        this.errors.needAssoc = false
+        this.errors.needAssoc = false;
         if (this.proposalParms.schedule) {
-          this.errors.schedule = false
+          this.errors.schedule = false;
           this.proposalParms.associations.map( assoc => {
+            const childId = Number(this.child.id);
+            const assocId = Number(assoc.id)
+            console.log(assocId)
 
-            let data = {
-              association: { id: assoc.id },
-              child: { id: this.child.id },
-            }
-            console.log(data)
-
-            api.request(req, data)
-                .then( data => console.log(data))
-                .catch( err => console.error(err) )
+            Proposal.create(assocId, childId)
+              .then(data => console.log(data))
+              .catch(err => console.error(err))
           })
         } else {
           this.errors.schedule = true

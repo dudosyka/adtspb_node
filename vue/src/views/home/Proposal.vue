@@ -15,8 +15,8 @@
                 <figcaption class="child-stat_heading">Статус: {{ proposal.status }}</figcaption>
               </div>
               <div class="buttons">
-                <button class="dark-button dark-box" @click="downloadPdf(proposal.id, child, index)">Скачать</button>
-                <button class="dark-button dark-box" @click="downloadPdf(proposal.id, child, index)">Печатать</button>
+                <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)">Скачать</button>
+                <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)">Печатать</button>
               </div>
             </section>
 
@@ -66,45 +66,47 @@
         children: []
       }
     },
-    methods: {
-        downloadPdf(proposal_id, child, proposal_index) {
-            const name = child.surname + "_" + child.name + "_" + child.proposals[proposal_index].name;
-            Proposal.renderPdf(proposal_id, name);
-        }
-    },
     async created() {
-        console.log(111, User, Proposal);
-        const children = await User.getChildren({
-            id: null,
-            name: null,
-            surname: null,
-            proposals: {
-                id: null,
-                association: {
-                    name: null
-                },
-                status: {
-                    text: null
-                }
-            }
-        }, false).then( data => data );
-        children.map((child, index) => {
-            const proposals = child.proposals.map(el => {
-                return {
-                    id: el.id,
-                    name: el.association.name,
-                    status: el.status[0].text,
-                    download: "",
-                    print: ""
-                }
-            });
-            if (proposals.length > 0)
-                this.children.push({
-                    name: child.name,
-                    surname: child.surname,
-                    proposals: proposals
-                });
+      console.log(111, User, Proposal);
+      const children = await User.getChildren({
+        id: null,
+        name: null,
+        surname: null,
+        proposals: {
+          id: null,
+          association: {
+            name: null
+          },
+          status: {
+            text: null
+          }
+        }
+      }, false).then( data => data );
+
+      children.map((child) => {
+        const proposals = child.proposals.map(el => {
+          return {
+            id: el.id,
+            name: el.association.name,
+            //status: el.status[0].text,
+            download: "",
+            print: ""
+          }
         });
+
+        if (proposals.length > 0)
+          this.children.push({
+            name: child.name,
+            surname: child.surname,
+            proposals: proposals
+          });
+      });
+    },
+    methods: {
+      downloadPdf(proposal_id, child, proposal_index) {
+        const name = child.surname + "_" + child.name + "_" + child.proposals[proposal_index].name;
+        Proposal.renderPdf(proposal_id, name);
+      }
     },
     computed: {
       staus(stroke) {
