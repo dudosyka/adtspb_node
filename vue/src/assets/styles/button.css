@@ -100,6 +100,11 @@
   .ghost-hover:hover {
     opacity: 100%;
   }
+/* Disable */
+button:disabled, button:hover:disabled {
+  cursor: default;
+}
+
 
 /* Arrows */
   .left-arrow {

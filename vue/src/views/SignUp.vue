@@ -72,8 +72,8 @@
               </div>
             </section>
             <div class="buttons-row">
-              <button :style="{opacity: (step > 1) ? '100%' : '0%'}" @click="beforeStep" class="light-box light-button">Назад</button>
-              <button :style="{opacity: (step < 3) ? '100%' : '0%'}" @click="nextStep" class="light-box light-button">Далее</button>
+              <button :style="{opacity: (step > 1) ? '100%' : '0%'}" :disabled="step < 2" @click="beforeStep" class="light-box light-button">Назад</button>
+              <button :style="{opacity: (step < 3) ? '100%' : '0%'}" :disabled="step > 2" @click="nextStep" class="light-box light-button">Далее</button>
             </div>
           </div>
         </div>
