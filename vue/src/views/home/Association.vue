@@ -201,12 +201,12 @@ export default {
       return arr
     },
     weekHours() {
-      //let hours = 0
-      //this.proposalParms.associations.map( el => {
-      //  hours += this.associations[el].hours_week
-      //})
-      //this.proposalParms.weekHours = hours;
-      //return hours;
+      let hours = 0
+      this.proposalParms.associations.map( el => {
+        hours += el.hours_week
+      })
+      this.proposalParms.weekHours = hours;
+      return hours;
       return 5;
     },
     weekHoursSpeedometr() {
