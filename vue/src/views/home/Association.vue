@@ -13,8 +13,8 @@
           <p class="association-description">{{ card.study_years + correctYears(card.study_years) }} обучения</p>
 
           <table class="association-schedule">
-            <tr>
-              <td>This is schedule </td>
+            <tr v-for="">
+
             </tr>
           </table>
           <!--
@@ -74,7 +74,7 @@
 <script>
 import navigation from '../../components/Navigation.vue';
 import {Proposal} from '../../models/Proposal.js';
-import {Parser} from '../../utils/Parser.js';
+import {Association} from "../../models/Association.js";
 
 export default {
   name: "Association",
@@ -117,19 +117,95 @@ export default {
             hours_count,
             study_period,
             isRecruiment,
-            timetable { id },
+            timetable {
+              group { id, name }
+              monday, tuesday, wednesday, thursday, friday, saturday, sunday
+            },
           }
         }
-      `; //timetable, proposals
+      `;
 
       api.request(req)
-          .then(data => {
-            this.associations = data.getAssociations;
-          })
-          .catch(err => {
-            console.error(err);
-          })
+        .then(data => {
+          /*
+          * reconstruction arr with timetable
+          * for more simply render it
+
+            timetable: [
+              {
+                group:  {
+                    id: '',
+                    name: '',
+                }
+                monday: '',
+                ...
+                sunday: ''
+              }
+            ]
+
+            * to <=>
+
+            groups: [
+              {
+                group: {}
+                timetable: {}
+              }
+            ]
+          */
+
+          const associations = data.getAssociations
+
+          //1. create new arr for timetable
+          //2. create new obj with keys: group, timetable
+          //3. sort data to new obj
+          //4. create new obj with constructor and push to arr
+          //5. delete old key timetable
+          for (let id in associations) {
+            associations[id].groups = [];
+
+            for (let timetables of associations[id].timetable) {
+              let group = {};
+              let timetable = {};
+
+              for (let el in timetables) {
+                if (el === 'group') {
+                  group = timetables[el];
+                } else {
+                  timetable[el] = timetables[el];
+                }
+              }
+              associations[id].groups.push(new Group(group, timetable));
+              delete associations[id].timetable
+            }
+          }
+          console.log(associations)
+
+          function Group(group, timetable) {
+            return {
+              group: {
+                name: group.name,
+                id: group.id,
+              },
+              timetable: {
+                monday: timetable.monday,
+                tuesday: timetable.tuesday,
+                wednesday: timetable.wednesday,
+                thursday: timetable.thursday,
+                friday: timetable.friday,
+                saturday: timetable.saturday,
+                sunday: timetable.sunday
+              }
+            }
+          }
+
+          this.associations = associations;
+
+        })
+        .catch(err => {
+          console.error(err);
+        })
     }
+
     {
       const req = `
         query($id: ID) {

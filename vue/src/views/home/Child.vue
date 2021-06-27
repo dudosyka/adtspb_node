@@ -310,7 +310,7 @@
   }
   .to-associations {
     margin: 20px;
-    opacity: 5%;
+    opacity: 0%;
     transition: 0.3s;
   }
   .child:hover .to-associations {
@@ -319,6 +319,7 @@
   .child-to-data {
     margin-left: 10px;
     transition: 0.3s;
+    transform: translateX(10px);
   }
   .child-to-data::after {
     content: '';
@@ -331,6 +332,10 @@
     border-bottom-color: rgba(0,0,0,0);
     border-left-style: none;
     opacity: 20%;
+    transition: transform 0.3s ease-out;
+  }
+  .child:hover .child-to-data::after {
+    transform: translateX(10px);
   }
   .child-from-data::after {
     border: 10px solid #0086c9;
