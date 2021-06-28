@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "start": "vue-cli-service serve",
     "winStart": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build --mode development"
   },
   "dependencies": {
     "axios": "^0.21.1",
