@@ -44,8 +44,12 @@ Proposal.create = async function (association, child) {
 
     const data = {
         proposal: {
-            association: association,
-            child: child
+            association: {
+                id: association
+            },
+            child: {
+                id: child
+            }
         }
     };
 

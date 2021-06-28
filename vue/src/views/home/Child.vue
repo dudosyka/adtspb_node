@@ -5,20 +5,22 @@
 
         <section class="children">
 
-          <header class="card child shadow" v-for="(raw, number) in childrenRaw">
+          <section class="card child shadow" v-for="(raw, number) in childrenRaw" @click="showData(number)">
             <h2 class="child-name">{{ raw.name + ' ' + raw.surname }}</h2>
-            <button
-              @click="showData(number)"
-              class="dark-box darken child-to-data"
-              :class="{'child-from-data': number === show.childData}"
-            ></button>
-          </header>
+            <div class="child-heading">
+              <button @click="toAssociations(raw.id)" class="dark-box dark-button to-associations">Запись</button>
+              <span
+                  class="child-to-data"
+                  :class="{'child-from-data': number === show.childData}"
+              ></span>
+            </div>
+          </section>
 
           <router-link to="/child/add" class="dark-box dark-button child-add">+ Добавить ребёнка</router-link>
 
         </section>
 
-        <section class="children-data card shadow">
+        <section class="children-data card shadow" v-show="childrenRaw.length > 0">
 
           <article class="child-data" v-for="(raw, number) in childrenRaw" v-show="show.childData === number">
             <article class="child-data_table">
@@ -155,7 +157,7 @@
                     </select>
                   </div>
                   <div v-if="raw.ovz" :class="{'input-error': errors[number]['ovz_type']['id']}">
-                    <h2 class="form-heading left" :class="{'label-error': errors[number]['ovz_type']['id']}">Тип ОВЗ</h2>
+                    <h2 class="form-heading child-data_heading" :class="{'label-error': errors[number]['ovz_type']['id']}">Тип ОВЗ</h2>
                     <select class="dark-box darken" v-model="raw.ovz_type.id" >
                       <option v-for="(type, id) in ovzTypes" :value="id">{{ type }}</option>
                     </select>
@@ -171,7 +173,7 @@
                     </select>
                   </div>
                   <div v-if="raw.disability" :class="{'input-error': errors[number]['disability_group']['id']}">
-                    <h2 class="form-heading left" :class="{'label-error': errors[number]['disability_group']['id']}">Группа нвалидности</h2>
+                    <h2 class="form-heading child-data_heading" :class="{'label-error': errors[number]['disability_group']['id']}">Группа нвалидности</h2>
                     <select class="dark-box darken" v-model="raw.disability_group.id" >
                       <option v-for="(type, id) in disabilityTypes" :value="id">{{ type }}</option>
                     </select>
@@ -276,7 +278,7 @@
 <style scoped>
   .home-content {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: auto 1fr;
     grid-gap: 10px;
   }
   .children {
@@ -288,35 +290,65 @@
   }
   .child {
     display: flex;
-    justify-content: space-between
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .child-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-flow: row;
+  }
+  .child:hover {
+    cursor: pointer;
   }
   .child-name {
     margin: 0;
     color: #142732;
     align-self: center;
   }
+  .to-associations {
+    margin: 20px;
+    opacity: 0%;
+    transition: 0.3s;
+  }
+  .child:hover .to-associations {
+    opacity: 100%;
+  }
   .child-to-data {
     margin-left: 10px;
+    transition: 0.3s;
+    transform: translateX(10px);
   }
   .child-to-data::after {
     content: '';
-    display: inline-block;
+    display: block;
     width: 0px;
     height: 0px;
-    margin-left: 10px;
 
-    border: 8px solid #fff;
+    border: 10px solid #0086c9;
     border-top-color: rgba(0,0,0,0);
     border-bottom-color: rgba(0,0,0,0);
     border-left-style: none;
+    opacity: 20%;
+    transition: transform 0.3s ease-out;
+  }
+  .child:hover .child-to-data::after {
+    transform: translateX(10px);
   }
   .child-from-data::after {
+    border: 10px solid #0086c9;
+    border-top-color: rgba(0,0,0,0);
+    border-bottom-color: rgba(0,0,0,0);
+
     border-left-style: solid;
     border-right-style: none;
+
+    opacity: 100%;
   }
   .child-add {
     align-self: center;
-    max-width: 150px;
     margin-top: 20px;
   }
 
@@ -453,6 +485,12 @@
             this.remove.message = 'Произошла ошибка('
           })
       },
+      toAssociations(id) {
+        localStorage.setItem('childInAssociations', id);
+        window.location = 'child/association';
+        console.log(localStorage.getItem('childInAssociations'))
+      }
+
     },
     computed: {
     }

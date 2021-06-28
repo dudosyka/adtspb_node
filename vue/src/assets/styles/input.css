@@ -23,6 +23,10 @@
     border-bottom-color: #C90000 !important;
   }
 
+  .label-normal {
+    color: #0086c9 !important;
+  }
+
   .input-container {
     width: 100%;
     position: relative;
@@ -88,9 +92,11 @@
     align-self: end;
   }
   .hidden-pass, .show-pass {
-    background-repeat: no-repeat;
-    background-position: center;
     background-size: 80%;
+    background: #fff no-repeat center;
+    border: none;
+    border-bottom: 3px solid #0086c9;
+    outline: none;
   }
   .hidden-pass {
     background-image: url("../files/close-eye.svg");

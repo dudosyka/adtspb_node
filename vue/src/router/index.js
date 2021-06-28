@@ -12,6 +12,7 @@ import AddChild from '../views/home/AddChild.vue'
 import Parent from '../views/home/Parent.vue'
 import Ducument from '../views/home/Document.vue'
 import Proposal from '../views/home/Proposal.vue'
+import Association from "../views/home/Association"
 
 Vue.use(VueRouter)
 
@@ -56,6 +57,11 @@ const routes = [
     path: '/child/add',
     name: 'AddChild',
     component: AddChild
+  },
+  {
+    path: '/child/association',
+    name: 'Association',
+    component: Association
   },
   {
     path: '/parent',

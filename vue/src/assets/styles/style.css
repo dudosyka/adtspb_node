@@ -14,6 +14,19 @@ hr {
   margin: 5px 0 50px;
 }
 
+/* sizes */
+.wp100 {
+  width: 100%;
+}
+
+/* transitions */
+slide-fade-enter-active {
+  transition: all .1s ease;
+}
+.slide-fade-leave-active {
+  transition: all .1s ease;
+}
+
 /* Auth */
   .login {
     position: relative;
@@ -209,6 +222,18 @@ hr {
   padding: 30px;
   margin-bottom: 10px;
   background: #fff;
+}
+.accept-container {
+  background-color: #d6ffcf;
+  border-left: 3px solid #426139;
+}
+.warning-container {
+  background-color: #fff2cf;
+  border-left: 3px solid #615d39;
+}
+.fatal-container {
+  background-color: #ffcfcf;
+  border-left: 3px solid #613939;
 }
 
 /* WARNING: wrapper must have ONE child */

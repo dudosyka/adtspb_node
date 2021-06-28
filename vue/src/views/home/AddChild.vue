@@ -287,7 +287,6 @@
                 label="Пароль"
                 type="password"
                 v-model="childRaw.password"
-
               />
             </div>
           </div>

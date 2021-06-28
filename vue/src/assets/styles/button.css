@@ -6,22 +6,29 @@
 
     width: 100%;
   }
+  .buttons-row {
+    display: flex;
+    justify-content: space-between;
 
-  .dark-button, .light-button {
+    width: 100%;
+  }
+
+  button.dark-button, .light-button {
     border: none;
     outline: none;
 
-    padding: 10px;
-    margin-bottom: 10px;
+    padding: 10px 30px;
 
     justify-self: center;
-    min-width: 200px;
 
     font-weight: bold;
     font-size: 1rem;
     text-decoration: none;
     text-align: center;
     transition: transform 0.3s;
+  }
+  .dark-button:last-child, .light-button:last-child {
+    margin: 0;
   }
   .dark-button {
     color: #fff;
@@ -76,55 +83,67 @@
     text-align: center;
   }
 
-  /*Hovers*/
-    .darken {
-      background-color: #0086C9;
-      transition: background-color 0.3s;
-    }
-    .darken:hover {
-      background-color: #025680;
-      cursor: pointer;
-    }
+/*Hovers*/
+  .darken {
+    background-color: #0086C9;
+    transition: background-color 0.3s;
+  }
+  .darken:hover {
+    background-color: #025680;
+    cursor: pointer;
+  }
 
-  /* Arrows */
-    .left-arrow {
-      position: absolute;
-      top: 25px;
-      left: 25px;
+  .ghost-hover {
+    opacity: 0%;
+    transition: opacity 0.3s;
+  }
+  .ghost-hover:hover {
+    opacity: 100%;
+  }
+/* Disable */
+button:disabled, button:hover:disabled {
+  cursor: default;
+}
 
-      border: none;
-      outline: none;
-      background-color: rgba(0,0,0,0);
 
-      display: block;
-      width: 30px;
-      height: 12px;
+/* Arrows */
+  .left-arrow {
+    position: absolute;
+    top: 25px;
+    left: 25px;
 
-      border-bottom: 5px solid #0086C9;
-      transition: transform 0.3s;
-    }
-    .left-arrow::before {
-      content: '';
-      position: absolute;
-      top: 0px;
-      left: 0px;
+    border: none;
+    outline: none;
+    background-color: rgba(0,0,0,0);
 
-      width: 15px;
-      height: 15px;
-      border-bottom: 5px solid #0086C9;
-      border-left: 5px solid #0086C9;
-      transform: rotate(45deg);
-    }
-    .left-arrow:hover {
-      cursor: pointer;
-      transform: translateX(-5px);
-    }
-    .left-arrow:active {
-      transform: translateX(-20px);
-    }
+    display: block;
+    width: 30px;
+    height: 12px;
+
+    border-bottom: 5px solid #0086C9;
+    transition: transform 0.3s;
+  }
+  .left-arrow::before {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: 0px;
+
+    width: 15px;
+    height: 15px;
+    border-bottom: 5px solid #0086C9;
+    border-left: 5px solid #0086C9;
+    transform: rotate(45deg);
+  }
+  .left-arrow:hover {
+    cursor: pointer;
+    transform: translateX(-5px);
+  }
+  .left-arrow:active {
+    transform: translateX(-20px);
+  }
 
 /*Actives*/
-
   .air-button {
     color: #0086C9;
     background: none;
@@ -163,4 +182,17 @@
   }
   .router-link-exact-active {
     color: #1890CD  !important;
+  }
+  .link-notification {
+    position: relative;
+  }
+  .link-notification::after {
+    content: '';
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    left: -1.5rem;
+    width: 1rem;
+    height: 1rem;
+    background-color: #0086c9;
+    border-radius: 50%;
   }

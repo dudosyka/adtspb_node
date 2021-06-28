@@ -6,9 +6,10 @@
     </header>
     <nav class="nav-container">
         <router-link to="/" class="link">Главная</router-link>
+
         <router-link to="/parent" v-if="isChild" class="link">Мои родители</router-link>
         <router-link to="/child" v-if="manageChildren" class="link">Мои дети</router-link>
-        <router-link to="/proposal" class="link">Заявления</router-link>
+        <router-link to="/proposal" class="link" :class="{'link-notification': notification.newProposal}">Заявления</router-link>
         <router-link to="/document" class="link">Подача документов</router-link>
     </nav>
   </div>
@@ -41,21 +42,32 @@
 </style>
 
 <script>
-  export default {
-    data() {
-      return {
-        isChild: false,
-        manageChildren: false,
-      }
-    },
-    created() {
-      if (hasAccess(11) === true) {
-        this.manageChildren = true
-      }
+import {User} from '../models/User';
 
-      if (hasAccess(11) === false) {
-        this.isChild = true
+export default {
+  data() {
+    return {
+      isChild: false,
+      manageChildren: false,
+      children: [],
+      notification: {
+        newProposal: false
       }
     }
+  },
+  created() {
+    if (hasAccess(11) === true) {
+      this.manageChildren = true
+    }
+
+    if (hasAccess(11) === false) {
+      this.isChild = true
+    }
+  },
+  methods: {
+    newPropoasal() {
+      this.notification.newProposal = true
+    }
   }
+}
 </script>
