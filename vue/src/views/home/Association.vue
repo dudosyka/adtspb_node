@@ -1,6 +1,6 @@
 <template>
   <main class="home">
-    <navigation />
+    <navigation :new-proposal="messages.proposalCreated" />
 
     <section class="content">
       <article class="association-cards">
@@ -207,7 +207,6 @@ export default {
                 timetable[2].push(time[1])
               }
             }
-
             return timetable
           }
 

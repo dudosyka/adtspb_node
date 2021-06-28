@@ -9,7 +9,7 @@
 
         <router-link to="/parent" v-if="isChild" class="link">Мои родители</router-link>
         <router-link to="/child" v-if="manageChildren" class="link">Мои дети</router-link>
-        <router-link to="/proposal" class="link" :class="{'link-notification': notification.newProposal}">Заявления</router-link>
+        <router-link to="/proposal" class="link" :class="{'link-notification': newProposal}">Заявления</router-link>
         <router-link to="/document" class="link">Подача документов</router-link>
     </nav>
   </div>
@@ -45,14 +45,17 @@
 import {User} from '../models/User';
 
 export default {
+  props: {
+    newProposal: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       isChild: false,
       manageChildren: false,
       children: [],
-      notification: {
-        newProposal: false
-      }
     }
   },
   created() {
@@ -64,10 +67,5 @@ export default {
       this.isChild = true
     }
   },
-  methods: {
-    newPropoasal() {
-      this.notification.newProposal = true
-    }
-  }
 }
 </script>
