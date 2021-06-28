@@ -12,11 +12,15 @@
           <p class="association-description">{{ card.hours_week + correctHours(card.hours_week) }} в неделю</p>
           <p class="association-description">{{ card.study_years + correctYears(card.study_years) }} обучения</p>
 
-          <table class="association-schedule">
-            <tr v-for="">
+          <section class="association-schedule" v-for="group of card.groups">
+            <h3 class="schedule-name">{{ group.group.name }}</h3>
+            <div class="schedule-tbody">
+              <div v-for="row of group.timetable" class="schedule-tr">
+                <div v-for="day of row" class="schedule-td">{{ day }}</div>
+              </div>
+            </div>
+          </section>
 
-            </tr>
-          </table>
           <!--
           <div class="association-test warning-container" v-if="card.test.is">
             <h3 class="assoc-test-heading" v-text="card.test.name"></h3>
@@ -75,6 +79,7 @@
 import navigation from '../../components/Navigation.vue';
 import {Proposal} from '../../models/Proposal.js';
 import {Association} from "../../models/Association.js";
+import {Corrector} from "../../utils/Corrector.js";
 
 export default {
   name: "Association",
@@ -174,11 +179,11 @@ export default {
                   timetable[el] = timetables[el];
                 }
               }
+
               associations[id].groups.push(new Group(group, timetable));
               delete associations[id].timetable
             }
           }
-          console.log(associations)
 
           function Group(group, timetable) {
             return {
@@ -186,16 +191,24 @@ export default {
                 name: group.name,
                 id: group.id,
               },
-              timetable: {
-                monday: timetable.monday,
-                tuesday: timetable.tuesday,
-                wednesday: timetable.wednesday,
-                thursday: timetable.thursday,
-                friday: timetable.friday,
-                saturday: timetable.saturday,
-                sunday: timetable.sunday
+              timetable: MakeTimetable(timetable)
+            }
+          }
+
+          function MakeTimetable(week) {
+            let timetable = [[],[],[]]
+
+            for (let day in week) {
+              if (week[day] !== '-') {
+                timetable[0].push(Corrector.translateWeekDay(day))
+
+                const time = week[day].split('-')
+                timetable[1].push(time[0])
+                timetable[2].push(time[1])
               }
             }
+
+            return timetable
           }
 
           this.associations = associations;
@@ -405,5 +418,29 @@ export default {
   .assoc-reserve-description {
     margin: 0;
   }
+
+  .association-schedule {
+    position: relative;
+    display: grid;
+    grid-template-rows: repeat(auto-fill, 30px);
+    padding: 0;
+    margin: 20px 0;
+  }
+  .schedule-name {
+    text-align: left;
+  }
+  .schedule-tbody {
+    overflow-x: scroll;
+  }
+  .schedule-tr {
+    display: grid;
+    grid-template-columns: repeat(7, 100px);
+    width: 100%;
+  }
+  .schedule-td {
+    padding: 5px;
+    text-align: center;
+  }
+
 
 </style>

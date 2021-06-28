@@ -29,4 +29,8 @@ Association.getAssociations = async function() {
 
 }
 
+Association.createTimetable = function() {
+
+}
+
 export {Association}
