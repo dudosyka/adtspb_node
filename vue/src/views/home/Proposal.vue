@@ -89,7 +89,7 @@
           return {
             id: el.id,
             name: el.association.name,
-            //status: el.status[0].text,
+            status: el.status[0].text,
             download: "",
             print: ""
           }
