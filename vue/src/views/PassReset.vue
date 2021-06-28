@@ -39,7 +39,7 @@
         </div>
       </div>
 
-      <AuthPlate title="Востановление пароля"/>
+      <AuthPlate title="Восстановление пароля"/>
   </main>
 </template>
 

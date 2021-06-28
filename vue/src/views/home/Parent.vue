@@ -3,18 +3,19 @@
       <navigation />
 
       <div class="home-content">
-        <section>
+        <section v-if="parentRequests.length > 0">
 
-          <article class="card shadow" v-if="haveParentRequest" v-for="(req, id) in parentRequest">
+          <article class="card shadow" v-for="(req, id) in parentRequests">
             <h1 class="form-heading">{{req.surname}} {{req.name}}</h1>
             <p>{{ req.phone }}</p>
             <p>Хочет стать вашим родителем</p>
-            <button class="dark-box dark-button" @click="accept(id)">Принять</button>
-            <button class="light-box light-button" @click="cancell(id)">Отклонить</button>
-
-            <section v-if="extraData.show">
-
+            <section v-if="show.needData">
+              hello
             </section>
+            <button v-if="!show.needData" class="dark-box dark-button" @click="showNeedData">Принять</button>
+
+            <button v-if="show.needData" class="dark-box dark-button" @click="accept(id)">Принять</button>
+            <button class="light-box light-button" @click="cancell(id)">Отклонить</button>
           </article>
         </section>
       </div>
@@ -41,24 +42,24 @@
     },
     data() {
       return {
-        haveParentRequest: null,
-        parentRequest: [],
-        extraData: {
-          show: true,
+        parentRequests: [],
+        needData: {
+
+        },
+        show: {
+          needData: false
         }
       }
     },
     async created() {
-        const requests = await User.getParentRequests().then(data => data).catch(err => {console.error(err);});
+      const requests = await User.getParentRequests().then(data => data).catch(err => console.error(err));
 
-        if (requests.length > 0) {
-            this.haveParentRequest = true;
-
-            this.parentRequest = requests;
-            console.log(requests);
-        }
+      this.parentRequests = requests;
     },
     methods: {
+      showNeedData() {
+        this.show.needData = true
+      },
       accept(id) {
           console.log(this.parentRequest[id])
           User.agreeParentRequest(id).then(data => {
