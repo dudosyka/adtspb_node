@@ -86,7 +86,10 @@
               if (err.response) {
                   const msg = err.response.errors[0].message;
                   if (msg === 'login incorrect') {
-                      //......
+                      this.errors.login = true;
+                  }
+                  else if (msg == 'password incorrect') {
+                      this.errors.password = true;
                   }
                   //.....
               }
