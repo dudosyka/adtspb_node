@@ -4,6 +4,13 @@
         <div class="auth">
           <div class="form">
             <section v-show="step === 1">
+              <h2 class="label-normal choose-heading">Кто вы?</h2>
+              <div class="buttons">
+                <button @click="isParent(true)" class="dark-button wp100">Родитель</button>
+                <button @click="isParent(false)" class="dark-button wp100">Поступающий</button>
+              </div>
+            </section>
+            <section v-show="step === 2">
               <div class="input-container required">
                 <label class="label" v-bind:class="{'label-up': user.surname, 'label-error': errors.surname}">Фамилия</label><br>
                 <input type="text" v-model="user.surname" class="type" :class="{'input-error': errors.surname}" tabindex="1" required>
@@ -17,8 +24,6 @@
                 <label class="label" v-bind:class="{'label-up': user.lastname, 'label-error': errors.lastname}">Отчество</label><br>
                 <input type="text" v-model="user.lastname" class="type" :class="{'input-error': errors.lastname}" tabindex="3">
               </div>
-            </section>
-            <section v-show="step === 2">
               <div class="input-container required">
                 <label class="label" v-bind:class="{'label-up': user.phone, 'label-error': errors.phone}">Номер телефона</label><br>
                 <masked-input
@@ -44,8 +49,6 @@
                   </div>
                 </ul>
               </div>
-            </section>
-            <section v-show="step === 3">
               <div class="input-container required">
                 <label class="label" v-bind:class="{'label-up': user.email, 'label-error': errors.email}">Email</label><br>
                 <input type="email" v-model="user.email" class="type" :class="{'input-error': errors.email}" tabindex="7">
@@ -71,10 +74,9 @@
                 <button class="dark-button" @click="registration()" tabindex="9">Зарегистрироваться</button>
               </div>
             </section>
-            <div class="buttons-row">
-              <button :style="{opacity: (step > 1) ? '100%' : '0%'}" :disabled="step < 2" @click="beforeStep" class="light-box light-button">Назад</button>
-              <button :style="{opacity: (step < 3) ? '100%' : '0%'}" :disabled="step > 2" @click="nextStep" class="light-box light-button">Далее</button>
-            </div>
+            <section v-show="step === 3">
+
+            </section>
           </div>
         </div>
 
@@ -83,14 +85,11 @@
 </template>
 
 <style scoped>
-  .auth {
-    padding-top: 150px;
-  }
   .form > section {
     width: 100%;
   }
-  .buttons-row {
-    margin-top: 20px;
+  .choose-heading {
+    margin-bottom: 20px;
   }
 </style>
 
@@ -107,6 +106,9 @@
     data() {
       return {
         rawPhone: null,
+        additionalData: {
+          isParent: null,
+        },
         passwordFieldType: "password",
         step: 1,
         user: {
@@ -133,6 +135,11 @@
       MaskedInput, AuthPlate
     },
     methods: {
+      isParent(boolean) {
+        this.additionalData.isParent = !!(boolean);
+        console.log(this.additionalData.isParent)
+        this.step = 2
+      },
       registration() {
           User.signUp(this.user).catch(err => {
               if (err.msg) {
@@ -149,12 +156,6 @@
       switchVisibility() {
         this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
       },
-      nextStep() {
-        this.step++
-      },
-      beforeStep() {
-        this.step--
-      }
     },
   }
 </script>
