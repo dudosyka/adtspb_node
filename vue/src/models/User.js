@@ -68,6 +68,7 @@ User.setOnConfirm = function () {
 }
 
 User.signUp = async function (data) {
+    console.log(data);
     data.phone = "8"+data.phone;
     let errs = [];
     const validateRes = Validator.validateNotEmpty(data, true);
@@ -81,8 +82,10 @@ User.signUp = async function (data) {
     if (!Validator.validateEmail(data.email))
         errs.push('email');
 
-    if (errs.length)
+    if (errs.length) {
+        data.phone = data.phone.substr(1);
         throw {msg: errs};
+    }
 
     let request = `
       mutation($user: UserInput) {
