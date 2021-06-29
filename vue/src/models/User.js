@@ -77,7 +77,7 @@ User.setOnConfirm = function () {
     window.location = '/confirmation';
 }
 
-User.signUp = async function (data) {
+User.signUp = async function (data, makeParent = false) {
     console.log(data);
     if (data.phone.length < 11)
         data.phone = "8"+data.phone;
@@ -99,14 +99,14 @@ User.signUp = async function (data) {
     }
 
     let request = `
-      mutation($user: UserInput) {
-        createUser(user: $user) {
+      mutation($user: UserInput, $makeParent: Boolean) {
+        createUser(user: $user, makeParent: $makeParent) {
           token, id, status
         }
       }
     `;
 
-    return await endoor.request(request, { user: data })
+    return await endoor.request(request, { user: data, makeParent: makeParent })
     .then(async res => {
           this.auth(res.createUser.token);
           const isConfirmed = await this.checkConfirmation(res.createUser.id);

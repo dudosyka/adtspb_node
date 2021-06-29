@@ -141,7 +141,8 @@
         this.step = 2
       },
       registration() {
-          User.signUp(this.user).catch(err => {
+          console.log(this.additionalData.isParent);
+          User.signUp(this.user, this.additionalData.isParent).catch(err => {
               if (err.msg) {
                   console.log(err);
                   for (let msg of err.msg)
