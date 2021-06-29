@@ -18,8 +18,8 @@ const multer = require('multer');
 const jwt = new Jwt();
 const upload = multer();
 
-const Mail = require('./utils/Mail');
-const mail = new Mail();
+// const Mail = require('./utils/Mail');
+// const mail = new Mail();
 
 let schema = new GraphQLSchema({
     query: require('./types/Query'),
@@ -54,7 +54,7 @@ let rootValue = {
 //Check user token. If valid -> next(), invalid -> HTTP 403
 app.use('/api', async (req, res, next) =>
 {
-    mail.sendEmail("a.hatson@ya.ru", "super", "text");
+    // mail.sendEmail("a.hatson@ya.ru", "super", "text");
 	console.log(req.body);
     //Authorization: Bearer [token]
     let token = req.header("Authorization");
