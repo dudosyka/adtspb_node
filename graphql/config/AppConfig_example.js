@@ -5,5 +5,9 @@ module.exports = {
     common_user_id: 9, //Id of `simmple user` role in your `role` table
     port: 8080,
     year: 2021,
-    group_size: 15
+    group_size: 15,
+    email: {
+        login: "a.hatson22@gmail.com",
+        pass: "sasha-hatson-11"
+    }
 }
