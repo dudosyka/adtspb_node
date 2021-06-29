@@ -160,7 +160,7 @@ User.prototype.createNew = async function (roles = []) {
         console.log(this.__get('email'));
         console.log(fullname);
         console.log(validation.__get('code'));
-        mail.sendEmail(this.__get('email'), "Код подтверждения" , "Здравствуйте, " + fullname + "Код подтверждения для вашего аккаунта в личном кабинете Академии Цифровых Технологий: " + validation.__get('code') + " (Никому не сообщайте его)");
+        mail.sendEmail(this.__get('email'), "Код подтверждения" , "Здравствуйте, " + fullname + "! Код подтверждения для вашего аккаунта в личном кабинете Академии Цифровых Технологий: " + validation.__get('code') + " (Никому не сообщайте его)");
 
         if (usr === false)
             throw Error('Saving data failed');
@@ -210,7 +210,7 @@ User.prototype.restorePasswordRequest = async function (email) {
 
     let res = await this.db.query('INSERT INTO `restore_password` (`user_id`, `code`) VALUES (?, ?)', [ user_id, code ]);
     const fullname = user[0].surname + " " + user[0].name + " " + user[0].lastname;
-    mail.sendEmail(user[0].email, "Код подтверждения" , "Здравствуйте, " + fullname + "Код восстановления для вашего аккаунта в личном кабинете Академии Цифровых Технологий: " + code + " (Никому не сообщайте его)");
+    mail.sendEmail(user[0].email, "Код подтверждения" , "Здравствуйте, " + fullname + "! Код восстановления для вашего аккаунта в личном кабинете Академии Цифровых Технологий: " + code + " (Никому не сообщайте его)");
     return (res !== null);
 }
 

@@ -11,7 +11,7 @@ Mail.prototype.sendEmail = async function (to, subject, text) {
       }
     });
     await transporter.sendMail({
-      from: '"Node js" <lk_support@adtspb.ru>',
+      from: '"Академия Цифровых Технологий" <lk_support@adtspb.ru>',
       to: to,
       subject: subject,
       text: text,
