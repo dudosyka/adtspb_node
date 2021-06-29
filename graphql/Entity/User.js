@@ -19,6 +19,9 @@ let rbac = new Rbac();
 
 let User = function () {  }
 
+const Mail = require('../utils/Mail');
+const mail = new Mail();
+
 User.prototype = Object.assign(User.prototype, baseEntity.prototype);
 
 User.prototype.createFrom = async function (data) {
@@ -151,7 +154,13 @@ User.prototype.createNew = async function (roles = []) {
         const usr = await this.save();
         const id = usr.insertId;
 
-        EmailValidation.setOnConfirmation(id);
+        const validation = await EmailValidation.setOnConfirmation(id);
+
+        const fullname = this.__get('surname') + " " + this.__get("name") + " " + this.__get('lastname');
+        console.log(this.__get('email'));
+        console.log(fullname);
+        console.log(validation.__get('code'));
+        mail.sendEmail(this.__get('email'), "Код подтверждения" , "Здравствуйте, " + fullname + "! Код подтверждения для вашего аккаунта в личном кабинете Академии Цифровых Технологий: " + validation.__get('code') + " (Никому не сообщайте его)");
 
         if (usr === false)
             throw Error('Saving data failed');
@@ -200,7 +209,8 @@ User.prototype.restorePasswordRequest = async function (email) {
     }
 
     let res = await this.db.query('INSERT INTO `restore_password` (`user_id`, `code`) VALUES (?, ?)', [ user_id, code ]);
-    //call send mail function
+    const fullname = user[0].surname + " " + user[0].name + " " + user[0].lastname;
+    mail.sendEmail(user[0].email, "Код подтверждения" , "Здравствуйте, " + fullname + "! Код восстановления для вашего аккаунта в личном кабинете Академии Цифровых Технологий: " + code + " (Никому не сообщайте его)");
     return (res !== null);
 }
 

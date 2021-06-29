@@ -68,7 +68,7 @@
               </div>
 
               <div class="buttons">
-                <button class="dark-button" @click="registration" tabindex="9">Зарегистрироваться</button>
+                <button class="dark-button" @click="registration()" tabindex="9">Зарегистрироваться</button>
               </div>
             </section>
             <div class="buttons-row">
@@ -135,8 +135,8 @@
     methods: {
       registration() {
           User.signUp(this.user).catch(err => {
-              //Ошибки с клиента
               if (err.msg) {
+                  console.log(err);
                   for (let msg of err.msg)
                     if (msg)
                       this.errors[msg] = true;

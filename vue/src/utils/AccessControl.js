@@ -1,4 +1,6 @@
 const AccessContol = {};
+import { request, GraphQLClient } from "graphql-request";
+import * as AppConfig from '../config/AppConfig';
 
 AccessContol.checkRule = function (id) {
     const rules = localStorage.getItem('rules');

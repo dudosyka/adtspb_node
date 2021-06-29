@@ -29,6 +29,7 @@ User.login = async function ({login, pass}) {
 
     return await endoor.request(req, data)
     .then(async data => {
+        this.auth(data.login.token);
         const isConfirmed = await this.checkConfirmation(data.login.id);
         console.log(isConfirmed);
         console.log(data.login.token);
@@ -39,7 +40,7 @@ User.login = async function ({login, pass}) {
     });
 }
 
-User.auth = function (token) {
+User.auth = function (token, redir = false) {
     localStorage.setItem('token', token);
     window.location = window.location;
     return;
@@ -47,28 +48,38 @@ User.auth = function (token) {
 
 User.checkConfirmation  = async function (id) {
     let req = `
-      query ($user_id: Int) {
-        checkUserConfirmation (user_id: $user_id) {
-            isConfirmed
+      query {
+        checkUserConfirmation {
+            code, user_id, isConfirmed
         }
       }
     `;
 
-    const data = {
-        user_id: id
-    };
+    console.log(id);
 
-    return await endoor.request(req, data).then(check => {
+    const data = {
+    };
+    try {
+    refreshApiToken();
+    } catch (err) {
+        window.location = window.location;
+        console.log(err);
+    }
+
+    return await api.request(req, data).then(check => {
+        console.log(check);
         return check.checkUserConfirmation.isConfirmed;
     }).catch(err => { return err; });
 }
 
 User.setOnConfirm = function () {
-    // window.location = '/confirmation';
+    window.location = '/confirmation';
 }
 
 User.signUp = async function (data) {
-    data.phone = "8"+data.phone;
+    console.log(data);
+    if (data.phone.length < 11)
+        data.phone = "8"+data.phone;
     let errs = [];
     const validateRes = Validator.validateNotEmpty(data, true);
 
@@ -81,8 +92,10 @@ User.signUp = async function (data) {
     if (!Validator.validateEmail(data.email))
         errs.push('email');
 
-    if (errs.length)
+    if (errs.length) {
+        data.phone = data.phone.substr(1);
         throw {msg: errs};
+    }
 
     let request = `
       mutation($user: UserInput) {
@@ -94,6 +107,7 @@ User.signUp = async function (data) {
 
     return await endoor.request(request, { user: data })
     .then(async res => {
+          this.auth(res.createUser.token);
           const isConfirmed = await this.checkConfirmation(res.createUser.id);
           if (isConfirmed)
               this.auth(res.createUser.token);
