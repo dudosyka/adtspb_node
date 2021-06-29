@@ -135,7 +135,6 @@
     methods: {
       registration() {
           User.signUp(this.user).catch(err => {
-              //Ошибки с клиента
               if (err.msg) {
                   for (let msg of err.msg)
                     if (msg)
