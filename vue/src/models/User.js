@@ -78,7 +78,8 @@ User.setOnConfirm = function () {
 
 User.signUp = async function (data) {
     console.log(data);
-    data.phone = "8"+data.phone;
+    if (data.phone.length < 11)
+        data.phone = "8"+data.phone;
     let errs = [];
     const validateRes = Validator.validateNotEmpty(data, true);
 

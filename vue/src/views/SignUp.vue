@@ -68,7 +68,7 @@
               </div>
 
               <div class="buttons">
-                <button class="dark-button" @click="registration" tabindex="9">Зарегистрироваться</button>
+                <button class="dark-button" @click="registration()" tabindex="9">Зарегистрироваться</button>
               </div>
             </section>
             <div class="buttons-row">
@@ -136,6 +136,7 @@
       registration() {
           User.signUp(this.user).catch(err => {
               if (err.msg) {
+                  console.log(err);
                   for (let msg of err.msg)
                     if (msg)
                       this.errors[msg] = true;
