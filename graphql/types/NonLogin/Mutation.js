@@ -1,4 +1,5 @@
 const {GraphQLObjectType, GraphQLString, GraphQLBoolean, GraphQLInt} = require("graphql");
+const AppConfig = require('../../config/AppConfig');
 
 const UserInput = require("../EntityTypes/InputTypes/User");
 const User = require('../../Entity/User');
@@ -40,11 +41,17 @@ module.exports = new GraphQLObjectType({
             args: {
                 user: {
                     type: UserInput,
+                },
+                makeParent: {
+                    type: GraphQLBoolean
                 }
             },
-            async resolve(obj, { user }) {
+            async resolve(obj, { user, makeParent }) {
                 let usr = await User.createFrom(user);
-                return usr.createNew();
+                let additionalRoles = [];
+                if (makeParent)
+                    additionalRoles.push(AppConfig.parent_role_id)
+                return usr.createNew(additionalRoles);
             }
         },
         restorePassword: {
