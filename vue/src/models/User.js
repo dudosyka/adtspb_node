@@ -31,10 +31,10 @@ User.login = async function ({login, pass}) {
     .then(async data => {
         this.auth(data.login.token);
         const isConfirmed = await this.checkConfirmation(data.login.id);
-        console.log(isConfirmed);
-        console.log(data.login.token);
+        console.log("IS CONFIRMED", isConfirmed);
+        console.log("DATA.LOGIN.TOKEN", data.login.token);
         if (isConfirmed)
-            this.auth(data.login.token);
+            this.auth(data.login.token, true);
         else
             this.setOnConfirm();
     });
@@ -42,7 +42,8 @@ User.login = async function ({login, pass}) {
 
 User.auth = function (token, redir = false) {
     localStorage.setItem('token', token);
-    window.location = window.location;
+    if (redir)
+        window.location = window.location;
     return;
 }
 
@@ -110,7 +111,7 @@ User.signUp = async function (data) {
           this.auth(res.createUser.token);
           const isConfirmed = await this.checkConfirmation(res.createUser.id);
           if (isConfirmed)
-              this.auth(res.createUser.token);
+              this.auth(res.createUser.token, true);
           else
               this.setOnConfirm();
     });
