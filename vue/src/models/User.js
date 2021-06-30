@@ -27,7 +27,7 @@ User.login = async function ({login, pass}) {
         password: pass
     }
 
-    return await endoor.request(req, data)
+    return await _request("endoor", req, data)
     .then(async data => {
         this.auth(data.login.token);
         const isConfirmed = await this.checkConfirmation(data.login.id);
@@ -67,7 +67,7 @@ User.checkConfirmation  = async function (id) {
         console.log(err);
     }
 
-    return await api.request(req, data).then(check => {
+    return await _request("api", req, data).then(check => {
         console.log(check);
         return check.checkUserConfirmation.isConfirmed;
     }).catch(err => { return err; });
@@ -106,7 +106,7 @@ User.signUp = async function (data, makeParent = false) {
       }
     `;
 
-    return await endoor.request(request, { user: data, makeParent: makeParent })
+    return await _request("endoor", request, { user: data, makeParent: makeParent })
     .then(async res => {
           this.auth(res.createUser.token);
           const isConfirmed = await this.checkConfirmation(res.createUser.id);
@@ -126,7 +126,7 @@ User.getParentRequests = async function () {
       }
     `
 
-    return await api.request(req)
+    return await _request("api", req)
       .then(data => {
         return data.getParentRequests;
     });
@@ -153,7 +153,7 @@ User.agreeParentRequest = async function (request_id, userData) {
       request_id
     }
 
-    return await api.request(req, data).then(data => {
+    return await _request("api", req, data).then(data => {
         return data.agreeParentRequest;
     });
 }
@@ -199,7 +199,7 @@ User.getChildren = async function (fields = null, parse = true) {
 
     console.log(req);
 
-    return await api.request(req).then(data => {
+    return await _request("api", req).then(data => {
         console.log(data);
         data.getChildren.map(el => {
             if (!parse)
@@ -262,7 +262,7 @@ User.editMainData = async function (obj, target_id = 0) {
         target_id: obj.id
     }
 
-    return await api.request(req, data).then(async data => {
+    return await _request("api", req, data).then(async data => {
         console.log(data)
         // this.edit.message = 'Данные отпралены успешно'
         return await this.editExtraData(obj, target_id);
@@ -305,7 +305,7 @@ User.editExtraData = async function (obj, target_id) {
       target_id: obj.id
   };
 
-    return await api.request(req, data)
+    return await _request("api", req, data)
       .then(data => {
         console.log(data)
         return data.editExtraUserData;
@@ -325,7 +325,7 @@ User.removeChild = async function (id, comment, remove_account) {
         comment: comment
       }
 
-      return await api.request(req, data);
+      return await request("api", req, data);
 }
 
 export {User};

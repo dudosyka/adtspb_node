@@ -7,7 +7,10 @@ module.exports = {
     year: 2021,
     group_size: 15,
     email: {
-        login: "a.hatson22@gmail.com",
-        pass: "sasha-hatson-11"
-    }
+        login: "lk_support@adtspb.ru",
+        pass: ""
+    },
+    requestWhiteList: [
+        "validToken"
+    ]
 }

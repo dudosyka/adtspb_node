@@ -24,16 +24,33 @@ global.getError = (err, id = 0) => {
 }
 global.api = graphql;
 global.endoor = endoor;
+global._request = async (route, query, data = {}) => {
+    console.log('CALLL');
+    // console.log("GLOBAL ROUTE", global[route]);
+    const res = global[route].request(query, data).catch(err => {
+        try {
+            const msg = JSON.parse(err.response.error).message;
+            if (msg == 'Not confirmed') {
+                window.location = '/confirmation';
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    });
+    return res;
+}
 
 let token = localStorage.getItem('token');
 
 let validToken = () => {
+    console.log("VALID");
+    // console.log(global['api'].request("", {}));
     const req = `
       query($token: String) {
         validToken(token: $token)
       }
     `;
-    return api.request(req, {token: token})
+    return _request("api", req, {token: token})
     .then(data => {
       console.log(data.validToken);
       return data.validToken;
