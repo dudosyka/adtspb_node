@@ -7,6 +7,7 @@ app.use(bodyParcer.json());
 const expressWs = require('express-ws')(app);
 const {graphqlHTTP} = require("express-graphql");
 const {GraphQLSchema} = require("graphql");
+const {gql} = require('graphql-tag');
 const User = require("./Entity/User");
 
 const { instance } = require('./utils/Redis');
@@ -17,6 +18,9 @@ const multer = require('multer');
 
 const jwt = new Jwt();
 const upload = multer();
+
+const AppConfig = require('./config/AppConfig');
+const EmailValidation = require('./Entity/EmailValidation');
 
 let schema = new GraphQLSchema({
     query: require('./types/Query'),
@@ -52,12 +56,16 @@ let rootValue = {
 app.use('/api', async (req, res, next) =>
 {
 	console.log(req.body);
+    const endPointName = gql`
+        ${req.body.query}
+    `.definitions[0].selectionSet.selections[0].name.value;
     //Authorization: Bearer [token]
     let token = req.header("Authorization");
 
     if (typeof token === 'undefined')
     {
         res.status(403).send();
+        return;
     }
     else
     {
@@ -67,21 +75,26 @@ app.use('/api', async (req, res, next) =>
         console.log(data);
         if (data !== false && Object.keys(data).length != 1)
         {
-           // let usr = await User.createFrom(data);
-            // if (usr.__get("isConfirmed").code == null) {
-                rootValue = {
-                    ...rootValue,
-                    viewer: {
-                        id: data.id
-                    },
-                };
-            // }
-            // else {
-                // res.status(403).send("acount is not confirmed");
-            // }
+            if (!AppConfig.requestWhiteList.includes(endPointName))
+            {
+                const confirm = await EmailValidation.checkConfirmation(data.id);
+                if (!confirm.__get('isConfirmed'))
+                {
+                    const response = {message: "Not confirmed"};
+                    res.status(200).end(JSON.stringify(response));
+                    return;
+                }
+            }
+            rootValue = {
+                ...rootValue,
+                viewer: {
+                    id: data.id
+                },
+            };
         }
         else {
             res.status(403).send();
+            return;
         }
         console.log(rootValue);
     }
@@ -109,7 +122,7 @@ app.use('/endoor', graphqlHTTP({
         return {};
         // return rootValue;
     },
-    graphiql: true
+    graphiql: true,
 }));
 
 //We really needn`t chat? (Delete if yes)

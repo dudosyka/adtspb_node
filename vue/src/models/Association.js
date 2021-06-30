@@ -14,7 +14,7 @@ Association.getAssociations = async function() {
             hours_count,
             study_period,
             isRecruiment,
-            timetable { 
+            timetable {
               group { id, name }
               monday, tuesday, wednesday, thursday, friday, saturday, sunday
             },
@@ -22,7 +22,7 @@ Association.getAssociations = async function() {
         }
     `;
 
-    return await api.request(req)
+    return await _request("api", req)
         .then(data => {
             return data.getAssociations
         })

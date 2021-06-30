@@ -28,7 +28,7 @@ Proposal.renderPdf = async function (proposal_id, name = "tatui") {
         }
     };
 
-    api.request(req, data).then(async res => {
+    _request("api", req, data).then(async res => {
         //Получаешь этот татуй и суёшь его в этот гобан
         await this.downloadPdfFromBase64(res.generateProposalPdf, name);
     }).catch(err => {
@@ -53,7 +53,7 @@ Proposal.create = async function (association, child) {
         }
     };
 
-    return await api.request(req, data).then(data => data.createProposal);
+    return await _request("api", req, data).then(data => data.createProposal);
 }
 
 Proposal.canJoinAssociation = async function (association, child) {
@@ -70,7 +70,7 @@ Proposal.canJoinAssociation = async function (association, child) {
         }
     };
 
-    return await api.request(req, data).then(data => data.canJoinAssociation);
+    return await _request("api", req, data).then(data => data.canJoinAssociation);
 }
 
 Proposal.getChildProposal = async function (child_id) {
@@ -93,7 +93,7 @@ Proposal.getChildProposal = async function (child_id) {
         child_id: child_id
     };
 
-    return await api.request(req, data).then(data => data);
+    return await _request("api", req, data).then(data => data);
 }
 
 export {Proposal};
