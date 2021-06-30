@@ -126,6 +126,15 @@
           phone: false,
           sex: false
         },
+        errors_prot: {
+            name: false,
+            surname: false,
+            lastname: false,
+            email: false,
+            password: false,
+            phone: false,
+            sex: false
+        }
       }
     },
     components: {
@@ -138,7 +147,11 @@
         this.step = 2
       },
       registration() {
-          User.signUp(this.user).catch(err => {
+          console.log(this.errors_prot);
+          this.errors = {...this.errors_prot};
+          console.log(this.errors.email);
+          console.log(this.additionalData.isParent);
+          User.signUp(this.user, this.additionalData.isParent).catch(err => {
               if (err.msg) {
                   console.log(err);
                   for (let msg of err.msg)
@@ -147,6 +160,13 @@
               }
               else if (err.response) {
                   const msg = getError(err);
+                  console.log(msg);
+                  if (msg === 'Email must be unique') {
+                      this.errors['email'] = true;
+                  }
+                  else if (msg === 'Phone must be unique') {
+                      this.errors['phone'] = true;
+                  }
               }
           });
       },

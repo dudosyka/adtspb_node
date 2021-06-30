@@ -31,10 +31,10 @@ User.login = async function ({login, pass}) {
     .then(async data => {
         this.auth(data.login.token);
         const isConfirmed = await this.checkConfirmation(data.login.id);
-        console.log(isConfirmed);
-        console.log(data.login.token);
+        console.log("IS CONFIRMED", isConfirmed);
+        console.log("DATA.LOGIN.TOKEN", data.login.token);
         if (isConfirmed)
-            this.auth(data.login.token);
+            this.auth(data.login.token, true);
         else
             this.setOnConfirm();
     });
@@ -42,7 +42,8 @@ User.login = async function ({login, pass}) {
 
 User.auth = function (token, redir = false) {
     localStorage.setItem('token', token);
-    window.location = window.location;
+    if (redir)
+        window.location = window.location;
     return;
 }
 
@@ -76,7 +77,7 @@ User.setOnConfirm = function () {
     window.location = '/confirmation';
 }
 
-User.signUp = async function (data) {
+User.signUp = async function (data, makeParent = false) {
     console.log(data);
     if (data.phone.length < 11)
         data.phone = "8"+data.phone;
@@ -98,19 +99,19 @@ User.signUp = async function (data) {
     }
 
     let request = `
-      mutation($user: UserInput) {
-        createUser(user: $user) {
+      mutation($user: UserInput, $makeParent: Boolean) {
+        createUser(user: $user, makeParent: $makeParent) {
           token, id, status
         }
       }
     `;
 
-    return await endoor.request(request, { user: data })
+    return await endoor.request(request, { user: data, makeParent: makeParent })
     .then(async res => {
           this.auth(res.createUser.token);
           const isConfirmed = await this.checkConfirmation(res.createUser.id);
           if (isConfirmed)
-              this.auth(res.createUser.token);
+              this.auth(res.createUser.token, true);
           else
               this.setOnConfirm();
     });
