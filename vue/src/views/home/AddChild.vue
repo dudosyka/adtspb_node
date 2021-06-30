@@ -170,7 +170,7 @@
               <div>
                 <h2 class="form-heading child-data_heading">ОВЗ</h2>
                 <select class="dark-box darken" v-model.number="childRaw.ovz"  >
-                  <option value="0">Нету</option>
+                  <option value="0">Нет</option>
                   <option value="1">Есть</option>
                 </select>
               </div>
@@ -186,9 +186,10 @@
               <div>
                 <h2 class="form-heading child-data_heading">Инвалидность</h2>
                 <select class="dark-box darken" v-model.number="childRaw.disability"  >
-                  <option value="0">Нету</option>
+                  <option value="0">Нет</option>
                   <option value="1">Есть</option>
                 </select>
+
               </div>
               <div v-if="childRaw.disability">
                 <h2 class="form-heading left">Группа нвалидности</h2>

@@ -152,7 +152,7 @@
                   <div :class="{'input-error': errors[number]['ovz']['id']}">
                     <h2 class="form-heading child-data_heading" :class="{'label-error': errors[number]['ovz']['id']}">ОВЗ</h2>
                     <select class="dark-box darken" v-model.number="raw.ovz">
-                      <option value="0">Нету</option>
+                      <option value="0">Нет</option>
                       <option value="1">Есть</option>
                     </select>
                   </div>
@@ -168,7 +168,7 @@
                   <div :class="{'input-error': errors[number]['disability']['id']}">
                     <h2 class="form-heading child-data_heading" :class="{'label-error': errors[number]['disability']['id']}">Инвалидность</h2>
                     <select class="dark-box darken" v-model.number="raw.disability" >
-                      <option value="0">Нету</option>
+                      <option value="0">Нет</option>
                       <option value="1">Есть</option>
                     </select>
                   </div>
