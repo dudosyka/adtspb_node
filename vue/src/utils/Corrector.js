@@ -14,21 +14,23 @@ Corrector.phone = function (phone) {
     return phone.length < 11 ? "8" + phone : phone;
 }
 
-Corrector.correctYears(years) {
+Corrector.correctYears = function (years) {
   if (years > 1) {
     return ' года'
   } else {
     return ' год'
   }
-},
-Corrector.correctLessons(lessons) {
+}
+
+Corrector.correctLessons = function (lessons) {
   if (lessons === 1 || lessons > 4) {
     return ' раз'
   } else {
     return ' раза'
   }
-},
-Corrector.correctHours(hours) {
+}
+
+Corrector.correctHours = function (hours) {
   if (hours == 1) {
     return ' час'
   } else if (hours < 5) {
@@ -36,6 +38,6 @@ Corrector.correctHours(hours) {
   } else {
     return ' часов'
   }
-},
+}
 
 export {Corrector}

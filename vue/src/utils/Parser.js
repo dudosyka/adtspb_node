@@ -65,7 +65,7 @@ Parser.objToGraphQlQuery = function (obj) {
     return arr.join(',');
 }
 
-Parser.birthdayToTimestamp(birthday) {
+Parser.birthdayToTimestamp = function (birthday) {
     return (new Date(birthday)).getTime();
 }
 

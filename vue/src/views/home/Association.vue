@@ -243,9 +243,9 @@ export default {
   },
   methods: {
     //Методы для правильного склонения слов
-    correctYears(years) => Corrector.correctYears(years),
-    correctLessons(lessons) => Corrector.correctLessons(lessons),
-    correctHours(hours) => Corrector.correctHours(hours),
+    correctYears: (years) => Corrector.correctYears(years),
+    correctLessons: (lessons) => Corrector.correctLessons(lessons),
+    correctHours: (hours) => Corrector.correctHours(hours),
 
     addAssociation(id) {
       const assocsUser = this.proposalParms.associations

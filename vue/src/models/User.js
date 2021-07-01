@@ -388,7 +388,7 @@ User.removeChild = async function (id, comment, remove_account) {
   return await request("api", req, data);
 }
 
-User.prototype.confirm = async function (code) {
+User.confirm = async function (code) {
   let req = `
     mutation($code: String) {
         confirmUser(code: $code) {
@@ -411,7 +411,7 @@ User.prototype.confirm = async function (code) {
   }).catch(err => console.error(err));
 }
 
-User.prototype.sendNewConfirmationCode = async function () {
+User.sendNewConfirmationCode = async function () {
     let req = `
       mutation {
         generateNewConfirmationCode {
