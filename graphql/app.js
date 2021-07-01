@@ -78,7 +78,7 @@ app.use('/api', async (req, res, next) =>
             if (!AppConfig.requestWhiteList.includes(endPointName))
             {
                 const confirm = await EmailValidation.checkConfirmation(data.id);
-                if (!confirm.__get('isConfirmed'))
+                if (confirm.__get('code') != null)
                 {
                     const response = {message: "Not confirmed"};
                     res.status(200).end(JSON.stringify(response));

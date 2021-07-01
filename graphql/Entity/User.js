@@ -19,9 +19,6 @@ let rbac = new Rbac();
 
 let User = function () {  }
 
-const Mail = require('../utils/Mail');
-const mail = new Mail();
-
 User.prototype = Object.assign(User.prototype, baseEntity.prototype);
 
 User.prototype.createFrom = async function (data) {
@@ -128,6 +125,8 @@ User.prototype.encryptPassword = async function () {
     await this.__set('password', await crypt(this.__get('password')));
 }
 
+User.prototype.fullname = function () { return this.__get('surname') + " " + this.__get("name") + " " + this.__get('lastname'); }
+
 User.prototype.createNew = async function (roles = []) {
     let validate = this.validate();
     if (validate !== true) {
@@ -154,13 +153,11 @@ User.prototype.createNew = async function (roles = []) {
         const usr = await this.save();
         const id = usr.insertId;
 
-        const validation = await EmailValidation.setOnConfirmation(id);
+        const validation = await EmailValidation.setOnConfirmation(id, this.__get('email'), this.fullname());
 
-        const fullname = this.__get('surname') + " " + this.__get("name") + " " + this.__get('lastname');
         console.log(this.__get('email'));
         console.log(fullname);
         console.log(validation.__get('code'));
-        mail.sendEmail(this.__get('email'), "Код подтверждения" , "Здравствуйте, " + fullname + "! Код подтверждения для вашего аккаунта в личном кабинете Академии Цифровых Технологий: " + validation.__get('code') + " (Никому не сообщайте его)");
 
         if (usr === false)
             throw Error('Saving data failed');

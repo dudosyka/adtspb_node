@@ -88,16 +88,17 @@ module.exports = new GraphQLObjectType({
                 return result;
             }
         },
-        generateNewConfirmationCode: {
-                type: EmailValidationType,
-                args: {
-                    user_id: {
-                        type: GraphQLInt
-                    }
-                },
-                async resolve(obj, { user_id }) {
-                    return (await EmailValidation.setOnConfirmation(user_id)).fields;
-                }
-        },
+        // generateNewConfirmationCode: {
+                // type: EmailValidationType,
+                // args: {
+                    // user_id: {
+                        // type: GraphQLInt
+                    // }
+                // },
+                // async resolve(obj, { user_id }) {
+                    // return {}
+                    // return (await EmailValidation.setOnConfirmation(user_id)).fields;
+                // }
+        // },
     }
 });
