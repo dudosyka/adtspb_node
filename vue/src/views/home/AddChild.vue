@@ -492,7 +492,7 @@
           data.child_data = this.childPhoneOrEmail
         }
 
-        api.request(req, data)
+        _request("api", req, data)
           .then(data => {
             console.log(data)
 
