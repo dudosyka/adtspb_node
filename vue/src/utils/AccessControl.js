@@ -33,7 +33,7 @@ AccessContol.refreshUserRules = async function () {
     }
     `;
 
-    return api.request(req).then(el => {
+    return _request("api", req).then(el => {
         console.log(el);
         localStorage.setItem('rules', el.viewer.rules);
     });

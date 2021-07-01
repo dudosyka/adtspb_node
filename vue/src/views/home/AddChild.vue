@@ -414,96 +414,27 @@
     },
     methods: {
       childRegistration() {
-        const req = `
-          mutation ($user: UserInput) {
-            createChild(child: $user)
-          }
-        `
-
-        for (let key in this.childRaw) {
-          this.childFormated[key] = this.childRaw[key]
-        }
-        console.log(this.childFormated)
-
-        this.childFormated.registration_address = this.childRaw.registration_address.city + ', ' + this.childRaw.registration_address.district + ', ' + this.childRaw.registration_address.street + ', ' + this.childRaw.registration_address.house
-        this.childFormated.residence_address = this.childRaw.residence_address.city + ', ' + this.childRaw.residence_address.district + ', ' + this.childRaw.residence_address.street + ', ' + this.childRaw.residence_address.house
-
-        if (this.childRaw.phone != 11) {
-            this.childFormated.phone = 8 + this.childRaw.phone
-        }
-
-        console.log('raw birthday - ' + this.childRaw.birthday)
-        this.childFormated.birthday = (new Date(this.childRaw.birthday)).getTime()
-        console.log('formatted birthday - ' + this.childFormated.birthday)
-
-        this.childFormated.ovz = Number(this.childRaw.ovz)
-        this.childFormated.ovz_type.id = Number(this.childRaw.ovz_type.id)
-        this.childFormated.disability = Number(this.childRaw.disability)
-        this.childFormated.disability_group.id = Number(this.childRaw.disability_group.id)
-
-        let data = {
-          user: this.childFormated
-        }
-        console.log(data)
-
-
-        api.request(req, data)
-          .then(data => {
-            console.log(data)
-
-            this.message = 'Ребёнок успешно добавлен'
-            this.show.childReg = true
-          })
-          .catch(err => {
-            console.error(err);
-            //this.show.childNotReg = true;
-            if (err.msg)
-              console.log(err.msg + ' - err.msg');
-
-          })
+          User.addChild({...this.childRaw}).then(res => {
+              if (res) {
+                  this.message = 'Ребёнок успешно добавлен';
+                  this.show.childReg = true;
+              }
+          }).catch(err => {
+              //TODO: Обработка ошибок с бэка и фронта.
+          });
       },
       addChild() {
-        let req = `
-          mutation ($child_data: String) {
-            addChild(child_data: $child_data)
-          }
-        `
+          User.sendParentRequest().then(res => {
+              if (res) {
+                  this.message = 'Запрос на подтверждение родства ребёнку успешно отпрвлен';
+                  this.show.childReg = true;
+              }
+          }).catch(err => {
+              console.log(err);
+              console.log(err.msg);
 
-        let data = {}
-
-        if (this.childPhoneOrEmail.indexOf('@') !== -1) {
-          data.child_data = this.childPhoneOrEmail
-
-        } else {
-
-          if (this.childPhoneOrEmail.indexOf('+7') !== -1) {
-            this.childPhoneOrEmail = this.childPhoneOrEmail.split('')
-            this.childPhoneOrEmail.splice(0,2)
-            this.childPhoneOrEmail = this.childPhoneOrEmail.join('')
-
-          }
-
-          if (this.childPhoneOrEmail.length < 11) {
-            this.childPhoneOrEmail = '8' + this.childPhoneOrEmail
-
-          }
-
-          data.child_data = this.childPhoneOrEmail
-        }
-
-        api.request(req, data)
-          .then(data => {
-            console.log(data)
-
-            this.message = 'Запрос на подтверждение родства ребёнку успешно отпрвлен'
-            this.show.childReg = true
-          })
-          .catch(err => {
-            console.log(err)
-            console.log(err.msg)
-
-            this.show.error = 'не удалось найти ребёнка'
-          })
+              this.show.error = 'не удалось найти ребёнка';
+          });
       }
     }
   }

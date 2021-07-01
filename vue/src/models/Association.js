@@ -22,10 +22,10 @@ Association.getAssociations = async function() {
         }
     `;
 
-    return await _request("api", req)
+    return _request("api", req)
         .then(data => {
-            return data.getAssociations
-        })
+            return data.getAssociations;
+        });
 
 }
 
