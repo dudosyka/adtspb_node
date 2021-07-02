@@ -28,14 +28,17 @@ User.login = async function ({login, pass}) {
         password: pass
     }
 
-    return await _request("endoor", req, data)
-    .then(async data => {
+    return _request("endoor", req, data).then(data => {
+        console.log(data);
+        if (data === undefined)
+            return;
         this.auth(data.login.token);
-        const isConfirmed = await this.checkConfirmation(data.login.id);
-        if (isConfirmed)
-            this.auth(data.login.token, true);
-        else
-            this.setOnConfirm();
+        this.checkConfirmation(data.login.id).then(isConfirmed => {
+            if (isConfirmed)
+                this.auth(data.login.token, true);
+            else
+                this.setOnConfirm();
+        });
     });
 }
 
@@ -130,7 +133,9 @@ User.getParentRequests = async function () {
 
 }
 
-User.agreeParentRequest = async function (request_id, userData) {
+User.agreeParentRequest = async function (parent_id, userData) {
+    parent_id = Number(parent_id);
+    console.log(parent_id, userData);
     let errs = [];
     const validateRes = Validator.validateNotEmpty(userData, true);
 
@@ -141,13 +146,19 @@ User.agreeParentRequest = async function (request_id, userData) {
         throw {msg: errs};
 
     let req = `
-      mutation ($request_id: Int, $userData: UserInput) {
-        agreeParentRequest(request_id: $request_id, newData: $userData)
+      mutation ($parent_id: Int, $userData: UserInput) {
+        agreeParentRequest(parent_id: $parent_id, newData: $userData)
       }
-    `
+    `;
+
+    userData.registration_address = Parser.objToAddress(userData.registration_address);
+    userData.residence_address = Parser.objToAddress(userData.residence_address);
+
+    userData.birthday = Parser.birthdayToTimestamp(userData.birthday);
 
     let data = {
-      request_id
+      parent_id,
+      userData
     }
 
     return await _request("api", req, data).then(data => {
@@ -215,6 +226,91 @@ User.getChildren = async function (fields = null, parse = true) {
             return el;
         });
         return data.getChildren;
+    });
+}
+
+User.getFullData = async function (fields = null, parse = true) {
+    if (fields === null) {
+        fields = {
+           id: null,
+           name: null,
+           surname: null,
+           lastname: null,
+           email: null,
+           phone: null,
+           sex: null,
+           birthday: null,
+           birth_certificate: null,
+           state: null,
+           relationship: null,
+           studyPlace: null,
+           ovz: null,
+           ovz_type: {
+               id: null
+           },
+           disability: null,
+           disability_group: {
+               id: null,
+           },
+           registration_address: null,
+           registration_flat: null,
+           residence_address: null,
+           residence_flat: null
+       };
+    }
+    const fieldsOnGet = Parser.objToGraphQlQuery(fields);
+
+    let req = `
+      query {
+        getFullUserData {
+            `+ fieldsOnGet +`
+        }
+      }
+    `;
+
+    return await _request("api", req).then(data => {
+        const el = data.getFullUserData;
+        let errors = {};
+
+        const birth = Parser.timestampToObj(el.birthday ?? Date.now());
+        el.birthday = birth.year + "-" + birth.month + "-" + birth.day;
+
+        el.registration_address = Parser.addressToObj(el.registration_address);
+        el.residence_address = Parser.addressToObj(el.residence_address);
+
+        Object.keys(el).map(field => {
+           const fieldValue = el[field];
+           if (typeof fieldValue === 'object' && fieldValue !== null) {
+               Object.keys(fieldValue ?? {}).map(subfield => {
+                   if (errors[field])
+                      errors[field][subfield] = false;
+                   else
+                      errors[field] = { [subfield]: false };
+               });
+           }
+           else {
+               errors[field] = false;
+           }
+        });
+
+        if (!parse)
+            return {
+                childData: el,
+                errors
+            };
+
+        el.masked = {};
+
+        let formattingPhone = el.phone.split('');
+        formattingPhone.shift();
+        el.masked.phone = formattingPhone.join('');
+
+        el.sex = el.sex;
+
+        return {
+            childData: el,
+            errors
+        };
     });
 }
 
@@ -366,9 +462,10 @@ User.sendParentRequest = async function (login) {
     data.child_data = Corrector.phone(login);
   }
 
-  return _request("api", req, data)
-    .then(data => {
+  return _request("api", req, data).then(data => {
         return data.addChild;
+  }).catch(err => {
+      console.log(err);
   });
 }
 

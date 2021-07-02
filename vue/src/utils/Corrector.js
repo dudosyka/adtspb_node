@@ -40,4 +40,23 @@ Corrector.correctHours = function (hours) {
   }
 }
 
+Corrector.userField = function (field) {
+    const correct = {
+        birth_certificate: "Номер сведительства о рождении",
+        birthday: "Дата рождения",
+        disability: "Инвалидность",
+        disability_group: "Группа инвалидности",
+        ovz: "ОВЗ",
+        ovz_type: "Тип ОВЗ",
+        registration_address: "Адрес регистрации",
+        registration_flat: "Квартира по адресу регистрации",
+        relationship: " Степень родства",
+        residence_address: "Адрес проживания",
+        residence_flat: "Квартира по адресу проживания",
+        state: "Гражданство",
+        studyPlace: "Место обучения",
+    };
+    return correct[field];
+}
+
 export {Corrector}
