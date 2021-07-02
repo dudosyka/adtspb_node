@@ -183,7 +183,7 @@
 
               <article class="child-data_table-group">
                 <inputField
-                  label="Образовательное учреждение"
+                  label="Образовательное учреждение (наименование)"
                   v-model="raw.studyPlace"
                   type="text"
                   :error="errors[number]['studyPlace']"

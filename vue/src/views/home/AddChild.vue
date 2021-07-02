@@ -210,7 +210,7 @@
 
           <article class="child-data_table-group">
             <inputField
-              label="Образовательное учреждение"
+              label="Образовательное учреждение (наименование)"
               v-model="childRaw.studyPlace"
               type="text"
               :error="childRawErrors.studyPlace"
