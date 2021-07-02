@@ -129,18 +129,18 @@ module.exports = new GraphQLObjectType({
         agreeParentRequest: {
             type: GraphQLBoolean,
             args: {
-                request_id: {
+                parent_id: {
                     type: GraphQLInt,
                 },
                 newData: {
                     type: UserInput
                 }
             },
-            async resolve(obj, { request_id, newData }) {
+            async resolve(obj, { parent_id, newData }) {
                 const viewer = await User.createFrom(obj().viewer);
                 // console.log('FIELDS', viewer.fields);
                 // console.log('Input', newData);
-                return await viewer.agreeParentRequest(request_id, newData);
+                return await viewer.agreeParentRequest(parent_id, newData);
             }
         },
         removeChildRequest: {

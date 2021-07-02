@@ -27,7 +27,7 @@ module.exports = new GraphQLObjectType({
             async resolve (obj, { login, password }) {
                 const auth = await User.auth({ user: login, pass: password });
                 if (auth.status !== true)
-                    throw new Error(auth.res);
+                    throw Error(auth.res);
                 const id = auth.res.id;
                 // console.log(auth.res.id);
                 return {

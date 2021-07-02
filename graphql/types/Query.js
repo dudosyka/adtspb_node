@@ -134,6 +134,13 @@ module.exports = new GraphQLObjectType({
                 return children;
             }
         },
+        getFullUserData: {
+            type: UserFullDataType,
+            args: {},
+            async resolve(obj, {}) {
+                return User.getFullData(obj().viewer.id);
+            }
+        },
         getChildRequests: {
             type: graphql.GraphQLList(UserType),
             args: {},
