@@ -154,8 +154,8 @@ input, input:before, input:after {
 
     pointer-events: none;
 
-    white-space: nowrap;
-    text-overflow: clip;
+    white-space: ;
+    text-overflow: fade;
 
     color: #0086C9;
     font-size: 0.9em;

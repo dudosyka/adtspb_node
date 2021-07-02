@@ -77,7 +77,7 @@
           </div>
         </div>
 
-        <AuthPlate title="Добро пожаловать в личный кабинет" />
+        <AuthPlate title="Добро пожаловать в Личный кабинет" />
     </main>
 </template>
 
