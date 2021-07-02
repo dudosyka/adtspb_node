@@ -359,11 +359,11 @@ User.sendParentRequest = async function (login) {
 
   let data = {}
 
-  if (this.childPhoneOrEmail.indexOf('@') !== -1) {
+  if (login.indexOf('@') !== -1) {
     data.child_data = this.childPhoneOrEmail
   }
   else {
-    data.child_data = Corrector.phone(this.childPhoneOrEmail);
+    data.child_data = Corrector.phone(login);
   }
 
   return _request("api", req, data)

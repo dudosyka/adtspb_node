@@ -53,7 +53,7 @@
     },
     async created() {
       const requests = await User.getParentRequests().then(data => data).catch(err => console.error(err));
-
+      console.log("REQUESTS", requests);
       this.parentRequests = requests;
     },
     methods: {
@@ -61,7 +61,6 @@
         this.show.needData = true
       },
       accept(id) {
-          console.log(this.parentRequest[id])
           User.agreeParentRequest(id).then(data => {
               console.log(data);
           }).catch(err => {

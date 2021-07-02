@@ -348,6 +348,7 @@
 <script>
   import InputField from '../../components/InputField.vue'
   import MaskedInput from 'vue-masked-input'
+  import {User} from '../../models/User'
 
   export default {
     name: '',
@@ -424,7 +425,7 @@
           });
       },
       addChild() {
-          User.sendParentRequest().then(res => {
+          User.sendParentRequest(this.childPhoneOrEmail).then(res => {
               if (res) {
                   this.message = 'Запрос на подтверждение родства ребёнку успешно отпрвлен';
                   this.show.childReg = true;

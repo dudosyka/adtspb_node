@@ -72,7 +72,7 @@
           email: this.email
         }
 
-        endoor.request(req, data)
+        _request("endoor", req, data)
           .then(data => { this.step = 1 })
           .catch(err => { console.error('catch') })
       },
@@ -88,7 +88,7 @@
           code: this.code
         };
 
-        endoor.request(req, data)
+        _request("endoor", req, data)
           .then(data => {
             if (data.checkRestoreCode) {
               this.step = 2
@@ -113,7 +113,7 @@
           password: this.password
         }
 
-        endoor.request(req, data)
+        _request("endoor", req, data)
           .then(data => {
             window.location = '/login'
           })
