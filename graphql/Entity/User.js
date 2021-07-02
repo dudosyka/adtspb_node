@@ -155,9 +155,9 @@ User.prototype.createNew = async function (roles = []) {
 
         const validation = await EmailValidation.setOnConfirmation(id, this.__get('email'), this.fullname());
 
-        console.log(this.__get('email'));
-        console.log(fullname);
-        console.log(validation.__get('code'));
+        // console.log(this.__get('email'));
+        // console.log(fullname);
+        // console.log(validation.__get('code'));
 
         if (usr === false)
             throw Error('Saving data failed');
