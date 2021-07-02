@@ -60,12 +60,14 @@
                 <inputField
                   label="Имя"
                   v-model="childRaw.name"
+                  :error="childRawErrors.name"
                 />
               </div>
               <div>
                 <inputField
                   label="Фамилия"
                   v-model="childRaw.surname"
+                  :error="childRawErrors.surname"
                 />
               </div>
             </div>
@@ -75,12 +77,13 @@
                 <inputField
                   label="Отчество"
                   v-model="childRaw.lastname"
+                  :error="childRawErrors.lastname"
                 />
               </div>
 
               <div>
                 <div class="input-container">
-                  <label class="label" v-bind:class="{'label-up': childRaw.birthday}">Дата рождения</label><br>
+                  <label class="label" :class="{'label-error': childRawErrors.birthday}">Дата рождения</label><br>
                   <!--<masked-input
                     class="type"
                     v-model="masked.birthday"
@@ -90,6 +93,7 @@
                   />!-->
                   <input
                     class="type"
+                    :class="{'input-error': childRawErrors.birthday}"
                     type="date"
                     v-model="childRaw.birthday"
                     tabindex="1"
@@ -103,6 +107,7 @@
                 label="Номер свидетельства о рождении"
                 v-model="childRaw.birth_certificate"
                 tabindex="1"
+                :error="childRawErrors.birth_certificate"
               />
             </div>
           </article>
@@ -113,18 +118,19 @@
                 <inputField
                   label="Электронная почта"
                   v-model="childRaw.email"
-
+                  :error="childRawErrors.email"
                 />
               </div>
               <div>
                 <div class="input-container required">
-                  <label class="label" v-bind:class="{'label-up': childRaw.phone}">Номер телефона</label><br>
+                  <label class="label" v-bind:class="{'label-error': childRawErrors.phone}">Номер телефона</label><br>
                   <masked-input
                     v-model="masked.phone"
                     mask="\+\7 (111) 111-11-11"
                     @input="childRaw.phone = arguments[1]"
                     type="tel"
                     class="type"
+                    :class="{'input-error': childRawErrors.phone}"
                     tabindex="4"
                     />
                 </div>
@@ -134,8 +140,8 @@
 
           <article class="child-data_table-group">
             <div class="input-container required">
-              <h3 class="radio-heading dark">Пол</h3>
-              <ul class="radio-list">
+              <h3 class="radio-heading dark" :class="{'label-error': childRawErrors.sex}">Пол</h3>
+              <ul class="radio-list" :class="{'input-error': childRawErrors.sex}">
                 <div class="radio-container">
                   <input type="radio" v-model.number="childRaw.sex" value="1" class="radio" tabindex="3" id="man">
                   <label class="dark radio" for="man" tabindex="5">Мужской</label>
@@ -154,12 +160,14 @@
                 <inputField
                   label="Гражданство"
                   v-model="childRaw.state"
+                  :error="childRawErrors.state"
                 />
               </div>
               <div>
                 <inputField
                   label="Степень родства"
                   v-model="childRaw.relationship"
+                  :error="childRawErrors.relationship"
                 />
               </div>
             </div>
@@ -168,14 +176,14 @@
           <article class="child-data_table-group">
             <div class="child-data_row">
               <div>
-                <h2 class="form-heading child-data_heading">ОВЗ</h2>
+                <h2 class="form-heading child-data_heading" :class="{'label-error': childRawErrors.ovz}">ОВЗ</h2>
                 <select class="dark-box darken" v-model.number="childRaw.ovz"  >
                   <option value="0">Нет</option>
                   <option value="1">Есть</option>
                 </select>
               </div>
               <div v-if="childRaw.ovz">
-                <h2 class="form-heading left">Тип ОВЗ</h2>
+                <h2 class="form-heading left" :class="{'label-error': childRawErrors.ovz_type}">Тип ОВЗ</h2>
                 <select class="dark-box darken" v-model="childRaw.ovz_type.id"  >
                   <option v-for="(type, id) in ovzTypes" :value="id">{{ type }}</option>
                 </select>
@@ -184,7 +192,7 @@
 
             <div class="child-data_row">
               <div>
-                <h2 class="form-heading child-data_heading">Инвалидность</h2>
+                <h2 class="form-heading child-data_heading" :class="{'label-error': childRawErrors.disability}">Инвалидность</h2>
                 <select class="dark-box darken" v-model.number="childRaw.disability"  >
                   <option value="0">Нет</option>
                   <option value="1">Есть</option>
@@ -192,7 +200,7 @@
 
               </div>
               <div v-if="childRaw.disability">
-                <h2 class="form-heading left">Группа нвалидности</h2>
+                <h2 class="form-heading left" :class="{'label-error': childRawErrors.disability_group}">Группа нвалидности</h2>
                 <select class="dark-box darken" v-model="childRaw.disability_group.id"  >
                   <option v-for="(type, id) in disabilityTypes" :value="id">{{ type }}</option>
                 </select>
@@ -205,7 +213,7 @@
               label="Образовательное учреждение"
               v-model="childRaw.studyPlace"
               type="text"
-
+              :error="childRawErrors.studyPlace"
             />
             <div class="child-data_row">
               <!--
@@ -226,27 +234,27 @@
                 <inputField
                   label="Город"
                   v-model="childRaw.registration_address.city"
-
+                  :error="childRawErrors.registration_address.city"
                 />
                 <inputField
                   label="Район"
                   v-model="childRaw.registration_address.district"
-
+                  :error="childRawErrors.registration_address.district"
                 />
                 <inputField
                   label="Улица"
                   v-model="childRaw.registration_address.street"
-
+                  :error="childRawErrors.registration_address.street"
                 />
                 <inputField
                   label="Дом"
                   v-model="childRaw.registration_address.house"
-
+                  :error="childRawErrors.registration_address.house"
                 />
                 <inputField
                   label="Номер квартиры"
                   v-model="childRaw.registration_flat"
-
+                  :error="childRawErrors.registration_flat"
                 />
               </div>
           </article>
@@ -257,27 +265,27 @@
               <inputField
                 label="Город"
                 v-model="childRaw.residence_address.city"
-
+                :error="childRawErrors.residence_address.city"
               />
               <inputField
                 label="Район"
                 v-model="childRaw.residence_address.district"
-
+                :error="childRawErrors.residence_address.district"
               />
               <inputField
                 label="Улица"
                 v-model="childRaw.residence_address.street"
-
+                :error="childRawErrors.residence_address.street"
               />
               <inputField
                 label="Дом"
                 v-model="childRaw.residence_address.house"
-
+                :error="childRawErrors.residence_address.house"
               />
               <inputField
                 label="Номер квартиры"
                 v-model="childRaw.residence_flat"
-
+                :error="childRawErrors.residence_flat"
               />
             </div>
           </article>
@@ -288,6 +296,7 @@
                 label="Пароль"
                 type="password"
                 v-model="childRaw.password"
+                :error="childRawErrors.password"
               />
             </div>
           </div>
@@ -398,6 +407,42 @@
           },
           residence_flat: null,
         },
+        childRawErrors: {
+          name: false,
+          surname: false,
+          lastname: false,
+          email: false,
+          phone: false,
+          sex: false,
+          password: false,
+
+          birthday: false,
+          birth_certificate: false,
+
+          state: false,
+          relationship: false,
+          studyPlace: false,
+          ovz: false,
+          ovz_type: { id: false },
+          disability: false,
+          disability_group: { id: false },
+
+          registration_address: {
+            city: false,
+            district: false,
+            street: false,
+            house: false,
+          },
+          registration_flat: false,
+
+          residence_address: {
+            city: false,
+            district: false,
+            street: false,
+            house: false
+          },
+          residence_flat: false,
+        },
         childFormated: {},
 
         ovzTypes: ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'],
@@ -422,7 +467,20 @@
                   this.show.childReg = true;
               }
           }).catch(err => {
-              //TODO: Обработка ошибок с бэка и фронта.
+            //TODO: Обработка ошибок с бэка и фронта.
+            if (err.msg)
+              err.msg.map(el => {
+                if (typeof el === 'object') {
+                  Object.keys(el ?? {}).map(field => {
+                    el[field].map(subfield => {
+                      this.childRawErrors[field][subfield] = true;
+                    });
+                  });
+                }
+                else {
+                  this.childRawErrors[el] = true;
+                }
+              });
           });
       },
       addChild() {
@@ -437,7 +495,6 @@
 
               this.show.error = 'не удалось найти ребёнка';
           });
->>>>>>> master
       }
     }
   }
