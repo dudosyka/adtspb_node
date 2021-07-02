@@ -106,6 +106,7 @@ export default {
     }
   },
   created() {
+      //TODO: Вынести логику в модель!
     const child = localStorage.getItem('childInAssociations');
 
     {
@@ -130,7 +131,7 @@ export default {
         }
       `;
 
-      api.request(req)
+      _request("api", req)
         .then(data => {
           /*
           * reconstruction arr with timetable
@@ -231,7 +232,7 @@ export default {
         id: child
       }
 
-      api.request(req, data)
+      _request("api", req, data)
         .then( data => {
           this.child = data.user
         })
@@ -242,34 +243,13 @@ export default {
   },
   methods: {
     //Методы для правильного склонения слов
-    correctYears(years) {
-      if (years > 1) {
-        return ' года'
-      } else {
-        return ' год'
-      }
-    },
-    correctLessons(lessons) {
-      if (lessons === 1 || lessons > 4) {
-        return ' раз'
-      } else {
-        return ' раза'
-      }
-    },
-    correctHours(hours) {
-      if (hours == 1) {
-        return ' час'
-      } else if (hours < 5) {
-        return ' часа'
-      } else {
-        return ' часов'
-      }
-    },
+    correctYears: (years) => Corrector.correctYears(years),
+    correctLessons: (lessons) => Corrector.correctLessons(lessons),
+    correctHours: (hours) => Corrector.correctHours(hours),
 
     addAssociation(id) {
       const assocsUser = this.proposalParms.associations
       const assocsList = this.associations
-
       /*
         Have arr[id]?
         if haven't, then
@@ -293,6 +273,7 @@ export default {
     },
 
     createProposal() {
+        //TODO: Вынести логику в модель!
       if (this.proposalParms.associations.length > 0) {
         this.errors.needAssoc = false;
         if (this.proposalParms.schedule) {
@@ -321,7 +302,8 @@ export default {
   },
   computed: {
     assocsUser() {
-      let arr = []
+      let arr = [];
+      //TODO: Использовать Array.filter()
       this.proposalParms.associations.map( el => { if (el) arr.push(el) })
       return arr
     },

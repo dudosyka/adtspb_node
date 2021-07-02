@@ -1,5 +1,8 @@
 const baseEntity = require('./BaseEntity');
 
+const Mail = require('../utils/Mail');
+const mail = new Mail();
+
 let EmailValidation = function () {}
 
 EmailValidation.prototype = Object.assign(EmailValidation.prototype, baseEntity.prototype);
@@ -65,11 +68,22 @@ EmailValidation.prototype.generateToken = function (l) {
     return res;
 }
 
-EmailValidation.prototype.setOnConfirmation = async function (user_id) {
+EmailValidation.prototype.setOnConfirmation = async function (user_id, email, fullname) {
+    let res = await this.db.select(this, '`user_id` = ?', [ user_id ]);
+    if (res.length <= 0) {
+        return {
+            code: null,
+            user_id: user_id,
+            timestamp: Math.floor(Date.now() / 1000),
+            isConfirmed: true,
+        };
+    }
+    this.__set('id', res[0].id);
     this.__set('code', this.generateToken(4));
     this.__set('user_id', user_id);
     this.__set('timestamp', Math.floor(Date.now() / 1000));
-    await this.save();
+    mail.sendEmail(email, "Код подтверждения" , "Здравствуйте, " + fullname + "! Код подтверждения для вашего аккаунта в личном кабинете Академии Цифровых Технологий: " + this.__get('code') + " (Никому не сообщайте его)");
+    await this.update();
     return this;
 }
 

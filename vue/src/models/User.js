@@ -1,5 +1,6 @@
 import {Validator} from "../utils/Validator";
 import {Parser} from "../utils/Parser";
+import {Corrector} from "../utils/Corrector";
 
 let User = {};
 
@@ -31,8 +32,6 @@ User.login = async function ({login, pass}) {
     .then(async data => {
         this.auth(data.login.token);
         const isConfirmed = await this.checkConfirmation(data.login.id);
-        console.log("IS CONFIRMED", isConfirmed);
-        console.log("DATA.LOGIN.TOKEN", data.login.token);
         if (isConfirmed)
             this.auth(data.login.token, true);
         else
@@ -56,15 +55,12 @@ User.checkConfirmation  = async function (id) {
       }
     `;
 
-    console.log(id);
-
     const data = {
     };
     try {
     refreshApiToken();
     } catch (err) {
         window.location = window.location;
-        console.log(err);
     }
 
     return await _request("api", req, data).then(check => {
@@ -79,8 +75,9 @@ User.setOnConfirm = function () {
 
 User.signUp = async function (data, makeParent = false) {
     console.log(data);
-    if (data.phone.length < 11)
-        data.phone = "8"+data.phone;
+
+    data.phone = Corrector.phone(data.phone);
+
     let errs = [];
     const validateRes = Validator.validateNotEmpty(data, true);
 
@@ -197,10 +194,7 @@ User.getChildren = async function (fields = null, parse = true) {
       }
     `;
 
-    console.log(req);
-
     return await _request("api", req).then(data => {
-        console.log(data);
         data.getChildren.map(el => {
             if (!parse)
                 return el;
@@ -232,13 +226,13 @@ User.editMainData = async function (obj, target_id = 0) {
     `;
 
     let errs = [];
-    console.log(obj);
     const validateRes = Validator.validateNotEmpty(obj, true);
 
     if (validateRes !== true)
         errs = validateRes;
 
-    obj.phone = "8" + obj.phone;
+    obj.phone = Corrector.phone(obj.phone);
+
     if (!Validator.validatePhone(obj.phone))
         errs.push('phone');
 
@@ -279,7 +273,7 @@ User.editExtraData = async function (obj, target_id) {
     obj.registration_address = Parser.objToAddress(obj.registration_address);
     obj.residence_address = Parser.objToAddress(obj.residence_address);
 
-    obj.birthday = (new Date(obj.birthday)).getTime();
+    obj.birthday = Parser.birthdayToTimestamp(obj.birthday);
 
     obj.id = Number(obj.id);
 
@@ -312,20 +306,121 @@ User.editExtraData = async function (obj, target_id) {
     });
 }
 
-User.removeChild = async function (id, comment, remove_account) {
-      let req = `
-        mutation ($child_id: Int, $removeAccount: Boolean, $comment: String) {
-          removeChild(child_id: $child_id, removeAccount: $removeAccount, comment: $comment)
-        }
-      `;
-
-      let data = {
-        child_id: id,
-        removeAccount: remove_account,
-        comment: comment
+User.addChild = async function (child) {
+    const req = `
+      mutation ($user: UserInput) {
+        createChild(child: $user)
       }
+    `;
 
-      return await request("api", req, data);
+    let errs = [];
+    const validateRes = Validator.validateNotEmpty(child, true);
+
+    if (validateRes !== true)
+        errs = validateRes;
+
+    child.phone = Corrector.phone(child.phone);
+
+    if (!Validator.validatePhone(child.phone))
+        errs.push('phone');
+
+    if (!Validator.validateEmail(child.email))
+        errs.push('email');
+
+    if (errs.length)
+        throw {msg: errs};
+
+    child.registration_address = Parser.objToAddress(child.registration_address);
+    child.residence_address = Parser.objToAddress(child.residence_address);
+
+    child.birthday = Parser.birthdayToTimestamp(child.birthday);
+
+    child.ovz = Number(child.ovz)
+    child.ovz_type.id = Number(child.ovz_type.id)
+    child.disability = Number(child.disability)
+    child.disability_group.id = Number(child.disability_group.id)
+
+    let data = {
+      user: child
+    };
+
+    return _request("api", req, data)
+      .then(data => {
+        return data.createChild;
+    });
+}
+
+User.sendParentRequest = async function (login) {
+  let req = `
+    mutation ($child_data: String) {
+      addChild(child_data: $child_data)
+    }
+  `
+
+  let data = {}
+
+  if (login.indexOf('@') !== -1) {
+    data.child_data = this.childPhoneOrEmail
+  }
+  else {
+    data.child_data = Corrector.phone(login);
+  }
+
+  return _request("api", req, data)
+    .then(data => {
+        return data.addChild;
+  });
+}
+
+User.removeChild = async function (id, comment, remove_account) {
+  let req = `
+    mutation ($child_id: Int, $removeAccount: Boolean, $comment: String) {
+      removeChild(child_id: $child_id, removeAccount: $removeAccount, comment: $comment)
+    }
+  `;
+
+  let data = {
+    child_id: id,
+    removeAccount: remove_account,
+    comment: comment
+  };
+
+  return await request("api", req, data);
+}
+
+User.confirmUser = async function (code) {
+  let req = `
+    mutation($code: String) {
+        confirmUser(code: $code) {
+            isConfirmed
+        }
+    }
+  `;
+
+  let data = {
+    code: code,
+  };
+
+  return _request("api", req, data)
+    .then(data => {
+      if (data.confirmUser.isConfirmed) {
+          window.location = '/';
+          return true;
+      }
+      return false;
+  }).catch(err => console.error(err));
+}
+
+User.sendNewConfirmationCode = async function () {
+    let req = `
+      mutation {
+        generateNewConfirmationCode {
+            isConfirmed
+        }
+      }
+    `;
+
+    return _request("api", req).catch(err => console.error(err));
 }
 
 export {User};

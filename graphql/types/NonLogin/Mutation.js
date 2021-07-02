@@ -50,7 +50,9 @@ module.exports = new GraphQLObjectType({
                 let usr = await User.createFrom(user);
                 let additionalRoles = [];
                 if (makeParent)
-                    additionalRoles.push(AppConfig.parent_role_id)
+                    additionalRoles.push(AppConfig.parent_role_id);
+                else
+                    additionalRoles.push(AppConfig.child_role_id);
                 return usr.createNew(additionalRoles);
             }
         },
@@ -88,16 +90,17 @@ module.exports = new GraphQLObjectType({
                 return result;
             }
         },
-        generateNewConfirmationCode: {
-                type: EmailValidationType,
-                args: {
-                    user_id: {
-                        type: GraphQLInt
-                    }
-                },
-                async resolve(obj, { user_id }) {
-                    return (await EmailValidation.setOnConfirmation(user_id)).fields;
-                }
-        },
+        // generateNewConfirmationCode: {
+                // type: EmailValidationType,
+                // args: {
+                    // user_id: {
+                        // type: GraphQLInt
+                    // }
+                // },
+                // async resolve(obj, { user_id }) {
+                    // return {}
+                    // return (await EmailValidation.setOnConfirmation(user_id)).fields;
+                // }
+        // },
     }
 });

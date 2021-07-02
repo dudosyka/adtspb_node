@@ -40,6 +40,7 @@
 
 <script>
   import axios from "axios"
+  import {User} from "../models/User"
 
   export default {
     name: 'Confirmation',
@@ -52,46 +53,15 @@
     },
     methods: {
       sendCode() {
-        let req = `
-          mutation($code: String) {
-              confirmUser(code: $code) {
-                  isConfirmed
-              }
-          }
-        `
-
-        let data = {
-          code: this.code
-        }
-
-        api.request(req, data)
-          .then(data => {
-
-            if (data.confirmUser.isConfirmed) {
-              window.location = '/'
-            } else {
-              this.isInvalid = true
-            }
-
-          })
-          .catch(err => { console.error(err) })
+          User.confirmUser(this.code).then(data => {
+              this.isInvalid = !data;
+          });
       },
+
       getNewCode() {
-        let req = `
-          mutation {
-            generateNewConfirmationCode {
-                isConfirmed
-            }
-          }
-        `
-
-        api.request(req)
-          .then(res => {
-            this.new = 'новый'
+          User.sendNewConfirmationCode().then(data => {
+              this.new = "новый";
           })
-          .catch(err => { console.log(err) })
-
-
       }
     }
   }
