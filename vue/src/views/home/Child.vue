@@ -6,21 +6,20 @@
         <section class="children">
 
           <section class="card child shadow" v-for="(raw, number) in childrenRaw" @click="showData(number)">
-            <h2 class="child-name">{{ raw.name + ' ' + raw.surname }}</h2>
-            <div class="child-heading">
-              <button @click="toAssociations(raw.id)" class="dark-box dark-button to-associations">Запись</button>
-              <span
-                  class="child-to-data"
-                  :class="{'child-from-data': number === show.childData}"
-              ></span>
+            <div class="child_heading">
+              <h2 class="child-name">{{ raw.name + ' ' + raw.surname }}</h2>
+              <button class="dark-box dark-button to-associations" @click="toAssociations(raw.id)" >Запись</button>
             </div>
+            <span class="child-to-data"
+                :class="{'child-from-data': number === show.childData}"
+            ></span>
           </section>
 
           <router-link to="/child/add" class="dark-box dark-button child-add">+ Добавить ребёнка</router-link>
 
         </section>
 
-        <section class="children-data card shadow" v-show="childrenRaw.length > 0">
+        <section class="children-data card shadow child-form-wrapper" v-show="childrenRaw.length > 0">
 
           <article class="child-data" v-for="(raw, number) in childrenRaw" v-show="show.childData === number">
 
@@ -239,37 +238,40 @@
     padding: 60px;
   }
   .child {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-  }
-  .child-heading {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-flow: row;
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 1fr 15px;
   }
   .child:hover {
     cursor: pointer;
+  }
+  .child_heading {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
   }
   .child-name {
     margin: 0;
     color: #142732;
     align-self: center;
   }
+
   .to-associations {
     margin: 20px;
-    opacity: 0%;
+    color: #3e91b1;
+    background-color: #fff;
     transition: 0.3s;
   }
   .child:hover .to-associations {
     opacity: 100%;
+    color: #fff;
+    background-color: #0086c9;
   }
+
   .child-to-data {
     margin-left: 10px;
     transition: 0.3s;
-    transform: translateX(10px);
+    align-self: center;
   }
   .child-to-data::after {
     content: '';
