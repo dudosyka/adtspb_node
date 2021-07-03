@@ -40,6 +40,7 @@ module.exports = new GraphQLObjectType({
             async resolve(obj, data) {
                 let viewer = await User.createFrom(obj().viewer);
                 viewer.fields.rules = viewer.__get('__accessible');
+                viewer.fields.roles = viewer.__get('__role');
                 console.log(viewer.fields);
                 return viewer.fields;
             }

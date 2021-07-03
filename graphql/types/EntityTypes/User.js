@@ -38,6 +38,9 @@ module.exports = new graphql.GraphQLObjectType({
         },
         rules: {
             type: graphql.GraphQLList(graphql.GraphQLInt)
+        },
+        roles: {
+            type: graphql.GraphQLList(graphql.GraphQLInt)
         }
     })
 });
