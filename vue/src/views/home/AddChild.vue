@@ -2,8 +2,8 @@
   <main class="home">
     <article class="home-content">
       <!-- Question !-->
-      <div class="card_wrapper horizontal-center">
-        <router-link tag="button" class="left-arrow" to="/child" v-if="show.question"></router-link>
+      <section  v-if="show.question" class="card_wrapper horizontal-center">
+        <router-link tag="button" class="left-arrow" to="/child"></router-link>
         <article class="card shadow" v-if="show.question">
           <h2 class="form-heading">Как вы хотите добавить ребёнка?</h2>
           <div class="buttons">
@@ -11,20 +11,20 @@
             <button class="light-box light-button" @click="show.question = false; show.add = true">Привязать существующий аккаунт</button>
           </div>
         </article>
-      </div>
+      </section>
 
       <!-- Back succesful answer !-->
-      <article class="card_wrapper" v-if="show.childReg">
+      <section v-if="show.childReg" class="card_wrapper">
         <section class="card shadow">
           <h2 class="form-heading">{{ message }}</h2>
           <div class="buttons">
             <router-link class="dark-button dark-box" to="/child">Вернуться в "Мои дети"</router-link>
           </div>
         </section>
-      </article>
+      </section>
 
       <!-- Add by phone/email !-->
-      <div class="card_wrapper horizontal-center" v-if="show.add">
+      <section v-if="show.add" class="card_wrapper horizontal-center" >
         <button class="left-arrow" @click="show.add = false; show.question = true"></button>
         <article class="card shadow">
           <h2 class="form-heading">Введите номер телефона или почту ребёнка</h2>
@@ -35,11 +35,10 @@
           />
           <button class="dark-box dark-button" @click="addChild">Добавить</button>
         </article>
-      </div>
-
+      </section>
 
       <!-- Add new child !-->
-      <div class="wp100 horizontal-center" v-if="show.registration">
+      <section v-if="show.registration" class="wp100 horizontal-center" >
         <button class="left-arrow" @click="show.registration = false; show.question = true"></button>
         <article class="card shadow child-form-wrapper">
 
@@ -238,7 +237,7 @@
             <button class="dark-box dark-button register-button" @click="childRegistration">Зарегистрировать ребёнка</button>
           </div>
         </article>
-      </div>
+      </section>
     </article>
   </main>
 </template>

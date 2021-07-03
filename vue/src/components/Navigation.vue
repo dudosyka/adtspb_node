@@ -1,5 +1,8 @@
 <template id="nav">
   <div class="nav shadow">
+    <span class="burger">
+
+    </span>
     <header class="header">
       <img src="../assets/files/logo.svg" width="50" alt="">
       <h1 class="dark">Личный кабинет</h1>

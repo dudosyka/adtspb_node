@@ -253,6 +253,7 @@ input, input:before, input:after {
   display: grid;
   grid-template-columns: repeat(2, minmax(150px, 200px));
   grid-gap: 10px;
+  max-width: 470px;
 }
 .child-form_heading, .child-form_span-2 {
   grid-column: span 2;
@@ -269,7 +270,7 @@ input, input:before, input:after {
   margin: 10px 0;
 }
 
-@media (max-width: 574px) {
+@media (max-width: 1000px) {
   .child-form {
     display: grid;
     grid-template-columns: minmax(150px, 200px);
