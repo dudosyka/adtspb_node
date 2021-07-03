@@ -19,14 +19,6 @@ hr {
   width: 100%;
 }
 
-/* transitions */
-slide-fade-enter-active {
-  transition: all .1s ease;
-}
-.slide-fade-leave-active {
-  transition: all .1s ease;
-}
-
 /* Auth */
   .login {
     position: relative;
@@ -92,14 +84,6 @@ slide-fade-enter-active {
       grid-template-columns: 1fr 36px;
       grid-row: auto;
     }
-  }
-
-/* transitions */
-  .fade-enter-active, .fade-leave-active {
-    transition: transform .5s;
-  }
-  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-    transform: translateX(-100%);
   }
 
 /* social media link */
@@ -258,6 +242,10 @@ slide-fade-enter-active {
 
 .zz {
   z-index: 10;
+}
+
+.zzz {
+  z-index: 15;
 }
 
 .shadow {

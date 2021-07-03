@@ -13,7 +13,7 @@
     width: 100%;
   }
 
-  button.dark-button, .light-button {
+  .dark-button, .light-button {
     border: none;
     outline: none;
 

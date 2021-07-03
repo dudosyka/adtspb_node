@@ -142,20 +142,13 @@ input, input:before, input:after {
   .label {
     display: inline-block;
 
-    position: absolute;
-    top: 0;
-    left: 0px;
+    position: relative;
 
     z-index: 2;
 
     width: inherit;
 
-    margin-bottom: 5px;
-
     pointer-events: none;
-
-    white-space: ;
-    text-overflow: fade;
 
     color: #0086C9;
     font-size: 0.9em;
@@ -250,3 +243,37 @@ input, input:before, input:after {
   .radio-list.input-error label.radio {
     color: #C90000;
   }
+
+/* Child data form */
+
+.child-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(150px, 200px));
+  grid-gap: 10px;
+}
+.child-form_heading, .child-form_span-2 {
+  grid-column: span 2;
+  color: #0086c9;
+}
+.child-form_select-heading {
+  font-size: 1rem;
+  margin-bottom: 5px;
+  color: #0086c9;
+}
+.child-form_select {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 160px);
+  margin: 10px 0;
+}
+
+@media (max-width: 574px) {
+  .child-form {
+    display: grid;
+    grid-template-columns: minmax(150px, 200px);
+  }
+  .child-form_heading, .child-form_span-2 {
+    grid-column: span 1;
+  }
+}
+
+
