@@ -2,8 +2,9 @@
   <main class="home">
     <navigation :new-proposal="messages.proposalCreated" />
 
-    <section class="content">
-      <article class="association-cards">
+
+    <section class="home-content">
+      <article v-if="show.associationsList" class="association-cards">
         <article class="card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id">
           <h2 class="association-name" v-text="card.name"></h2>
           <p class="association-description" v-text="card.description"></p>
@@ -39,7 +40,7 @@
         </article>
       </article>
 
-      <section class="child shadow">
+      <section class="child card shadow">
         <h2 class="child-name">{{ child.name }} {{ child.surname }}</h2>
         <section v-if="proposalParms.associations.length !== 0">
           <div class="child-hours">
@@ -53,6 +54,9 @@
             </div>
           </div>
         </section>
+
+        <button class="dark-button add-association" @click="this.show.associationsList = true">Добавить объединение</button>
+
         <ul class="child-association">
           <!-- Using computed for correct arr rendering !-->
           <li v-for="association of assocsUser" class="child-association-item">{{ association.name }}</li>
@@ -102,6 +106,9 @@ export default {
       },
       messages: {
         proposalCreated: false
+      },
+      show: {
+        associationsList: false
       }
     }
   },
@@ -325,9 +332,9 @@ export default {
 </script>
 
 <style scoped>
-  .content {
+  .home-content {
     display: grid;
-    grid-template-columns: auto 300px;
+    grid-template-columns: 1fr auto;
   }
 
   article.card.shadow {
@@ -335,6 +342,7 @@ export default {
   }
   .child {
     padding: 20px;
+    margin: 0;
   }
   .child-name {
     text-align: center;
@@ -424,5 +432,15 @@ export default {
     text-align: center;
   }
 
-
+  @media (max-width: 1000px) {
+    .home-content {
+      grid-template-columns: 1fr;
+    }
+    .association-cards {
+      position: fixed;
+      margin: 10px 10px 0 10px;
+      width: 100%;
+      z-index: 5;
+    }
+  }
 </style>
