@@ -19,6 +19,13 @@ hr {
   width: 100%;
 }
 
+/* location */
+.horizontal-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 /* Auth */
   .login {
     position: relative;
@@ -196,13 +203,13 @@ hr {
 }
 .home-content {
   background-color: #EFEFEF;
-  padding: 30px;
   height: 100vh;
   box-sizing: border-box;
   overflow-y: scroll;
 }
 
 .card {
+  box-sizing: border-box;
   padding: 30px;
   margin-bottom: 10px;
   background: #fff;
@@ -229,23 +236,7 @@ hr {
   width: 100%;
   height: 100vh;
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
   background: #EFEFEF;
-}
-
-.z {
-  z-index: 5;
-}
-
-.zz {
-  z-index: 10;
-}
-
-.zzz {
-  z-index: 15;
 }
 
 .shadow {

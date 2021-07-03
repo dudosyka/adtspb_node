@@ -1,19 +1,20 @@
 <template>
   <main class="home">
     <article class="home-content">
-      <router-link tag="button" class="left-arrow" to="/child"></router-link>
-
       <!-- Question !-->
-      <article class="card shadow" v-if="show.question">
-        <h2 class="form-heading">Как вы хотите добавить ребёнка?</h2>
-        <div class="buttons">
-          <button class="dark-box dark-button" @click="show.question = false; show.registration = true">Зарегистрировать новый аккаунт</button>
-          <button class="light-box light-button" @click="show.question = false; show.add = true">Привязать существующий аккаунт</button>
-        </div>
-      </article>
+      <div class="card_wrapper horizontal-center">
+        <router-link tag="button" class="left-arrow" to="/child" v-if="show.question"></router-link>
+        <article class="card shadow" v-if="show.question">
+          <h2 class="form-heading">Как вы хотите добавить ребёнка?</h2>
+          <div class="buttons">
+            <button class="dark-box dark-button" @click="show.question = false; show.registration = true">Зарегистрировать новый аккаунт</button>
+            <button class="light-box light-button" @click="show.question = false; show.add = true">Привязать существующий аккаунт</button>
+          </div>
+        </article>
+      </div>
 
       <!-- Back succesful answer !-->
-      <article class="card_wrapper z" v-if="show.childReg">
+      <article class="card_wrapper" v-if="show.childReg">
         <section class="card shadow">
           <h2 class="form-heading">{{ message }}</h2>
           <div class="buttons">
@@ -23,225 +24,226 @@
       </article>
 
       <!-- Add by phone/email !-->
-      <div class="card_wrapper" v-if="show.add">
+      <div class="card_wrapper horizontal-center" v-if="show.add">
+        <button class="left-arrow" @click="show.add = false; show.question = true"></button>
         <article class="card shadow">
-          <button class="left-arrow" @click="show.add = false; show.question = true"></button>
-
           <h2 class="form-heading">Введите номер телефона или почту ребёнка</h2>
           <p class="form-error">{{ show.error }}</p>
           <inputField
-            label="Номер телефона / почта"
-            v-model="childPhoneOrEmail"
+              label="Номер телефона / почта"
+              v-model="childPhoneOrEmail"
           />
           <button class="dark-box dark-button" @click="addChild">Добавить</button>
         </article>
       </div>
 
+
       <!-- Add new child !-->
-      <article class="child-data card shadow" v-if="show.registration">
+      <div class="wp100 horizontal-center" v-if="show.registration">
         <button class="left-arrow" @click="show.registration = false; show.question = true"></button>
+        <article class="card shadow child-form-wrapper">
 
-        <article class="child-form wp100">
+          <article class="child-form">
 
-          <h2 class="child-form_heading">Регистрация ребёнка</h2>
+            <h2 class="child-form_heading">Регистрация ребёнка</h2>
 
-          <inputField
-            label="Имя"
-            v-model="childRaw.name"
-            :error="childRawErrors.name"
-          />
-          <inputField
-            label="Фамилия"
-            v-model="childRaw.surname"
-            :error="childRawErrors.surname"
-          />
+            <inputField
+                label="Имя"
+                v-model="childRaw.name"
+                :error="childRawErrors.name"
+            />
+            <inputField
+                label="Фамилия"
+                v-model="childRaw.surname"
+                :error="childRawErrors.surname"
+            />
 
-          <inputField
-            label="Отчество"
-            v-model="childRaw.lastname"
-            :error="childRawErrors.lastname"
-          />
+            <inputField
+                label="Отчество"
+                v-model="childRaw.lastname"
+                :error="childRawErrors.lastname"
+            />
 
-          <div class="input-container">
-            <label class="label" :class="{'label-error': childRawErrors.birthday}">Дата рождения</label><br>
-            <input
-              class="type"
-              :class="{'input-error': childRawErrors.birthday}"
-              type="date"
-              v-model="childRaw.birthday"
-              tabindex="1"
-            >
-          </div>
+            <div class="input-container">
+              <label class="label" :class="{'label-error': childRawErrors.birthday}">Дата рождения</label><br>
+              <input
+                  class="type"
+                  :class="{'input-error': childRawErrors.birthday}"
+                  type="date"
+                  v-model="childRaw.birthday"
+                  tabindex="1"
+              >
+            </div>
 
-          <inputField
-            label="Электронная почта"
-            v-model="childRaw.email"
-            :error="childRawErrors.email"
-          />
+            <inputField
+                label="Электронная почта"
+                v-model="childRaw.email"
+                :error="childRawErrors.email"
+            />
 
-          <div class="input-container required">
-            <label class="label" v-bind:class="{'label-error': childRawErrors.phone}">Номер телефона</label><br>
-            <masked-input
-              v-model="masked.phone"
-              mask="\+\7 (111) 111-11-11"
-              @input="childRaw.phone = arguments[1]"
-              type="tel"
-              class="type"
-              :class="{'input-error': childRawErrors.phone}"
-              tabindex="4"
+            <div class="input-container required">
+              <label class="label" v-bind:class="{'label-error': childRawErrors.phone}">Номер телефона</label><br>
+              <masked-input
+                  v-model="masked.phone"
+                  mask="\+\7 (111) 111-11-11"
+                  @input="childRaw.phone = arguments[1]"
+                  type="tel"
+                  class="type"
+                  :class="{'input-error': childRawErrors.phone}"
+                  tabindex="4"
               />
-          </div>
-
-          <div class="input-container child-form_span-2">
-            <h3 class="radio-heading dark" :class="{'label-error': childRawErrors.sex}">Пол</h3>
-            <ul class="radio-list" :class="{'input-error': childRawErrors.sex}">
-              <li class="radio-container">
-                <input type="radio" v-model.number="childRaw.sex" value="1" class="radio" tabindex="3" id="man">
-                <label class="dark radio" for="man" tabindex="5">Мужской</label>
-              </li>
-              <li class="radio-container">
-                <input type="radio" v-model.number="childRaw.sex" value="0" class="radio" tabindex="3" id="woman">
-                <label class="dark radio" for="woman" tabindex="6">Женский</label>
-              </li>
-            </ul>
-          </div>
-
-          <inputField
-            label="Гражданство"
-            v-model="childRaw.state"
-            :error="childRawErrors.state"
-          />
-          <inputField
-            label="Степень родства"
-            v-model="childRaw.relationship"
-            :error="childRawErrors.relationship"
-          />
-
-          <div class="child-form_span-2 child-form_select">
-            <div>
-              <h2 class="child-form_select-heading" :class="{'label-error': childRawErrors.ovz}">ОВЗ</h2>
-              <select class="dark-box darken" v-model.number="childRaw.ovz"  >
-                <option value="0">Нет</option>
-                <option value="1">Есть</option>
-              </select>
-            </div>
-            <div v-if="childRaw.ovz">
-              <h2 class="child-form_select-heading" :class="{'label-error': childRawErrors.ovz_type}">Тип ОВЗ</h2>
-              <select class="dark-box darken" v-model="childRaw.ovz_type.id"  >
-                <option v-for="(type, id) in ovzTypes" :value="id">{{ type }}</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="child-form_span-2 child-form_select">
-            <div>
-              <h2 class="child-form_select-heading" :class="{'label-error': childRawErrors.disability}">Инвалидность</h2>
-              <select class="dark-box darken" v-model.number="childRaw.disability"  >
-                <option value="0">Нет</option>
-                <option value="1">Есть</option>
-              </select>
             </div>
 
-            <div v-show="childRaw.disability">
-              <h2 class="child-form_select-heading" :class="{'label-error': childRawErrors.disability_group}">Группа нвалидности</h2>
-              <select class="dark-box darken" v-model="childRaw.disability_group.id"  >
-                <option v-for="(type, id) in disabilityTypes" :value="id">{{ type }}</option>
-              </select>
+            <div class="input-container child-form_span-2">
+              <h3 class="radio-heading dark" :class="{'label-error': childRawErrors.sex}">Пол</h3>
+              <ul class="radio-list" :class="{'input-error': childRawErrors.sex}">
+                <li class="radio-container">
+                  <input type="radio" v-model.number="childRaw.sex" value="1" class="radio" tabindex="3" id="man">
+                  <label class="dark radio" for="man" tabindex="5">Мужской</label>
+                </li>
+                <li class="radio-container">
+                  <input type="radio" v-model.number="childRaw.sex" value="0" class="radio" tabindex="3" id="woman">
+                  <label class="dark radio" for="woman" tabindex="6">Женский</label>
+                </li>
+              </ul>
             </div>
-          </div>
 
-          <inputField
-            label="Образовательное учреждение (наименование)"
-            v-model="childRaw.studyPlace"
-            type="text"
-            :error="childRawErrors.studyPlace"
-            class="child-form_span-2"
-          />
-          <div class="child-data_row">
-            <!--
-            <div>
-              <inputField
-                label="Класс \ группа"
-                v-model="childRaw.class"
+            <inputField
+                label="Гражданство"
+                v-model="childRaw.state"
+                :error="childRawErrors.state"
+            />
+            <inputField
+                label="Степень родства"
+                v-model="childRaw.relationship"
+                :error="childRawErrors.relationship"
+            />
+
+            <div class="child-form_span-2 child-form_select">
+              <div>
+                <h2 class="child-form_select-heading" :class="{'label-error': childRawErrors.ovz}">ОВЗ</h2>
+                <select class="dark-box darken" v-model.number="childRaw.ovz"  >
+                  <option value="0">Нет</option>
+                  <option value="1">Есть</option>
+                </select>
+              </div>
+              <div v-if="childRaw.ovz">
+                <h2 class="child-form_select-heading" :class="{'label-error': childRawErrors.ovz_type}">Тип ОВЗ</h2>
+                <select class="dark-box darken" v-model="childRaw.ovz_type.id"  >
+                  <option v-for="(type, id) in ovzTypes" :value="id">{{ type }}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="child-form_span-2 child-form_select">
+              <div>
+                <h2 class="child-form_select-heading" :class="{'label-error': childRawErrors.disability}">Инвалидность</h2>
+                <select class="dark-box darken" v-model.number="childRaw.disability"  >
+                  <option value="0">Нет</option>
+                  <option value="1">Есть</option>
+                </select>
+              </div>
+
+              <div v-show="childRaw.disability">
+                <h2 class="child-form_select-heading" :class="{'label-error': childRawErrors.disability_group}">Группа нвалидности</h2>
+                <select class="dark-box darken" v-model="childRaw.disability_group.id"  >
+                  <option v-for="(type, id) in disabilityTypes" :value="id">{{ type }}</option>
+                </select>
+              </div>
+            </div>
+
+            <inputField
+                label="Образовательное учреждение (наименование)"
+                v-model="childRaw.studyPlace"
                 type="text"
-              />
+                :error="childRawErrors.studyPlace"
+                class="child-form_span-2"
+            />
+            <div class="child-data_row">
+              <!--
+              <div>
+                <inputField
+                  label="Класс \ группа"
+                  v-model="childRaw.class"
+                  type="text"
+                />
+              </div>
+              !-->
             </div>
-            !-->
+
+            <h2 class="child-form_heading">Адрес регистрации</h2>
+            <inputField
+                label="Город"
+                v-model="childRaw.registration_address.city"
+                :error="childRawErrors.registration_address.city"
+            />
+            <inputField
+                label="Район"
+                v-model="childRaw.registration_address.district"
+                :error="childRawErrors.registration_address.district"
+            />
+            <inputField
+                label="Улица"
+                v-model="childRaw.registration_address.street"
+                :error="childRawErrors.registration_address.street"
+            />
+            <inputField
+                label="Дом"
+                v-model="childRaw.registration_address.house"
+                :error="childRawErrors.registration_address.house"
+            />
+            <inputField
+                label="Номер квартиры"
+                v-model="childRaw.registration_flat"
+                :error="childRawErrors.registration_flat"
+            />
+
+            <h2 class="child-form_heading">Адрес проживания</h2>
+            <inputField
+                label="Город"
+                v-model="childRaw.residence_address.city"
+                :error="childRawErrors.residence_address.city"
+            />
+            <inputField
+                label="Район"
+                v-model="childRaw.residence_address.district"
+                :error="childRawErrors.residence_address.district"
+            />
+            <inputField
+                label="Улица"
+                v-model="childRaw.residence_address.street"
+                :error="childRawErrors.residence_address.street"
+            />
+            <inputField
+                label="Дом"
+                v-model="childRaw.residence_address.house"
+                :error="childRawErrors.residence_address.house"
+            />
+            <inputField
+                label="Номер квартиры"
+                v-model="childRaw.residence_flat"
+                :error="childRawErrors.residence_flat"
+            />
+
+            <br>
+
+            <inputField
+                label="Пароль"
+                type="password"
+                v-model="childRaw.password"
+                :error="childRawErrors.password"
+            />
+          </article>
+          <div class="buttons wp100">
+            <button class="dark-box dark-button register-button" @click="childRegistration">Зарегистрировать ребёнка</button>
           </div>
-
-          <h2 class="child-form_heading">Адрес регистрации</h2>
-          <inputField
-            label="Город"
-            v-model="childRaw.registration_address.city"
-            :error="childRawErrors.registration_address.city"
-          />
-          <inputField
-            label="Район"
-            v-model="childRaw.registration_address.district"
-            :error="childRawErrors.registration_address.district"
-          />
-          <inputField
-            label="Улица"
-            v-model="childRaw.registration_address.street"
-            :error="childRawErrors.registration_address.street"
-          />
-          <inputField
-            label="Дом"
-            v-model="childRaw.registration_address.house"
-            :error="childRawErrors.registration_address.house"
-          />
-          <inputField
-            label="Номер квартиры"
-            v-model="childRaw.registration_flat"
-            :error="childRawErrors.registration_flat"
-          />
-
-          <h2 class="child-form_heading">Адрес проживания</h2>
-          <inputField
-            label="Город"
-            v-model="childRaw.residence_address.city"
-            :error="childRawErrors.residence_address.city"
-          />
-          <inputField
-            label="Район"
-            v-model="childRaw.residence_address.district"
-            :error="childRawErrors.residence_address.district"
-          />
-          <inputField
-            label="Улица"
-            v-model="childRaw.residence_address.street"
-            :error="childRawErrors.residence_address.street"
-          />
-          <inputField
-            label="Дом"
-            v-model="childRaw.residence_address.house"
-            :error="childRawErrors.residence_address.house"
-          />
-          <inputField
-            label="Номер квартиры"
-            v-model="childRaw.residence_flat"
-            :error="childRawErrors.residence_flat"
-          />
-
-          <br>
-
-          <inputField
-            label="Пароль"
-            type="password"
-            v-model="childRaw.password"
-            :error="childRawErrors.password"
-          />
         </article>
-        <div class="buttons wp100">
-          <button class="dark-box dark-button register-button" @click="childRegistration">Зарегистрировать ребёнка</button>
-        </div>
-      </article>
-      </article>
+      </div>
+    </article>
   </main>
 </template>
 
 <style scoped>
-
   .home {
     display: flex;
     flex-direction: column;
@@ -254,7 +256,7 @@
   }
 
   .buttons {
-    margin-top: 50px;
+    margin-top: 25px;
   }
   .register-button {
     margin-top: 20px;

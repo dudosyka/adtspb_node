@@ -246,6 +246,9 @@ input, input:before, input:after {
 
 /* Child data form */
 
+.child-form-wrapper {
+  max-width: 470px;
+}
 .child-form {
   display: grid;
   grid-template-columns: repeat(2, minmax(150px, 200px));
