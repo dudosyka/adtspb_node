@@ -79,10 +79,11 @@ User.setOnConfirm = function () {
 User.signUp = async function (data, makeParent = false) {
     console.log(data);
 
-    data.phone = Corrector.phone(data.phone);
+    if (data.phone != 8)
+        data.phone = Corrector.phone(data.phone);
 
     let errs = [];
-    const validateRes = Validator.validateNotEmpty(data, true);
+    const validateRes = Validator.validateNotEmpty(data, true, ['lastname']);
 
     if (validateRes !== true)
         errs = validateRes;
@@ -93,6 +94,7 @@ User.signUp = async function (data, makeParent = false) {
     if (!Validator.validateEmail(data.email))
         errs.push('email');
 
+        console.log(errs);
     if (errs.length) {
         data.phone = data.phone.substr(1);
         throw {msg: errs};

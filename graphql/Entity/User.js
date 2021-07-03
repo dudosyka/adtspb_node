@@ -49,7 +49,7 @@ User.prototype.getInstance = () => User;
 
 User.prototype.validateRules = function () {
     return [
-        this.validator(['name', 'surname', 'lastname', 'sex', 'email', 'phone', 'password'], 'Can`t be empty.').notNull(),
+        this.validator(['name', 'surname', 'sex', 'email', 'phone', 'password'], 'Can`t be empty.').notNull(),
         this.validator(['phone'], 'Should be valid phone number.').phone(),
         this.validator(['email'], 'Should be valid email.').email(),
         this.validator(['sex'], 'Invalid format').match(/^[0-1]{1}$/),

@@ -2,10 +2,14 @@ const Parser = require('./Parser');
 const Validator = {};
 
 Validator.validateEmail = function (email) {
-    return email.search(/^[a-zA-Z0-9._-]{1,}[@]{1}[a-zA-Z]{1,}[.]{1}[a-zA-Z]{1,}$/) != -1;
+    return typeof email === 'string' ? email.search(/^[a-zA-Z0-9._-]{1,}[@]{1}[a-zA-Z]{1,}[.]{1}[a-zA-Z]{1,}$/) != -1 : false;
 }
 
-Validator.validateNotEmpty = function (val, obj = false) {
+function isEmpty(str) {
+     return (/^\s*$/.test(str) || str === null || str === '' || str === undefined);
+}
+
+Validator.validateNotEmpty = function (val, obj = false, exceptFields = []) {
     if (!obj)
         return (val !== null && val !== undefined && val != "");
 
@@ -22,8 +26,10 @@ Validator.validateNotEmpty = function (val, obj = false) {
             }
         }
         else {
-            if (el === null || el === undefined || el === "")
-                errs.push(id);
+            console.log(id, isEmpty(el));
+            if (!exceptFields.includes(id))
+                if (isEmpty(el))
+                    errs.push(id);
         }
     });
 

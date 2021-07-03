@@ -94,6 +94,7 @@
   import axios from "axios"
   import MaskedInput from 'vue-masked-input'
   import AuthPlate from '../components/AuthPlate.vue'
+  import clone from 'clone'
 
   import {User} from '../models/User';
 
@@ -147,10 +148,7 @@
         this.step = 2
       },
       registration() {
-          console.log(this.errors_prot);
-          this.errors = {...this.errors_prot};
-          console.log(this.errors.email);
-          console.log(this.additionalData.isParent);
+          this.errors = clone(this.errors_prot);
           User.signUp(this.user, this.additionalData.isParent).catch(err => {
               if (err.msg) {
                   console.log(err);
