@@ -339,7 +339,7 @@ User.prototype.createChild = async function (data) {
     const request_id = await this.addChild(child.__get('email'));
     await this.setChildData(child.__get('id'), data, true, child, false);
 
-    return await child.agreeParentRequest(request_id, data);
+    return await child.agreeParentRequest(this.__get('id'), data);
 }
 
 User.prototype.checkRelationship = async function (child_id) {

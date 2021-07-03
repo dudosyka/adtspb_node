@@ -266,6 +266,7 @@
   import InputField from '../../components/InputField.vue'
   import MaskedInput from 'vue-masked-input'
   import {User} from '../../models/User'
+  import clone from 'clone'
 
   export default {
     name: '',
@@ -350,6 +351,42 @@
           },
           residence_flat: false,
         },
+        childRawErrors_proto: {
+          name: false,
+          surname: false,
+          lastname: false,
+          email: false,
+          phone: false,
+          sex: false,
+          password: false,
+
+          birthday: false,
+          birth_certificate: false,
+
+          state: false,
+          relationship: false,
+          studyPlace: false,
+          ovz: false,
+          ovz_type: { id: false },
+          disability: false,
+          disability_group: { id: false },
+
+          registration_address: {
+            city: false,
+            district: false,
+            street: false,
+            house: false,
+          },
+          registration_flat: false,
+
+          residence_address: {
+            city: false,
+            district: false,
+            street: false,
+            house: false
+          },
+          residence_flat: false,
+        },
         childFormated: {},
 
         ovzTypes: ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'],
@@ -368,6 +405,7 @@
     },
     methods: {
       childRegistration() {
+          this.childRawErrors = clone(this.childRawErrors_proto);
           User.addChild({...this.childRaw}).then(res => {
               if (res) {
                   this.message = 'Ребёнок успешно добавлен';
@@ -388,6 +426,23 @@
                   this.childRawErrors[el] = true;
                 }
               });
+
+            if (err.response) {
+                const msg = err.response.errors[0].message;
+                console.log(msg);
+                if (msg === 'Email must be unique') {
+                    this.childRawErrors.email = true;
+                }
+                else if (msg == 'Phone must be unique') {
+                    this.childRawErrors.phone = true;
+                }
+                else if (JSON.parse(msg)) {
+                    const parsed = JSON.parse(msg);
+                    Object.keys(parsed).map(el => {
+                        this.childRawErrors[el] = true;
+                    });
+                }
+            }
           });
       },
       addChild() {
