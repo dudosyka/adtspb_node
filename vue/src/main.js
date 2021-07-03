@@ -25,17 +25,14 @@ global.getError = (err, id = 0) => {
 global.api = graphql;
 global.endoor = endoor;
 global._request = async (route, query, data = {}) => {
-    console.log('CALLL');
-    // console.log("GLOBAL ROUTE", global[route]);
     const res = global[route].request(query, data).catch(err => {
-        try {
+        if (err.response.error) {
             const msg = JSON.parse(err.response.error).message;
             if (msg == 'Not confirmed') {
                 window.location = '/confirmation';
             }
-        } catch (err) {
-            console.log(err);
         }
+        throw err;
     });
     return res;
 }

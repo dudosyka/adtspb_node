@@ -12,7 +12,6 @@ Validator.validateNotEmpty = function (val, obj = false) {
     const errs = [];
     Object.keys(val).map(id => {
         const el = val[id];
-        console.log(id, el);
         if (id == "residence_address" || id == 'registration_address') {
             const validateRes = this.validateAddressNotEmpty(el);
             if (validateRes !== true)

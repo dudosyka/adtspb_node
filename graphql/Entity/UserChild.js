@@ -10,6 +10,9 @@ UserChild.prototype.getInstance = () => UserChild;
 
 UserChild.prototype.fields = {
     id: null,
+    child_id: null,
+    parent_id: null,
+    agreed: null,
 };
 
 UserChild.prototype.checkRelationship = async function () {
@@ -60,13 +63,14 @@ UserChild.prototype.parentRequestExists = async function (child_id) {
 }
 
 UserChild.prototype.agreeParentRequest = async function () {
-    const userChildLog = await UserChildLog.createFromUserChild(this);
-    this.__set('agreed', 1);
+    const userChildLog = await UserChildLog.createFromUserChild(this);;
+    this.fields.agreed = 1;
     userChildLog.addChild();
+    console.log(this.fields);
     await this.update();
 }
 
-UserChild.prototype.getChildren = async function (child = true, agreed = 0) {
+UserChild.prototype.getChildren = async function (child = true, agreed = 0, child_id = false) {
     let field = 'parent_id';
     let rangeField = 'child_id';
     if (!child)

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "clone": "^1.0.4",
     "core-js": "^3.6.5",
     "graphql": "^15.4.0",
     "graphql-request": "^3.4.0",

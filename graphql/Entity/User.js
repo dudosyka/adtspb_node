@@ -15,6 +15,9 @@ const UserDataLog = require('../Entity/UserDataLog');
 
 const AssociationExtraData = require('./AssociationExraData');
 
+const Mail = require('../utils/Mail');
+const mail = new Mail();
+
 let rbac = new Rbac();
 
 let User = function () {  }
@@ -186,6 +189,10 @@ User.prototype.getChildren = async function () {
     .catch(err => { throw new Error('Internal server error.'); });
 }
 
+User.prototype.getFullData = async function (id = false) {
+    return (await this.db.query("SELECT * FROM `user` as `main` LEFT JOIN `user_extra_data` AS `data` ON `main`.`id` = `data`.`user_id` WHERE `main`.`id` = ?", id ? id : this.__get('id')))[0];
+}
+
 User.prototype.restorePasswordRequest = async function (email) {
     //Search for user
     let user = await this.db.select(this, '`email` = ?', [ email ]);
@@ -294,16 +301,23 @@ User.prototype.setChildData = async function (childId, data, deleteChild = false
     }
 }
 
-User.prototype.agreeParentRequest = async function (request_id, newData) {
+User.prototype.agreeParentRequest = async function (parent_id, newData) {
     if (this.__get('id') == null)
         throw Error('Token is gone');
 
 
-    const request = await UserChild.baseCreateFrom({id: request_id});
+    const request = await UserChild.baseCreateFrom({parent_id: parent_id, child_id: this.__get('id')});
+    const checkRelationship = await request.checkRelationship();
+    console.log(1);
+    if (!checkRelationship)
+        throw Error('Request not found');
+
+    console.log(2);
     const requestExists = await request.parentRequestExists(this.__get('id'));
     if (requestExists !== true)
         throw Error(requestExists);
 
+    console.log(3);
     await this.setChildData(this.__get('id'), newData);
     await request.agreeParentRequest();
 
