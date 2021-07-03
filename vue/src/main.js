@@ -25,9 +25,7 @@ global.getError = (err, id = 0) => {
 global.api = graphql;
 global.endoor = endoor;
 global._request = async (route, query, data = {}) => {
-    const res = global[route].request(query, data).then(res => {
-        console.log("dshjdhsjdhjsjkdhjshdj", res);
-    }).catch(err => {
+    const res = global[route].request(query, data).catch(err => {
         if (err.response.error) {
             const msg = JSON.parse(err.response.error).message;
             if (msg == 'Not confirmed') {
