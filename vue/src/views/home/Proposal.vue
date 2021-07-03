@@ -28,6 +28,9 @@
 </template>
 
 <style scoped>
+  .home-content {
+    padding: 30px;
+  }
   .proposals {
     display: grid;
     grid-gap: 20xp;

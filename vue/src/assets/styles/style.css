@@ -201,6 +201,11 @@ hr {
   display: grid;
   grid-template-columns: 300px 1fr;
 }
+@media (max-width: 840px) {
+  .home {
+    grid-template-columns: 60px 1fr;
+  }
+}
 .home-content {
   background-color: #EFEFEF;
   height: 100vh;
