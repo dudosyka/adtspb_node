@@ -35,14 +35,9 @@
     max-width: 600px;
     min-width: 300px;
   }
-  @media (min-width: 400px) {
+  @media (max-width: 400px) {
     .home-content {
       padding: 10px;
-    }
-  }
-  @media (min-width: 350px) {
-    .home-content {
-      padding: 0;
     }
   }
   .proposals {
