@@ -15,6 +15,9 @@ const UserDataLog = require('../Entity/UserDataLog');
 
 const AssociationExtraData = require('./AssociationExraData');
 
+const Mail = require('../utils/Mail');
+const mail = new Mail();
+
 let rbac = new Rbac();
 
 let User = function () {  }
