@@ -74,13 +74,10 @@
                 <button class="dark-button" @click="registration()" tabindex="9">Зарегистрироваться</button>
               </div>
             </section>
-            <section v-show="step === 3">
-
-            </section>
           </div>
         </div>
 
-        <AuthPlate title="Добро пожаловать в личный кабинет" />
+        <AuthPlate title="Добро пожаловать в Личный кабинет" />
     </main>
 </template>
 

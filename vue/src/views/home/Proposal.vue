@@ -4,10 +4,10 @@
 
       <section class="home-content">
 
-        <article class="card shadow" v-for="child in children">
+        <article class="card shadow children" v-for="child in children">
           <h2 class="child-name">{{ child.name + ' ' + child.surname }}</h2>
 
-          <article class="proposals">
+          <article class="proposals wp100">
 
             <section class="proposal" v-for="(proposal, index) in child.proposals">
               <div class="child-stat">
@@ -28,13 +28,28 @@
 </template>
 
 <style scoped>
+  .home-content {
+    padding: 30px;
+  }
+  .children {
+    max-width: 600px;
+    min-width: 300px;
+  }
+  @media (max-width: 400px) {
+    .home-content {
+      padding: 10px;
+    }
+  }
   .proposals {
-    display: grid;
-    grid-gap: 20xp;
+
+  }
+  .buttons {
+    max-width: 200px;
   }
   .proposal {
-    display: grid;
-    grid-template-columns: 1fr 220px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
     padding: 20px;
   }
   .proposal_heading {
@@ -44,6 +59,7 @@
     align-self: center;
     display: grid;
     grid-gap: 20px;
+    margin-bottom: 10px;
   }
   .child-stat_heading {
     font-size: 20px;

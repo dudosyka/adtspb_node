@@ -305,6 +305,7 @@ export default {
       let arr = [];
       //TODO: Использовать Array.filter()
       this.proposalParms.associations.map( el => { if (el) arr.push(el) })
+      console.log(arr);
       return arr
     },
     weekHours() {

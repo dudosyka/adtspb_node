@@ -13,7 +13,7 @@
     width: 100%;
   }
 
-  button.dark-button, .light-button {
+  .dark-button, .light-button {
     border: none;
     outline: none;
 
@@ -108,9 +108,7 @@ button:disabled, button:hover:disabled {
 
 /* Arrows */
   .left-arrow {
-    position: absolute;
-    top: 25px;
-    left: 25px;
+    position: relative;
 
     border: none;
     outline: none;
@@ -119,6 +117,10 @@ button:disabled, button:hover:disabled {
     display: block;
     width: 30px;
     height: 12px;
+
+    align-self: flex-start;
+
+    margin: 20px;
 
     border-bottom: 5px solid #0086C9;
     transition: transform 0.3s;

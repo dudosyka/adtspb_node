@@ -3,7 +3,7 @@
       <div class="auth">
         <div class="form">
           <InputField
-            label="Номер телефона/Электронная почта"
+            label="Номер телефона / Электронная почта"
             v-model="login"
             :error="errors.login"
           />
@@ -49,7 +49,7 @@
         </div>
       </div>
 
-      <AuthPlate title="Добро пожаловать в личный кабинет"/>
+      <AuthPlate title="Добро пожаловать в Личный кабинет"/>
   </main>
 </template>
 <script>

@@ -169,7 +169,7 @@
             <div v-if='show.success'>
                 Запрос успешно подтвержден!
             </div>
-            
+
             <button class="light-box light-button" @click="cancell(id)">Отклонить</button>
           </article>
         </section>
@@ -207,6 +207,44 @@
         child: {
 
         },
+        childRaw: {
+          name: null,
+          surname: null,
+          lastname: null,
+          email: null,
+          phone: null, //mask
+          sex: null,
+          password: null,
+
+          birthday: null, //mask
+          birth_certificate: null,
+
+          state: null,
+          relationship: null,
+          studyPlace: null,
+          ovz: null,
+          ovz_type: { id: null },
+          disability: null,
+          disability_group: { id: null },
+
+          registration_address: {
+            city: null,
+            district: null,
+            street: null,
+            house: null,
+          },
+          registration_flat: null,
+
+          residence_address: {
+            city: null,
+            district: null,
+            street: null,
+            house: null
+          },
+          residence_flat: null,
+        },
+        ovzTypes: ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'],
+        disabilityTypes: ['I', 'II', 'III'],
         show: {
             needData: false,
             success: false,

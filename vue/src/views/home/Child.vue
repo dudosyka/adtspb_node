@@ -6,251 +6,199 @@
         <section class="children">
 
           <section class="card child shadow" v-for="(raw, number) in childrenRaw" @click="showData(number)">
-            <h2 class="child-name">{{ raw.name + ' ' + raw.surname }}</h2>
-            <div class="child-heading">
-              <button @click="toAssociations(raw.id)" class="dark-box dark-button to-associations">Запись</button>
-              <span
-                  class="child-to-data"
-                  :class="{'child-from-data': number === show.childData}"
-              ></span>
+            <div class="child_heading">
+              <h2 class="child-name">{{ raw.name + ' ' + raw.surname }}</h2>
+              <button class="dark-box dark-button to-associations" @click="toAssociations(raw.id)" >Запись</button>
             </div>
+            <span class="child-to-data"
+                :class="{'child-from-data': number === show.childData}"
+            ></span>
           </section>
 
           <router-link to="/child/add" class="dark-box dark-button child-add">+ Добавить ребёнка</router-link>
 
         </section>
 
-        <section class="children-data card shadow" v-show="childrenRaw.length > 0">
+        <section class="children-data card shadow child-form-wrapper" v-show="childrenRaw.length > 0">
 
           <article class="child-data" v-for="(raw, number) in childrenRaw" v-show="show.childData === number">
-            <article class="child-data_table">
-              <article class="child-data_table-group">
-                <p class="label-error" v-if="edit.error"> {{ edit.error }} </p>
 
-                <div class="child-data_row">
-                  <div>
-                    <inputField
-                      label="Имя"
-                      v-model="raw.name"
-                      :error="errors[number]['name']"
-                    />
-                  </div>
-                  <div>
-                    <inputField
-                      label="Фамилия"
-                      v-model="raw.surname"
-                      :error="errors[number]['surname']"
-                    />
-                  </div>
-                </div>
+            <article class="child-form">
+              <p class="label-error child-form_span-2" v-if="edit.error"> {{ edit.error }} </p>
 
-                <div class="child-data_row">
-                  <div>
-                    <inputField
-                      label="Отчество"
-                      v-model="raw.lastname"
-                      :error="errors[number]['lastname']"
-                    />
-                  </div>
+              <inputField
+                label="Имя"
+                v-model="raw.name"
+                :error="errors[number]['name']"
+              />
 
-                </div>
-              </article>
+              <inputField
+                label="Фамилия"
+                v-model="raw.surname"
+                :error="errors[number]['surname']"
+              />
 
-              <article class="child-data_table-group">
-                <div class="child-data_row">
-                  <div>
-                    <inputField
-                      label="Электронная почта"
-                      v-model="raw.email"
-                      :error="errors[number]['email']"
-                    />
-                  </div>
-                  <div>
-                    <div class="input-container required">
-                      <label class="label" v-bind:class="{'label-up': raw.phone, 'error-label': errors[number]['phone']}">Номер телефона</label><br>
-                      <masked-input
-                        v-model="raw.masked.phone"
-                        mask="\+\7 (111) 111-11-11"
-                        @input="raw.phone = arguments[1]"
-                        type="tel"
-                        class="type"
-                        :class="{'input-error': errors[number]['phone']}"
-                        tabindex="4"
+              <inputField
+                label="Отчество"
+                v-model="raw.lastname"
+                :error="errors[number]['lastname']"
+              />
 
-                        />
-                    </div>
-                  </div>
-                </div>
-              </article>
+              <inputField
+                label="Электронная почта"
+                v-model="raw.email"
+                :error="errors[number]['email']"
+              />
 
-              <article class="child-data_table-group">
-                <div class="input-container required">
-                  <h3 class="radio-heading dark" :class="{'label-error': errors[number]['sex']}">Пол</h3>
-                  <ul class="radio-list" :class="{'input-error': errors[number]['sex']}">
-                    <div class="radio-container">
-                      <input type="radio" v-model.number="raw.sex" value="1" class="radio" tabindex="3" :id="number + 'man'">
-                      <label class="dark radio" :for="number + 'man'" tabindex="5">Мужской</label>
-                    </div>
-                    <div class="radio-container">
-                      <input type="radio" v-model.number="raw.sex" value="0" class="radio" tabindex="3" :id="number + 'woman'">
-                      <label class="dark radio" :for="number + 'woman'" tabindex="6">Женский</label>
-                    </div>
-                  </ul>
-                </div>
-              </article>
+              <div class="input-container required">
+                <label class="label" v-bind:class="{'label-up': raw.phone, 'error-label': errors[number]['phone']}">Номер телефона</label><br>
+                <masked-input
+                  v-model="raw.masked.phone"
+                  mask="\+\7 (111) 111-11-11"
+                  @input="raw.phone = arguments[1]"
+                  type="tel"
+                  class="type"
+                  :class="{'input-error': errors[number]['phone']}"
+                  tabindex="4"
 
-              <article class="child-data_table-group">
-                <div>
-                  <inputField
-                    label="Номер свидетельства о рождении"
-                    v-model="raw.birth_certificate"
-                    :error="errors[number]['birth_certificate']"
                   />
-                </div>
+              </div>
 
-                <div>
-                  <div class="input-container">
-                    <label class="label" v-bind:class="{'label-up': raw.birthday}">Дата рождения</label><br>
-                    <!--<masked-input
-                      class="type"
-                      v-model="masked.birthday"
-                      mask="11 / 11 / 11"
-                      @input="childRaw.birthday = arguments[1]"
-                      tabindex="1"
-                    />!-->
-                    <input
-                      class="type"
-                      type="date"
-                      v-model="raw.birthday"
-                      :error="errors[number]['birthday']"
-                    >
-                  </div>
-                </div>
-              </article>
+              <div class="input-container required child-form_span-2">
+                <h3 class="radio-heading dark" :class="{'label-error': errors[number]['sex']}">Пол</h3>
+                <ul class="radio-list" :class="{'input-error': errors[number]['sex']}">
+                  <li class="radio-container">
+                    <input type="radio" v-model.number="raw.sex" value="1" class="radio" tabindex="3" :id="number + 'man'">
+                    <label class="dark radio" :for="number + 'man'" tabindex="5">Мужской</label>
+                  </li>
+                  <li class="radio-container">
+                    <input type="radio" v-model.number="raw.sex" value="0" class="radio" tabindex="3" :id="number + 'woman'">
+                    <label class="dark radio" :for="number + 'woman'" tabindex="6">Женский</label>
+                  </li>
+                </ul>
+              </div>
 
-              <article class="child-data_table-group">
-                <div class="child-data_row">
-                  <div>
-                    <inputField
-                      label="Гражданство"
-                      v-model="raw.state"
-                      :error="errors[number]['state']"
-                    />
-                  </div>
-                  <div>
-                    <inputField
-                      label="Степень родства"
-                      v-model="raw.relationship"
-                      :error="errors[number]['relationship']"
-                    />
-                  </div>
-                </div>
-              </article>
+              <inputField
+                label="Номер свидетельства о рождении"
+                v-model="raw.birth_certificate"
+                :error="errors[number]['birth_certificate']"
+              />
 
-              <article class="child-data_table-group">
-                <div class="child-data_row">
-                  <div :class="{'input-error': errors[number]['ovz']['id']}">
-                    <h2 class="form-heading child-data_heading" :class="{'label-error': errors[number]['ovz']['id']}">ОВЗ</h2>
-                    <select class="dark-box darken" v-model.number="raw.ovz">
-                      <option value="0">Нету</option>
-                      <option value="1">Есть</option>
-                    </select>
-                  </div>
-                  <div v-if="raw.ovz" :class="{'input-error': errors[number]['ovz_type']['id']}">
-                    <h2 class="form-heading child-data_heading" :class="{'label-error': errors[number]['ovz_type']['id']}">Тип ОВЗ</h2>
-                    <select class="dark-box darken" v-model="raw.ovz_type.id" >
-                      <option v-for="(type, id) in ovzTypes" :value="id">{{ type }}</option>
-                    </select>
-                  </div>
-                </div>
+              <div class="input-container">
+                <label class="label" v-bind:class="{'label-up': raw.birthday}">Дата рождения</label><br>
+                <input
+                  class="type"
+                  type="date"
+                  v-model="raw.birthday"
+                  :error="errors[number]['birthday']"
+                >
+              </div>
 
-                <div class="child-data_row">
-                  <div :class="{'input-error': errors[number]['disability']['id']}">
-                    <h2 class="form-heading child-data_heading" :class="{'label-error': errors[number]['disability']['id']}">Инвалидность</h2>
-                    <select class="dark-box darken" v-model.number="raw.disability" >
-                      <option value="0">Нету</option>
-                      <option value="1">Есть</option>
-                    </select>
-                  </div>
-                  <div v-if="raw.disability" :class="{'input-error': errors[number]['disability_group']['id']}">
-                    <h2 class="form-heading child-data_heading" :class="{'label-error': errors[number]['disability_group']['id']}">Группа нвалидности</h2>
-                    <select class="dark-box darken" v-model="raw.disability_group.id" >
-                      <option v-for="(type, id) in disabilityTypes" :value="id">{{ type }}</option>
-                    </select>
-                  </div>
-                </div>
-              </article>
+              <inputField
+                label="Гражданство"
+                v-model="raw.state"
+                :error="errors[number]['state']"
+              />
 
-              <article class="child-data_table-group">
+              <inputField
+                label="Степень родства"
+                v-model="raw.relationship"
+                :error="errors[number]['relationship']"
+              />
+
+              <div class="child-form_span-2 child-form_select">
+                <div :class="{'input-error': errors[number]['ovz']['id']}">
+                  <h2 class="child-form_select-heading" :class="{'label-error': errors[number]['ovz']['id']}">ОВЗ</h2>
+                  <select class="dark-box darken" v-model.number="raw.ovz">
+                    <option value="0">Нет</option>
+                    <option value="1">Есть</option>
+                  </select>
+                </div>
+                <div v-if="raw.ovz" :class="{'input-error': errors[number]['ovz_type']['id']}">
+                  <h2 class="child-form_select-heading" :class="{'label-error': errors[number]['ovz_type']['id']}">Тип ОВЗ</h2>
+                  <select class="dark-box darken" v-model="raw.ovz_type.id" >
+                    <option v-for="(type, id) in ovzTypes" :value="id">{{ type }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="child-form_span-2">
+                <div :class="{'input-error': errors[number]['disability']['id']}">
+                  <h2 class="child-form_select-heading" :class="{'label-error': errors[number]['disability']['id']}">Инвалидность</h2>
+                  <select class="dark-box darken" v-model.number="raw.disability" >
+                    <option value="0">Нет</option>
+                    <option value="1">Есть</option>
+                  </select>
+                </div>
+                <div v-if="raw.disability" :class="{'input-error': errors[number]['disability_group']['id']}">
+                  <h2 class="child-form_select-heading" :class="{'label-error': errors[number]['disability_group']['id']}">Группа нвалидности</h2>
+                  <select class="dark-box darken" v-model="raw.disability_group.id" >
+                    <option v-for="(type, id) in disabilityTypes" :value="id">{{ type }}</option>
+                  </select>
+                </div>
+              </div>
+
                 <inputField
-                  label="Образовательное учреждение"
+                  label="Образовательное учреждение (наименование)"
+                  class="child-form_span-2"
                   v-model="raw.studyPlace"
                   type="text"
                   :error="errors[number]['studyPlace']"
                 />
-              </article>
 
-              <article class="child-data_table-group">
-                <h2 class="form-heading child-data_heading">Адрес регистрации</h2>
-                  <div class="child-data_addres">
-                    <inputField
-                      label="Город"
-                      v-model="raw.registration_address.city"
-                      :error="errors[number]['registration_address']['city']"
-                    />
-                    <inputField
-                      label="Район"
-                      v-model="raw.registration_address.district"
-                      :error="errors[number]['registration_address']['district']"
-                    />
-                    <inputField
-                      label="Улица"
-                      v-model="raw.registration_address.street"
-                      :error="errors[number]['registration_address']['street']"
-                    />
-                    <inputField
-                      label="Дом"
-                      v-model="raw.registration_address.house"
-                      :error="errors[number]['registration_address']['house']"
-                    />
-                    <inputField
-                      label="Номер квартиры"
-                      v-model="raw.registration_flat"
-                      :error="errors[number]['registration_flat']"
-                    />
-                  </div>
-              </article>
+                <h2 class="child-form_heading child-form_span-2">Адрес регистрации</h2>
+                <inputField
+                  label="Город"
+                  v-model="raw.registration_address.city"
+                  :error="errors[number]['registration_address']['city']"
+                />
+                <inputField
+                  label="Район"
+                  v-model="raw.registration_address.district"
+                  :error="errors[number]['registration_address']['district']"
+                />
+                <inputField
+                  label="Улица"
+                  v-model="raw.registration_address.street"
+                  :error="errors[number]['registration_address']['street']"
+                />
+                <inputField
+                  label="Дом"
+                  v-model="raw.registration_address.house"
+                  :error="errors[number]['registration_address']['house']"
+                />
+                <inputField
+                  label="Номер квартиры"
+                  v-model="raw.registration_flat"
+                  :error="errors[number]['registration_flat']"
+                />
 
-              <article class="child-data_table-group">
-                <h2 class="form-heading child-data_heading">Адрес проживания</h2>
-                <div class="child-data_addres">
-                  <inputField
-                    label="Город"
-                    v-model="raw.residence_address.city"
-                    :error="errors[number]['residence_address']['city']"
-                  />
-                  <inputField
-                    label="Район"
-                    v-model="raw.residence_address.district"
-                    :error="errors[number]['residence_address']['district']"
-                  />
-                  <inputField
-                    label="Улица"
-                    v-model="raw.residence_address.street"
-                    :error="errors[number]['residence_address']['street']"
-                  />
-                  <inputField
-                    label="Дом"
-                    v-model="raw.residence_address.house"
-                    :error="errors[number]['residence_address']['house']"
-                  />
-                  <inputField
-                    label="Номер квартиры"
-                    v-model="raw.residence_flat"
-                    :error="errors[number]['residence_flat']"
-                  />
-                </div>
-              </article>
+                <h2 class="child-form_heading child-form_span-2">Адрес проживания</h2>
+                <inputField
+                  label="Город"
+                  v-model="raw.residence_address.city"
+                  :error="errors[number]['residence_address']['city']"
+                />
+                <inputField
+                  label="Район"
+                  v-model="raw.residence_address.district"
+                  :error="errors[number]['residence_address']['district']"
+                />
+                <inputField
+                  label="Улица"
+                  v-model="raw.residence_address.street"
+                  :error="errors[number]['residence_address']['street']"
+                />
+                <inputField
+                  label="Дом"
+                  v-model="raw.residence_address.house"
+                  :error="errors[number]['residence_address']['house']"
+                />
+                <inputField
+                  label="Номер квартиры"
+                  v-model="raw.residence_flat"
+                  :error="errors[number]['residence_flat']"
+                />
             </article>
 
             <div class="buttons">
@@ -280,6 +228,7 @@
     display: grid;
     grid-template-columns: auto 1fr;
     grid-gap: 10px;
+    padding: 30px 30px;
   }
   .children {
     display: flex;
@@ -289,37 +238,40 @@
     padding: 60px;
   }
   .child {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-  }
-  .child-heading {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-flow: row;
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 1fr 15px;
   }
   .child:hover {
     cursor: pointer;
+  }
+  .child_heading {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
   }
   .child-name {
     margin: 0;
     color: #142732;
     align-self: center;
   }
+
   .to-associations {
     margin: 20px;
-    opacity: 0%;
+    color: #3e91b1;
+    background-color: #fff;
     transition: 0.3s;
   }
   .child:hover .to-associations {
     opacity: 100%;
+    color: #fff;
+    background-color: #0086c9;
   }
+
   .child-to-data {
     margin-left: 10px;
     transition: 0.3s;
-    transform: translateX(10px);
+    align-self: center;
   }
   .child-to-data::after {
     content: '';
@@ -352,28 +304,7 @@
     margin-top: 20px;
   }
 
-  .child-data_table {
-    width: 100%;
-    display: grid;
-    grid-gap: 20px;
-  }
-  .child-data_heading {
-    margin-bottom: 5px;
-    margin-top: 20px;
-  }
-  .child-data_table-group {
-    margin: 5px 0;
-  }
-  .child-data_row {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 200px));
-    grid-gap: 20px;
-  }
-  .child-data_addres {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 200px));
-    grid-gap: 10px;
-  }
+
   .buttons {
     margin-top: 30px;
   }
