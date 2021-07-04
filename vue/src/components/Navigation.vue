@@ -28,7 +28,7 @@
   height: 100vh;
   box-sizing: border-box;
   background-color: #fff;
-  z-index: 2;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   transform: translate(-235px);
