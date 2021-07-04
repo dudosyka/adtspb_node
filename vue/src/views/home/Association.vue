@@ -4,41 +4,44 @@
 
 
     <section class="home-content">
-      <article v-if="show.associationsList" class="association-cards">
-        <article class="card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id">
-          <h2 class="association-name" v-text="card.name"></h2>
-          <p class="association-description" v-text="card.description"></p>
-          <p class="association-description">от {{ card.min_age + ' до ' + card.max_age}} лет</p>
-          <p class="association-description">занятия {{ card.lessons_week + correctLessons(card.lessons_week)}} в неделю</p>
-          <p class="association-description">{{ card.hours_week + correctHours(card.hours_week) }} в неделю</p>
-          <p class="association-description">{{ card.study_years + correctYears(card.study_years) }} обучения</p>
+      <div :class="{'association-cards--opened': show.associationsList}" class="association-cards-wrapper">
+        <button class="close-association" @click="show.associationsList = false"><span></span></button>
+        <article class="association-cards">
+          <article class="card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id">
+            <h2 class="association-name" v-text="card.name"></h2>
+            <p class="association-description" v-text="card.description"></p>
+            <p class="association-description">от {{ card.min_age + ' до ' + card.max_age}} лет</p>
+            <p class="association-description">занятия {{ card.lessons_week + correctLessons(card.lessons_week)}} в неделю</p>
+            <p class="association-description">{{ card.hours_week + correctHours(card.hours_week) }} в неделю</p>
+            <p class="association-description">{{ card.study_years + correctYears(card.study_years) }} обучения</p>
 
-          <section class="association-schedule" v-for="group of card.groups">
-            <h3 class="schedule-name">{{ group.group.name }}</h3>
-            <div class="schedule-tbody">
-              <div v-for="row of group.timetable" class="schedule-tr">
-                <div v-for="day of row" class="schedule-td">{{ day }}</div>
+            <section class="association-schedule" v-for="group of card.groups">
+              <h3 class="schedule-name">{{ group.group.name }}</h3>
+              <div class="schedule-tbody">
+                <div v-for="row of group.timetable" class="schedule-tr">
+                  <div v-for="day of row" class="schedule-td">{{ day }}</div>
+                </div>
               </div>
+            </section>
+
+            <!--
+            <div class="association-test warning-container" v-if="card.test.is">
+              <h3 class="assoc-test-heading" v-text="card.test.name"></h3>
+              <p class="assoc-test-description" v-text="card.test.description"></p>
             </div>
-          </section>
+            !-->
+            <div v-if="!card.isRecruiment" class="association-reserve fatal-container">
+              <p class="assoc-reserve-description">Идёт набор в резерв</p>
+            </div>
+            <div v-else class="association-reserve accept-container">
+              <p class="assoc-reserve-description">Идёт набор</p>
+            </div>
 
-          <!--
-          <div class="association-test warning-container" v-if="card.test.is">
-            <h3 class="assoc-test-heading" v-text="card.test.name"></h3>
-            <p class="assoc-test-description" v-text="card.test.description"></p>
-          </div>
-          !-->
-          <div v-if="!card.isRecruiment" class="association-reserve fatal-container">
-            <p class="assoc-reserve-description">Идёт набор в резерв</p>
-          </div>
-          <div v-else class="association-reserve accept-container">
-            <p class="assoc-reserve-description">Идёт набор</p>
-          </div>
-
-          <button v-if="!proposalParms.associations[id]" class="dark-box dark-button" @click="addAssociation(id)">Записать</button>
-          <button v-else class="dark-box dark-button" @click="removeAssociation(id)">Отмена</button>
+            <button v-if="!proposalParms.associations[id]" class="dark-box dark-button" @click="addAssociation(id)">Записать</button>
+            <button v-else class="dark-box dark-button" @click="removeAssociation(id)">Отмена</button>
+          </article>
         </article>
-      </article>
+      </div>
 
       <section class="child card shadow">
         <h2 class="child-name">{{ child.name }} {{ child.surname }}</h2>
@@ -55,23 +58,28 @@
           </div>
         </section>
 
-        <button class="dark-button add-association" @click="this.show.associationsList = true">Добавить объединение</button>
-
         <ul class="child-association">
           <!-- Using computed for correct arr rendering !-->
           <li v-for="association of assocsUser" class="child-association-item">{{ association.name }}</li>
         </ul>
 
-        <p class="label-error" v-show="errors.schedule">Ознакомтесь с расписанием</p>
-        <div class="checkbox-container" @click="proposalParms.schedule = !proposalParms.schedule">
-          <input type="checkbox" v-model="proposalParms.schedule" class="checkbox" tabindex="3">
-          <label class="checkbox">С рассписанием ознакомлен</label>
+        <div class="buttons add-association">
+          <button class="dark-button" @click="show.associationsList = true">Добавить объединение</button>
         </div>
-        <div class="buttons">
-          <p class="label-error" v-if="errors.needAssoc">Выберите объединения</p>
-          <p class="label-normal" v-if="messages.proposalCreated">Заявления составлены</p>
-          <p class="label-error" v-if="errors.alreadyCreated">Заявления уже составлены</p>
-          <button class="dark-box dark-button" @click="createProposal">Составить заявления</button>
+
+        <div v-if="assocsUser.length > 0">
+          <p class="label-error" v-show="errors.schedule">Ознакомтесь с расписанием</p>
+          <div class="checkbox-container" @click="proposalParms.schedule = !proposalParms.schedule">
+            <input type="checkbox" v-model="proposalParms.schedule" class="checkbox" tabindex="3">
+            <label class="checkbox">С рассписанием ознакомлен</label>
+          </div>
+
+          <div class="buttons">
+            <p class="label-error" v-if="errors.needAssoc">Выберите объединения</p>
+            <p class="label-normal" v-if="messages.proposalCreated">Заявления составлены</p>
+            <p class="label-error" v-if="errors.alreadyCreated">Заявления уже составлены</p>
+            <button class="dark-box dark-button" @click="createProposal">Составить заявления</button>
+          </div>
         </div>
 
       </section>
@@ -108,12 +116,13 @@ export default {
         proposalCreated: false
       },
       show: {
-        associationsList: false
+        associationsList: true
       }
     }
   },
   created() {
-      //TODO: Вынести логику в модель!
+
+    //TODO: Вынести логику в модель!
     const child = localStorage.getItem('childInAssociations');
 
     {
@@ -343,10 +352,12 @@ export default {
   .child {
     padding: 20px;
     margin: 0;
+    min-width: 300px;
   }
   .child-name {
     text-align: center;
     color: #142732;
+    margin-bottom: 15px;
   }
   .child-association {
     padding: 20px 0;
@@ -394,6 +405,9 @@ export default {
     grid-template-columns: repeat(auto-fill, 260px);
     overflow-y: scroll;
   }
+  .association-cards--show {
+    display: grid !important;
+  }
   .association-name {
     word-wrap: break-word;
   }
@@ -431,16 +445,67 @@ export default {
     padding: 5px;
     text-align: center;
   }
+  .add-association {
+    display: none;
+  }
+  .close-association {
+    display: none;
+  }
 
   @media (max-width: 1000px) {
     .home-content {
       grid-template-columns: 1fr;
     }
+    .child {
+      min-width: auto;
+    }
     .association-cards {
+      height: auto;
+      overflow-y: hidden;
+      padding: 0;
+    }
+    .add-association {
+      display: grid;
+    }
+    .close-association {
       position: fixed;
-      margin: 10px 10px 0 10px;
+      top: 5px;
+      right: 5px;
+      display: block;
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border: none;
+      background-color: initial;
+    }
+    .close-association span, .close-association span::after {
+      display: block;
+      background-color: #fff;
+      height: 3px;
+      width: 30px;
+    }
+    .close-association span {
+      transform: rotate(45deg);
+    }
+    .close-association span::after {
+      content: '';
+      transform: rotate(90deg);
+    }
+    .association-cards--opened {
+      display: block !important;
+    }
+    .association-cards-wrapper {
+      display: none;
+      z-index: 10;
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
-      z-index: 5;
+      height: 100vh;
+      box-sizing: border-box;
+      overflow-y: auto;
+      padding: 20px 35px 20px 20px;
+      background-color: rgba(70, 70, 70, 0.54);
     }
   }
 </style>
