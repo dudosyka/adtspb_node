@@ -11,12 +11,9 @@
       <h1 class="dark">Личный кабинет</h1>
     </header>
     <nav class="links-container">
-      <router-link to="/" class="link">Главная</router-link>
-
-      <router-link to="/parent" v-if="isChild" class="link">Мои родители</router-link>
-      <router-link to="/child" v-if="manageChildren" class="link">Мои дети</router-link>
-      <router-link to="/proposal" class="link" :class="{'link-notification': newProposal}">Заявления</router-link>
-      <router-link to="/document" class="link">Подача документов</router-link>
+      <template v-for='item in menu'>
+          <router-link :to='item.link' class='link' :class='item.class'>{{ item.title }}</router-link>
+      </template>
     </nav>
   </div>
 </template>
@@ -112,6 +109,16 @@
 </style>
 
 <script>
+import AppConfig from '../config/AppConfig'
+
+function buildMenuItem(link, title, _class = {}) {
+    return {
+        link,
+        title,
+        class: _class,
+    };
+}
+
 export default {
   props: {
     newProposal: {
@@ -121,15 +128,19 @@ export default {
   },
   data() {
     return {
-      isChild: false,
-      manageChildren: false,
-      children: [],
-      navVisibility: true
+        isChild: false,
+        manageChildren: false,
+        children: [],
+        navVisibility: true
     }
   },
   created() {
     if (hasAccess(11) === true) {
       this.manageChildren = true
+    }
+
+    if (hasRole(AppConfig.child_role_id)) {
+
     }
 
     if (hasAccess(11) === false) {
@@ -140,6 +151,33 @@ export default {
     switchNav() {
       this.navVisibility = !this.navVisibility
     }
+  },
+  computed: {
+      menu: function () {
+          let menu = {
+              'home': {
+                  link: "/",
+                  title: "Главная",
+                  class: null,
+              },
+          }
+
+          if (hasRole(AppConfig.child_role_id)) {
+              menu['parent'] = buildMenuItem('/parent', 'Мои родители');
+              menu['proposal'] = buildMenuItem('/proposal', 'Заявления', {'link-notification': this.newProposal});
+              menu['document'] = buildMenuItem('/document', 'Подача документов');
+          }
+
+          if (hasRole(AppConfig.parent_role_id)) {
+          menu['document'] = buildMenuItem('/document', 'Подача документов');
+              menu['proposal'] = buildMenuItem('/proposal', 'Заявления', {'link-notification': this.newProposal});
+              if (hasAccess(11)) {
+                  menu['child'] = buildMenuItem('/child', 'Мои дети');
+              }
+          }
+
+          return menu;
+      }
   }
 }
 </script>

@@ -4,12 +4,18 @@ import * as AppConfig from '../config/AppConfig';
 
 AccessContol.checkRule = function (id) {
     const rules = localStorage.getItem('rules');
-    console.log(localStorage);
-    console.log(id, rules);
     if (rules === null)
         return false;
 
     return rules.includes(id);
+}
+
+AccessContol.checkRole = function (id) {
+    const roles = localStorage.getItem('roles');
+    if (roles === null)
+        return false;
+
+    return roles.includes(id);
 }
 
 AccessContol.refreshApiToken = function () {
@@ -28,22 +34,25 @@ AccessContol.refreshUserRules = async function () {
     let req = `
     query {
         viewer {
-            rules
+            rules, roles
         }
     }
     `;
 
     return _request("api", req).then(el => {
         localStorage.setItem('rules', el.viewer.rules);
+        localStorage.setItem('roles', el.viewer.roles);
     });
 }
 
 AccessContol.refreshAccess = async function () {
     if (localStorage.getItem('token') === null) {
         localStorage.removeItem('rules');
+        localStorage.removeItem('roles');
     }
     else {
-        if (localStorage.getItem('rules') === null) {
+        if (localStorage.getItem('roles') === null ||
+            localStorage.getItem('rules') === null) {
             await this.refreshUserRules();
         }
     }

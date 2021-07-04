@@ -15,6 +15,7 @@ const endoor  = new GraphQLClient(AppConfig.endoor_url, {});
 global.refreshUserRules = AccessContol.refreshUserRules;
 global.refreshApiToken = AccessContol.refreshApiToken;
 global.hasAccess = AccessContol.checkRule;
+global.hasRole = AccessContol.checkRole;
 global.getError = (err, id = 0) => {
     try {
         return JSON.parse(err.response.errors[id].message);
