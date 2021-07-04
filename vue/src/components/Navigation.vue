@@ -169,11 +169,11 @@ export default {
           }
 
           if (hasRole(AppConfig.parent_role_id)) {
-          menu['document'] = buildMenuItem('/document', 'Подача документов');
               menu['proposal'] = buildMenuItem('/proposal', 'Заявления', {'link-notification': this.newProposal});
               if (hasAccess(11)) {
                   menu['child'] = buildMenuItem('/child', 'Мои дети');
               }
+              menu['document'] = buildMenuItem('/document', 'Подача документов');
           }
 
           return menu;

@@ -61,7 +61,7 @@ User.checkConfirmation  = async function (id) {
     const data = {
     };
     try {
-    refreshApiToken();
+        refreshApiToken();
     } catch (err) {
         window.location = window.location;
     }
@@ -69,7 +69,10 @@ User.checkConfirmation  = async function (id) {
     return await _request("api", req, data).then(check => {
         console.log(check);
         return check.checkUserConfirmation.isConfirmed;
-    }).catch(err => { return err; });
+    }).catch(err => {
+        console.error(err);
+        throw err;
+    });
 }
 
 User.setOnConfirm = function () {
@@ -458,7 +461,7 @@ User.sendParentRequest = async function (login) {
   let data = {}
 
   if (login.indexOf('@') !== -1) {
-    data.child_data = this.childPhoneOrEmail
+    data.child_data = login;
   }
   else {
     data.child_data = Corrector.phone(login);
@@ -468,6 +471,7 @@ User.sendParentRequest = async function (login) {
         return data.addChild;
   }).catch(err => {
       console.log(err);
+      throw err;
   });
 }
 
@@ -484,7 +488,7 @@ User.removeChild = async function (id, comment, remove_account) {
     comment: comment
   };
 
-  return await request("api", req, data);
+  return await _request("api", req, data);
 }
 
 User.confirmUser = async function (code) {
@@ -507,7 +511,10 @@ User.confirmUser = async function (code) {
           return true;
       }
       return false;
-  }).catch(err => console.error(err));
+  }).catch(err => {
+      console.error(err);
+      throw err;
+  });
 }
 
 User.sendNewConfirmationCode = async function () {
@@ -519,7 +526,10 @@ User.sendNewConfirmationCode = async function () {
       }
     `;
 
-    return _request("api", req).catch(err => console.error(err));
+    return _request("api", req).catch(err => {
+        console.error(err);
+        throw err;
+    });
 }
 
 export {User};

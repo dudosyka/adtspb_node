@@ -29,7 +29,7 @@
                           class="type"
                           type="date"
                           v-model="child.birthday"
-                          :error="errors['birthday']"
+                          :class="{'input-error': errors['birthday']}"
                         >
                       </div>
                     </div>
@@ -290,7 +290,6 @@
             this.errors = clone(data.errors);
             this.errors_proto = clone(data.errors);
             this.show.needData = true;
-
         });
       },
       cloneAddress() {
@@ -320,8 +319,23 @@
                       }
                   });
               }
-              else if (err.response) {
-                  const msg = getError(err);
+
+              if (err.response) {
+                  const msg = err.response.errors[0].message;
+                  console.log(msg);
+                  if (msg === 'Email must be unique') {
+                      this.childRawErrors.email = true;
+                  }
+                  else if (msg == 'Phone must be unique') {
+                      this.childRawErrors.phone = true;
+                  }
+                  else if (JSON.parse(msg)) {
+                      const parsed = JSON.parse(msg);
+                      // debugger;
+                      Object.keys(parsed).map(el => {
+                          this.errors[el] = true;
+                      });
+                  }
               }
           });
       },

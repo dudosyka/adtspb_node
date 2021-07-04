@@ -446,9 +446,12 @@
           });
       },
       addChild() {
+          console.log(this.childPhoneOrEmail)
           User.sendParentRequest(this.childPhoneOrEmail).then(res => {
+              console.log(res);
               if (res) {
-                  this.message = 'Запрос на подтверждение родства ребёнку успешно отпрвлен';
+                  this.message = 'Запрос на подтверждение родства ребёнку успешно отправлен';
+                  this.show.add = false;
                   this.show.childReg = true;
               }
           }).catch(err => {
