@@ -40,8 +40,6 @@ UserExtraData.prototype.__save = async function () {
         this.__set('ovz_type', null);
     if (this.__get('disability_group') == 0)
         this.__set('disability_group', null);
-    console.log(this.__get('ovz_type'));
-    console.log(this.__get('disability_group'));
     if (this.fields.id)
         return await this.update();
     else
@@ -78,7 +76,7 @@ UserExtraData.prototype.checkChildData = function () {
                     'birthday'
                 ],
                 'Student should be older than 6 yo'
-            ).age(6)
+            ).age(6, 18)
         ];
     }
 

@@ -104,7 +104,7 @@ Validator.prototype.len = function (max = null, min = null) {
     return this;
 }
 
-Validator.prototype.age = function (minAge) {
+Validator.prototype.age = function (minAge, maxAge = null) {
     this.fields.map(el => {
         const dayFrom = (new Date(AppConfig.year + "-09-01")).getTime();
         console.log("DAY FROM:::", dayFrom);
@@ -114,7 +114,7 @@ Validator.prototype.age = function (minAge) {
         const diff = dayFrom - birth;
         const age = Math.floor(diff / 31557600000);
         console.log("Age", age);
-        if (age < minAge)
+        if (age < minAge || age > (maxAge ?? AppConfig.year))
             this.reject(el.name);
     });
     return this;
