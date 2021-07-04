@@ -451,6 +451,9 @@ export default {
   .close-association {
     display: none;
   }
+  .close-association:hover {
+    cursor: pointer;
+  }
 
   @media (max-width: 1000px) {
     .home-content {
