@@ -7,9 +7,12 @@
         <h1 class="main-heading">Добро пожаловать</h1>
         <button class="dark-box dark-button" onclick='localStorage.removeItem("token"); window.location.reload();'>Выйти</button>
 
+        <br>
+        <br>
+
+        <FullUserData></FullUserData>
       </section>
 
-      <FullUserData></FullUserData>
 
     </article>
 
