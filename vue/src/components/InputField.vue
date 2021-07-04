@@ -8,6 +8,7 @@
         :value="value"
         v-on="listeners"
         class="type"
+        :data_id="JSON.stringify(data_id)"
         :class="{'input-error': error}"
         tabindex="1"
         :required="required"
@@ -64,7 +65,18 @@
       error: {
         type: Boolean,
         default: false
-      }
+      },
+      data_id: {
+          type: Object,
+          default() {
+              return {
+                  name: "",
+                  parent: "",
+                  group: null
+              }
+          }
+      },
+
     },
     data() {
       return {

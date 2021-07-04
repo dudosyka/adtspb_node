@@ -171,6 +171,50 @@ User.agreeParentRequest = async function (parent_id, userData) {
     });
 }
 
+function userDataProcessing(entity, parse = true) {
+    let errors = {};
+
+    const birth = Parser.timestampToObj(entity.birthday ?? Date.now());
+    entity.birthday = birth.year + "-" + birth.month + "-" + birth.day;
+
+    entity.registration_address = Parser.addressToObj(entity.registration_address);
+    entity.residence_address = Parser.addressToObj(entity.residence_address);
+
+    Object.keys(entity).map(field => {
+       const fieldValue = entity[field];
+       if (typeof fieldValue === 'object' && fieldValue !== null) {
+           Object.keys(fieldValue ?? {}).map(subfield => {
+               if (errors[field])
+                  errors[field][subfield] = false;
+               else
+                  errors[field] = { [subfield]: false };
+           });
+       }
+       else {
+           errors[field] = false;
+       }
+    });
+
+    if (!parse)
+        return {
+            data: entity,
+            errors
+        };
+
+    entity.masked = {};
+
+    let formattingPhone = entity.phone.split('');
+    formattingPhone.shift();
+    entity.masked.phone = formattingPhone.join('');
+
+    entity.sex = entity.sex;
+
+    return {
+        data: entity,
+        errors
+    };
+}
+
 User.getChildren = async function (fields = null, parse = true) {
     if (fields === null) {
         fields = {
@@ -211,26 +255,8 @@ User.getChildren = async function (fields = null, parse = true) {
     `;
 
     return await _request("api", req).then(data => {
-        data.getChildren.map(el => {
-            if (!parse)
-                return el;
-            const birth = Parser.timestampToObj(el.birthday);
-            el.birthday = birth.year + "-" + birth.month + "-" + birth.day;
-
-            el.registration_address = Parser.addressToObj(el.registration_address);
-            el.residence_address = Parser.addressToObj(el.residence_address);
-
-            el.masked = {};
-
-            let formattingPhone = el.phone.split('');
-            formattingPhone.shift();
-            el.masked.phone = formattingPhone.join('');
-
-            el.sex = el.sex;
-
-            return el;
-        });
-        return data.getChildren;
+        const res = data.getChildren.map(el => userDataProcessing(el, parse));
+        return res;
     });
 }
 
@@ -275,47 +301,8 @@ User.getFullData = async function (fields = null, parse = true) {
 
     return await _request("api", req).then(data => {
         const el = data.getFullUserData;
-        let errors = {};
 
-        const birth = Parser.timestampToObj(el.birthday ?? Date.now());
-        el.birthday = birth.year + "-" + birth.month + "-" + birth.day;
-
-        el.registration_address = Parser.addressToObj(el.registration_address);
-        el.residence_address = Parser.addressToObj(el.residence_address);
-
-        Object.keys(el).map(field => {
-           const fieldValue = el[field];
-           if (typeof fieldValue === 'object' && fieldValue !== null) {
-               Object.keys(fieldValue ?? {}).map(subfield => {
-                   if (errors[field])
-                      errors[field][subfield] = false;
-                   else
-                      errors[field] = { [subfield]: false };
-               });
-           }
-           else {
-               errors[field] = false;
-           }
-        });
-
-        if (!parse)
-            return {
-                childData: el,
-                errors
-            };
-
-        el.masked = {};
-
-        let formattingPhone = el.phone.split('');
-        formattingPhone.shift();
-        el.masked.phone = formattingPhone.join('');
-
-        el.sex = el.sex;
-
-        return {
-            childData: el,
-            errors
-        };
+        return userDataProcessing(el, parse);
     });
 }
 
@@ -327,77 +314,76 @@ User.editMainData = async function (obj, target_id = 0) {
     `;
 
     let errs = [];
-    const validateRes = Validator.validateNotEmpty(obj, true);
+    const validateRes = Validator.validateNotEmpty(obj, true, [ 'lastname' ]);
 
     if (validateRes !== true)
         errs = validateRes;
 
-    obj.phone = Corrector.phone(obj.phone);
+    if (obj.phone) {
 
-    if (!Validator.validatePhone(obj.phone))
-        errs.push('phone');
+        obj.phone = Corrector.phone(obj.phone);
 
-    if (!Validator.validateEmail(obj.email))
-        errs.push('email');
+        if (!Validator.validatePhone(obj.phone))
+            errs.push('phone');
+    }
+
+    if (obj.email) {
+        if (!Validator.validateEmail(obj.email))
+            errs.push('email');
+    }
 
     if (errs.length)
         throw {msg: errs};
 
-    obj.id = Number(obj.id)
-
     let data = {
-        data: {
-            name: obj.name,
-            surname: obj.surname,
-            lastname: obj.lastname,
-            email: obj.email,
-            phone: obj.phone,
-            sex: obj.sex,
-        },
-        target_id: obj.id
+        data: obj,
+        target_id: target_id
     }
 
-    return await _request("api", req, data).then(async data => {
-        console.log(data)
-        // this.edit.message = 'Данные отпралены успешно'
-        return await this.editExtraData(obj, target_id);
-    });
+    return _request("api", req, data);
 }
 
-User.editExtraData = async function (obj, target_id) {
+User.editExtraData = async function (obj, target_id = 0) {
     let req = `
       mutation ($data: UserInput, $target_id: Int) {
         editExtraUserData(newData: $data, target_id: $target_id)
       }
-    `
+    `;
 
-    obj.registration_address = Parser.objToAddress(obj.registration_address);
-    obj.residence_address = Parser.objToAddress(obj.residence_address);
+    const validateRes = Validator.validateNotEmpty(obj, true, [ 'lastname' ]);
 
-    obj.birthday = Parser.birthdayToTimestamp(obj.birthday);
+    if (validateRes !== true)
+        throw validateRes;
 
-    obj.id = Number(obj.id);
+    if (obj.registration_address)
+        obj.registration_address = Parser.objToAddress(obj.registration_address);
+
+    if (obj.residence_address)
+        obj.residence_address = Parser.objToAddress(obj.residence_address);
+
+    if (obj.birthday)
+        obj.birthday = Parser.birthdayToTimestamp(obj.birthday);
+
+    if (obj.disability_group) {
+        if (typeof obj.disability_group === 'string') {
+            obj.disability_group = {
+                id: Number(obj.disability_group)
+            };
+        }
+    }
+
+    if (obj.ovz_type) {
+        console.log(obj.ovz_type);
+        if (typeof obj.ovz_type === 'string') {
+            obj.ovz_type = {
+                id: Number(obj.ovz_type)
+            };
+        }
+    }
 
     let data = {
-      data: {
-        birthday: obj.birthday,
-        birth_certificate: obj.birth_certificate,
-
-        state: obj.state,
-        relationship: obj.relationship,
-        studyPlace: obj.studyPlace,
-        ovz: obj.ovz,
-        ovz_type: { id: obj.ovz_type.id },
-        disability: obj.disability,
-        disability_group: { id: obj.disability_group.id },
-
-        registration_address: obj.registration_address,
-        registration_flat: obj.registration_flat,
-
-        residence_address: obj.residence_address,
-        residence_flat: obj.residence_flat,
-      },
-      target_id: obj.id
+      data: obj,
+      target_id: target_id
   };
 
     return await _request("api", req, data)

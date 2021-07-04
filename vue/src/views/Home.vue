@@ -9,6 +9,8 @@
 
       </section>
 
+      <FullUserData></FullUserData>
+
     </article>
 
 
@@ -29,29 +31,23 @@
 <script>
   // @ is an alias to /src
   import navigation from '../components/Navigation.vue'
+  import FullUserData from '../components/forms/FullUserData'
+
 
   export default {
     name: 'Home',
     components: {
-      navigation,
+      navigation, FullUserData
     },
     data() {
         return {
-          cards: [],
-          user: {
-            name: null
-          }
+            cards: [],
         }
     },
-    created() {
-
-    },
     methods: {
-
     },
     async created()
     {
-        this.token = localStorage.getItem('token');
     }
   }
 </script>

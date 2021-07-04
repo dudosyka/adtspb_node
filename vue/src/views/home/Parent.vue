@@ -201,8 +201,6 @@
     },
     data() {
       return {
-        ovzTypes: ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'],
-        disabilityTypes: ['', 'I', 'II', 'III'],
         parentRequests: [],
         child: {
 
@@ -286,7 +284,7 @@
             },
             false
         ).then(data => {
-            this.child = {...data.childData};
+            this.child = clone(data.data);
             this.errors = clone(data.errors);
             this.errors_proto = clone(data.errors);
             this.show.needData = true;

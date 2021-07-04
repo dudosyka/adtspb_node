@@ -7,8 +7,8 @@
 
           <section class="card child shadow" v-for="(raw, number) in childrenRaw" @click="showData(number)">
             <div class="child_heading">
-              <h2 class="child-name">{{ raw.name + ' ' + raw.surname }}</h2>
-              <button class="dark-box dark-button to-associations" @click="toAssociations(raw.id)" >Запись</button>
+              <h2 class="child-name">{{ raw.data.name + ' ' + raw.data.surname }}</h2>
+              <button class="dark-box dark-button to-associations" @click="toAssociations(raw.data.id)" >Запись</button>
             </div>
             <span class="child-to-data"
                 :class="{'child-from-data': number === show.childData}"
@@ -23,188 +23,11 @@
 
           <article class="child-data" v-for="(raw, number) in childrenRaw" v-show="show.childData === number">
 
-            <article class="child-form">
-              <p class="label-error child-form_span-2" v-if="edit.error"> {{ edit.error }} </p>
-
-              <inputField
-                label="Имя"
-                v-model="raw.name"
-                :error="errors[number]['name']"
-              />
-
-              <inputField
-                label="Фамилия"
-                v-model="raw.surname"
-                :error="errors[number]['surname']"
-              />
-
-              <inputField
-                label="Отчество"
-                v-model="raw.lastname"
-                :error="errors[number]['lastname']"
-              />
-
-              <inputField
-                label="Электронная почта"
-                v-model="raw.email"
-                :error="errors[number]['email']"
-              />
-
-              <div class="input-container required">
-                <label class="label" v-bind:class="{'label-up': raw.phone, 'error-label': errors[number]['phone']}">Номер телефона</label><br>
-                <masked-input
-                  v-model="raw.masked.phone"
-                  mask="\+\7 (111) 111-11-11"
-                  @input="raw.phone = arguments[1]"
-                  type="tel"
-                  class="type"
-                  :class="{'input-error': errors[number]['phone']}"
-                  tabindex="4"
-
-                  />
-              </div>
-
-              <div class="input-container required child-form_span-2">
-                <h3 class="radio-heading dark" :class="{'label-error': errors[number]['sex']}">Пол</h3>
-                <ul class="radio-list" :class="{'input-error': errors[number]['sex']}">
-                  <li class="radio-container">
-                    <input type="radio" v-model.number="raw.sex" value="1" class="radio" tabindex="3" :id="number + 'man'">
-                    <label class="dark radio" :for="number + 'man'" tabindex="5">Мужской</label>
-                  </li>
-                  <li class="radio-container">
-                    <input type="radio" v-model.number="raw.sex" value="0" class="radio" tabindex="3" :id="number + 'woman'">
-                    <label class="dark radio" :for="number + 'woman'" tabindex="6">Женский</label>
-                  </li>
-                </ul>
-              </div>
-
-              <inputField
-                label="Номер свидетельства о рождении"
-                v-model="raw.birth_certificate"
-                :error="errors[number]['birth_certificate']"
-              />
-
-              <div class="input-container">
-                <label class="label" v-bind:class="{'label-up': raw.birthday}">Дата рождения</label><br>
-                <input
-                  class="type"
-                  type="date"
-                  v-model="raw.birthday"
-                  :error="errors[number]['birthday']"
-                >
-              </div>
-
-              <inputField
-                label="Гражданство"
-                v-model="raw.state"
-                :error="errors[number]['state']"
-              />
-
-              <inputField
-                label="Степень родства"
-                v-model="raw.relationship"
-                :error="errors[number]['relationship']"
-              />
-
-              <div class="child-form_span-2 child-form_select">
-                <div :class="{'input-error': errors[number]['ovz']['id']}">
-                  <h2 class="child-form_select-heading" :class="{'label-error': errors[number]['ovz']['id']}">ОВЗ</h2>
-                  <select class="dark-box darken" v-model.number="raw.ovz">
-                    <option value="0">Нет</option>
-                    <option value="1">Есть</option>
-                  </select>
-                </div>
-                <div v-if="raw.ovz" :class="{'input-error': errors[number]['ovz_type']['id']}">
-                  <h2 class="child-form_select-heading" :class="{'label-error': errors[number]['ovz_type']['id']}">Тип ОВЗ</h2>
-                  <select class="dark-box darken" v-model="raw.ovz_type.id" >
-                    <option v-for="(type, id) in ovzTypes" :value="id">{{ type }}</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="child-form_span-2">
-                <div :class="{'input-error': errors[number]['disability']['id']}">
-                  <h2 class="child-form_select-heading" :class="{'label-error': errors[number]['disability']['id']}">Инвалидность</h2>
-                  <select class="dark-box darken" v-model.number="raw.disability" >
-                    <option value="0">Нет</option>
-                    <option value="1">Есть</option>
-                  </select>
-                </div>
-                <div v-if="raw.disability" :class="{'input-error': errors[number]['disability_group']['id']}">
-                  <h2 class="child-form_select-heading" :class="{'label-error': errors[number]['disability_group']['id']}">Группа нвалидности</h2>
-                  <select class="dark-box darken" v-model="raw.disability_group.id" >
-                    <option v-for="(type, id) in disabilityTypes" :value="id">{{ type }}</option>
-                  </select>
-                </div>
-              </div>
-
-                <inputField
-                  label="Образовательное учреждение (наименование)"
-                  class="child-form_span-2"
-                  v-model="raw.studyPlace"
-                  type="text"
-                  :error="errors[number]['studyPlace']"
-                />
-
-                <h2 class="child-form_heading child-form_span-2">Адрес регистрации</h2>
-                <inputField
-                  label="Город"
-                  v-model="raw.registration_address.city"
-                  :error="errors[number]['registration_address']['city']"
-                />
-                <inputField
-                  label="Район"
-                  v-model="raw.registration_address.district"
-                  :error="errors[number]['registration_address']['district']"
-                />
-                <inputField
-                  label="Улица"
-                  v-model="raw.registration_address.street"
-                  :error="errors[number]['registration_address']['street']"
-                />
-                <inputField
-                  label="Дом"
-                  v-model="raw.registration_address.house"
-                  :error="errors[number]['registration_address']['house']"
-                />
-                <inputField
-                  label="Номер квартиры"
-                  v-model="raw.registration_flat"
-                  :error="errors[number]['registration_flat']"
-                />
-
-                <h2 class="child-form_heading child-form_span-2">Адрес проживания</h2>
-                <inputField
-                  label="Город"
-                  v-model="raw.residence_address.city"
-                  :error="errors[number]['residence_address']['city']"
-                />
-                <inputField
-                  label="Район"
-                  v-model="raw.residence_address.district"
-                  :error="errors[number]['residence_address']['district']"
-                />
-                <inputField
-                  label="Улица"
-                  v-model="raw.residence_address.street"
-                  :error="errors[number]['residence_address']['street']"
-                />
-                <inputField
-                  label="Дом"
-                  v-model="raw.residence_address.house"
-                  :error="errors[number]['residence_address']['house']"
-                />
-                <inputField
-                  label="Номер квартиры"
-                  v-model="raw.residence_flat"
-                  :error="errors[number]['residence_flat']"
-                />
-            </article>
+              <FullUserData :input='JSON.stringify(raw)'></FullUserData>
 
             <div class="buttons">
               <h2 class="form-heading"> {{ edit.message }} </h2>
               <p class="label-error"> {{ edit.error }} </p>
-              <button class="dark-box dark-button" @click="editChild(number)">Отправить на редактирование</button>
 
               <h2 class="form-heading"> {{ remove.message }} </h2>
               <inputField
@@ -314,13 +137,14 @@
   import navigation from '../../components/Navigation.vue'
   import inputField from '../../components/InputField.vue'
   import MaskedInput from 'vue-masked-input'
+  import FullUserData from '../../components/forms/FullUserData'
 
   import {User} from '../../models/User';
 
   export default {
     name: 'Child',
     components: {
-      navigation, inputField, MaskedInput
+      navigation, inputField, MaskedInput, FullUserData
     },
     data() {
       return {
@@ -351,55 +175,11 @@
     },
     async created() {
       this.childrenRaw = await User.getChildren();
-
-      //Создание массива, для отображения ошибок
-
-      this.childrenRaw.map(child => {
-          let raw = {};
-          Object.keys(child).map(field => {
-             const fieldValue = child[field];
-             if (typeof fieldValue === 'object') {
-                 Object.keys(fieldValue ?? {}).map(subfield => {
-                     if (raw[field])
-                        raw[field][subfield] = false;
-                     else
-                        raw[field] = { [subfield]: false };
-                 });
-             }
-             else {
-                 raw[field] = false;
-             }
-          });
-          this.errors.push(raw);
-      });
+      console.log(this.childrenRaw);
     },
     methods: {
       showData(id) {
         this.show.childData = id
-      },
-
-      editChild(id) {
-          User.editMainData({...this.childrenRaw[id]}, id)
-          .then(data => {
-              this.edit.message = 'Данные отправлены успешно'
-          })
-          .catch(err => {
-              if (err.msg)
-                err.msg.map(el => {
-                    // Если поймали ошибку для составного поля обрабатываем каждое
-                    if (typeof el === 'object') {
-                        Object.keys(el ?? {}).map(field => {
-                            el[field].map(subfield => {
-                                this.errors[id][field][subfield] = true;
-                            });
-                        });
-                    }
-                    else {
-                        this.errors[id][el] = true;
-                    }
-                });
-              this.edit.error = 'Ошибка заполнения формы';
-          });
       },
       removeChild(id) {
           User.removeChild(id, this.remove.comment, false)
