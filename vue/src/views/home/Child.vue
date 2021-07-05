@@ -19,7 +19,7 @@
 
         </section>
 
-        <section class="children-data card shadow child-form-wrapper" v-show="childrenRaw.length > 0">
+        <section class="child-form-wrapper" v-show="childrenRaw.length > 0">
 
           <article class="child-data" v-for="(raw, number) in childrenRaw" v-show="show.childData === number">
 
