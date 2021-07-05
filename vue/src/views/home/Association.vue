@@ -17,11 +17,11 @@
 
             <section class="association-schedule" v-for="group of card.groups">
               <h3 class="schedule-name">{{ group.group.name }}</h3>
-              <div class="schedule-tbody">
-                <div v-for="row of group.timetable" class="schedule-tr">
-                  <div v-for="day of row" class="schedule-td">{{ day }}</div>
-                </div>
-              </div>
+              <table class="schedule">
+                <tr v-for="(time, day) in group.timetable">
+                  <td>{{ day }}</td><td>{{ time }}</td>
+                </tr>
+              </table>
             </section>
 
             <!--
@@ -213,15 +213,12 @@ export default {
           }
 
           function MakeTimetable(week) {
-            let timetable = [[],[],[]]
+            let timetable = {}
 
             for (let day in week) {
               if (week[day] !== '-') {
-                timetable[0].push(Corrector.translateWeekDay(day))
-
-                const time = week[day].split('-')
-                timetable[1].push(time[0])
-                timetable[2].push(time[1])
+                const dayRusName = Corrector.translateWeekDay(day)
+                timetable[dayRusName] = week[day]
               }
             }
             return timetable
@@ -405,9 +402,6 @@ export default {
     grid-template-columns: repeat(auto-fill, 260px);
     overflow-y: scroll;
   }
-  .association-cards--show {
-    display: grid !important;
-  }
   .association-name {
     word-wrap: break-word;
   }
@@ -433,18 +427,7 @@ export default {
   .schedule-name {
     text-align: left;
   }
-  .schedule-tbody {
-    overflow-x: scroll;
-  }
-  .schedule-tr {
-    display: grid;
-    grid-template-columns: repeat(7, 100px);
-    width: 100%;
-  }
-  .schedule-td {
-    padding: 5px;
-    text-align: center;
-  }
+
   .add-association {
     display: none;
   }
