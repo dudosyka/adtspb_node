@@ -16,7 +16,7 @@
               </div>
               <div class="buttons">
                 <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)">Скачать</button>
-                <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)">Печатать</button>
+                <button class="dark-button wp100" @click="printPdf(proposal.id)">Печатать</button>
               </div>
             </section>
 
@@ -120,10 +120,15 @@
       });
     },
     methods: {
-      downloadPdf(proposal_id, child, proposal_index) {
-        const name = child.surname + "_" + child.name + "_" + child.proposals[proposal_index].name;
-        Proposal.renderPdf(proposal_id, name);
-      }
+        generateProposalName(child, proposal_index) {
+            return child.surname + "_" + child.name + "_" + child.proposals[proposal_index].name;
+        },
+        downloadPdf(proposal_id, child, proposal_index) {
+            Proposal.downloadPdf(proposal_id, this.generateProposalName(child, proposal_index));
+        },
+        printPdf(proposal_id) {
+            Proposal.printPdf(proposal_id);
+        }
     },
     computed: {
       staus(stroke) {

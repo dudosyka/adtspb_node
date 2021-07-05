@@ -1,22 +1,6 @@
 const Proposal = {};
 
-Proposal.downloadPdfFromBase64 = async function (hash, name) {
-    return await fetch("data:application/pdf;base64," + hash)
-        .then(base64 => { base64.blob()
-            .then(blob => {
-              console.log(blob);
-              const url = window.URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = name + ".pdf";
-              document.body.appendChild(a);
-              a.click();
-              a.remove();
-          });
-        });
-}
-
-Proposal.renderPdf = async function (proposal_id, name = "tatui") {
+Proposal.getPdfBlob = async function (proposal_id) {
     const req = `
     query($proposal: ProposalInput) {
         generateProposalPdf(proposal: $proposal)
@@ -28,12 +12,44 @@ Proposal.renderPdf = async function (proposal_id, name = "tatui") {
         }
     };
 
-    _request("api", req, data).then(async res => {
-        //Получаешь этот татуй и суёшь его в этот гобан
-        await this.downloadPdfFromBase64(res.generateProposalPdf, name);
+    return await _request("api", req, data).then(async res => {
+        return await fetch("data:application/pdf;base64," + res.generateProposalPdf).then(base64 =>  base64.blob() );
     }).catch(err => {
         console.error(err);
+        throw err;
     })
+}
+//
+// .then(response =>  response.blob().then(function(myBlob) {
+//     var objectURL = URL.createObjectURL(myBlob);
+//     document.querySelector('#pdf-frame').src = objectURL;
+// 	  objectURL = URL.revokeObjectURL(myBlob);
+// }).then(
+//     function() {
+//         window.setTimeout(function() {
+//             document.querySelector('#pdf-frame').contentWindow.print();
+//         }, 1000)
+//     });
+
+Proposal.downloadPdf = async function (proposal_id, name) {
+    const blob = await this.getPdfBlob(proposal_id);
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name + ".pdf";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+}
+
+Proposal.printPdf = async function (proposal_id) {
+    const blob = await this.getPdfBlob(proposal_id);
+    let url = window.URL.createObjectURL(blob);
+    const iframe = document.createElement('iframe');
+    iframe.src = url;
+    document.body.appendChild(iframe);
+    url = URL.revokeObjectURL(blob);
+    iframe.contentWindow.print();
 }
 
 Proposal.create = async function (association, child) {
