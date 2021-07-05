@@ -25,14 +25,16 @@ Parser.addressToObj = function (address) {
         house: null
     };
 
-    if (address === null)
+    if (address === null || address === undefined)
         return obj;
+
+    console.log(address);
 
     const arr = address.split(',');
 
     obj.city = arr[0];
 
-    if (arr.length >= 2) {
+    if (arr.length >= 2) {2
         obj.district = arr[1];
         if (arr.length >= 3) {
             obj.street = arr[2];

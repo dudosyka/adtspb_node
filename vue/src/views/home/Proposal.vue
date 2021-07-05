@@ -101,7 +101,7 @@
       }, false).then( data => data );
 
       children.map((child) => {
-        const proposals = child.proposals.map(el => {
+        const proposals = child.data.proposals.map(el => {
           return {
             id: el.id,
             name: el.association.name,
@@ -113,8 +113,8 @@
 
         if (proposals.length > 0)
           this.children.push({
-            name: child.name,
-            surname: child.surname,
+            name: child.data.name,
+            surname: child.data.surname,
             proposals: proposals
           });
       });

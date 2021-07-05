@@ -20,6 +20,7 @@
                 <input
                     :type="passwordFieldType"
                     v-model="pass"
+                    v-on:keyup.enter="auth"
                     class="type"
                     :class="{'input-error': errors.password}"
                     tabindex="1"
@@ -36,7 +37,7 @@
           </div>
 
           <div class="buttons">
-            <button class="dark-button" @click="auth()" tabindex="4">Войти</button>
+            <button class="dark-button" @click="auth" tabindex="4">Войти</button>
             <router-link to="/signup" tabindex="5" class="light-button">Регистрация</router-link>
           </div>
         </div>

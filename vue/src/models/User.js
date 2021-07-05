@@ -256,6 +256,7 @@ User.getChildren = async function (fields = null, parse = true) {
 
     return await _request("api", req).then(data => {
         const res = data.getChildren.map(el => userDataProcessing(el, parse));
+        console.log(res);
         return res;
     });
 }
