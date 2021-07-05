@@ -1,7 +1,6 @@
 <template>
 
-
-    <div v-if='data_loaded'>
+    <section v-if='data_loaded' class='child-form-wrapper card shadow'>
 
         <article class="child-form">
 
@@ -236,7 +235,7 @@
         <div class="buttons wp100">
           <button class="dark-box dark-button register-button" :disabled='blockSaveBtn' @click="saveEditedData()">Сохранить</button>
         </div>
-    </div>
+    </section>
 
 
 </template>
