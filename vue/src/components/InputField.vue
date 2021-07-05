@@ -13,8 +13,8 @@
         tabindex="1"
         :required="required"
         :readonly="readonly">
+        <slot name="prompt"></slot>
     </div>
-
     <div class="password-container input-container" v-if="type === 'password'">
       <div>
         <label class="label" v-bind:class="{'label-up': value}">{{label}}</label><br>

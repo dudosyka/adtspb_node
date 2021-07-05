@@ -4,96 +4,106 @@
 
         <article class="child-form">
 
-          <h2 class="child-form_heading">Личные данные</h2>
+            <h2 class="child-form_heading">Личные данные</h2>
 
-          <inputField
-              label="Имя"
-              v-model="data.name"
-              :error="errors.name"
-              :data_id="{name: 'name', group: 'main'}"
-              @change="_onedit"
-          />
-          <inputField
-              label="Фамилия"
-              v-model="data.surname"
-              :error="errors.surname"
-              :data_id="{name: 'surname', group: 'main'}"
-              @change="_onedit"
-          />
-
-          <inputField
-              label="Отчество"
-              v-model="data.lastname"
-              :error="errors.lastname"
-              :data_id="{name: 'lastname', group: 'main'}"
-              @change="_onedit"
-          />
-
-          <div class="input-container">
-            <label class="label" :class="{'label-error': errors.birthday}">Дата рождения</label><br>
-            <input
-                class="type"
-                :class="{'input-error': errors.birthday}"
-                type="date"
-                v-model="data.birthday"
-                :data_id="JSON.stringify({name: 'birthday', group: 'extra'})"
-                tabindex="1"
+            <inputField
+                label="Имя"
+                v-model="data.name"
+                :error="errors.name"
+                :data_id="{name: 'name', group: 'main'}"
                 @change="_onedit"
-            >
-          </div>
-
-          <inputField
-              label="Электронная почта"
-              v-model="data.email"
-              :error="errors.email"
-              :data_id="{name: 'email', group: 'main'}"
-              @change="_onedit"
-          />
-
-          <div class="input-container required">
-            <label class="label" v-bind:class="{'label-error': errors.phone}">Номер телефона</label><br>
-            <masked-input
-                v-model="data.masked.phone"
-                mask="\+\7 (111) 111-11-11"
-                @input="data.phone = arguments[1]"
-                type="tel"
-                class="type"
-                :class="{'input-error': errors.phone}"
-                :data_id="JSON.stringify({name: 'phone', group: 'main'})"
-                tabindex="4"
             />
-          </div>
+            <inputField
+                label="Фамилия"
+                v-model="data.surname"
+                :error="errors.surname"
+                :data_id="{name: 'surname', group: 'main'}"
+                @change="_onedit"
+            />
 
-          <div class="input-container child-form_span-2">
-            <h3 class="radio-heading dark" :class="{'label-error': errors.sex}">Пол</h3>
-            <ul class="radio-list" :class="{'input-error': errors.sex}">
-              <li class="radio-container">
-                <input type="radio"
-                @change="_onedit" v-model.number="data.sex" :data_id="JSON.stringify({name: 'sex', group: 'main'})" value="1" class="radio" tabindex="3" id="man">
-                <label class="dark radio" for="man" tabindex="5">Мужской</label>
-              </li>
-              <li class="radio-container">
-                <input type="radio"
-                @change="_onedit" v-model.number="data.sex" :data_id="JSON.stringify({name: 'sex', group: 'main'})" value="0" class="radio" tabindex="3" id="woman">
-                <label class="dark radio" for="woman" tabindex="6">Женский</label>
-              </li>
-            </ul>
-          </div>
+            <inputField
+                label="Отчество"
+                v-model="data.lastname"
+                :error="errors.lastname"
+                :data_id="{name: 'lastname', group: 'main'}"
+                @change="_onedit"
+            />
 
-          <inputField
-              label="Гражданство"
-              v-model="data.state"
-              :error="errors.state"
-              :data_id="{name: 'state', group: 'extra'}"
-              @change="_onedit"
-          />
-          <inputField
-              label="Степень родства"
-              v-model="data.relationship"
-              :error="errors.relationship"
-              :data_id="{name: 'relationship', group: 'extra'}"
-              @change="_onedit"
-          />
+            <div class="input-container">
+                <label class="label" :class="{'label-error': errors.birthday}">Дата рождения</label><br>
+                <input
+                    class="type"
+                    :class="{'input-error': errors.birthday}"
+                    type="date"
+                    v-model="data.birthday"
+                    :data_id="JSON.stringify({name: 'birthday', group: 'extra'})"
+                    tabindex="1"
+                    @change="_onedit"
+                >
+            </div>
+
+            <inputField
+                label="Электронная почта"
+                v-model="data.email"
+                :error="errors.email"
+                :data_id="{name: 'email', group: 'main'}"
+                @change="_onedit"
+            />
+
+            <div class="input-container required">
+                <label class="label" v-bind:class="{'label-error': errors.phone}">Номер телефона</label><br>
+                <masked-input
+                    v-model="data.masked.phone"
+                    mask="\+\7 (111) 111-11-11"
+                    @input="data.phone = arguments[1]"
+                    type="tel"
+                    class="type"
+                    :class="{'input-error': errors.phone}"
+                    :data_id="JSON.stringify({name: 'phone', group: 'main'})"
+                    tabindex="4"
+                />
+            </div>
+
+            <div class="input-container child-form_span-2">
+                <h3 class="radio-heading dark" :class="{'label-error': errors.sex}">Пол</h3>
+                <ul class="radio-list" :class="{'input-error': errors.sex}">
+                    <li class="radio-container">
+                        <input type="radio"
+                        @change="_onedit" v-model.number="data.sex" :data_id="JSON.stringify({name: 'sex', group: 'main'})" value="1" class="radio" tabindex="3" id="man">
+                        <label class="dark radio" for="man" tabindex="5">Мужской</label>
+                    </li>
+                        <li class="radio-container">
+                        <input type="radio"
+                        @change="_onedit" v-model.number="data.sex" :data_id="JSON.stringify({name: 'sex', group: 'main'})" value="0" class="radio" tabindex="3" id="woman">
+                        <label class="dark radio" for="woman" tabindex="6">Женский</label>
+                    </li>
+                </ul>
+            </div>
+
+            <inputField
+                label="Гражданство"
+                v-model="data.state"
+                :error="errors.state"
+                :data_id="{name: 'state', group: 'extra'}"
+                @change="_onedit"
+            />
+            <div>
+                <inputField
+                    label="Степень родства"
+                    v-model="data.relationship"
+                    :error="errors.relationship"
+                    :data_id="{name: 'relationship', group: 'extra'}"
+                    @change="_onedit"
+                    style="{margin: 0}"
+                >
+                    <template v-slot:prompt>
+                        <div class="input-prompt">
+                            <span @click="data.relationship = 'Родитель'">Родитель</span> /
+                            <span @click="data.relationship = 'Законный представитель'">Законный представитель</span>
+                        </div>
+                    </template>
+                </inputField>
+            </div>
 
           <div class="child-form_span-2 child-form_select">
             <div>

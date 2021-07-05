@@ -10,7 +10,6 @@
             <p>{{ req.phone }}</p>
             <p>Хочет стать вашим родителем</p>
             <section v-if="show.needData">
-                <!-- TODO: Стилизовать строку -->
                 <h2>Заполните недостающие данные:</h2>
                 <article class="child-data_table">
                     <article class="child-data_table-group">
