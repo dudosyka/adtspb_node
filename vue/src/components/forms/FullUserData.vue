@@ -98,7 +98,7 @@
                 >
                     <template v-slot:prompt>
                         <div class="input-prompt">
-                            <span @click="data.relationship = 'Родитель'">Родитель</span> /
+                            <span @click="data.relationship = 'Родитель'">Родитель</span>
                             <span @click="data.relationship = 'Законный представитель'">Законный представитель</span>
                         </div>
                     </template>
