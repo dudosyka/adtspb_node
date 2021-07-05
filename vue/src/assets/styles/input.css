@@ -1,17 +1,17 @@
 input, input:before, input:after {
-  -webkit-user-select: initial !important;
-  -khtml-user-select: initial !important;
-  -moz-user-select: initial !important;
-  -ms-user-select: initial !important;
-  user-select: initial !important;
+    -webkit-user-select: initial !important;
+    -khtml-user-select: initial !important;
+    -moz-user-select: initial !important;
+    -ms-user-select: initial !important;
+    user-select: initial !important;
 }
 input[type="date"] {
-  font-family: sans-serif;
-  height: 39px;
+    font-family: sans-serif;
+    height: 39px;
 }
 
 /* Form */
-  .form {
+.form {
     min-width: 300px;
     max-width: 400px;
 
@@ -19,113 +19,113 @@ input[type="date"] {
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-  }
-  .form-heading {
+}
+.form-heading {
     margin: 0;
     font-size: 20px;
     color: #0086C9;
-  }
+}
 
-  .label-error {
+.label-error {
     color: #C90000 !important;
-  }
-  .input-error {
+}
+.input-error {
     color: #C90000;
     background-color: #FFE4E4;
     border-bottom-color: #C90000 !important;
-  }
+}
 
-  .label-normal {
+.label-normal {
     color: #0086c9 !important;
-  }
+}
 
-  .input-container {
+.input-container {
     width: 100%;
     position: relative;
     margin-top: 15px;
     margin-bottom: 20px
-  }
+}
 
-  /* REQUIRED */
-  /*.input-container.required::before {
-    content: '*';
-    position: absolute;
-    top: 50%;
-    left: -20px;
-    z-index: 3;
+/* REQUIRED */
+/*.input-container.required::before {
+  content: '*';
+  position: absolute;
+  top: 50%;
+  left: -20px;
+  z-index: 3;
 
-    width: 5px;
-    height: 5px;
+  width: 5px;
+  height: 5px;
 
-    color: #C90000;
-    font-size: 20px;
-  }
-  .input-container.required::after {
-    display: none;
-    content: 'Обязательное поле';
-    position: absolute;
-    top: 50%;
-    right: 110%;
-    z-index: 3;
+  color: #C90000;
+  font-size: 20px;
+}
+.input-container.required::after {
+  display: none;
+  content: 'Обязательное поле';
+  position: absolute;
+  top: 50%;
+  right: 110%;
+  z-index: 3;
 
-    color: #C90000;
-    font-size: 15px;
-  }
-  .input-container:hover.required::after {
+  color: #C90000;
+  font-size: 15px;
+}
+.input-container:hover.required::after {
 
-  }
-  */
+}
+*/
 
-  /* INVALID */
+/* INVALID */
 
-  /* DISABLED */
+/* DISABLED */
 
-  /* READONLY */
+/* READONLY */
 
-  input[readonly] {
+input[readonly] {
     position: relative;
     opacity: 0.5;
-  }
-  input[readonly]:hover {
+}
+input[readonly]:hover {
     cursor: not-allowed;
-  }
+}
 
-  .password-container {
+.password-container {
     display: grid;
     grid-template-columns: 1fr 30px;
-  }
-  .password-container div {
+}
+.password-container div {
     width: 100%;
     position: relative;
-  }
-  .password-container button {
+}
+.password-container button {
     width: 28px;
     height: 36px;
     align-self: end;
-  }
-  .hidden-pass, .show-pass {
+}
+.hidden-pass, .show-pass {
     background-size: 80%;
     background: #fff no-repeat center;
     border: none;
     border-bottom: 3px solid #0086c9;
     outline: none;
-  }
-  .hidden-pass {
+}
+.hidden-pass {
     background-image: url("../files/close-eye.svg");
-  }
-  .show-pass {
+}
+.show-pass {
     background-image: url("../files/open-eye.svg");
-  }
+}
 
-  input[type="text"],
-  input[type="email"],
-  input[tupe="tel"],
-  input[type="password"],
-  input[type="url"] {
+input[type="text"],
+input[type="email"],
+input[tupe="tel"],
+input[type="password"],
+input[type="url"] {
     position: relative;
     z-index: 1;
-  }
-  .type {
+}
+.type {
     border: none;
     outline: none;
     user-select: none;
@@ -136,14 +136,14 @@ input[type="date"] {
     padding: 10px 0;
     transition-duration: 0.3s;
 
-    border-bottom: 3px solid #0086C9;
-  }
-  .type.invalid {
+    border-bottom: 3px solid #0086c9;
+}
+.type.invalid {
     background-color: #FFE4E4;
     border-bottom: 3px solid #c90000;
-  }
+}
 
-  .label {
+.label {
     display: inline-block;
 
     position: relative;
@@ -154,26 +154,26 @@ input[type="date"] {
 
     pointer-events: none;
 
-    color: #0086C9;
+    color: #0086c9;
     font-size: 0.9em;
-  }
+}
 
-  .checkbox-container {
+.checkbox-container {
     margin: 20px 0;
     color: #0086C9;
-  }
-  .checkbox-container:hover {
+}
+.checkbox-container:hover {
     cursor: pointer;
-  }
-  label.checkbox {
+}
+label.checkbox {
     position: relative;
     margin-left: 30px;
     margin-bottom: 30px;
-  }
-  input[type=checkbox] {
+}
+input[type=checkbox] {
     display: none;
-  }
-  input[type=checkbox] ~ label.checkbox::before {
+}
+input[type=checkbox] ~ label.checkbox::before {
     content: '';
     display: inline-block;
     position: absolute;
@@ -186,45 +186,45 @@ input[type="date"] {
 
     border: 3px solid #0086C9;
     transition: 0.5s;
-  }
-  input[type=checkbox]:checked ~ label.checkbox::before {
+}
+input[type=checkbox]:checked ~ label.checkbox::before {
     transform: rotate(-45deg);
     height: 10px;
     border-right-style: none;
     border-top-style: none;
     border-width: 3px;
-  }
+}
 
-  .radio-heading {
+.radio-heading {
     margin: 0;
     margin-bottom: 5px;
     margin-top: 40px;
     font-weight: normal;
-  }
-  .radio-list {
+}
+.radio-list {
     display: grid;
     grid-gap: 10px;
 
     list-style: none;
     margin: 0;
     padding: 15px 5px;
-  }
-  .radio-container {
+}
+.radio-container {
     padding-left: 35px;
-  }
-  .radio-container:hover {
+}
+.radio-container:hover {
     cursor: pointer;
-  }
-  label.radio {
+}
+label.radio {
     position: relative;
-  }
-  label.radio:hover {
+}
+label.radio:hover {
     cursor: pointer;
-  }
-  input[type=radio] {
+}
+input[type=radio] {
     display: none;
-  }
-  input[type=radio] ~ label.radio::before {
+}
+input[type=radio] ~ label.radio::before {
     content: '';
     display: inline-block;
     position: absolute;
@@ -237,51 +237,51 @@ input[type="date"] {
 
     border: 3px solid #0086C9;
     border-radius: 50%;
-  }
-  input[type=radio]:checked ~ label.radio::before {
+}
+input[type=radio]:checked ~ label.radio::before {
     background-color: #0086C9;
-  }
-  .radio-list.input-error label.radio:before {
+}
+.radio-list.input-error label.radio:before {
     border: 3px solid #C90000;
-  }
-  .radio-list.input-error label.radio {
+}
+.radio-list.input-error label.radio {
     color: #C90000;
-  }
+}
 
 /* Child data form */
 
 .child-form-wrapper {
-  max-width: 470px;
+    max-width: 470px;
 }
 .child-form {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(150px, 200px));
-  grid-gap: 10px;
-  max-width: 470px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(150px, 200px));
+    grid-gap: 10px;
+    max-width: 470px;
 }
 .child-form_heading, .child-form_span-2 {
-  grid-column: span 2;
-  color: #0086c9;
+    grid-column: span 2;
+    color: #142732;
 }
 .child-form_select-heading {
-  font-size: 1rem;
-  margin-bottom: 5px;
-  color: #0086c9;
+    font-size: 1rem;
+    margin-bottom: 5px;
+    color: #0086c9;
 }
 .child-form_select {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, 160px);
-  margin: 10px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 160px);
+    margin: 10px 0;
 }
 
 @media (max-width: 1000px) {
-  .child-form {
-    display: grid;
-    grid-template-columns: minmax(150px, 200px);
-  }
-  .child-form_heading, .child-form_span-2 {
-    grid-column: span 1;
-  }
+    .child-form {
+        display: grid;
+        grid-template-columns: minmax(150px, 200px);
+    }
+    .child-form_heading, .child-form_span-2 {
+        grid-column: span 1;
+    }
 }
 
 

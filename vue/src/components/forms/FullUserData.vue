@@ -1,6 +1,6 @@
 <template>
 
-    <section v-if='data_loaded' class='child-form-wrapper card shadow'>
+    <section v-if='data_loaded' class='child-form-wrapper card' :class='{shadow: independent}'>
 
         <article class="child-form">
 
@@ -251,7 +251,11 @@ export default {
   props: {
       input: {
           type: String,
-          default: "",
+          default: '',
+      },
+      independent: {
+          type: Boolean,
+          default: false
       }
   },
   components: {

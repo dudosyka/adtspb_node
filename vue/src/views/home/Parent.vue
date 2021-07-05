@@ -11,29 +11,29 @@
             <p>Хочет стать вашим родителем</p>
             <section v-if="show.needData">
                 <!-- TODO: Стилизовать строку -->
-                Заполните недостающие данные:
+                <h2>Заполните недостающие данные:</h2>
                 <article class="child-data_table">
-                  <article class="child-data_table-group">
-                    <div>
-                      <inputField
-                        label="Номер свидетельства о рождении"
-                        v-model="child.birth_certificate"
-                        :error="errors['birth_certificate']"
-                      />
-                    </div>
+                    <article class="child-data_table-group">
+                        <div>
+                            <inputField
+                            label="Номер свидетельства о рождении"
+                            v-model="child.birth_certificate"
+                            :error="errors['birth_certificate']"
+                            />
+                        </div>
 
-                    <div>
-                      <div class="input-container">
-                        <label class="label" v-bind:class="{'label-up': child.birthday}">Дата рождения</label><br>
-                        <input
-                          class="type"
-                          type="date"
-                          v-model="child.birthday"
-                          :class="{'input-error': errors['birthday']}"
-                        >
-                      </div>
-                    </div>
-                  </article>
+                        <div>
+                            <div class="input-container">
+                            <label class="label" v-bind:class="{'label-up': child.birthday}">Дата рождения</label><br>
+                            <input
+                              class="type"
+                              type="date"
+                              v-model="child.birthday"
+                              :class="{'input-error': errors['birthday']}"
+                            >
+                            </div>
+                        </div>
+                    </article>
 
                   <article class="child-data_table-group">
                     <div class="child-data_row">

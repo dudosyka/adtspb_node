@@ -19,22 +19,23 @@
 
         </section>
 
-        <section class="child-form-wrapper" v-show="childrenRaw.length > 0">
+        <section class="child-form-wrapper card shadow" v-show="childrenRaw.length > 0">
 
           <article class="child-data" v-for="(raw, number) in childrenRaw" v-show="show.childData === number">
 
-              <FullUserData :input='JSON.stringify(raw)'></FullUserData>
+              <FullUserData :input='JSON.stringify(raw)' ></FullUserData>
 
-            <div class="buttons">
               <h2 class="form-heading"> {{ edit.message }} </h2>
               <p class="label-error"> {{ edit.error }} </p>
 
               <h2 class="form-heading"> {{ remove.message }} </h2>
               <inputField
-                label="Комментарий к удалению"
-                v-if="remove.hidden"
-                v-model="remove.comment"
+                  label="Комментарий к удалению"
+                  v-if="remove.hidden"
+                  v-model="remove.comment"
               />
+
+            <div class="buttons">
               <button class="light-box light-button" v-if="!remove.hidden" @click="remove.hidden = true">Удалить</button>
               <button class="light-box light-button" v-if="remove.hidden" @click="removeChild(number)">Удалить</button>
             </div>
