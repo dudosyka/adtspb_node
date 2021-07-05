@@ -5,6 +5,10 @@ input, input:before, input:after {
   -ms-user-select: initial !important;
   user-select: initial !important;
 }
+input[type="date"] {
+  font-family: sans-serif;
+  height: 39px;
+}
 
 /* Form */
   .form {
