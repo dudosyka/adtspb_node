@@ -35,13 +35,6 @@
             </div>
           </div>
 
-          <!-- Не используется
-          <div class="checkbox-container" v-on:click="remember = !remember">
-            <input type="checkbox" v-model="remember" class="checkbox" tabindex="3">
-            <label class="checkbox">Запомнить меня</label>
-          </div>
-          !-->
-
           <div class="buttons">
             <button class="dark-button" @click="auth()" tabindex="4">Войти</button>
             <router-link to="/signup" tabindex="5" class="light-button">Регистрация</router-link>
