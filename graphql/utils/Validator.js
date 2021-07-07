@@ -47,7 +47,7 @@ Validator.prototype.email = function () {
 Validator.prototype.phone = function () {
     this.fields.map(el => {
         if (el.val !== null) {
-            if (el.val.search(/^[0-9]{11}$/) == -1)
+            if (el.val.search(/^[0-9]{10}$/) == -1)
                 this.reject(el.name);
         }
         else {

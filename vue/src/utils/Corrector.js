@@ -10,10 +10,6 @@ Corrector.translateWeekDay = function (day) {
     if (day === 'sunday') return 'воскресенье';
 }
 
-Corrector.phone = function (phone) {
-    return phone.length < 11 ? "8" + phone : phone;
-}
-
 Corrector.correctYears = function (years) {
   if (years > 1) {
     return ' года'

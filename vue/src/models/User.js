@@ -17,8 +17,17 @@ User.login = async function ({login, pass}) {
     if (!Validator.validateNotEmpty(pass))
         errs.push('password');
 
-    if (!Validator.validateEmail(login) && !Validator.validatePhone(login))
-        errs.push('login');
+    if (login.indexOf('@') == -1) {
+        if (!Validator.validatePhone(login, true))
+            errs.push('login');
+        else {
+            login = login.substr(1);
+        }
+    }
+    else {
+        if (!Validator.validateEmail(login))
+            errs.push('login');
+    }
 
     if (errs.length)
         throw {msg: errs};
@@ -81,9 +90,6 @@ User.setOnConfirm = function () {
 
 User.signUp = async function (data, makeParent = false) {
     console.log(data);
-
-    if (data.phone != 8)
-        data.phone = Corrector.phone(data.phone);
 
     let errs = [];
     const validateRes = Validator.validateNotEmpty(data, true, ['lastname']);
@@ -201,13 +207,11 @@ function userDataProcessing(entity, parse = true) {
             errors
         };
 
-    entity.masked = {};
-
-    let formattingPhone = entity.phone.split('');
-    formattingPhone.shift();
-    entity.masked.phone = formattingPhone.join('');
-
-    entity.sex = entity.sex;
+    if (entity.phone) {
+        entity.masked = {
+            phone: entity.phone
+        };
+    }
 
     return {
         data: entity,
@@ -261,7 +265,7 @@ User.getChildren = async function (fields = null, parse = true) {
     });
 }
 
-User.getFullData = async function (fields = null, parse = true) {
+User.getFullData = async function (fields = null, id = null, parse = true) {
     if (fields === null) {
         fields = {
            id: null,
@@ -293,14 +297,18 @@ User.getFullData = async function (fields = null, parse = true) {
     const fieldsOnGet = Parser.objToGraphQlQuery(fields);
 
     let req = `
-      query {
-        getFullUserData {
+      query ($id: Int) {
+        getFullUserData (id: $id) {
             `+ fieldsOnGet +`
         }
       }
     `;
 
-    return await _request("api", req).then(data => {
+    const data = {
+        id: id === null ? null : Number(id)
+    };
+
+    return await _request("api", req, data).then(data => {
         const el = data.getFullUserData;
 
         return userDataProcessing(el, parse);
@@ -321,9 +329,6 @@ User.editMainData = async function (obj, target_id = 0) {
         errs = validateRes;
 
     if (obj.phone) {
-
-        obj.phone = Corrector.phone(obj.phone);
-
         if (!Validator.validatePhone(obj.phone))
             errs.push('phone');
     }
@@ -407,8 +412,6 @@ User.addChild = async function (child) {
     if (validateRes !== true)
         errs = validateRes;
 
-    child.phone = Corrector.phone(child.phone);
-
     if (!Validator.validatePhone(child.phone))
         errs.push('phone');
 
@@ -445,13 +448,8 @@ User.sendParentRequest = async function (login) {
     }
   `
 
-  let data = {}
-
-  if (login.indexOf('@') !== -1) {
-    data.child_data = login;
-  }
-  else {
-    data.child_data = Corrector.phone(login);
+  let data = {
+      child_data: login
   }
 
   return _request("api", req, data).then(data => {

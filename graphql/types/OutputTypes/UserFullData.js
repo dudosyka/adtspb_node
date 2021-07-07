@@ -10,7 +10,10 @@ module.exports = new graphql.GraphQLObjectType({
     //Arrow func to prevent 'use before initialization' err
     fields: () => ({
         id: {
-            type: graphql.GraphQLID
+            type: graphql.GraphQLID,
+            resolve(obj) {
+                return obj.user_id ?? obj.id;
+            }
         },
         name: {
             type: graphql.GraphQLString,
@@ -90,7 +93,13 @@ module.exports = new graphql.GraphQLObjectType({
         proposals: {
             type: graphql.GraphQLList(ProposalType),
             async resolve (obj, data) {
-                return await Proposal.selectByChild(obj.id);
+                if (obj.user_id) {
+                    obj.id = obj.user_id;
+                }
+                console.log("OBJECT", obj);
+                const proposals = await Proposal.selectByChild(obj.id);
+                console.log("PROPOSALS", proposals);
+                return proposals;
             }
         },
     })

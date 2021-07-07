@@ -102,10 +102,11 @@
 
       children.map((child) => {
         const proposals = child.data.proposals.map(el => {
+
           return {
             id: el.id,
             name: el.association.name,
-            status: el.status[0].text,
+            status: el.status.length ? el.status[0].text : "",
             download: "",
             print: ""
           }
