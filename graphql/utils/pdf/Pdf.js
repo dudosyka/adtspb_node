@@ -57,7 +57,7 @@ Pdf.prototype.generateProposal = async function () {
             <p style='font-size: 8pt; margin-top: 0;text-align: center; padding-top: 0;'>(ФИО родителя полностью)</p>
         </div>
 
-        <div style='padding-top: 100px; width: 100%;'>
+        <div style='padding-top: 200px; width: 94%; margin-left: 3%;'>
             <h2 style='text-align: center;'>ЗАЯВЛЕНИЕ</h2>
             <p style='padding-bottom: 0; margin-bottom: 0;'>Я, <u>` + parent.surname + ' ' + parent.name + ' ' + parent.lastname + `</u>,</p>
             <p style='font-size: 8pt; margin-left: 40px; padding-bottom: 0; padding-top: 0; margin-top: 0; margin-bottom: 0;'>(ФИО родителя полностью)</p>
@@ -90,13 +90,14 @@ Pdf.prototype.generateProposal = async function () {
         </div>
 
 
-        <div>
-            <div style='margin-top: 40px;'>
-                ` + current_day + `
+        <div style='width: 94%; margin-left: 3%;'>
+            <div style='margin-top: 40px'>
+                <p>"___" _____________ 202__</p>
             </div>
 
-            <div style='float: right; display: block; width: 200px; margin-top: -40px;'>
-                 <p style='text-align: center;margin-bottom: 0; padding-bottom: 0;'>_______________________</p>
+            <div style='float: right; display: inline-block; width: 200px; margin-top: -40px; right: 3%;'>
+
+                 <p style='text-align: center;margin-bottom: 0; padding-bottom: 0;'>_____________________</p>
                  <p style='text-align: center; font-size: 8pt; padding-top: 0; margin-top: 0; margin-bottom: 0; padding-bottom: 0;'>Подпись родителя</p>
             </div>
         </div>`
