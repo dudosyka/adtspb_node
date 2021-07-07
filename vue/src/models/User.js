@@ -201,13 +201,13 @@ function userDataProcessing(entity, parse = true) {
             errors
         };
 
-    entity.masked = {};
+    if (entity.phone) {
+        entity.masked = {};
 
-    let formattingPhone = entity.phone.split('');
-    formattingPhone.shift();
-    entity.masked.phone = formattingPhone.join('');
-
-    entity.sex = entity.sex;
+        let formattingPhone = entity.phone.split('');
+        formattingPhone.shift();
+        entity.masked.phone = formattingPhone.join('');
+    }
 
     return {
         data: entity,
@@ -261,7 +261,7 @@ User.getChildren = async function (fields = null, parse = true) {
     });
 }
 
-User.getFullData = async function (fields = null, parse = true) {
+User.getFullData = async function (fields = null, id = null, parse = true) {
     if (fields === null) {
         fields = {
            id: null,
@@ -293,14 +293,18 @@ User.getFullData = async function (fields = null, parse = true) {
     const fieldsOnGet = Parser.objToGraphQlQuery(fields);
 
     let req = `
-      query {
-        getFullUserData {
+      query ($id: Int) {
+        getFullUserData (id: $id) {
             `+ fieldsOnGet +`
         }
       }
     `;
 
-    return await _request("api", req).then(data => {
+    const data = {
+        id: id === null ? null : Number(id)
+    };
+
+    return await _request("api", req, data).then(data => {
         const el = data.getFullUserData;
 
         return userDataProcessing(el, parse);

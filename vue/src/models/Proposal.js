@@ -19,17 +19,6 @@ Proposal.getPdfBlob = async function (proposal_id) {
         throw err;
     })
 }
-//
-// .then(response =>  response.blob().then(function(myBlob) {
-//     var objectURL = URL.createObjectURL(myBlob);
-//     document.querySelector('#pdf-frame').src = objectURL;
-// 	  objectURL = URL.revokeObjectURL(myBlob);
-// }).then(
-//     function() {
-//         window.setTimeout(function() {
-//             document.querySelector('#pdf-frame').contentWindow.print();
-//         }, 1000)
-//     });
 
 Proposal.downloadPdf = async function (proposal_id, name) {
     const blob = await this.getPdfBlob(proposal_id);
@@ -70,6 +59,19 @@ Proposal.create = async function (association, child) {
     };
 
     return await _request("api", req, data).then(data => data.createProposal);
+}
+
+Proposal.createFromObject = async function (obj, child_id) {
+    Object.keys(obj).map(async index => {
+      const assoc = obj[index];
+      const childId = Number(child_id);
+      const assocId = Number(assoc.id);
+
+      if (assoc.already)
+          return;
+
+      await Proposal.create(assocId, childId);
+    });
 }
 
 Proposal.canJoinAssociation = async function (association, child) {
