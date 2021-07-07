@@ -13,7 +13,7 @@
         </article>
       </section>
 
-      <!-- Back succesful answer !-->
+      <!-- Back successful answer !-->
       <section v-if="show.childReg" class="card_wrapper horizontal-center without-arrow">
         <section class="card shadow ">
           <h2 class="form-heading">{{ message }}</h2>

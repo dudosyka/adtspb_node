@@ -15,7 +15,7 @@
             ></span>
           </section>
 
-          <router-link to="/child/add" class="dark-box dark-button child-add">+ Добавить ребёнка</router-link>
+            <router-link to="/child/add" class="dark-box dark-button child-add"><span class="child-add_plus">&#43; </span>Добавить ребёнка</router-link>
 
         </section>
 
@@ -48,56 +48,56 @@
 </template>
 
 <style scoped>
-  .home-content {
+.home-content {
     display: grid;
     grid-template-columns: auto 1fr;
     grid-gap: 10px;
     padding: 30px 30px;
-  }
-  .children {
+}
+.children {
     display: flex;
     flex-direction: column;
-  }
-  .children-data {
+}
+.children-data {
     padding: 60px;
-  }
-  .child {
+}
+.child {
     display: grid;
     grid-gap: 10px;
     grid-template-columns: 1fr 15px;
-  }
-  .child:hover {
+}
+.child:hover {
     cursor: pointer;
-  }
-  .child_heading {
+}
+.child_heading {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-  }
-  .child-name {
+}
+.child-name {
     margin: 0;
     color: #142732;
     align-self: center;
-  }
+}
 
-  .to-associations {
+.to-associations {
     margin: 20px;
     color: #3e91b1;
     background-color: #fff;
     transition: 0.3s;
-  }
-  .child:hover .to-associations {
+}
+.child:hover .to-associations {
     opacity: 100%;
     color: #fff;
     background-color: #0086c9;
-  }
+}
 
-  .child-to-data {
+.child-to-data {
     margin-left: 10px;
     transition: 0.3s;
     align-self: center;
-  }
-  .child-to-data::after {
+}
+.child-to-data::after {
     content: '';
     display: block;
     width: 0px;
@@ -109,11 +109,11 @@
     border-left-style: none;
     opacity: 20%;
     transition: transform 0.3s ease-out;
-  }
-  .child:hover .child-to-data::after {
+}
+.child:hover .child-to-data::after {
     transform: translateX(10px);
-  }
-  .child-from-data::after {
+}
+.child-from-data::after {
     border: 10px solid #0086c9;
     border-top-color: rgba(0,0,0,0);
     border-bottom-color: rgba(0,0,0,0);
@@ -122,16 +122,23 @@
     border-right-style: none;
 
     opacity: 100%;
-  }
-  .child-add {
+}
+.child-add {
     align-self: center;
     margin-top: 20px;
-  }
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.child-add_plus {
+    font-size: 25px;
+    margin: 0 10px 0 0;
+}
 
 
-  .buttons {
+.buttons {
     margin-top: 30px;
-  }
+}
 </style>
 
 <script>
