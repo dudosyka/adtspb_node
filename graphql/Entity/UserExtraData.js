@@ -75,7 +75,7 @@ UserExtraData.prototype.checkChildData = function () {
                 [
                     'birthday'
                 ],
-                'Student should be older than 6 yo'
+                'Invalid age'
             ).age(6, 18)
         ];
     }

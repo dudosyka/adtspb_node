@@ -243,7 +243,7 @@
         <br v-if='message.length' />
 
         <div class="buttons wp100">
-          <button class="dark-box dark-button register-button" :disabled='blockSaveBtn' @click="saveEditedData()">Сохранить</button>
+          <button class="dark-box dark-button register-button" @click="saveEditedData()">Сохранить</button>
         </div>
     </section>
 
@@ -348,9 +348,8 @@ export default {
           console.log(this.data);
           console.log(this.clearData);
           if (this.data.phone !== this.clearData.phone.substr(1)) {
-              this.setDataOnEdit('phone', 'main', false, "8" + this.data.phone);
+              this.setDataOnEdit('phone', 'main', false, this.data.phone);
           }
-
           console.log(this.dataOnEdit);
 
           if (Object.keys(this.dataOnEdit.main).length)
@@ -361,7 +360,7 @@ export default {
               User.editExtraData(this.dataOnEdit.extra, this.target_id)
               .then(data => { this.message = "Изменения успешно отправлены в обработку!"; })
               .catch(err => this.formErrorParser(err));
-      }
+      },
   },
   async created()
   {
@@ -384,11 +383,6 @@ export default {
           this.clearData = clone(input.data);
           this.errors_proto = clone(input.errors);
           this.errors = clone(input.errors);
-      }
-  },
-  computed: {
-      blockSaveBtn: function () {
-          return !Object.keys(this.dataOnEdit.extra).length && !Object.keys(this.dataOnEdit.main).length;
       }
   }
 }

@@ -43,8 +43,8 @@ Validator.validateAddressNotEmpty = function (address) {
     return this.validateNotEmpty({...address}, true);
 }
 
-Validator.validatePhone = function (phone) {
-    return phone.search(/^[0-9]{11}$/) != -1;
+Validator.validatePhone = function (phone, full = false) {
+    return full ? phone.search(/^[0-9]{11}$/) != -1 : phone.search(/^[0-9]{10}$/) != -1;
 }
 
 export {Validator};
