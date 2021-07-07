@@ -14,8 +14,8 @@
       </section>
 
       <!-- Back succesful answer !-->
-      <section v-if="show.childReg" class="card_wrapper">
-        <section class="card shadow">
+      <section v-if="show.childReg" class="card_wrapper horizontal-center without-arrow">
+        <section class="card shadow ">
           <h2 class="form-heading">{{ message }}</h2>
           <div class="buttons">
             <router-link class="dark-button dark-box" to="/child">Вернуться в "Мои дети"</router-link>
@@ -260,6 +260,10 @@
   .register-button {
     margin-top: 20px;
   }
+
+  .without-arrow {
+      margin-top: 30px;
+  }
 </style>
 
 <script>
@@ -409,6 +413,7 @@
           User.addChild({...this.childRaw}).then(res => {
               if (res) {
                   this.message = 'Ребёнок успешно добавлен';
+                  this.show.registration = false;
                   this.show.childReg = true;
               }
           }).catch(err => {

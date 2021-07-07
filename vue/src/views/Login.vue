@@ -35,7 +35,11 @@
               </button>
             </div>
           </div>
+<<<<<<< Updated upstream
 
+=======
+          
+>>>>>>> Stashed changes
           <div class="buttons">
             <button class="dark-button" @click="auth" tabindex="4">Войти</button>
             <router-link to="/signup" tabindex="5" class="light-button">Регистрация</router-link>
