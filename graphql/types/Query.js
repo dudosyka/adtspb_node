@@ -137,9 +137,13 @@ module.exports = new GraphQLObjectType({
         },
         getFullUserData: {
             type: UserFullDataType,
-            args: {},
-            async resolve(obj, {}) {
-                return User.getFullData(obj().viewer.id);
+            args: {
+                id: {
+                    type: graphql.GraphQLInt
+                }
+            },
+            async resolve(obj, { id }) {
+                return User.getFullData(id ?? obj().viewer.id);
             }
         },
         getChildRequests: {

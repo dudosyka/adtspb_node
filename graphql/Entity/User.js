@@ -190,6 +190,9 @@ User.prototype.getChildren = async function () {
 }
 
 User.prototype.getFullData = async function (id = false) {
+    if (id === null) {
+        id = false;
+    }
     return (await this.db.query("SELECT * FROM `user` as `main` LEFT JOIN `user_extra_data` AS `data` ON `main`.`id` = `data`.`user_id` WHERE `main`.`id` = ?", id ? id : this.__get('id')))[0];
 }
 
