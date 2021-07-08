@@ -149,21 +149,28 @@ baseEntity.prototype.search = async function (Search) {
     return await db.select(this, query, data);
 }
 
-baseEntity.prototype.validator = function (field, onErr = "Validate error") {
-    let values = field.map(el => {
-        return {
-            name: el,
-            val: this.__get(el),
-        };
+baseEntity.prototype.fieldsOnValidate = [];
+
+baseEntity.prototype.validator = function (fields, onErr = "Validate error") {
+    let values = fields.map(el => {
+        if (this.fieldsOnValidate.includes(el)) {
+            return {
+                name: el,
+                val: this.__get(el),
+            };
+        }
     });
+    values = values.filter(el => el !== undefined);
+    console.log(values);
     return (new Validator(values, onErr));
 }
 
-baseEntity.prototype.validate = function () {
-    let rules = this.validateRules();
+baseEntity.prototype.validate = async function (fieldsOnValidate = null) {
+    this.fieldsOnValidate = fieldsOnValidate ?? Object.keys(this.fields);
+    let rules = await this.validateRules();
     let errs = {};
     for (rule in rules) {
-        if (!rules[rule].check())
+        if (!rules[rule].check(this.fieldsOnValidate))
             errs = Object.assign(errs, rules[rule].errs);
     }
     return (Object.keys(errs).length > 0) ? errs : true;

@@ -47,10 +47,10 @@ User.prototype.createFromUnique = async function (data) {
 
 User.prototype.getInstance = () => User;
 
-User.prototype.validateRules = function () {
+User.prototype.validateRules = async function () {
     return [
         this.validator(['name', 'surname', 'sex', 'email', 'phone', 'password'], 'Can`t be empty.').notNull(),
-        this.validator(['phone'], 'Should be valid phone number.').phone(),
+        await this.validator(['phone'], 'Should be valid phone number.').phone(),
         this.validator(['email'], 'Should be valid email.').email(),
         this.validator(['sex'], 'Invalid format').match(/^[0-1]{1}$/),
     ];
@@ -400,8 +400,25 @@ User.prototype.getTargetOfEditing = async function (target_id) {
 User.prototype.setMainDataOnEdit = async function (data, target_id) {
     let target = await this.getTargetOfEditing(target_id);
 
+    const model = this.newModel();
+    model.fields = {...data};
+    const validateRes = await model.validate(Object.keys(data));
+
+    if (validateRes !== true) {
+        throw Error(JSON.stringify(validateRes));
+    }
+
+    let pairs = await model.checkForPairs('email', model.__get('email'));
+
+    if (pairs.length > 0)
+        throw Error('Email must be unique');
+
+    pairs = await model.checkForPairs('phone', model.__get('phone'));
+
+    if (pairs.length > 0)
+        throw Error('Phone must be unique');
+
     if (target !== false) {
-        const model = this.newModel();
         target = await model.baseCreateFrom({ id: target_id });
     } else {
         target = this;
@@ -412,6 +429,14 @@ User.prototype.setMainDataOnEdit = async function (data, target_id) {
 
 User.prototype.setExtraDataOnEdit = async function (data, target_id, autoConfirm = false) {
     let target = await this.getTargetOfEditing(target_id);
+
+    const model = UserExtraData.newModel();
+    model.fields = {...data};
+    const validateRes = await model.checkChildData(Object.keys(data));
+
+    if (validateRes !== true) {
+        throw Error(JSON.stringify(validateRes));
+    }
 
     target = await UserExtraData.createFrom({ user_id: target === false ? this.__get('id') : target});
 

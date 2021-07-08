@@ -44,11 +44,12 @@ Validator.prototype.email = function () {
     return this;
 }
 
-Validator.prototype.phone = function () {
+Validator.prototype.phone = async function () {
     this.fields.map(el => {
         if (el.val !== null) {
-            if (el.val.search(/^[0-9]{10}$/) == -1)
+            if (el.val.search(/^[0-9]{10}$/) == -1) {
                 this.reject(el.name);
+            }
         }
         else {
             this.reject(el.name);
@@ -120,14 +121,16 @@ Validator.prototype.age = function (minAge, maxAge = null) {
     return this;
 }
 
-Validator.prototype.check = function () {
+Validator.prototype.check = function (fieldsOnValidate) {
     if (this.canBeNull)
         return this.result;
     else
     {
         this.fields.map(el => {
-            if (el.value === null) {
-                return false;
+            if (fieldsOnValidate.includes(el.name)) {
+                if (el.value === null) {
+                    return false;
+                }
             }
         });
 
