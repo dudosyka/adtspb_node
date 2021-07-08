@@ -7,6 +7,7 @@ const User = require('../Entity/User');
 const UserType = require('./EntityTypes/User');
 const UserExtraData = require('../Entity/UserExtraData');
 const UserFullDataType = require('./OutputTypes/UserFullData');
+const UserRightsOutput = require('./OutputTypes/UserRights');
 
 const UserChild = require('../Entity/UserChild');
 
@@ -43,6 +44,13 @@ module.exports = new GraphQLObjectType({
                 viewer.fields.roles = viewer.__get('__role');
 
                 return viewer.fields;
+            }
+        },
+        userRights: {
+            type: UserRightsOutput,
+            async resolve(obj, data) {
+                const rights = rbac.auth(obj().viewer.id);
+                return rights;
             }
         },
         user: {
@@ -108,8 +116,8 @@ module.exports = new GraphQLObjectType({
             type: EmailValidationType,
             args: {},
             async resolve(obj, {}) {
-                const viewer = await User.createFrom(obj().viewer);
-                return viewer.__get('isConfirmed').fields;
+                const confirmation = await EmailValidation.checkConfirmation(obj().viewer.id);
+                return confirmation.fields;
             }
         },
         //Check what data need to be child

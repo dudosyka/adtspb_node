@@ -75,20 +75,37 @@ app.use('/api', async (req, res, next) =>
         console.log(data);
         if (data !== false && Object.keys(data).length != 1)
         {
+            //If request is not in white list start checking email_validation
             if (!AppConfig.requestWhiteList.includes(endPointName))
             {
-                const confirm = await EmailValidation.checkConfirmation(data.id);
-                if (confirm.__get('code') != null)
-                {
-                    const response = {message: "Not confirmed"};
+                //If email_confirmation parm is not set in token return refresh
+                if (data.confirm == null) {
+                    const response = {message: "refresh"};
                     res.status(200).end(JSON.stringify(response));
                     return;
+                }
+                //If email_confirmation parm set but false check it
+                else if (data.confirm == false) {
+                    const confirm = await EmailValidation.checkConfirmation(data.id);
+                    //If email_confirmation truly false as set in token return not confirmed
+                    if (confirm.__get('code') != null) {
+                        const response = {message: "Not confirmed"};
+                        res.status(200).end(JSON.stringify(response));
+                        return;
+                    }
+                    //If information in token and in DB isnt same return refresh
+                    else {
+                        const response = {message: "refresh"};
+                        res.status(200).end(JSON.stringify(response));
+                        return;
+                    }
                 }
             }
             rootValue = {
                 ...rootValue,
                 viewer: {
-                    id: data.id
+                    id: data.id,
+                    isConfirmed: data.confirm
                 },
             };
         }
@@ -113,7 +130,11 @@ app.use('/api', graphqlHTTP({
 
 app.use('/endoor', (req, res, next) => {
 	console.log(req.body);
-	next();
+    try {
+        next();
+    } catch (err) {
+        console.log(err);
+    }
 });
 
 app.use('/endoor', graphqlHTTP({

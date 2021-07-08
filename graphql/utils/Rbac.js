@@ -80,26 +80,11 @@ Rbac.prototype.auth = async function (user_id)
 {
 
    //Get all roles
-   let roles = await db.query('SELECT `auth_role_id` FROM `user_role` WHERE `user_id` = ?', [ user_id ]).then(data => data.map(el => el.auth_role_id));
-   let rules = [];
+   const roles = await db.query('SELECT `auth_role_id` FROM `user_role` WHERE `user_id` = ?', [ user_id ]).then(data => data.map(el => el.auth_role_id));
 
-   //Get rule for every role
-   for (role in roles) {
-       rules.push(await db.query("SELECT `rule` FROM `auth_assignment_min` WHERE `role` = ?", [ roles[role] ])
-        .then(data => data.map(el => el.rule))
-        .catch(err => {
-           return false;
-       }));
-   }
-
-   //Remove nested arrays
-   let res = [];
-   for (rule in rules) {
-       res = res.concat(rules[rule], res);
-   }
-
-   //Get only unique rules
-   rules = res.filter((value, index, self) => (self.indexOf(value) === index));
+   //Get all rules of every role
+   const {ids, query} = db.createRangeQuery(false, roles, 'role');
+   const rules = await db.query('SELECT `rule` FROM `auth_assignment_min` WHERE ' + query, ids).then(data => data.map(el => el.rule));
 
    //Return roles and rules
    return {

@@ -21,6 +21,12 @@ module.exports = new graphql.GraphQLObjectType({
             resolve(obj, {}) {
                 return obj.code == null;
             }
+        },
+        token: {
+            type: graphql.GraphQLString,
+            resolve(obj, {}) {
+                return (obj.code != null) ? "" : obj.token;
+            }
         }
     })
 });

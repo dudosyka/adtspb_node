@@ -24,12 +24,14 @@ let User = function () {  }
 
 User.prototype = Object.assign(User.prototype, baseEntity.prototype);
 
-User.prototype.createFrom = async function (data) {
-    await this.baseCreateFrom(data);
+User.prototype.createFrom = async function (data, baseCreating = true, checkConfirmation = true) {
+    if (baseCreating)
+        await this.baseCreateFrom(data);
     let { role, rules } = await rbac.auth(this.__get('id'));
     this.fields.__role = role;
     this.fields.__accessible = rules;
-    this.fields.isConfirmed = await EmailValidation.checkConfirmation(this.__get('id'));
+    if (checkConfirmation)
+        this.fields.isConfirmed = await EmailValidation.checkConfirmation(this.__get('id'));
     return this;
 }
 
@@ -81,8 +83,10 @@ User.prototype.auth = async function (data) {
         if (res.length)
         {
             let user = await res[0];
-            if (await compare(data['pass'], user.password).catch(err => { console.error(err); }))
-              resolve({status: true, res: user});
+            if (await compare(data['pass'], user.password).catch(err => { console.error(err); })) {
+                const confirmation = await EmailValidation.checkConfirmation(user.id);
+                resolve({status: true, res: user, confirm: confirmation.__get('code') == null});
+            }
             else
              resolve({status: false, res: 'password incorrect'});
         }
@@ -120,7 +124,7 @@ User.prototype.encryptPassword = async function () {
 User.prototype.fullname = function () { return this.__get('surname') + " " + this.__get("name") + " " + this.__get('lastname'); }
 
 User.prototype.createNew = async function (roles = []) {
-    let validate = this.validate();
+    let validate = await this.validate();
     if (validate !== true) {
         throw Error(JSON.stringify(validate));
     }
@@ -162,7 +166,7 @@ User.prototype.createNew = async function (roles = []) {
         });
 
         answ.id = id;
-        answ.token = await jwt.sign({id: id});
+        answ.token = await jwt.sign({id: id, confirm: false});
 
         return answ;
     }

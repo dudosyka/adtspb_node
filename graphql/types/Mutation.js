@@ -20,6 +20,9 @@ const rbac = new Rbac();
 const Db = require("../utils/Db");
 const db = new Db();
 
+const Jwt = require('../utils/Jwt');
+let jwt = new Jwt();
+
 const { client } = require('../utils/Redis');
 
 module.exports = new GraphQLObjectType({
@@ -90,6 +93,9 @@ module.exports = new GraphQLObjectType({
             },
             async resolve (obj, { code }) {
                 const result = await EmailValidation.confirmUser(code, obj().viewer.id);
+                if (result.code == null) {
+                    result.token = await jwt.sign({ id: obj().viewer.id, confirm: true });
+                }
                 return result;
             }
         },

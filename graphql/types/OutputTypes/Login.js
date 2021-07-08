@@ -9,6 +9,9 @@ module.exports = new graphql.GraphQLObjectType({
         },
         id: {
             type: graphql.GraphQLInt
+        },
+        isConfirmed: {
+            type: graphql.GraphQLBoolean
         }
     })
 });
