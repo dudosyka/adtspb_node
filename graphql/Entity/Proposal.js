@@ -40,7 +40,7 @@ Proposal.prototype.createFromInput = async function (proposal) {
         parent_id: proposal["parent"] ? proposal["parent"]["id"] ? parseInt(proposal["parent"]["id"]) : null : null,
         child_id: proposal["child"] ? proposal["child"]["id"] ? parseInt(proposal["child"]["id"]) : null : null,
     };
-    // console.log("proposal", data);
+
     return await this.baseCreateFrom(data);
 }
 
@@ -81,8 +81,6 @@ Proposal.prototype.checkStudyLoad = async function () {
     associations.map(el => {
         hours += el.hours_week;
     });
-
-    console.log(hours);
 
     return hours;
 }

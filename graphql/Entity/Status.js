@@ -26,7 +26,7 @@ Status.prototype.setToCreate = function () {
         text: "Подано",
         hidden: 0
     });
-    console.log(this.fields);
+    
     this.save();
 }
 

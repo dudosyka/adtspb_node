@@ -28,8 +28,7 @@ module.exports = new GraphQLObjectType({
                 const auth = await User.auth({ user: login, pass: password });
                 if (auth.status !== true)
                     throw Error(auth.res);
-                const id = auth.res.id;
-                // console.log(auth.res.id);
+                const id = auth.res.id
                 return {
                     token: await jwt.sign({ id: id }),
                     id: id,
@@ -84,9 +83,7 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve (obj, { code, user_id }) {
-                // console.log(viewer.__get('id'));
                 const result = await EmailValidation.confirmUser(code, user_id);
-                console.log(result);
                 return result;
             }
         },

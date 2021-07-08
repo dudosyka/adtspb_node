@@ -82,9 +82,6 @@ baseEntity.prototype.__set = function (field, value) {
     let res = this.fields[field];
     let sec = null;
 
-    console.log('field', this.fields['id']);
-    console.log(typeof res);
-
     if (this.aliases[field])
         sec = this.fields[this.aliases[field]];
 
@@ -161,7 +158,6 @@ baseEntity.prototype.validator = function (fields, onErr = "Validate error") {
         }
     });
     values = values.filter(el => el !== undefined);
-    console.log(values);
     return (new Validator(values, onErr));
 }
 

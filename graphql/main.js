@@ -7,6 +7,5 @@ try {
   console.log("App listen on localhost:" + AppConfig.port);
 }
 catch (err) {
-  // console.log("Error catched!");
   console.log(err);
 }

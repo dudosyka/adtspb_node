@@ -34,9 +34,8 @@ User.prototype.createFrom = async function (data) {
 }
 
 User.prototype.createFromUnique = async function (data) {
-    console.log("DATA", data);
     const usr = await this.db.select(this, '`phone` = ? OR `email` = ?', [ data, data ]);
-    console.log(usr);
+
     if (usr.length)
     {
         const model = this.newModel();
@@ -65,16 +64,6 @@ User.prototype.fields = {
     phone: null,
     sex: null,
     password: null,
-}
-
-User.prototype.getRole = async function () {
-    return this.db.query("SELECT `role_id` FROM `user_role` WHERE `user_id` = ?", [ this.__get('id') ])
-        .then(data => {
-            console.log(data);
-        })
-        .catch(err => {
-            console.error(err);
-        });
 }
 
 User.prototype.hasAccess = function (rule) {
@@ -157,10 +146,6 @@ User.prototype.createNew = async function (roles = []) {
         const id = usr.insertId;
 
         const validation = await EmailValidation.setOnConfirmation(id, this.__get('email'), this.fullname());
-
-        // console.log(this.__get('email'));
-        // console.log(fullname);
-        // console.log(validation.__get('code'));
 
         if (usr === false)
             throw Error('Saving data failed');
@@ -262,8 +247,7 @@ User.prototype.addChild = async function (child_data) {
         const child = await this.createFromUnique(child_data);
         if (child == null)
             throw Error('Child not found')
-        console.log(child.fields);
-        // console.log(this.fields);
+
         if ((await child.checkRole(AppConfig.child_role_id)) === false)
             throw Error('You can`t send addChild request to user who is not a child');
 
@@ -311,16 +295,14 @@ User.prototype.agreeParentRequest = async function (parent_id, newData) {
 
     const request = await UserChild.baseCreateFrom({parent_id: parent_id, child_id: this.__get('id')});
     const checkRelationship = await request.checkRelationship();
-    console.log(1);
+
     if (!checkRelationship)
         throw Error('Request not found');
 
-    console.log(2);
     const requestExists = await request.parentRequestExists(this.__get('id'));
     if (requestExists !== true)
         throw Error(requestExists);
 
-    console.log(3);
     await this.setChildData(this.__get('id'), newData);
     await request.agreeParentRequest();
 

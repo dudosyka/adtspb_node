@@ -60,9 +60,7 @@ module.exports = new graphql.GraphQLObjectType({
         proposals: {
             type: graphql.GraphQLList(ProposalType),
             async resolve (obj, data) {
-                console.log('OBJ: ',obj);
                 let proposals = await Proposal.selectByAssociation(obj);
-                console.log('Proposal: ', proposals);
                 return proposals;
             }
         }

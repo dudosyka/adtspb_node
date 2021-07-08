@@ -41,7 +41,7 @@ module.exports = new GraphQLObjectType({
                 let viewer = await User.createFrom(obj().viewer);
                 viewer.fields.rules = viewer.__get('__accessible');
                 viewer.fields.roles = viewer.__get('__role');
-                console.log(viewer.fields);
+
                 return viewer.fields;
             }
         },
@@ -109,7 +109,6 @@ module.exports = new GraphQLObjectType({
             args: {},
             async resolve(obj, {}) {
                 const viewer = await User.createFrom(obj().viewer);
-                // console.log(viewer.__get('id'));
                 return viewer.__get('isConfirmed').fields;
             }
         },

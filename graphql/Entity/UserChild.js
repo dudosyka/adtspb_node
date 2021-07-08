@@ -16,7 +16,6 @@ UserChild.prototype.fields = {
 };
 
 UserChild.prototype.checkRelationship = async function () {
-    // console.log(this.fields);
     const req = await this.db.select(this, '`child_id` = ? AND `parent_id` = ?', [ this.__get('child_id'), this.__get('parent_id') ]);
     if (req.length > 0) {
         this.fields['id'] = req[0].id;
@@ -66,7 +65,7 @@ UserChild.prototype.agreeParentRequest = async function () {
     const userChildLog = await UserChildLog.createFromUserChild(this);;
     this.fields.agreed = 1;
     userChildLog.addChild();
-    console.log(this.fields);
+    
     await this.update();
 }
 

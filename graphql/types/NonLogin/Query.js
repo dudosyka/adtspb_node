@@ -25,7 +25,6 @@ module.exports = new GraphQLObjectType({
             },
             async resolve(obj, { user_id }) {
                 const viewer = await User.createFrom( user_id );
-                // console.log(viewer.__get('id'));
                 return viewer.__get('isConfirmed').fields;
             }
         },

@@ -39,9 +39,7 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve (obj, { showHidden }) {
-                console.log('OBJ 2: ', obj);
                 let statuses = await Status.selectByProposal(obj, showHidden);
-                console.log(statuses);
                 return statuses;
             },
         },

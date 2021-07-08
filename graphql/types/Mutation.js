@@ -48,7 +48,6 @@ module.exports = new GraphQLObjectType({
             async resolve(obj, { proposal }) {
                 proposal.parent = {id: obj().viewer.id};
                 let model = await Proposal.createFromInput(proposal);
-                console.log(model.fields);
                 return model.createNew();
             }
         },
@@ -61,7 +60,6 @@ module.exports = new GraphQLObjectType({
             },
             async resolve(obj, { proposal_id }) {
                 const proposal = await Proposal.baseCreateFrom({id: proposal_id});
-                console.log(proposal.fields);
                 const res = await proposal.recall(obj().viewer.id).catch(err => {throw Error(err)});
                 return res.affectedRows > 0;
             }
@@ -91,9 +89,7 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve (obj, { code }) {
-                // console.log(viewer.__get('id'));
                 const result = await EmailValidation.confirmUser(code, obj().viewer.id);
-                console.log(result);
                 return result;
             }
         },
@@ -152,8 +148,6 @@ module.exports = new GraphQLObjectType({
             },
             async resolve(obj, { parent_id, newData }) {
                 const viewer = await User.createFrom(obj().viewer);
-                // console.log('FIELDS', viewer.fields);
-                // console.log('Input', newData);
                 return await viewer.agreeParentRequest(parent_id, newData);
             }
         },
