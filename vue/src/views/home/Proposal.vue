@@ -12,11 +12,12 @@
             <section class="proposal" v-for="(proposal, index) in child.proposals">
               <div class="child-stat">
                 <h3 class="proposal_heading">{{ proposal.name }}</h3>
-                <figcaption class="child-stat_heading">Статус: {{ proposal.status }}</figcaption>
+                <figcaption class="child-stat_heading">Статус: {{ proposal.status.text }}</figcaption>
               </div>
-              <div class="buttons">
+              <div class="buttons" v-if='proposal.status.num !== 0'>
                 <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)">Скачать</button>
                 <button class="dark-button wp100" @click="printPdf(proposal.id)">Печатать</button>
+                <button v-if='!proposal.isDocumentTaken' class="dark-button wp100" @click="recall(child, proposal.id, index)">Отозвать</button>
               </div>
             </section>
 
@@ -95,8 +96,10 @@
             name: null
           },
           status: {
-            text: null
-          }
+            text: null,
+            num: null
+        },
+        isDocumentTaken: null
         }
       }, false).then( data => data );
 
@@ -106,7 +109,7 @@
           return {
             id: el.id,
             name: el.association.name,
-            status: el.status.length ? el.status[0].text : "",
+            status: el.status.length ? { ...el.status[0] } : { text: "", num: 0 },
             download: "",
             print: ""
           }
@@ -129,6 +132,18 @@
         },
         printPdf(proposal_id) {
             Proposal.printPdf(proposal_id);
+        },
+        recall(child, proposal_id, proposal_index) {
+            Proposal.recall(proposal_id)
+            .then(data => {
+                if (data) {
+                    child.proposals[proposal_index].status.num = 0;
+                    child.proposals[proposal_index].status.text = "Отозвано";
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            });
         }
     },
     computed: {
