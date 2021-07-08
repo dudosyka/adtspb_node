@@ -5,15 +5,17 @@
 
     <section class="home-content">
       <div :class="{'association-cards--opened': show.associationsList}" class="association-cards-wrapper">
-        <button class="close-association" @click="show.associationsList = false"><span></span></button>
+        <button class="close-associations" @click="show.associationsList = false"><span></span></button>
         <article class="association-cards">
           <article class="card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id" v-if='!card.already'>
             <h2 class="association-name" v-text="card.name"></h2>
             <p class="association-description" v-text="card.description"></p>
-            <p class="association-description">от {{ card.min_age + ' до ' + card.max_age}} лет</p>
-            <p class="association-description">занятия {{ card.lessons_week + correctLessons(card.lessons_week)}} в неделю</p>
-            <p class="association-description">{{ card.hours_week + correctHours(card.hours_week) }} в неделю</p>
-            <p class="association-description">{{ card.study_years + correctYears(card.study_years) }} обучения</p>
+            <div class="association-additional">
+                <p class="tak-hochet-marina">от {{ card.min_age + ' до ' + card.max_age}} лет</p>
+                <p class="tak-hochet-marina">занятия {{ card.lessons_week + correctLessons(card.lessons_week)}} в неделю</p>
+                <p class="tak-hochet-marina">{{ card.hours_week + correctHours(card.hours_week) }} в неделю</p>
+                <p class="tak-hochet-marina">{{ card.study_years + correctYears(card.study_years) }} обучения</p>
+            </div>
 
             <section class="association-schedule" v-for="group of card.groups">
               <h3 class="schedule-name">{{ group.name }}</h3>
@@ -63,7 +65,7 @@
           <li v-for="association of this.proposalParms.associations" class="child-association-item">{{ association.name }}</li>
         </ul>
 
-        <div class="buttons add-association">
+        <div class="buttons add-associations">
           <button class="dark-button" @click="show.associationsList = true">Добавить объединение</button>
         </div>
 
@@ -216,61 +218,61 @@ export default {
 </script>
 
 <style scoped>
-  .home-content {
+.home-content {
     display: grid;
     grid-template-columns: 1fr auto;
-  }
+}
 
-  article.card.shadow {
+article.card.shadow {
     margin: 0;
-  }
-  .child {
+}
+.child {
     padding: 20px;
     margin: 0;
     min-width: 300px;
-  }
-  .child-name {
+}
+.child-name {
     text-align: center;
     color: #142732;
     margin-bottom: 15px;
-  }
-  .child-association {
+}
+.child-association {
     padding: 20px 0;
     margin: 0;
 
     list-style: none;
-  }
-  .child-association-item {
+}
+.child-association-item {
     color: #142732;
 
     border-left: 3px solid #142732;
     padding: 5px 0px 5px 10px;
-  }
-  .child-hours {
+}
+.child-hours {
     margin: 30px 0;
 
     color: #142732;
-  }
-  .child-hours-header {
+}
+.child-hours-header {
     display: flex;
     justify-content: space-between;
-  }
-  .child-hours_speedometr {
+}
+.child-hours_speedometr {
     display: block;
     position: relative;
     width: 100%;
     height: 5px;
     margin-top: 10px;
     background-color: #aeaeae;
-  }
-  .child-hours_speedometr-l {
+}
+.child-hours_speedometr-l {
     position: absolute;
     top: 0;
     left: 0;
     background-color: #0086c9;
-  }
+}
 
-  .association-cards {
+.association-cards {
     box-sizing: border-box;
     height: 100vh;
     padding: 30px;
@@ -279,97 +281,112 @@ export default {
     grid-gap: 15px;
     grid-template-columns: repeat(auto-fill, 260px);
     overflow-y: scroll;
-  }
-  .association-name {
+}
+.association-name {
     word-wrap: break-word;
-  }
-  .association-test, .association-reserve, .association-schedule {
+}
+.association-additional {
+}
+.tak-hochet-marina {
+    display: inline-block;
+    width: fit-content;
+    margin: 0;
+    margin-bottom: 5px;
+    padding: 5px;
+    border-radius: 5px;
+    color: #0086c9;
+    background-color: #eaf4ff;
+}
+.tak-hochet-marina:last-child {
+    margin-bottom: 0;
+}
+.association-test, .association-reserve, .association-schedule {
     padding: 10px;
     margin-bottom: 15px;
-  }
-  .assoc-test-description {
+}
+.assoc-test-description {
     margin: 0;
     margin-top: 10px;
-  }
-  .assoc-reserve-description {
+}
+.assoc-reserve-description {
     margin: 0;
-  }
+}
 
-  .association-schedule {
+.association-schedule {
     position: relative;
     display: grid;
     grid-template-rows: repeat(auto-fill, 30px);
     padding: 0;
     margin: 20px 0;
-  }
-  .schedule-name {
+}
+.schedule-name {
     text-align: left;
-  }
+}
 
-  .add-association {
+.add-associations {
     display: none;
-  }
-  .close-association {
+}
+.close-associations {
     display: none;
-  }
-  .close-association:hover {
+}
+.close-associations:hover {
     cursor: pointer;
-  }
+}
 
-  @media (max-width: 1000px) {
+@media (max-width: 1000px) {
     .home-content {
-      grid-template-columns: 1fr;
+        grid-template-columns: 1fr;
     }
     .child {
-      min-width: auto;
+        min-width: auto;
     }
     .association-cards {
-      height: auto;
-      overflow-y: hidden;
-      padding: 0;
+        height: auto;
+        overflow-y: hidden;
+        padding: 0;
     }
-    .add-association {
-      display: grid;
+    .add-associations {
+        display: grid;
     }
-    .close-association {
-      position: fixed;
-      top: 5px;
-      right: 5px;
-      display: block;
-      width: 30px;
-      height: 30px;
-      padding: 0;
-      border: none;
-      background-color: initial;
+    .close-associations {
+        position: fixed;
+        top: 5px;
+        right: 5px;
+        display: block;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        border: none;
+        background-color: initial;
     }
-    .close-association span, .close-association span::after {
-      display: block;
-      background-color: #fff;
-      height: 3px;
-      width: 30px;
+    .close-associations span, .close-associations span::after {
+        display: block;
+        background-color: #fff;
+        height: 3px;
+        width: 30px;
     }
-    .close-association span {
-      transform: rotate(45deg);
+    .close-associations span {
+        transform: rotate(45deg);
     }
-    .close-association span::after {
-      content: '';
-      transform: rotate(90deg);
+    .close-associations span::after {
+        content: '';
+        transform: rotate(90deg);
     }
     .association-cards--opened {
-      display: block !important;
+        display: block !important;
     }
     .association-cards-wrapper {
-      display: none;
-      z-index: 10;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-      box-sizing: border-box;
-      overflow-y: auto;
-      padding: 20px 35px 20px 20px;
-      background-color: rgba(70, 70, 70, 0.54);
+        display: none;
+        z-index: 10;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        box-sizing: border-box;
+        overflow-y: auto;
+        padding: 20px 35px 20px 20px;
+        background-color: rgba(70, 70, 70, 0.54);
     }
-  }
+}
 </style>
