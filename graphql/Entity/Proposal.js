@@ -19,6 +19,10 @@ Proposal.prototype.getInstance = () => Proposal;
 
 Proposal.prototype.fields = {
     id: null,
+    association_id: null,
+    parent_id: null,
+    child_id: null,
+    document_taken: null
 };
 
 Proposal.prototype.aliases = {
@@ -153,4 +157,21 @@ Proposal.prototype.generatePdf = async function () {
     return await pdf.generateProposal();
 }
 
+Proposal.prototype.recall = async function (requester) {
+    if (this.__get('association_id') === null)
+        throw Error('Proposal not found');
+
+    if (requester !== this.__get('parent_id')) {
+        // const user = User.createFrom({id: requester});
+        // Проверять тут проавило позволяющее админам отзывыать любые заявления
+        // if ()
+        throw Error('Forbidden');
+    }
+
+    if (this.__get('document_taken') == 1) {
+        throw Error('Document taken');
+    }
+
+    return await Status.setToRecall(this.__get('id'));
+}
 module.exports = (new Proposal());

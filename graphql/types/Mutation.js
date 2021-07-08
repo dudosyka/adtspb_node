@@ -52,6 +52,20 @@ module.exports = new GraphQLObjectType({
                 return model.createNew();
             }
         },
+        recallProposal: {
+            type: GraphQLBoolean,
+            args: {
+                proposal_id: {
+                    type: GraphQLInt
+                }
+            },
+            async resolve(obj, { proposal_id }) {
+                const proposal = await Proposal.baseCreateFrom({id: proposal_id});
+                console.log(proposal.fields);
+                const res = await proposal.recall(obj().viewer.id).catch(err => {throw Error(err)});
+                return res.affectedRows > 0;
+            }
+        },
         restorePassword: {
             type: GraphQLBoolean,
             args: {

@@ -8,6 +8,7 @@ Status.prototype.getInstance = () => Status;
 
 Status.prototype.fields = {
     id: null,
+    proposal_id: null,
     num: null,
     text: null,
     hidden: null
@@ -27,6 +28,12 @@ Status.prototype.setToCreate = function () {
     });
     console.log(this.fields);
     this.save();
+}
+
+Status.prototype.setToRecall = async function (proposal_id = null) {
+    this.__set('proposal_id', proposal_id ?? this.__get('proposal_id'));
+    this.__set('text', 'Отозвано');
+    return await this.db.query("UPDATE " + this.table + " SET `text` = ?, `num` = ? WHERE `proposal_id` = ? AND `hidden` = ?", [ this.__get('text'), 0, this.__get('proposal_id'), 0 ]);
 }
 
 Status.prototype.table = "proposal_status";
