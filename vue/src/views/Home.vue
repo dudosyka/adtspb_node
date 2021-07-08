@@ -5,7 +5,7 @@
         <article class="home-content">
             <section class="card shadow">
                 <h1 class="main-heading">Добро пожаловать</h1>
-                <button class="dark-box dark-button" onclick='localStorage.removeItem("token"); window.location.reload();'>Выйти</button>
+                <button class="dark-box dark-button" @click='logout()'>Выйти</button>
             </section>
 
             <FullUserData :independent="true"></FullUserData>
@@ -29,6 +29,7 @@
   // @ is an alias to /src
   import navigation from '../components/Navigation.vue'
   import FullUserData from '../components/forms/FullUserData'
+  import {AccessControl} from '../utils/AccessControl'
 
 
   export default {
@@ -42,6 +43,7 @@
         }
     },
     methods: {
+        logout: () => AccessControl.logout()
     },
     async created()
     {
