@@ -114,4 +114,18 @@ Proposal.getChildProposal = async function (child_id) {
     return await _request("api", req, data).then(data => data);
 }
 
+Proposal.recall = async function (proposal_id) {
+    const req = `
+        mutation($proposal_id: Int) {
+            recallProposal(proposal_id: $proposal_id)
+        }
+    `;
+
+    const data = {
+        proposal_id: Number(proposal_id)
+    };
+
+    return await _request("api", req, data).then(data => data.recallProposal).catch(err => {throw err;});
+}
+
 export {Proposal};

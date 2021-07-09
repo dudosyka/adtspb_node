@@ -13,10 +13,6 @@ module.exports = new graphql.GraphQLObjectType({
         },
         association: {
             type: AssociationType,
-            async resolve (obj, data) {
-                const fullDataModel = await Association.getFullData(obj.association_id);
-                return fullDataModel.fields;
-            }
         },
         child: {
             type: UserType,
@@ -38,11 +34,8 @@ module.exports = new graphql.GraphQLObjectType({
                   type: graphql.GraphQLBoolean,
                 }
             },
-            async resolve (obj, { showHidden }) {
-                console.log('OBJ 2: ', obj);
-                let statuses = await Status.selectByProposal(obj, showHidden);
-                console.log(statuses);
-                return statuses;
+            resolve (obj, { showHidden }) {
+                return (obj.status.constructor === Array) ? obj.status : [ obj.status ];
             },
         },
         isDocumentTaken: {

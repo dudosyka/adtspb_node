@@ -45,11 +45,11 @@
   export default {
     name: 'Confirmation',
     data() {
-      return {
-        code: null,
-        isInvalid: false,
-        new: ''
-      }
+        return {
+            code: null,
+            isInvalid: false,
+            new: ''
+          }
     },
     methods: {
       sendCode() {

@@ -46,7 +46,7 @@ UserExtraData.prototype.__save = async function () {
         return await this.save();
 }
 
-UserExtraData.prototype.checkChildData = function () {
+UserExtraData.prototype.checkChildData = function (fieldsOnValidate = null) {
     this.validateRules = function () {
         return [
             this.validator(
@@ -80,7 +80,7 @@ UserExtraData.prototype.checkChildData = function () {
         ];
     }
 
-    return this.validate();
+    return this.validate(fieldsOnValidate);
 }
 
 UserExtraData.prototype.setChildData = async function () {

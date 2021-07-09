@@ -25,7 +25,9 @@ EmailValidation.prototype.checkConfirmation = async function (user_id) {
         return this;
     }
     else {
-        return await this.baseCreateFrom(res[0]);
+        const model = this.newModel();
+        model.fields = {...res[0]};
+        return model;
     }
 }
 
@@ -70,20 +72,19 @@ EmailValidation.prototype.generateToken = function (l) {
 
 EmailValidation.prototype.setOnConfirmation = async function (user_id, email, fullname) {
     let res = await this.db.select(this, '`user_id` = ?', [ user_id ]);
-    if (res.length <= 0) {
+    if (res.length > 0) {
         return {
-            code: null,
+            code: res[0].code,
             user_id: user_id,
-            timestamp: Math.floor(Date.now() / 1000),
-            isConfirmed: true,
+            timestamp: res[0].timestamp,
+            isConfirmed: false,
         };
     }
-    this.__set('id', res[0].id);
     this.__set('code', this.generateToken(4));
     this.__set('user_id', user_id);
     this.__set('timestamp', Math.floor(Date.now() / 1000));
     mail.sendEmail(email, "Код подтверждения" , "Здравствуйте, " + fullname + "! Код подтверждения для вашего аккаунта в личном кабинете Академии Цифровых Технологий: " + this.__get('code') + " (Никому не сообщайте его)");
-    await this.update();
+    await this.save();
     return this;
 }
 

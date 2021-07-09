@@ -9,6 +9,9 @@ module.exports = new graphql.GraphQLObjectType({
         text: {
             type: graphql.GraphQLString,
         },
+        num: {
+            type: graphql.GraphQLInt,
+        },
         // TODO: Remove?
         hidden: {
             type: graphql.GraphQLBoolean,

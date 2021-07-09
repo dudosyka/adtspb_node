@@ -3,7 +3,7 @@ import App from './App.vue';
 import router from './router';
 import { request, GraphQLClient } from "graphql-request";
 import * as AppConfig from './config/AppConfig';
-import {AccessContol} from './utils/AccessControl';
+import {AccessControl} from './utils/AccessControl';
 
 const graphql = new GraphQLClient(AppConfig.api_url, {
     headers: {
@@ -12,10 +12,10 @@ const graphql = new GraphQLClient(AppConfig.api_url, {
 });
 const endoor  = new GraphQLClient(AppConfig.endoor_url, {});
 
-global.refreshUserRules = AccessContol.refreshUserRules;
-global.refreshApiToken = AccessContol.refreshApiToken;
-global.hasAccess = AccessContol.checkRule;
-global.hasRole = AccessContol.checkRole;
+global.refreshUserRules = AccessControl.refreshUserRules;
+global.refreshApiToken = AccessControl.refreshApiToken;
+global.hasAccess = AccessControl.checkRule;
+global.hasRole = AccessControl.checkRole;
 global.getError = (err, id = 0) => {
     try {
         return JSON.parse(err.response.errors[id].message);
@@ -31,6 +31,9 @@ global._request = async (route, query, data = {}) => {
             const msg = JSON.parse(err.response.error).message;
             if (msg == 'Not confirmed') {
                 window.location = '/confirmation';
+            }
+            if (msg == 'refresh') {
+                AccessControl.logout(true);
             }
         }
         throw err;
@@ -78,7 +81,7 @@ router.afterEach(async (to, from) => {
 });
 
 (async function () {
-    await AccessContol.refreshAccess();
+    await AccessControl.refreshAccess();
     new Vue({
       router,
       render: h => h(App),

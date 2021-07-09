@@ -3,7 +3,6 @@ const baseEntity = require('./BaseEntity');
 const User = require('./User');
 const UserExtraData = require('./UserExtraData');
 
-const Association = require('./Association');
 const AssociationExraData = require('./AssociationExraData');
 
 const Status = require('./Status');
@@ -19,6 +18,10 @@ Proposal.prototype.getInstance = () => Proposal;
 
 Proposal.prototype.fields = {
     id: null,
+    association_id: null,
+    parent_id: null,
+    child_id: null,
+    document_taken: null
 };
 
 Proposal.prototype.aliases = {
@@ -36,7 +39,7 @@ Proposal.prototype.createFromInput = async function (proposal) {
         parent_id: proposal["parent"] ? proposal["parent"]["id"] ? parseInt(proposal["parent"]["id"]) : null : null,
         child_id: proposal["child"] ? proposal["child"]["id"] ? parseInt(proposal["child"]["id"]) : null : null,
     };
-    // console.log("proposal", data);
+
     return await this.baseCreateFrom(data);
 }
 
@@ -49,6 +52,100 @@ Proposal.prototype.selectByUser = async function (user) {
     return (User.checkRole(AppConfig.parent_role_id, user.__role))
     ? await this.selectByParent(user)
     : await this.selectByChild(user.__get('id'));
+}
+
+Proposal.prototype.selectProposalsList = async function (field, arr, selections) {
+    const { ids, query } = this.db.createRangeQuery(false, arr, field);
+
+    //Check if we have sub-selections and add them to query if exists
+    let sub1Query = "";
+    if (selections.association) {
+        sub1Query += "LEFT JOIN `association` AS `sub1` ON `sub1`.`id` = `main`.`association_id` LEFT JOIN `association_extra_data` AS `sub1_1` ON `sub1`.`id` = `sub1_1`.`association_id` ";
+    }
+
+    let sub2Query = "";
+    if (selections.status) {
+        sub2Query += "LEFT JOIN `proposal_status` AS `sub2` ON `sub2`.`proposal_id` = `main`.`id` ";
+    }
+
+    sub1Selections = sub1Query == "" ? "" : ' "" as `sub1_decorator`, `sub1`.*, `sub1_1`.*,';
+    sub2Selections = sub2Query == "" ? "" : ' "" as `sub2_decorator`, `sub2`.*,';
+    mainSelections = ' "" as `main_decorator`, `main`.*';
+    fullSelections = sub1Selections + sub2Selections + mainSelections;
+
+    let fullQuery = "SELECT " + fullSelections + " FROM " + this.table + " AS `main` " + sub1Query + sub2Query + "WHERE `main`." + query;
+    const res = await this.db.query(fullQuery, ids);
+
+    proposals = {};
+    res.map(proposal => {
+        let parsed = {};
+
+        let pushIntoSub1 = false;
+        let pushIntoSub2 = false;
+
+        let association = {};
+        let status = {};
+        let main = {};
+
+        Object.keys(proposal).map(selectedField => {
+            const value = proposal[selectedField];
+            if (selectedField == 'sub1_decorator') {
+                pushIntoSub1 = true;
+                pushIntoSub2 = false;
+            }
+            if (selectedField == 'sub2_decorator') {
+                pushIntoSub1 = false;
+                pushIntoSub2 = true;
+            }
+            if (selectedField == 'main_decorator') {
+                pushIntoSub1 = false;
+                pushIntoSub2 = false;
+            }
+            if (pushIntoSub1) {
+                association[selectedField] = value;
+            }
+            if (pushIntoSub2) {
+                status[selectedField] = value;
+            }
+            if (!pushIntoSub1 && !pushIntoSub2) {
+                main[selectedField] = value;
+            }
+            if (selectedField == field) {
+                main[selectedField] = value;
+            }
+        });
+
+        delete main.main_decorator;
+        if (association.proposal_id) {
+            main.id = association.proposal_id;
+            delete association.proposal_id;
+        }
+
+        if (status.proposal_id) {
+            main.id = status.proposal_id;
+            delete status.proposal_id;
+        }
+
+        delete association.sub1_decorator;
+        association.id = association.association_id;
+        delete association.association_id;
+
+        delete status.sub2_decorator;
+
+        parsed = {
+            ...main,
+            association,
+            status
+        };
+
+        if (proposals[ proposal[ field ] ]) {
+            proposals[ proposal[ field ] ].push(parsed);
+        }
+        else {
+            proposals[ proposal[ field ] ] = [ parsed ];
+        }
+    });
+    return proposals;
 }
 
 Proposal.prototype.selectByChild = async function (child_id) {
@@ -78,12 +175,10 @@ Proposal.prototype.checkStudyLoad = async function () {
         hours += el.hours_week;
     });
 
-    console.log(hours);
-
     return hours;
 }
 
-Proposal.prototype.canJoinAssociation = async function () {
+Proposal.prototype.canJoinAssociation = async function (userModel, userExtraDataModel) {
         if (this.__get('parent') == null || this.__get('child') == null || this.__get('association') == null)
             throw Error('Bad request');
 
@@ -91,7 +186,7 @@ Proposal.prototype.canJoinAssociation = async function () {
             id: this.__get('parent')
         };
 
-        const parent = await User.createFrom(data);
+        const parent = await userModel.createFrom(data);
         const children = await parent.getChildren();
 
         //Check can parent create proposals
@@ -103,7 +198,7 @@ Proposal.prototype.canJoinAssociation = async function () {
         if (!children.includes(this.__get('child')))
             throw Error("Child not found");
 
-        const child = await UserExtraData.createFrom({user_id: this.__get('child')});
+        const child = await userExtraDataModel.createFrom({user_id: this.__get('child')});
         const age = child.calculateAge();
 
         //Check if proposal had already created
@@ -134,8 +229,8 @@ Proposal.prototype.canJoinAssociation = async function () {
         return true;
 }
 
-Proposal.prototype.createNew = async function () {
-    await this.canJoinAssociation();
+Proposal.prototype.createNew = async function (userModel, userExtraDataModel) {
+    await this.canJoinAssociation(userModel, userExtraDataModel);
 
     const proposal = await this.save();
 
@@ -153,4 +248,21 @@ Proposal.prototype.generatePdf = async function () {
     return await pdf.generateProposal();
 }
 
+Proposal.prototype.recall = async function (requester) {
+    if (this.__get('association_id') === null)
+        throw Error('Proposal not found');
+
+    if (requester !== this.__get('parent_id')) {
+        // const user = User.createFrom({id: requester});
+        // Проверять тут проавило позволяющее админам отзывыать любые заявления
+        // if ()
+        throw Error('Forbidden');
+    }
+
+    if (this.__get('document_taken') == 1) {
+        throw Error('Document taken');
+    }
+
+    return await Status.setToRecall(this.__get('id'));
+}
 module.exports = (new Proposal());

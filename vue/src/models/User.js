@@ -1,6 +1,7 @@
 import {Validator} from "../utils/Validator";
 import {Parser} from "../utils/Parser";
 import {Corrector} from "../utils/Corrector";
+import {AccessControl} from '../utils/AccessControl'
 
 let User = {};
 
@@ -8,7 +9,7 @@ User.login = async function ({login, pass}) {
     let req = `
       mutation($login: String, $password: String) {
           login(login: $login, password: $password) {
-              token, id
+              token, id, isConfirmed
           }
       }
     `;
@@ -42,12 +43,11 @@ User.login = async function ({login, pass}) {
         if (data === undefined)
             return;
         this.auth(data.login.token);
-        this.checkConfirmation(data.login.id).then(isConfirmed => {
-            if (isConfirmed)
-                this.auth(data.login.token, true);
-            else
-                this.setOnConfirm();
-        });
+
+        if (data.login.isConfirmed)
+            this.auth(data.login.token, true);
+        else
+            this.setOnConfirm();
     });
 }
 
@@ -86,6 +86,50 @@ User.checkConfirmation  = async function (id) {
 
 User.setOnConfirm = function () {
     window.location = '/confirmation';
+}
+
+User.confirmUser = async function (code) {
+  let req = `
+    mutation($code: String) {
+        confirmUser(code: $code) {
+            isConfirmed, token
+        }
+    }
+  `;
+
+  let data = {
+    code: code,
+  };
+
+  return _request("api", req, data)
+    .then(data => {
+        console.log(data);
+      if (data.confirmUser.isConfirmed) {
+          AccessControl.refreshApiToken(data.confirmUser.token);
+          AccessControl.refreshAccess();
+          window.location = '/';
+          return true;
+      }
+      return false;
+  }).catch(err => {
+      console.error(err);
+      throw err;
+  });
+}
+
+User.sendNewConfirmationCode = async function () {
+    let req = `
+      mutation {
+        generateNewConfirmationCode {
+            isConfirmed
+        }
+      }
+    `;
+
+    return _request("api", req).catch(err => {
+        console.error(err);
+        throw err;
+    });
 }
 
 User.signUp = async function (data, makeParent = false) {
@@ -474,47 +518,6 @@ User.removeChild = async function (id, comment, remove_account) {
   };
 
   return await _request("api", req, data);
-}
-
-User.confirmUser = async function (code) {
-  let req = `
-    mutation($code: String) {
-        confirmUser(code: $code) {
-            isConfirmed
-        }
-    }
-  `;
-
-  let data = {
-    code: code,
-  };
-
-  return _request("api", req, data)
-    .then(data => {
-      if (data.confirmUser.isConfirmed) {
-          window.location = '/';
-          return true;
-      }
-      return false;
-  }).catch(err => {
-      console.error(err);
-      throw err;
-  });
-}
-
-User.sendNewConfirmationCode = async function () {
-    let req = `
-      mutation {
-        generateNewConfirmationCode {
-            isConfirmed
-        }
-      }
-    `;
-
-    return _request("api", req).catch(err => {
-        console.error(err);
-        throw err;
-    });
 }
 
 export {User};

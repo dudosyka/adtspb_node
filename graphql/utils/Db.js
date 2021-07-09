@@ -55,7 +55,10 @@ Db.prototype.createRangeQuery = function (field, arr, selected_field = 'id')
     let query = " " + selected_field + " in (";
     let i = 0;
     arr.map(el => {
-        ids.push(el[field]);
+        if (field !== false)
+            ids.push(el[field]);
+        else
+            ids.push(el);
         query += "?";
         if (i + 1 < arr.length)
             query += ",";
