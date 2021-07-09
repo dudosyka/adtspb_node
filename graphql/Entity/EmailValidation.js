@@ -41,7 +41,7 @@ EmailValidation.prototype.confirmUser = async function (code, user_id) {
     {
         if (res[0].code == code)
         {
-            // this.db.query('DELETE FROM `email_validation` WHERE `user_id` = ?', [ user_id ]);
+            this.db.query('DELETE FROM `email_validation` WHERE `user_id` = ?', [ user_id ]);
             return answ;
         }
         else

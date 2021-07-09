@@ -35,224 +35,233 @@ let jwt = new Jwt();
 
 module.exports = new GraphQLObjectType({
     name: 'Query',
-    fields: {
-        viewer: {
-            type: UserType,
-            async resolve(obj, data) {
-                let viewer = await User.createFrom(obj().viewer);
-                viewer.fields.rules = viewer.__get('__accessible');
-                viewer.fields.roles = viewer.__get('__role');
+    fields: function () {
+        return {
+            viewer: {
+                type: UserType,
+                async resolve(obj, data) {
+                    let viewer = await User.createFrom(obj().viewer);
+                    viewer.fields.rules = viewer.__get('__accessible');
+                    viewer.fields.roles = viewer.__get('__role');
 
-                return viewer.fields;
-            }
-        },
-        userRights: {
-            type: UserRightsOutput,
-            async resolve(obj, data) {
-                const rights = rbac.auth(obj().viewer.id);
-                return rights;
-            }
-        },
-        user: {
-            type: UserType,
-            args: {
-                id: {
-                    type: GraphQLID
+                    return viewer.fields;
                 }
             },
-            async resolve(obj, { id }) {
-                let user = await User.createFrom({id: id});
-                return user.fields;
-            }
-        },
-        association: {
-            type: AssociationType,
-            args: {
-                id: {
-                    type: GraphQLID
+            userRights: {
+                type: UserRightsOutput,
+                async resolve(obj, data) {
+                    const rights = await rbac.auth(obj().viewer.id);
+                    return rights;
                 }
             },
-            async resolve(obj, { id }) {
-                return (await Association.createFrom({id: id})).fields;
-            }
-        },
-        validToken: {
-            type: GraphQLBoolean,
-            args: {
-                token: {
-                    type: GraphQLString
-                }
-            },
-            async resolve(obj, { token }) {
-              return (await jwt.parse(token) !== false);
-            }
-        },
-        restorePasswordRequest: {
-            type: GraphQLBoolean,
-            args: {
-                email: {
-                    type: GraphQLString
-                }
-            },
-            async resolve(obj, { email }) {
-                return await User.restorePasswordRequest(email);
-            }
-        },
-        checkRestoreCode: {
-            type: GraphQLBoolean,
-            args: {
-                email: {
-                    type: GraphQLString
+            user: {
+                type: UserType,
+                args: {
+                    id: {
+                        type: GraphQLID
+                    }
                 },
-                code: {
-                    type: GraphQLInt
+                async resolve(obj, { id }) {
+                    let user = await User.createFrom({id: id});
+                    return user.fields;
                 }
             },
-            async resolve(obj, { email, code }) {
-                return User.checkRestoreCode(email, code);
-            }
-        },
-        checkUserConfirmation: {
-            type: EmailValidationType,
-            args: {},
-            async resolve(obj, {}) {
-                const confirmation = await EmailValidation.checkConfirmation(obj().viewer.id);
-                return confirmation.fields;
-            }
-        },
-        //Check what data need to be child
-        checkChildData: {
-            type: GraphQLString,
-            args: {},
-            async resolve(obj, {  }) {
-                const userData = await UserExtraData.createFrom({ user_id: obj().viewer.id });
-                const res = userData.checkChildData();
-                if (res !== true)
-                    return JSON.stringify(res);
-                else
-                    return "success";
-            }
-        },
-        getChildren: {
-            type: graphql.GraphQLList(UserFullDataType),
-            args: {},
-            async resolve(obj, {}) {
-                const userChild = await UserChild.baseCreateFrom({ parent_id: obj().viewer.id });
-                const children = await userChild.getChildren(true, 1);
-                return children;
-            }
-        },
-        getFullUserData: {
-            type: UserFullDataType,
-            args: {
-                id: {
-                    type: graphql.GraphQLInt
+            association: {
+                type: AssociationType,
+                args: {
+                    id: {
+                        type: GraphQLID
+                    }
+                },
+                async resolve(obj, { id }) {
+                    return (await Association.createFrom({id: id})).fields;
                 }
             },
-            async resolve(obj, { id }) {
-                return User.getFullData(id ?? obj().viewer.id);
-            }
-        },
-        getChildRequests: {
-            type: graphql.GraphQLList(UserType),
-            args: {},
-            async resolve(obj, {}) {
-                const userChild = await UserChild.baseCreateFrom({ parent_id: obj().viewer.id });
-                return await userChild.getChildRequests();
-            }
-        },
-        getParentRequests: {
-            type: graphql.GraphQLList(UserType),
-            args: {},
-            async resolve(obj, {}) {
-                const userChild = await UserChild.baseCreateFrom({ child_id: obj().viewer.id });
-                return await userChild.getParentRequests();
-            }
-        },
-        getAssociations: {
-            type: graphql.GraphQLList(AssociationType),
-            args: {
-            },
-            async resolve(obj, {  }) {
-                return await Association.getAssociations();
-            }
-        },
-        getAssociationsForChild: {
-            type: graphql.GraphQLList(AssociationType),
-            args: {
-                child_id: {
-                    type: GraphQLInt
+            validToken: {
+                type: GraphQLBoolean,
+                args: {
+                    token: {
+                        type: GraphQLString
+                    }
+                },
+                async resolve(obj, { token }) {
+                  return (await jwt.parse(token) !== false);
                 }
             },
-            async resolve(obj, { child_id }) {
-                const usr = await UserExtraData.createFrom({user_id: child_id});
-                return await Association.getAssociations(usr.calculateAge());
-            }
-        },
-        getAssociationTimetable: {
-            type: graphql.GraphQLList(TimetableType),
-            args: {
-                association_id: {
-                    type: graphql.GraphQLInt
+            restorePasswordRequest: {
+                type: GraphQLBoolean,
+                args: {
+                    email: {
+                        type: GraphQLString
+                    }
+                },
+                async resolve(obj, { email }) {
+                    return await User.restorePasswordRequest(email);
                 }
             },
-            async resolve(obj, data) {
-                const timetable = Timetable.createFrom(data);
-                return timetable.map(el => el.fields);
-            }
-        },
-        getChildProposals: {
-            type: graphql.GraphQLList(ProposalType),
-            args: {
-                child_id: {
-                    type: GraphQLInt
+            checkRestoreCode: {
+                type: GraphQLBoolean,
+                args: {
+                    email: {
+                        type: GraphQLString
+                    },
+                    code: {
+                        type: GraphQLInt
+                    }
+                },
+                async resolve(obj, { email, code }) {
+                    return User.checkRestoreCode(email, code);
                 }
             },
-            async resolve(obj, { child_id }) {
-                return await Proposal.selectByChild(child_id);
-            }
-        },
-        getChildStudyLoad: {
-            type: graphql.GraphQLList(AssociationType),
-            args: {
-                child_id: {
-                    type: GraphQLInt
+            checkUserConfirmation: {
+                type: EmailValidationType,
+                args: {},
+                async resolve(obj, {}) {
+                    const confirmation = await EmailValidation.checkConfirmation(obj().viewer.id);
+                    return confirmation.fields;
                 }
             },
-            async resolve(obj, { child_id }) {
-                //TODO: Select associations where proposal status is `enlisted`
-            }
-        },
-        canJoinAssociation: {
-            type: graphql.GraphQLBoolean,
-            args: {
-                data: {
-                    type: ProposalInput
+            //Check what data need to be child
+            checkChildData: {
+                type: GraphQLString,
+                args: {},
+                async resolve(obj, {  }) {
+                    const userData = await UserExtraData.createFrom({ user_id: obj().viewer.id });
+                    const res = userData.checkChildData();
+                    if (res !== true)
+                        return JSON.stringify(res);
+                    else
+                        return "success";
                 }
             },
-            async resolve(obj, { data }) {
-                data.parent = {id: obj().viewer.id};
-                const proposal = await Proposal.createFromInput(data);
-                const canJoin = await proposal.canJoinAssociation();
-                return canJoin;
-            }
-        },
-        generateProposalPdf: {
-            type: GraphQLString,
-            args: {
-                proposal: {
-                    type: ProposalInput
-                }
-            },
-            async resolve(obj, { proposal }) {
-                const proposalEntity = await Proposal.createFromInput(proposal);
-                if (proposalEntity.__get('association_id') == null)
-                    throw Error('Proposal not found');
+            getChildren: {
+                type: graphql.GraphQLList(UserFullDataType),
+                args: {},
+                async resolve(obj, {}) {
+                    const selections = obj().selections;
 
-                const buffer = await proposalEntity.generatePdf();
-                return buffer.toString("base64");
-            }
-        }
+                    const userChild = await UserChild.baseCreateFrom({ parent_id: obj().viewer.id });
+                    const children = await userChild.getChildren(true, 1, false, selections);
 
+                    return children;
+                }
+            },
+            getFullUserData: {
+                type: UserFullDataType,
+                args: {
+                    id: {
+                        type: graphql.GraphQLInt
+                    }
+                },
+                async resolve(obj, { id }) {
+                    const rights = await rbac.auth(id ?? obj().viewer.id);
+                    const model = Proposal.newModel();
+
+                    return User.getFullData(id ?? obj().viewer.id, obj().selections, model, rights.role);
+                }
+            },
+            getChildRequests: {
+                type: graphql.GraphQLList(UserType),
+                args: {},
+                async resolve(obj, {}) {
+                    const userChild = await UserChild.baseCreateFrom({ parent_id: obj().viewer.id });
+                    return await userChild.getChildRequests();
+                }
+            },
+            getParentRequests: {
+                type: graphql.GraphQLList(UserType),
+                args: {},
+                async resolve(obj, {}) {
+                    const userChild = await UserChild.baseCreateFrom({ child_id: obj().viewer.id });
+                    return await userChild.getParentRequests();
+                }
+            },
+            getAssociations: {
+                type: graphql.GraphQLList(AssociationType),
+                args: {
+                },
+                async resolve(obj, {  }) {
+                    const model = Proposal.newModel();
+                    return await Association.getAssociations(null, obj().selections, model);
+                }
+            },
+            getAssociationsForChild: {
+                type: graphql.GraphQLList(AssociationType),
+                args: {
+                    child_id: {
+                        type: GraphQLInt
+                    }
+                },
+                async resolve(obj, { child_id }) {
+                    const usr = await UserExtraData.createFrom({user_id: child_id});
+                    return await Association.getAssociations(usr.calculateAge());
+                }
+            },
+            getAssociationTimetable: {
+                type: graphql.GraphQLList(TimetableType),
+                args: {
+                    association_id: {
+                        type: graphql.GraphQLInt
+                    }
+                },
+                async resolve(obj, data) {
+                    const timetable = Timetable.createFrom(data);
+                    return timetable.map(el => el.fields);
+                }
+            },
+            getChildProposals: {
+                type: graphql.GraphQLList(ProposalType),
+                args: {
+                    child_id: {
+                        type: GraphQLInt
+                    }
+                },
+                async resolve(obj, { child_id }) {
+                    return await Proposal.selectByChild(child_id);
+                }
+            },
+            getChildStudyLoad: {
+                type: graphql.GraphQLList(AssociationType),
+                args: {
+                    child_id: {
+                        type: GraphQLInt
+                    }
+                },
+                async resolve(obj, { child_id }) {
+                    //TODO: Select associations where proposal status is `enlisted`
+                }
+            },
+            canJoinAssociation: {
+                type: graphql.GraphQLBoolean,
+                args: {
+                    data: {
+                        type: ProposalInput
+                    }
+                },
+                async resolve(obj, { data }) {
+                    data.parent = {id: obj().viewer.id};
+                    const proposal = await Proposal.createFromInput(data);
+                    const canJoin = await proposal.canJoinAssociation();
+                    return canJoin;
+                }
+            },
+            generateProposalPdf: {
+                type: GraphQLString,
+                args: {
+                    proposal: {
+                        type: ProposalInput
+                    }
+                },
+                async resolve(obj, { proposal }) {
+                    const proposalEntity = await Proposal.createFromInput(proposal);
+                    if (proposalEntity.__get('association_id') == null)
+                        throw Error('Proposal not found');
+
+                    const buffer = await proposalEntity.generatePdf();
+                    return buffer.toString("base64");
+                }
+            }
+
+        };
     },
 });

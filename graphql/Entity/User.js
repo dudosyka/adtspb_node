@@ -178,11 +178,30 @@ User.prototype.getChildren = async function () {
     .catch(err => { throw new Error('Internal server error.'); });
 }
 
-User.prototype.getFullData = async function (id = false) {
+User.prototype.getFullData = async function (id = false, selections = {}, model = null, role = []) {
     if (id === null) {
         id = false;
     }
-    return (await this.db.query("SELECT * FROM `user` as `main` LEFT JOIN `user_extra_data` AS `data` ON `main`.`id` = `data`.`user_id` WHERE `main`.`id` = ?", id ? id : this.__get('id')))[0];
+    const data = (await this.db.query("SELECT * FROM `user` as `main` LEFT JOIN `user_extra_data` AS `data` ON `main`.`id` = `data`.`user_id` WHERE `main`.`id` = ?", id ? id : this.__get('id')))[0];
+
+    data.id = data.user_id;
+
+    let proposals = null;
+    if (selections.proposals) {
+        let field = 'child_id';
+        if (role.includes(AppConfig.parent_role_id)) {
+            field = 'parent_id'
+        }
+        proposals = await model.selectProposalsList(field, [data.id], selections.proposals);
+    }
+
+    console.log(proposals);
+
+    data.proposals = Object.keys(proposals ?? {}).length > 0 ? proposals[data.id] : null;
+
+    console.log(data);
+
+    return data;
 }
 
 User.prototype.restorePasswordRequest = async function (email) {

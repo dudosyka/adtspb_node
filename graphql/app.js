@@ -52,6 +52,16 @@ let rootValue = {
 //   res.send();
 // });
 
+function parseSelections(selection) {
+    let selections = {};
+    if (selection.selectionSet !== undefined) {
+        selection.selectionSet.selections.map( _selection => {
+            selections[_selection.name.value] = parseSelections(_selection);
+        });
+    }
+    return Object.keys(selections).length ? selections : true;
+}
+
 //Check user token. If valid -> next(), invalid -> HTTP 403
 app.use('/api', async (req, res, next) =>
 {
@@ -59,6 +69,17 @@ app.use('/api', async (req, res, next) =>
     const endPointName = gql`
         ${req.body.query}
     `.definitions[0].selectionSet.selections[0].name.value;
+
+    let selections = null;
+
+    const request = gql`
+        ${req.body.query}
+    `.definitions[0].selectionSet.selections[0];
+
+    if (request.selectionSet) {
+        selections = parseSelections(request)
+    }
+
     //Authorization: Bearer [token]
     let token = req.header("Authorization");
 
@@ -103,6 +124,7 @@ app.use('/api', async (req, res, next) =>
             }
             rootValue = {
                 ...rootValue,
+                selections,
                 viewer: {
                     id: data.id,
                     isConfirmed: data.confirm

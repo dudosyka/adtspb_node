@@ -41,7 +41,6 @@ module.exports = new GraphQLObjectType({
             }
         },
         createProposal: {
-            // type: ProposalType,
             type: GraphQLBoolean,
             args: {
                 proposal: {
@@ -49,9 +48,11 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve(obj, { proposal }) {
+                const userModel = User.newModel();
+                const userExtraDataModel = UserExtraData.newModel();
                 proposal.parent = {id: obj().viewer.id};
                 let model = await Proposal.createFromInput(proposal);
-                return model.createNew();
+                return model.createNew(userModel, userExtraDataModel);
             }
         },
         recallProposal: {

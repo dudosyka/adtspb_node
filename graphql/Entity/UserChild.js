@@ -1,6 +1,7 @@
 const baseEntity = require('./BaseEntity');
 const UserChildLog = require('./UserChildLog');
 const UserChildOnDelete = require('./UserChildOnDelete');
+const Proposal = require('./Proposal');
 
 let UserChild = function () {}
 
@@ -65,11 +66,11 @@ UserChild.prototype.agreeParentRequest = async function () {
     const userChildLog = await UserChildLog.createFromUserChild(this);;
     this.fields.agreed = 1;
     userChildLog.addChild();
-    
+
     await this.update();
 }
 
-UserChild.prototype.getChildren = async function (child = true, agreed = 0, child_id = false) {
+UserChild.prototype.getChildren = async function (child = true, agreed = 0, child_id = false, selections = {}) {
     let field = 'parent_id';
     let rangeField = 'child_id';
     if (!child)
@@ -81,10 +82,20 @@ UserChild.prototype.getChildren = async function (child = true, agreed = 0, chil
     if (res.length) {
         const range = this.db.createRangeQuery(rangeField, res);
         const children = await this.db.query("SELECT * FROM `user` as `main` LEFT JOIN `user_extra_data` AS `data` ON `main`.`id` = `data`.`user_id` WHERE `main`." + range.query, range.ids);
+
+        let proposals = null;
+        //Check if we have any sub-selections
+        if (selections.proposals) {
+            const model = Proposal.newModel();
+            proposals = await model.selectProposalsList('child_id', children.map(el => el.user_id), selections.proposals);
+        }
+
         children.map(el => {
             el.id = el.user_id;
+            el.proposals = Object.keys(proposals ?? {}).length > 0 ? proposals[el.id] : proposals;
             return el;
-        })
+        });
+
         return children;
     } else {
         return [];

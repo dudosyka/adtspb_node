@@ -91,13 +91,8 @@ module.exports = new graphql.GraphQLObjectType({
         },
         proposals: {
             type: graphql.GraphQLList(ProposalType),
-            async resolve (obj, data) {
-                if (obj.user_id) {
-                    obj.id = obj.user_id;
-                }
-
-                const proposals = await Proposal.selectByChild(obj.id);
-                return proposals;
+            resolve (obj, data) {
+                return (obj.proposals === undefined || obj.proposals === null) ? [] : obj.proposals;
             }
         },
     })
