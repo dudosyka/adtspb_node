@@ -13,9 +13,7 @@ if (typeof dir == 'undefined')
 let path = "../config/migrations/" + dir;
 
 fs.readdirSync(path).map(async el => {
-	console.log('Upload: ' + el + '...');
 	let query = fs.readFileSync(path+"/"+el).toString();
-	// console.log(query);
 	await db.query(query, []);
 });
 

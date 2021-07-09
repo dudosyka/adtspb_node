@@ -29,8 +29,7 @@ UserDataLog.prototype.confirmEditRequest = async function (request_id, admin_id)
     this.__set('edit_timestamp', request.__get('timestamp'));
     this.__set('confirm_timestamp', Date.now());
     this.__set('admin_id', admin_id);
-    // console.log(request.fields);
-    // console.log(this.fields);
+
     const res = await this.save();
 
     if (res === false)
@@ -55,7 +54,6 @@ UserDataLog.prototype.autoConfirm = async function (inObj) {
         data.push(el.requester_id);
     });
     const res = await this.db.query(query, data).catch(err => { console.error(err); });
-    console.log("RES", res);
 }
 
 module.exports = (new UserDataLog());

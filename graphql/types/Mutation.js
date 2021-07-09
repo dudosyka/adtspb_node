@@ -20,6 +20,9 @@ const rbac = new Rbac();
 const Db = require("../utils/Db");
 const db = new Db();
 
+const Jwt = require('../utils/Jwt');
+let jwt = new Jwt();
+
 const { client } = require('../utils/Redis');
 
 module.exports = new GraphQLObjectType({
@@ -38,7 +41,6 @@ module.exports = new GraphQLObjectType({
             }
         },
         createProposal: {
-            // type: ProposalType,
             type: GraphQLBoolean,
             args: {
                 proposal: {
@@ -46,10 +48,24 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve(obj, { proposal }) {
+                const userModel = User.newModel();
+                const userExtraDataModel = UserExtraData.newModel();
                 proposal.parent = {id: obj().viewer.id};
                 let model = await Proposal.createFromInput(proposal);
-                console.log(model.fields);
-                return model.createNew();
+                return model.createNew(userModel, userExtraDataModel);
+            }
+        },
+        recallProposal: {
+            type: GraphQLBoolean,
+            args: {
+                proposal_id: {
+                    type: GraphQLInt
+                }
+            },
+            async resolve(obj, { proposal_id }) {
+                const proposal = await Proposal.baseCreateFrom({id: proposal_id});
+                const res = await proposal.recall(obj().viewer.id).catch(err => {throw Error(err)});
+                return res.affectedRows > 0;
             }
         },
         restorePassword: {
@@ -77,9 +93,10 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve (obj, { code }) {
-                // console.log(viewer.__get('id'));
                 const result = await EmailValidation.confirmUser(code, obj().viewer.id);
-                console.log(result);
+                if (result.code == null) {
+                    result.token = await jwt.sign({ id: obj().viewer.id, confirm: true });
+                }
                 return result;
             }
         },
@@ -138,8 +155,6 @@ module.exports = new GraphQLObjectType({
             },
             async resolve(obj, { parent_id, newData }) {
                 const viewer = await User.createFrom(obj().viewer);
-                // console.log('FIELDS', viewer.fields);
-                // console.log('Input', newData);
                 return await viewer.agreeParentRequest(parent_id, newData);
             }
         },

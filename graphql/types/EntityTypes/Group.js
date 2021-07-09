@@ -1,4 +1,5 @@
 const graphql = require("graphql");
+const TimetableType = require("./Timetable");
 
 module.exports = new graphql.GraphQLObjectType({
     name: "Group",
@@ -14,6 +15,9 @@ module.exports = new graphql.GraphQLObjectType({
         },
         association_id: {
             type: graphql.GraphQLInt
-        }
+        },
+        timetable: {
+            type: TimetableType,
+        },
     }
 });

@@ -1,7 +1,6 @@
 const graphql = require("graphql");
 const Proposal = require("../../Entity/Proposal");
 const AppConfig = require('../../config/AppConfig');
-const Timetable = require("../../Entity/Timetable");
 
 module.exports = new graphql.GraphQLObjectType({
     name: "Association",
@@ -45,30 +44,20 @@ module.exports = new graphql.GraphQLObjectType({
         },
         isRecruiment: {
             type: graphql.GraphQLBoolean,
-            async resolve(obj, data) {
-                const proposals = await Proposal.selectByAssociation(obj, true);
+            resolve(obj) {
+                const proposals = obj.proposals;
                 return (proposals.length < (obj.group_count * AppConfig.group_size));
             }
         },
-        timetable: {
-            type: graphql.GraphQLList(TimetableType),
-            async resolve(obj, data) {
-                const timetable = await Timetable.createFrom({ association_id: obj.id });
-                return timetable.map(el => el.fields);
-            }
+        groups: {
+            type: graphql.GraphQLList(GroupType),
         },
         proposals: {
             type: graphql.GraphQLList(ProposalType),
-            async resolve (obj, data) {
-                console.log('OBJ: ',obj);
-                let proposals = await Proposal.selectByAssociation(obj);
-                console.log('Proposal: ', proposals);
-                return proposals;
-            }
         }
     })
 });
 
 //Moved here to prevent from circular dependence err.
 const ProposalType = require("./Proposal");
-const TimetableType = require("./Timetable");
+const GroupType = require('./Group');

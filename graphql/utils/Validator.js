@@ -44,11 +44,12 @@ Validator.prototype.email = function () {
     return this;
 }
 
-Validator.prototype.phone = function () {
+Validator.prototype.phone = async function () {
     this.fields.map(el => {
         if (el.val !== null) {
-            if (el.val.search(/^[0-9]{10}$/) == -1)
+            if (el.val.search(/^[0-9]{10}$/) == -1) {
                 this.reject(el.name);
+            }
         }
         else {
             this.reject(el.name);
@@ -107,27 +108,25 @@ Validator.prototype.len = function (max = null, min = null) {
 Validator.prototype.age = function (minAge, maxAge = null) {
     this.fields.map(el => {
         const dayFrom = (new Date(AppConfig.year + "-09-01")).getTime();
-        console.log("DAY FROM:::", dayFrom);
-        console.log("NOWADAYS:::", Date.now());
-        console.log("Min Age", minAge);
         const birth = el.val;
         const diff = dayFrom - birth;
         const age = Math.floor(diff / 31557600000);
-        console.log("Age", age);
         if (age < minAge || age > (maxAge ?? AppConfig.year))
             this.reject(el.name);
     });
     return this;
 }
 
-Validator.prototype.check = function () {
+Validator.prototype.check = function (fieldsOnValidate) {
     if (this.canBeNull)
         return this.result;
     else
     {
         this.fields.map(el => {
-            if (el.value === null) {
-                return false;
+            if (fieldsOnValidate.includes(el.name)) {
+                if (el.value === null) {
+                    return false;
+                }
             }
         });
 

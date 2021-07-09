@@ -16,9 +16,9 @@ Mail.prototype.sendEmail = async function (to, subject, text) {
       subject: subject,
       text: text,
   }).then(data => {
-      console.log(data);
+
   }).catch(err => {
-      console.log(err);
+      
   });
 
 
