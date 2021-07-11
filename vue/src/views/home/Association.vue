@@ -22,7 +22,11 @@
                     </section>
                 </article>
 
-                <button class="association-card_timetable-toggle" @click="openTimetables(id)">Рассписание</button>
+                <button
+                    class="association-card_timetable-toggle"
+                    :class="{'association-card_timetable-toggle--open': card.showSchendule}"
+                    @click="openTimetables(id)"
+                >Рассписание</button>
                 <article class="association-card_timetable" v-show="card.showSchendule">
                     <div class="bread-crumbs">
                         <button class="bread-crumb"
@@ -31,7 +35,7 @@
                                 @click="openTimetable(id, groupId)"
                         >{{ group.name }}</button>
                     </div>
-                    <section>
+                    <section class="schedule-wrapper">
                         <table class="schedule" v-for="(group, id) in card.groups" v-show="group.timetable.show">
                             <tr v-for="day of group.timetable.week">
                                 <td>{{ day.name }}</td><td>{{ day.time }}</td>
@@ -348,6 +352,7 @@ article.card.shadow {
     width: 100%;
     padding: 10px;
     padding-right: 30px;
+    margin-bottom: 10px;
     background-color: #fff;
     border: none;
     font-size: 17px;
@@ -360,10 +365,16 @@ article.card.shadow {
     width: 0;
     height: 0;
     margin-left: 10px;
-    border: 10px solid #142732;
+    border: 7px solid #464646;
     border-left-color: rgba(0,0,0,0);
     border-right-color: rgba(0,0,0,0);
     border-top-style: none;
+}
+.association-card_timetable-toggle--open::after {
+    border: 7px solid #142732;
+    border-left-color: rgba(0,0,0,0);
+    border-right-color: rgba(0,0,0,0);
+    border-bottom-style: none;
 }
 .association-card_timetable-toggle:hover {
     cursor: pointer;
@@ -378,6 +389,7 @@ article.card.shadow {
     color: #525252;
     background-color: #fff;
     border: none;
+    font-size: 12px;
 }
 .bread-crumb--active {
     color: #0086c9;
@@ -392,6 +404,9 @@ article.card.shadow {
     color: #142732;
     margin-bottom: 10px;
 }
+.schedule-wrapper {
+    padding-bottom: 20px;
+}
 .schedule {
     padding: 10px 0;
     width: 100%;
@@ -399,7 +414,7 @@ article.card.shadow {
 
 .association-test, .association-reserve {
     padding: 10px;
-    margin-bottom: 15px;
+    margin: 15px 0;
 }
 
 .assoc-reserve-description {
