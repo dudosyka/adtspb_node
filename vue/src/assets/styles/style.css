@@ -247,3 +247,29 @@ hr {
 .shadow {
   box-shadow: 0 0 10px 0 #aeaeae;
 }
+
+.black-text {
+  color: #142732;
+}
+.gray-text {
+  color: #525252;
+}
+.white-text {
+  color: #fff;
+}
+.blue-text {
+  color: #0086c9;
+}
+
+.blue-bg {
+  background-color: #0086c9;
+}
+.white-bg {
+  background-color: #fff;
+}
+
+.black-line {
+  background-color: #142732;
+  height: 1px;
+  margin: 0;
+}

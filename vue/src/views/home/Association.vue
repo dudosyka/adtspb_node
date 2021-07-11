@@ -7,41 +7,59 @@
       <div :class="{'association-cards--opened': show.associationsList}" class="association-cards-wrapper">
         <button class="close-associations" @click="show.associationsList = false"><span></span></button>
         <article class="association-cards">
-          <article class="card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id" v-if='!card.already'>
-            <h2 class="association-name" v-text="card.name"></h2>
-            <p class="association-description" v-text="card.description"></p>
-            <div class="association-additional">
-                <p class="tak-hochet-marina">от {{ card.min_age + ' до ' + card.max_age}} лет</p>
-                <p class="tak-hochet-marina">занятия {{ card.lessons_week + correctLessons(card.lessons_week)}} в неделю</p>
-                <p class="tak-hochet-marina">{{ card.hours_week + correctHours(card.hours_week) }} в неделю</p>
-                <p class="tak-hochet-marina">{{ card.study_years + correctYears(card.study_years) }} обучения</p>
-            </div>
+            <article class="association-card card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id">
+                <h2 class="association-card_heading">{{ card.name }}</h2>
+                <p class="association-card_old gray-text">от {{ card.min_age + ' до ' + card.max_age}} лет</p>
+                <p class="gray-text">{{ card.description }}</p>
+                <article class="association-card_time">
+                    <section class="association-card_time_item">
+                        <p class="black-text">{{ card.lessons_week + correctLessons(card.lessons_week)}} {{ card.hours_week + correctHours(card.hours_week) }}</p>
+                        <p class="gray-text">в неделю</p>
+                    </section>
+                    <section class="association-card_time_item">
+                        <p class="black-text">{{ card.study_years + correctYears(card.study_years) }}</p>
+                        <p class="gray-text">обучения</p>
+                    </section>
+                </article>
 
-            <section class="association-schedule" v-for="group of card.groups">
-              <h3 class="schedule-name">{{ group.name }}</h3>
-              <table class="schedule">
-                <tr v-for="day in group.timetable.week">
-                  <td>{{ day.name }}</td><td>{{ day.time }}</td>
-                </tr>
-              </table>
-            </section>
+                <button class="association-card_timetable-toggle" @click="openTimetables(id)">Рассписание</button>
+                <article class="association-card_timetable" v-show="card.showSchendule">
+                    <div class="bread-crumbs">
+                        <button class="bread-crumb"
+                                :class="{'bread-crumb--active': group.timetable.show}"
+                                v-for="(group, groupId) of card.groups"
+                                @click="openTimetable(id, groupId)"
+                        >{{ group.name }}</button>
+                    </div>
+                    <section>
+                        <table class="schedule" v-for="(group, id) in card.groups" v-show="group.timetable.show">
+                            <tr v-for="day of group.timetable.week">
+                                <td>{{ day.name }}</td><td>{{ day.time }}</td>
+                            </tr>
+                        </table>
+                        <hr class="black-line">
+                    </section>
+                </article>
 
-            <!--
-            <div class="association-test warning-container" v-if="card.test.is">
-              <h3 class="assoc-test-heading" v-text="card.test.name"></h3>
-              <p class="assoc-test-description" v-text="card.test.description"></p>
-            </div>
-            !-->
-            <div v-if="!card.isRecruiment" class="association-reserve fatal-container">
-              <p class="assoc-reserve-description">Идёт набор в резерв</p>
-            </div>
-            <div v-else class="association-reserve accept-container">
-              <p class="assoc-reserve-description">Идёт набор</p>
-            </div>
+                <!--
+                <div class="association-test warning-container" v-if="card.test.is">
+                    <h3 class="assoc-test-heading" v-text="card.test.name"></h3>
+                    <p class="assoc-test-description" v-text="card.test.description"></p>
+                </div>
+                !-->
 
-            <button v-if="!proposalParms.associations[id]" class="dark-box dark-button" @click="addAssociation(id)">Записать</button>
-            <button v-else-if='!proposalParms.associations[id].already' class="dark-box dark-button" @click="removeAssociation(id)">Отмена</button>
-          </article>
+                <div v-if="!card.isRecruiment" class="association-reserve fatal-container">
+                    <p class="assoc-reserve-description">Идёт набор в резерв</p>
+                </div>
+                <div v-else class="association-reserve accept-container">
+                    <p class="assoc-reserve-description">Идёт набор</p>
+                </div>
+
+                <div class="association-card_buttons buttons">
+                    <button v-if="!proposalParms.associations[id]" class="dark-box dark-button" @click="addAssociation(id)">Записать</button>
+                    <button v-else-if='!proposalParms.associations[id].already' class="dark-box dark-button" @click="removeAssociation(id)">Отмена</button>
+                </div>
+            </article>
         </article>
       </div>
 
@@ -130,9 +148,15 @@ export default {
     const child = localStorage.getItem('childInAssociations');
 
     Association.getAssociations().then(data => {
-        data.map(el => {
-            this.associations[el.id] = el;
-            this.associations[el.id].already = false;
+        data.map(association => {
+            const id = association.id;
+
+            //this properties must be reactive
+            this.$set(this.associations, id, association);
+            this.$set(this.associations[id], 'already', false);
+            this.$set(this.associations[id], 'showSchendule', false);
+            this.$set(this.associations[id].groups[0].timetable, 'show', true);
+
         });
 
         console.log(data);
@@ -157,8 +181,6 @@ export default {
             this.child.proposals.map(el => {
                 this.associations[el.association.id].already = true;
                 this.proposalParms.associations[el.association.id] = el.association;
-                this.proposalParms.associations[el.association.id].already = true;
-                this.proposalParms.weekHours += el.association.hours_week;
             });
             console.log(this.child);
             console.log(this.proposalParms);
@@ -171,6 +193,18 @@ export default {
     correctYears: (years) => Corrector.correctYears(years),
     correctLessons: (lessons) => Corrector.correctLessons(lessons),
     correctHours: (hours) => Corrector.correctHours(hours),
+
+    //I will create component, pleas don't change it
+    openTimetables(id) {
+        this.associations[id].showSchendule = !this.associations[id].showSchendule;
+    },
+    openTimetable(assocId, groupId) {
+        this.associations[assocId].groups.map(group => {
+            group.timetable.show = false;
+        })
+        this.associations[assocId].groups[groupId].timetable.show = true;
+    },
+
 
     addAssociation(id) {
         this.proposalParms.associations[id] = this.associations[id];
@@ -213,6 +247,9 @@ export default {
             }
         })
     }
+  },
+  computed: {
+
   }
 }
 </script>
@@ -221,6 +258,7 @@ export default {
 .home-content {
     display: grid;
     grid-template-columns: 1fr auto;
+    overflow-y: hidden;
 }
 
 article.card.shadow {
@@ -276,51 +314,96 @@ article.card.shadow {
     box-sizing: border-box;
     height: 100vh;
     padding: 30px;
-    color: #142732;
+
     display: grid;
     grid-gap: 15px;
     grid-template-columns: repeat(auto-fill, 260px);
     overflow-y: scroll;
 }
-.association-name {
-    word-wrap: break-word;
+
+.association-card {
+
 }
-.association-additional {
-}
-.tak-hochet-marina {
-    display: inline-block;
-    width: fit-content;
+.association-card_old {
     margin: 0;
-    margin-bottom: 5px;
-    padding: 5px;
-    border-radius: 5px;
-    color: #0086c9;
-    background-color: #eaf4ff;
+    margin-top: 5px;
 }
-.tak-hochet-marina:last-child {
-    margin-bottom: 0;
+.association-card_time {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 5px 0 15px;
 }
-.association-test, .association-reserve, .association-schedule {
-    padding: 10px;
-    margin-bottom: 15px;
-}
-.assoc-test-description {
+.association-card_time_item .black-text {
+    font-size: 17px;
     margin: 0;
-    margin-top: 10px;
 }
-.assoc-reserve-description {
+.association-card_time_item .gray-text {
+    font-size: 15px;
     margin: 0;
 }
 
-.association-schedule {
+.association-card_timetable-toggle {
     position: relative;
-    display: grid;
-    grid-template-rows: repeat(auto-fill, 30px);
-    padding: 0;
-    margin: 20px 0;
+    width: 100%;
+    padding: 10px;
+    padding-right: 30px;
+    background-color: #fff;
+    border: none;
+    font-size: 17px;
+    color: #142732;
 }
-.schedule-name {
-    text-align: left;
+.association-card_timetable-toggle::after {
+    content: '';
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    margin-left: 10px;
+    border: 10px solid #142732;
+    border-left-color: rgba(0,0,0,0);
+    border-right-color: rgba(0,0,0,0);
+    border-top-style: none;
+}
+.association-card_timetable-toggle:hover {
+    cursor: pointer;
+}
+
+.bread-crumbs {
+    display: flex;
+    flex-wrap: wrap;
+}
+.bread-crumb {
+    padding: 3px;
+    color: #525252;
+    background-color: #fff;
+    border: none;
+}
+.bread-crumb--active {
+    color: #0086c9;
+    background-color: #eaf4ff;
+    border-radius: 5px;
+}
+.bread-crumb:hover {
+    cursor: pointer;
+}
+
+.association-card_timetable {
+    color: #142732;
+    margin-bottom: 10px;
+}
+.schedule {
+    padding: 10px 0;
+    width: 100%;
+}
+
+.association-test, .association-reserve {
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.assoc-reserve-description {
+    margin: 0;
 }
 
 .add-associations {
