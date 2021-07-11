@@ -21,7 +21,6 @@ Timetable.prototype.createFrom = async function (data) {
                 model.fields = newData;
                 models.push(model);
             });
-            console.log("MODELS", models);
             return models;
         }
         else

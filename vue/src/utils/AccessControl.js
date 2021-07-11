@@ -1,8 +1,8 @@
-const AccessContol = {};
+const AccessControl = {};
 import { request, GraphQLClient } from "graphql-request";
 import * as AppConfig from '../config/AppConfig';
 
-AccessContol.checkRule = function (id) {
+AccessControl.checkRule = function (id) {
     const rules = localStorage.getItem('rules');
     if (rules === null)
         return false;
@@ -10,7 +10,7 @@ AccessContol.checkRule = function (id) {
     return rules.includes(id);
 }
 
-AccessContol.checkRole = function (id) {
+AccessControl.checkRole = function (id) {
     const roles = localStorage.getItem('roles');
     if (roles === null)
         return false;
@@ -18,7 +18,11 @@ AccessContol.checkRole = function (id) {
     return roles.includes(id);
 }
 
-AccessContol.refreshApiToken = function () {
+AccessControl.refreshApiToken = function (token = null) {
+    if (token !== null) {
+        localStorage.setItem('token', token);
+    }
+
     global.api = new GraphQLClient(AppConfig.api_url, {
         headers: {
             Authorization: "Bearer " + localStorage.getItem('token'),
@@ -26,26 +30,26 @@ AccessContol.refreshApiToken = function () {
     });
 }
 
-AccessContol.refreshUserRules = async function () {
+AccessControl.refreshUserRules = async function () {
 
     if (localStorage.getItem('token') === null)
         return;
 
     let req = `
     query {
-        viewer {
+        userRights {
             rules, roles
         }
     }
     `;
 
     return _request("api", req).then(el => {
-        localStorage.setItem('rules', el.viewer.rules);
-        localStorage.setItem('roles', el.viewer.roles);
+        localStorage.setItem('rules', el.userRights.rules);
+        localStorage.setItem('roles', el.userRights.roles);
     });
 }
 
-AccessContol.refreshAccess = async function () {
+AccessControl.refreshAccess = async function () {
     if (localStorage.getItem('token') === null) {
         localStorage.removeItem('rules');
         localStorage.removeItem('roles');
@@ -58,4 +62,15 @@ AccessContol.refreshAccess = async function () {
     }
 }
 
-export {AccessContol};
+AccessControl.logout = function (redirToLogin = false) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('rules');
+    localStorage.removeItem('roles');
+
+    if (redirToLogin)
+        window.location = "/login";
+    else
+        window.location = window.location;
+}
+
+export {AccessControl};

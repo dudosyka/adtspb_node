@@ -117,7 +117,6 @@ import {Proposal} from '../../models/Proposal.js';
 import {Association} from "../../models/Association.js";
 import {User} from "../../models/User.js";
 import {Timetable} from "../../models/Timetable.js";
-import {Group} from "../../models/Group.js";
 import {Corrector} from "../../utils/Corrector.js";
 
 export default {
@@ -221,7 +220,6 @@ export default {
     },
 
     createProposal() {
-        //TODO: Вынести логику в модель!
       if (!this.selected) {
         this.errors.needAssoc = true;
         return;
@@ -235,6 +233,10 @@ export default {
 
       Proposal.createFromObject(this.proposalParms.associations, this.child.id)
       .then(data => {
+          Object.keys(this.proposalParms.associations).map(el => {
+                this.associations[el].already = true;
+          });
+
           this.messages.proposalCreated = true;
       })
       .catch(err => {

@@ -1,30 +1,16 @@
 const graphql = require("graphql");
 
-const Group = require('../../Entity/Group');
-const GroupType = require('./Group');
-
-const Association = require('../../Entity/Association');
-const AssociationType = require('./Association');
-
 module.exports = new graphql.GraphQLObjectType({
     name: "Timetable",
     fields: {
         id: {
             type: graphql.GraphQLID,
         },
-        group: {
-            type: GroupType,
-            async resolve(obj, data) {
-                const group = await Group.baseCreateFrom({id: obj.group_id});
-                return group.fields;
-            }
+        group_id: {
+            type: graphql.GraphQLID,
         },
-        association: {
-            type: AssociationType,
-            async resolve(obj, data) {
-                const association = await Association.baseCreateFrom({id: obj.association_id});
-                return association.fields;
-            }
+        association_id: {
+            type: graphql.GraphQLID,
         },
         week: {
             type: graphql.GraphQLList(graphql.GraphQLString),

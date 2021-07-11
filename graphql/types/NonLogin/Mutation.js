@@ -28,11 +28,12 @@ module.exports = new GraphQLObjectType({
                 const auth = await User.auth({ user: login, pass: password });
                 if (auth.status !== true)
                     throw Error(auth.res);
-                const id = auth.res.id;
-                // console.log(auth.res.id);
+                const id = auth.res.id
+                const confirm = auth.confirm;
                 return {
-                    token: await jwt.sign({ id: id }),
+                    token: await jwt.sign({ id: id, confirm: confirm }),
                     id: id,
+                    isConfirmed: confirm
                 };
             }
         },
@@ -47,13 +48,16 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve(obj, { user, makeParent }) {
-                let usr = await User.createFrom(user);
+                const model = User.newModel();
+                model.fields = {...user};
+
                 let additionalRoles = [];
                 if (makeParent)
                     additionalRoles.push(AppConfig.parent_role_id);
                 else
                     additionalRoles.push(AppConfig.child_role_id);
-                return usr.createNew(additionalRoles);
+
+                return model.createNew(additionalRoles);
             }
         },
         restorePassword: {
@@ -84,9 +88,7 @@ module.exports = new GraphQLObjectType({
                 }
             },
             async resolve (obj, { code, user_id }) {
-                // console.log(viewer.__get('id'));
                 const result = await EmailValidation.confirmUser(code, user_id);
-                console.log(result);
                 return result;
             }
         },

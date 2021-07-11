@@ -83,7 +83,6 @@ module.exports = new graphql.GraphQLObjectType({
         disability_group: {
             type: DisabilityGroupType,
             async resolve(obj, data) {
-                console.log(obj);
                 return {
                     id: obj.disability_group,
                     name: null
@@ -92,14 +91,8 @@ module.exports = new graphql.GraphQLObjectType({
         },
         proposals: {
             type: graphql.GraphQLList(ProposalType),
-            async resolve (obj, data) {
-                if (obj.user_id) {
-                    obj.id = obj.user_id;
-                }
-                console.log("OBJECT", obj);
-                const proposals = await Proposal.selectByChild(obj.id);
-                console.log("PROPOSALS", proposals);
-                return proposals;
+            resolve (obj, data) {
+                return (obj.proposals === undefined || obj.proposals === null) ? [] : obj.proposals;
             }
         },
     })

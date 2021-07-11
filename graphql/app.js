@@ -52,6 +52,16 @@ let rootValue = {
 //   res.send();
 // });
 
+function parseSelections(selection) {
+    let selections = {};
+    if (selection.selectionSet !== undefined) {
+        selection.selectionSet.selections.map( _selection => {
+            selections[_selection.name.value] = parseSelections(_selection);
+        });
+    }
+    return Object.keys(selections).length ? selections : true;
+}
+
 //Check user token. If valid -> next(), invalid -> HTTP 403
 app.use('/api', async (req, res, next) =>
 {
@@ -59,6 +69,17 @@ app.use('/api', async (req, res, next) =>
     const endPointName = gql`
         ${req.body.query}
     `.definitions[0].selectionSet.selections[0].name.value;
+
+    let selections = null;
+
+    const request = gql`
+        ${req.body.query}
+    `.definitions[0].selectionSet.selections[0];
+
+    if (request.selectionSet) {
+        selections = parseSelections(request)
+    }
+
     //Authorization: Bearer [token]
     let token = req.header("Authorization");
 
@@ -75,20 +96,38 @@ app.use('/api', async (req, res, next) =>
         console.log(data);
         if (data !== false && Object.keys(data).length != 1)
         {
+            //If request is not in white list start checking email_validation
             if (!AppConfig.requestWhiteList.includes(endPointName))
             {
-                const confirm = await EmailValidation.checkConfirmation(data.id);
-                if (confirm.__get('code') != null)
-                {
-                    const response = {message: "Not confirmed"};
+                //If email_confirmation parm is not set in token return refresh
+                if (data.confirm == null) {
+                    const response = {message: "refresh"};
                     res.status(200).end(JSON.stringify(response));
                     return;
+                }
+                //If email_confirmation parm set but false check it
+                else if (data.confirm == false) {
+                    const confirm = await EmailValidation.checkConfirmation(data.id);
+                    //If email_confirmation truly false as set in token return not confirmed
+                    if (confirm.__get('code') != null) {
+                        const response = {message: "Not confirmed"};
+                        res.status(200).end(JSON.stringify(response));
+                        return;
+                    }
+                    //If information in token and in DB isnt same return refresh
+                    else {
+                        const response = {message: "refresh"};
+                        res.status(200).end(JSON.stringify(response));
+                        return;
+                    }
                 }
             }
             rootValue = {
                 ...rootValue,
+                selections,
                 viewer: {
-                    id: data.id
+                    id: data.id,
+                    isConfirmed: data.confirm
                 },
             };
         }
@@ -113,7 +152,11 @@ app.use('/api', graphqlHTTP({
 
 app.use('/endoor', (req, res, next) => {
 	console.log(req.body);
-	next();
+    try {
+        next();
+    } catch (err) {
+        console.log(err);
+    }
 });
 
 app.use('/endoor', graphqlHTTP({
