@@ -11,6 +11,6 @@ module.exports = {
         pass: ""
     },
     requestWhiteList: [
-        "validToken", "viewer", "confirmUser", "checkUserConfirmation" , "generateNewConfirmationCode"
+        "validToken", "viewer", "userRights", "confirmUser", "checkUserConfirmation" , "generateNewConfirmationCode"
     ]
 }

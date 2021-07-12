@@ -195,12 +195,7 @@ User.prototype.getFullData = async function (id = false, selections = {}, model 
         proposals = await model.selectProposalsList(field, [data.id], selections.proposals);
     }
 
-    console.log(proposals);
-
     data.proposals = Object.keys(proposals ?? {}).length > 0 ? proposals[data.id] : null;
-
-    console.log(data);
-
     return data;
 }
 

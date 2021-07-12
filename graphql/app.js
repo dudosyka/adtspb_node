@@ -148,16 +148,7 @@ app.use('/api', graphqlHTTP({
     graphiql: true
 }));
 
-//app.use('/endoor', (req, res, next) => { console.log('WORK!'); res.end("RESPONSE"); });
-
-app.use('/endoor', (req, res, next) => {
-	console.log(req.body);
-    try {
-        next();
-    } catch (err) {
-        console.log(err);
-    }
-});
+app.use('/endoor', (req, res, next) => {console.log(req.body);});
 
 app.use('/endoor', graphqlHTTP({
     schema: schemaForNonLogin,
@@ -169,29 +160,9 @@ app.use('/endoor', graphqlHTTP({
 }));
 
 app.use((err, req, res, next) => {
-    console.log(err.stack);
+    console.log("Catched: ", err.stack);
     res.status(500).send();
     return;
 });
-
-//We really needn`t chat? (Delete if yes)
-//Listen for WS connections
-// expressWs.getWss().on('connection', (ws) => {
-//     //When connect get current from rootValue
-//     let id = rootValue.user.fields.id;
-//
-//     //Setting id to WS and redis
-//     ws.id = id;
-//     instance.hmset(['ws', id, id], (err, res) => {
-//         // console.log(err,res);
-//     });
-//     //When connection closed delete id from redis
-//     ws.on('close', () => {
-//         instance.hdel(['ws', ws.id], (err, res) => {
-//             // console.log(res);
-//         });
-//     })
-// });
-// app.wss = expressWs.getWss();
 
 module.exports = app;
