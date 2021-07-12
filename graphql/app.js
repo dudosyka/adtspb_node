@@ -148,7 +148,7 @@ app.use('/api', graphqlHTTP({
     graphiql: true
 }));
 
-app.use('/endoor', (req, res, next) => {console.log(req.body);});
+app.use('/endoor', (req, res, next) => {console.log(req.body); next();});
 
 app.use('/endoor', graphqlHTTP({
     schema: schemaForNonLogin,
