@@ -127,7 +127,7 @@ module.exports = new GraphQLObjectType({
                 args: {},
                 async resolve(obj, {  }) {
                     const userData = await UserExtraData.createFrom({ user_id: obj().viewer.id });
-                    const res = userData.checkChildData();
+                    const res = await userData.checkChildData();
                     if (res !== true)
                         return JSON.stringify(res);
                     else

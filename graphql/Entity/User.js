@@ -156,7 +156,7 @@ User.prototype.createNew = async function (roles = []) {
 
         let res = rbac.addRoleToUser(id, AppConfig.common_user_id);
 
-        UserExtraData.createNew({ user_id: id });
+        const dataRes = await UserExtraData.createNew({ user_id: id });
 
         if (res === false)
             throw Error('Saving data failed');
@@ -282,10 +282,14 @@ User.prototype.addChild = async function (child_data) {
 
 User.prototype.setChildData = async function (childId, data, deleteChild = false, entity = false, log = true, autoConfirm = false) {
     data.user_id = childId;
-    const childExtraData = await UserExtraData.createFrom(data);
+    const childExtraData = await UserExtraData.createFrom({user_id: childId});
+    childExtraData.load(data);
+    console.log(childExtraData.fields);
+    console.log(entity.fields);
     createResult = await childExtraData.setChildData();
 
     if (createResult !== true) {
+        console.log(createResult);
         if (deleteChild)
             entity.delete();
         if (createResult === false)
@@ -326,23 +330,26 @@ User.prototype.agreeParentRequest = async function (parent_id, newData) {
 
     return true;
 }
-
+//-------------------------------------------------------------------
 User.prototype.createChild = async function (data) {
     if (!this.hasAccess(11))
         throw Error('Forbidden');
 
     const instance = this.newModel();
-    const childData = await instance.baseCreateFrom(data);
+    instance.fields = {...data};
 
-    let createResult = await childData.createNew([ AppConfig.child_role_id ]);
+    let createResult = await instance.createNew([ AppConfig.child_role_id ]);
     if (createResult.status != 'success')
         throw Error("User creating failed");
 
-    const child = await instance.createFrom({id: createResult.id});
-    const request_id = await this.addChild(child.__get('email'));
-    await this.setChildData(child.__get('id'), data, true, child, false);
+    instance.fields.id = createResult.id
 
-    return await child.agreeParentRequest(this.__get('id'), data);
+    // const child = await instance.createFrom({id: createResult.id});
+    const usrChild = await UserChild.baseCreateFrom({ parent_id: this.__get('id'), child_id: createResult.id });
+    const request = await usrChild.addParentRequest();
+    await this.setChildData(createResult.id, data, true, instance, true);
+
+    return await instance.agreeParentRequest(this.__get('id'), data);
 }
 
 User.prototype.checkRelationship = async function (child_id) {

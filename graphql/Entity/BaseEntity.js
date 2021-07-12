@@ -103,6 +103,10 @@ baseEntity.prototype.newModel = function () {
     return (new instance());
 }
 
+baseEntity.prototype.load = function (data) {
+    this.fields = Object.assign(this.fields, data);
+}
+
 baseEntity.prototype.table = "";
 
 baseEntity.prototype.save = async function () {
