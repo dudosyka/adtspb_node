@@ -157,7 +157,7 @@ export default {
           let menu = {
               'home': {
                   link: "/",
-                  title: "Главная",
+                  title: "Профиль",
                   class: null,
               },
           }
