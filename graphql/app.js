@@ -168,6 +168,12 @@ app.use('/endoor', graphqlHTTP({
     graphiql: true,
 }));
 
+app.use((err, req, res, next) => {
+    console.log(err.stack);
+    res.status(500).send();
+    return;
+});
+
 //We really needn`t chat? (Delete if yes)
 //Listen for WS connections
 // expressWs.getWss().on('connection', (ws) => {
