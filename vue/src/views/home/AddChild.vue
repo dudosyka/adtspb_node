@@ -308,7 +308,6 @@
           password: null,
 
           birthday: null, //mask
-          birth_certificate: 'ABC123456',
 
           state: null,
           relationship: null,
@@ -344,7 +343,6 @@
           password: false,
 
           birthday: false,
-          birth_certificate: false,
 
           state: false,
           relationship: false,
@@ -380,7 +378,6 @@
           password: false,
 
           birthday: false,
-          birth_certificate: false,
 
           state: false,
           relationship: false,

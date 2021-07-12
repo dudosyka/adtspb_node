@@ -212,7 +212,6 @@
           password: null,
 
           birthday: null, //mask
-          birth_certificate: null,
 
           state: null,
           relationship: null,
@@ -262,7 +261,6 @@
         User.getFullData(
             {
                birthday: null,
-               birth_certificate: null,
                state: null,
                relationship: null,
                studyPlace: null,

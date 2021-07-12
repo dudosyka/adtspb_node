@@ -58,7 +58,7 @@ UserExtraData.prototype.checkChildData = async function (fieldsOnValidate = null
                     'relationship', 'state', 'studyPlace',
                     'registration_address', 'registration_flat',
                     'residence_address', 'residence_flat',
-                    'birth_certificate', 'ovz', 'ovz_type',
+                    'ovz', 'ovz_type',
                     'disability', 'disability_group', 'birthday'
                 ],
                 'Can`t be empty'
@@ -69,12 +69,6 @@ UserExtraData.prototype.checkChildData = async function (fieldsOnValidate = null
                 ],
                 'Invalid format'
             ).match(/^[0-1]{1}$/),
-            this.validator(
-                [
-                    'birth_certificate'
-                ],
-                'Invalid format'
-            ).match(/^[A-Za-zА-Яа-яЕеЁёЫыЙйЪъЬьЖжЗз]{1,}[0-9]{6}$/),
             this.validator(
                 [
                     'birthday'

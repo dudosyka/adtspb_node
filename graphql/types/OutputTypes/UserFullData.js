@@ -62,9 +62,6 @@ module.exports = new graphql.GraphQLObjectType({
         residence_flat: {
             type: graphql.GraphQLString,
         },
-        birth_certificate: {
-            type: graphql.GraphQLString,
-        },
         ovz: {
             type: graphql.GraphQLInt,
         },

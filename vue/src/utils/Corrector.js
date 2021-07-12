@@ -38,7 +38,6 @@ Corrector.correctHours = function (hours) {
 
 Corrector.userField = function (field) {
     const correct = {
-        birth_certificate: "Номер сведительства о рождении",
         birthday: "Дата рождения",
         disability: "Инвалидность",
         disability_group: "Группа инвалидности",
