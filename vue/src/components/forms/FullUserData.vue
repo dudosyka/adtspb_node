@@ -366,7 +366,7 @@ export default {
       saveEditedData() {
           console.log(this.data);
           console.log(this.clearData);
-          if (this.data.phone !== this.clearData.phone.substr(1)) {
+          if (this.data.phone !== this.clearData.phone) {
               this.setDataOnEdit('phone', 'main', false, this.data.phone);
           }
           console.log(this.dataOnEdit);

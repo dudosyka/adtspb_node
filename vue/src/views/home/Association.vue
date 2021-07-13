@@ -101,7 +101,8 @@
           <div class="buttons">
             <p class="label-error" v-if="errors.needAssoc">Выберите объединения</p>
             <p class="label-normal" v-if="messages.proposalCreated">Заявления составлены</p>
-            <p class="label-error" v-if="errors.alreadyCreated">Заявления уже составлены</p>
+            <p class="label-error" v-if="errors.alreadyCreated">Заявления в {{ errors.assoc.name }} уже составлены</p>
+            <p class="label-error" v-if="errors.age">Объединение {{ errors.assoc.name }} не подходит по возрасту</p>
             <button class="dark-box dark-button" @click="createProposal()">Составить заявления</button>
           </div>
         </div>
@@ -136,7 +137,11 @@ export default {
       errors: {
         schedule: false,
         needAssoc: false,
-        alreadyCreated: false
+        alreadyCreated: false,
+        age: false,
+        assoc: {
+            name: false
+        }
       },
       messages: {
         proposalCreated: false
@@ -232,17 +237,23 @@ export default {
       this.errors.schedule = false;
 
       Proposal.createFromObject(this.proposalParms.associations, this.child.id)
-      .then(data => {
-          Object.keys(this.proposalParms.associations).map(el => {
-                this.associations[el].already = true;
+          .then(data => {
+              Object.keys(this.proposalParms.associations).map(el => {
+                    this.associations[el].already = true;
+              });
+
+              this.messages.proposalCreated = true;
+          })
+          .catch(err => {
+              this.errors.assoc = err.assoc;
+              console.log(err.msg);
+              if (err.msg == 'Age doesn`t pass') {
+                  this.errors.age = true;
+              }
+              else {
+                  this.errors.alreadyCreated = true;
+              }
           });
-
-          this.messages.proposalCreated = true;
-      })
-      .catch(err => {
-          this.errors.alreadyCreated = true;
-      })
-
     },
     anyAssociationSelected() {
         this.selected = false;
