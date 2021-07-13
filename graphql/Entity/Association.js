@@ -20,6 +20,9 @@ Association.prototype.getAssociations = async function (age = null, selections =
     const res = await this.db.query(fullQuery, data);
     const ids = res.map(el => el.association_id);
 
+    if (ids.length <= 0)
+        return [];
+        
     let groups = null;
     if (selections.groups) {
         const model = Group.newModel();

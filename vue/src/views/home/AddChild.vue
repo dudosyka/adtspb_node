@@ -112,11 +112,22 @@
                 v-model="childRaw.state"
                 :error="childRawErrors.state"
             />
-            <inputField
-                label="Степень родства"
-                v-model="childRaw.relationship"
-                :error="childRawErrors.relationship"
-            />
+
+            <div>
+                <inputField
+                    label="Степень родства"
+                    v-model="childRaw.relationship"
+                    :error="childRawErrors.relationship"
+                    style="{margin: 0}"
+                >
+                    <template v-slot:prompt>
+                        <div class="input-prompt">
+                            <span @click="childRaw.relationship = 'Родитель'">Родитель</span>
+                            <span @click="childRaw.relationship = 'Законный представитель'">Законный представитель</span>
+                        </div>
+                    </template>
+                </inputField>
+            </div>
 
             <div class="child-form_span-2 child-form_select">
               <div>
@@ -198,6 +209,10 @@
             />
 
             <h2 class="child-form_heading">Адрес проживания</h2>
+              <div class="input-prompt">
+                  <span @click="autoResidenceAddress()">По адресу регистрации</span>
+              </div>
+              <br>
             <inputField
                 label="Город"
                 v-model="childRaw.residence_address.city"
@@ -293,7 +308,6 @@
           password: null,
 
           birthday: null, //mask
-          birth_certificate: 'ABC123456',
 
           state: null,
           relationship: null,
@@ -329,7 +343,6 @@
           password: false,
 
           birthday: false,
-          birth_certificate: false,
 
           state: false,
           relationship: false,
@@ -365,7 +378,6 @@
           password: false,
 
           birthday: false,
-          birth_certificate: false,
 
           state: false,
           relationship: false,
@@ -408,6 +420,10 @@
       }
     },
     methods: {
+        autoResidenceAddress() {
+            this.childRaw.residence_address = clone(this.childRaw.registration_address);
+            this.childRaw.residence_flat = this.childRaw.registration_flat;
+        },
       childRegistration() {
           this.childRawErrors = clone(this.childRawErrors_proto);
           User.addChild({...this.childRaw}).then(res => {

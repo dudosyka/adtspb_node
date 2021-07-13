@@ -58,20 +58,23 @@ Proposal.create = async function (association, child) {
         }
     };
 
-    return await _request("api", req, data).then(data => data.createProposal);
+    return await _request("api", req, data).then(data => data.createProposal).catch(err => {throw err;});
 }
 
 Proposal.createFromObject = async function (obj, child_id) {
-    Object.keys(obj).map(async index => {
-      const assoc = obj[index];
-      const childId = Number(child_id);
-      const assocId = Number(assoc.id);
+    let result = [];
+    for (let index in obj) {
+        const assoc = obj[index];
+        const childId = Number(child_id);
+        const assocId = Number(assoc.id);
 
-      if (assoc.already)
-          return;
+        if (assoc.already)
+            return;
 
-      await Proposal.create(assocId, childId);
-    });
+        await Proposal.create(assocId, childId).catch(err => {
+            throw {msg: getError(err), assoc: assoc};
+        });
+    }
 }
 
 Proposal.canJoinAssociation = async function (association, child) {

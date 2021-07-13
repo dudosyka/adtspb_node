@@ -14,14 +14,6 @@
                 <article class="child-data_table">
                     <article class="child-data_table-group">
                         <div>
-                            <inputField
-                            label="Номер свидетельства о рождении"
-                            v-model="child.birth_certificate"
-                            :error="errors['birth_certificate']"
-                            />
-                        </div>
-
-                        <div>
                             <div class="input-container">
                             <label class="label" v-bind:class="{'label-up': child.birthday}">Дата рождения</label><br>
                             <input
@@ -43,13 +35,17 @@
                           :error="errors['state']"
                         />
                       </div>
-                      <div>
-                        <inputField
-                          label="Степень родства"
-                          v-model="child.relationship"
-                          :error="errors['relationship']"
-                        />
-                      </div>
+                        <div>
+                            <inputField
+                              label="Степень родства"
+                              v-model="child.relationship"
+                              :error="errors['relationship']"
+                            />
+                            <div class="input-prompt">
+                                <span @click="child.relationship = 'Родитель'">Родитель</span>
+                                <span @click="child.relationship = 'Законный представитель'">Законный представитель</span>
+                            </div>
+                        </div>
                     </div>
                   </article>
 
@@ -129,8 +125,10 @@
 
                   <article class="child-data_table-group">
                     <h2 class="form-heading child-data_heading">Адрес проживания</h2>
-                        <!-- TODO: Стилизовать кнопку -->
-                    <button @click='cloneAddress()'>Совпадает с адресом регистрации</button>
+                      <div class="input-prompt">
+                          <span @click="cloneAddress()">По адресу регистрации</span>
+                      </div>
+                      <br>
                     <div class="child-data_addres">
                       <inputField
                         label="Город"
@@ -214,7 +212,6 @@
           password: null,
 
           birthday: null, //mask
-          birth_certificate: null,
 
           state: null,
           relationship: null,
@@ -264,7 +261,6 @@
         User.getFullData(
             {
                birthday: null,
-               birth_certificate: null,
                state: null,
                relationship: null,
                studyPlace: null,

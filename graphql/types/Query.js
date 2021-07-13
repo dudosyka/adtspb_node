@@ -127,7 +127,7 @@ module.exports = new GraphQLObjectType({
                 args: {},
                 async resolve(obj, {  }) {
                     const userData = await UserExtraData.createFrom({ user_id: obj().viewer.id });
-                    const res = userData.checkChildData();
+                    const res = await userData.checkChildData();
                     if (res !== true)
                         return JSON.stringify(res);
                     else
@@ -154,7 +154,7 @@ module.exports = new GraphQLObjectType({
                     }
                 },
                 async resolve(obj, { id }) {
-                    const rights = await rbac.auth(id ?? obj().viewer.id);
+                    const rights = await rbac.auth(id ?? obj().viewer.id, true);
                     const model = Proposal.newModel();
 
                     return User.getFullData(id ?? obj().viewer.id, obj().selections, model, rights.role);
@@ -194,7 +194,8 @@ module.exports = new GraphQLObjectType({
                 },
                 async resolve(obj, { child_id }) {
                     const usr = await UserExtraData.createFrom({user_id: child_id});
-                    return await Association.getAssociations(usr.calculateAge());
+                    const model = Proposal.newModel();
+                    return await Association.getAssociations(usr.calculateAge(), obj().selections, model);
                 }
             },
             getAssociationTimetable: {

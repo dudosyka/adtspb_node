@@ -76,11 +76,13 @@ Rbac.prototype.minimize = async function ()
     });
 }
 
-Rbac.prototype.auth = async function (user_id)
+Rbac.prototype.auth = async function (user_id, onlyRoles = false)
 {
 
    //Get all roles
    const roles = await db.query('SELECT `auth_role_id` FROM `user_role` WHERE `user_id` = ?', [ user_id ]).then(data => data.map(el => el.auth_role_id));
+   if (onlyRoles)
+    return {role: roles};
 
    //Get all rules of every role
    const {ids, query} = db.createRangeQuery(false, roles, 'role');

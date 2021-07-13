@@ -11,7 +11,7 @@ UserExtraData.prototype.createFromField = "user_id";
 
 UserExtraData.prototype.createNew = async function (data) {
     this.fields = data;
-    this.__save();
+    return await this.__save();
 }
 
 UserExtraData.prototype.validateRules = function () {
@@ -21,6 +21,10 @@ UserExtraData.prototype.validateRules = function () {
 
 UserExtraData.prototype.fields = {
     id: null,
+    relationship: null,
+    studyPlace: null,
+    ovz_type: null,
+    disability_group: null,
     birthday: null
 };
 
@@ -103,7 +107,7 @@ UserExtraData.prototype.checkAdultData = async function (fieldsOnValidate = null
 }
 
 UserExtraData.prototype.setChildData = async function () {
-    const validate = this.checkChildData();
+    const validate = await this.checkChildData();
     if (validate !== true) {
         return JSON.stringify(validate);
     }

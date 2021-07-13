@@ -200,7 +200,12 @@
               @change="_onedit"
           />
 
+
           <h2 class="child-form_heading">Адрес проживания</h2>
+            <div class="input-prompt">
+                <span @click="autoResidenceAddress()">По адресу регистрации</span>
+            </div>
+            <br>
           <inputField
               label="Город"
               v-model="data.residence_address.city"
@@ -311,6 +316,20 @@ export default {
           else
               this.dataOnEdit[group][name] = value;
       },
+      autoResidenceAddress() {
+          Object.keys(this.data.residence_address).map(key => {
+              const newValue = this.data.registration_address[key];
+              if (this.data.residence_address[key] !== newValue) {
+                  this.data.residence_address[key] = newValue;
+                  this.setDataOnEdit(key, "extra", "residence_address", newValue);
+              }
+          });
+
+          if (this.data.residence_flat !== this.data.registration_flat) {
+              this.data.residence_flat = this.data.registration_flat;
+              this.setDataOnEdit("residence_flat", "extra", false, this.data.registration_flat);
+          }
+      },
       formErrorParser(err) {
           this.errors = clone(this.errors_proto);
           console.log(err);
@@ -347,7 +366,7 @@ export default {
       saveEditedData() {
           console.log(this.data);
           console.log(this.clearData);
-          if (this.data.phone !== this.clearData.phone.substr(1)) {
+          if (this.data.phone !== this.clearData.phone) {
               this.setDataOnEdit('phone', 'main', false, this.data.phone);
           }
           console.log(this.dataOnEdit);
