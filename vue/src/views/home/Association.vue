@@ -95,7 +95,7 @@
           <p class="label-error" v-show="errors.schedule">Ознакомтесь с расписанием</p>
           <div class="checkbox-container" @click="proposalParms.schedule = !proposalParms.schedule">
             <input type="checkbox" v-model="proposalParms.schedule" class="checkbox" tabindex="3">
-            <label class="checkbox">С расписанием ознакомлен</label>
+            <label class="checkbox">Пожалуйста, подтвердите ознакомление с расписанием</label>
           </div>
 
           <div class="buttons">
@@ -103,7 +103,7 @@
             <p class="label-normal" v-if="messages.proposalCreated">Заявления составлены</p>
             <p class="label-error" v-if="errors.alreadyCreated">Заявления в {{ errors.assoc.name }} уже составлены</p>
             <p class="label-error" v-if="errors.age">Объединение {{ errors.assoc.name }} не подходит по возрасту</p>
-            <button class="dark-box dark-button" @click="createProposal()">Составить заявления</button>
+            <button class="dark-box dark-button" @click="createProposal()">Сформировать заявления</button>
           </div>
         </div>
 
