@@ -13,11 +13,24 @@ AssociationExtraData.prototype.fields = {
     id: null,
 };
 
-AssociationExtraData.prototype.canJoinAssociation = async function (id) {
-    const userData = await UserExtraData.createFrom({ user_id: id });
-    const age = userData.calculateAge();
+AssociationExtraData.prototype.canJoinAssociation = async function (id = false, child = false) {
+    console.log(id);
+    let age;
+    if (id !== false) {
+        const userData = await UserExtraData.createFrom({ user_id: id });
+        age = userData.calculateAge();
+    }
+    else if (child !== false) {
+        age = child.calculateAge();
+    }
+    else {
+        return "Age doesn`t pass";
+    }
 
-    if (this.__get('max_age') < age || this.__get('min_age') > age)
+    console.log(age);
+    console.log(this.fields);
+
+    if (this.__get('max_age') <= age || this.__get('min_age') >= age)
         return 'Age doesn`t pass';
 
     return true;

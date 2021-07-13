@@ -243,7 +243,7 @@ module.exports = new GraphQLObjectType({
             },
             async resolve(obj, { newData, target_id }) {
                 const viewer = await User.createFrom(obj().viewer);
-                return (await viewer.setExtraDataOnEdit(newData, target_id)) !== false;
+                return (await viewer.setExtraDataOnEdit(newData, target_id, false, false)) !== false;
             }
         },
 

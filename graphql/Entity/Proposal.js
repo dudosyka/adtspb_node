@@ -76,6 +76,9 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections)
     let fullQuery = "SELECT " + fullSelections + " FROM " + this.table + " AS `main` " + sub1Query + sub2Query + "WHERE `main`." + query;
     const res = await this.db.query(fullQuery, ids);
 
+    if (res.length <= 0)
+        return [];
+
     proposals = {};
     res.map(proposal => {
         let parsed = {};
@@ -209,7 +212,7 @@ Proposal.prototype.canJoinAssociation = async function (userModel, userExtraData
         if (associationData.__get('min_age') === null)
             throw Error("Association not found");
 
-        const canJoin = await associationData.canJoinAssociation();
+        const canJoin = await associationData.canJoinAssociation(false, child);
 
         //Check does child pass by age
         if (canJoin !== true)
@@ -243,9 +246,13 @@ Proposal.prototype.createNew = async function (userModel, userExtraDataModel) {
     return true;
 };
 
-Proposal.prototype.generatePdf = async function () {
+Proposal.prototype.generatePdf = async function (childModel, parentModel, userExtraModel, associationModel) {
     const pdf = new Pdf(this);
-    return await pdf.generateProposal();
+    const child = await childModel.baseCreateFrom({id: this.__get('child')});
+    const parent = await parentModel.baseCreateFrom({id: this.__get('parent')});
+    const child_extra = await userExtraModel.createFrom({user_id: this.__get('child')})
+    const association = await associationModel.baseCreateFrom({id: this.__get('association')});;
+    return await pdf.generateProposal(child, parent, child_extra, association);
 }
 
 Proposal.prototype.recall = async function (requester) {
