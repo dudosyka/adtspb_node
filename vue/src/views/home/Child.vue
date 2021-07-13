@@ -25,29 +25,31 @@
                     <h2 class="form-heading"> {{ edit.message }} </h2>
                     <p class="label-error"> {{ edit.error }} </p>
 
-                    <article  v-if="remove.hidden">
+                    <article >
                         <h2 class="form-heading"> {{ remove.message }} </h2>
-                        <inputField
-                            label="Комментарий к удалению"
-                            v-model="remove.comment"
-                        />
+                        <template v-if="remove.hidden">
+                            <inputField
+                                label="Комментарий к удалению"
+                                v-model="remove.comment"
+                            />
 
-                        <ul class="radio-list">
-                            <li class="radio-container">
-                                <input type="radio" v-model.number="remove.onlyUnLink" value="1" class="radio" id="removeDelet">
-                                <label class="dark radio" for="removeDelet">Удалить</label>
-                            </li>
-                            <li class="radio-container">
-                                <input type="radio" v-model.number="remove.onlyUnLink" value="0" class="radio" id="removeOnlyUnLink">
-                                <label class="dark radio" for="removeOnlyUnLink">Отвязать, но не удалять</label>
-                            </li>
-                            <!-- TODO: добавить тултип !-->
-                        </ul>
+                            <ul class="radio-list">
+                                <li class="radio-container">
+                                    <input type="radio" v-model="remove.onlyUnLink" :value="true" class="radio" id="removeDelet">
+                                    <label class="dark radio" for="removeDelet">Удалить</label>
+                                </li>
+                                <li class="radio-container">
+                                    <input type="radio" v-model="remove.onlyUnLink" :value="false" class="radio" id="removeOnlyUnLink">
+                                    <label class="dark radio" for="removeOnlyUnLink">Отвязать, но не удалять</label>
+                                </li>
+                                <!-- TODO: добавить тултип !-->
+                            </ul>
+                        </template>
                     </article>
 
                     <div class="buttons">
                         <button class="light-box light-button" v-if="!remove.hidden" @click="remove.hidden = true">Удалить</button>
-                        <button class="light-box light-button" v-if="remove.hidden" @click="removeChild(number)">Удалить</button>
+                        <button class="light-box light-button" v-if="remove.hidden" @click="removeChild(Number(raw.data.id))">Удалить</button>
                     </div>
                 </article>
 
@@ -201,7 +203,14 @@
         this.show.childData = id
       },
       removeChild(id) {
-          User.removeChild(id, this.remove.comment, false)
+          if (this.remove.comment == null || this.remove.comment == "") {
+              this.remove.message = "Укажите причину удаления!";
+              return;
+          }
+          if (this.remove.onlyUnLink == null) {
+              this.remove.onlyUnLink = false;
+          }
+          User.removeChild(id, this.remove.comment, this.remove.onlyUnLink)
           .then(data => {
             this.remove.hidden = false
             this.remove.message = 'Запрос на удаление успешно отправлен'
