@@ -26,7 +26,7 @@
                     class="association-card_timetable-toggle"
                     :class="{'association-card_timetable-toggle--open': card.showSchendule}"
                     @click="openTimetables(id)"
-                >Рассписание</button>
+                >Расписание</button>
                 <article class="association-card_timetable" v-show="card.showSchendule">
                     <div class="bread-crumbs">
                         <button class="bread-crumb"
@@ -95,7 +95,7 @@
           <p class="label-error" v-show="errors.schedule">Ознакомтесь с расписанием</p>
           <div class="checkbox-container" @click="proposalParms.schedule = !proposalParms.schedule">
             <input type="checkbox" v-model="proposalParms.schedule" class="checkbox" tabindex="3">
-            <label class="checkbox">С рассписанием ознакомлен</label>
+            <label class="checkbox">С расписанием ознакомлен</label>
           </div>
 
           <div class="buttons">
