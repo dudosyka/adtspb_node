@@ -7,7 +7,7 @@
       <div :class="{'association-cards--opened': show.associationsList}" class="association-cards-wrapper">
         <button class="close-associations" @click="show.associationsList = false"><span></span></button>
         <article class="association-cards">
-            <article class="association-card card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id">
+            <article class="association-card card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id" v-if='!card.already'>
                 <h2 class="association-card_heading">{{ card.name }}</h2>
                 <p class="association-card_old gray-text">от {{ card.min_age + ' до ' + card.max_age}} лет</p>
                 <p class="gray-text">{{ card.description }}</p>
@@ -121,6 +121,7 @@ import {User} from "../../models/User.js";
 import {Timetable} from "../../models/Timetable.js";
 import {Corrector} from "../../utils/Corrector.js";
 import * as AppConfig from "../../config/AppConfig.js";
+import clone from 'clone';
 
 export default {
   name: "Association",
@@ -189,7 +190,6 @@ export default {
         }
 
         User.getFullData(fields, child).then(data => {
-            console.log(data);
             this.child = data.data;
             this.child.proposals.map(el => {
                 this.associations[el.association.id].already = true;
@@ -231,25 +231,29 @@ export default {
         this.speedometr();
         delete this.proposalParms.associations[id];
         this.anyAssociationSelected();
+        this.removeErrs();
     },
-
+    removeErrs() {
+        this.errors.needAssoc = false;
+        this.errors.schedule = false;
+        this.errors.overflow = false;
+    },
     createProposal() {
-      if (!this.selected) {
+        this.removeErrs();
+        if (!this.selected) {
           this.errors.needAssoc = true;
           return;
-      }
-      if (!this.proposalParms.schedule) {
+        }
+        if (!this.proposalParms.schedule) {
           this.errors.schedule = true
           return;
-      }
-      if (this.proposalParms.overflow == 'red') {
+        }
+        if (this.proposalParms.overflow == 'red') {
           this.errors.overflow = true;
           return;
-      }
-      this.errors.needAssoc = false;
-      this.errors.schedule = false;
+        }
 
-      Proposal.createFromObject(this.proposalParms.associations, this.child.id)
+        Proposal.createFromObject(this.proposalParms.associations, this.child.id)
           .then(data => {
               Object.keys(this.proposalParms.associations).map(el => {
                     this.associations[el].already = true;
@@ -266,7 +270,7 @@ export default {
               else {
                   this.errors.alreadyCreated = true;
               }
-          });
+      });
     },
     anyAssociationSelected() {
         this.selected = false;

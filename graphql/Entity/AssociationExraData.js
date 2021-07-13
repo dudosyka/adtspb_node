@@ -30,7 +30,7 @@ AssociationExtraData.prototype.canJoinAssociation = async function (id = false, 
     console.log(age);
     console.log(this.fields);
 
-    if (this.__get('max_age') <= age || this.__get('min_age') >= age)
+    if (age > this.__get('max_age') || age < this.__get('min_age'))
         return 'Age doesn`t pass';
 
     return true;
