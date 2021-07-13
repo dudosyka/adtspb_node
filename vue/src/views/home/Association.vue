@@ -73,11 +73,11 @@
           <div class="child-hours">
             <header class="child-hours-header">
               <h3 class="child-hours-heading">Часов в неделю</h3>
-              <h3>{{ this.proposalParms.weekHours }}</h3>
+              <h3>{{ proposalParms.weekHours }}</h3>
             </header>
             <span></span>
             <div class="child-hours_speedometr">
-              <span class="child-hours_speedometr-l"></span>
+              <span :style='"width: " + proposalParms.speedometr + "%; background-color: " + proposalParms.overflow' class="child-hours_speedometr-l"></span>
             </div>
           </div>
         </section>
@@ -103,6 +103,7 @@
             <p class="label-normal" v-if="messages.proposalCreated">Заявления составлены</p>
             <p class="label-error" v-if="errors.alreadyCreated">Заявления в {{ errors.assoc.name }} уже составлены</p>
             <p class="label-error" v-if="errors.age">Объединение {{ errors.assoc.name }} не подходит по возрасту</p>
+            <p class="label-error" v-if="errors.overflow">Вы привысили ограничение по количеству часов в неделю! </p>
             <button class="dark-box dark-button" @click="createProposal()">Составить заявления</button>
           </div>
         </div>
@@ -119,6 +120,7 @@ import {Association} from "../../models/Association.js";
 import {User} from "../../models/User.js";
 import {Timetable} from "../../models/Timetable.js";
 import {Corrector} from "../../utils/Corrector.js";
+import * as AppConfig from "../../config/AppConfig.js";
 
 export default {
   name: "Association",
@@ -132,13 +134,16 @@ export default {
       proposalParms: {
         associations: {},
         schedule: false,
-        weekHours: 0
+        weekHours: 0,
+        speedometr: 0,
+        overflow: "#0086c9",
       },
       errors: {
         schedule: false,
         needAssoc: false,
         alreadyCreated: false,
         age: false,
+        overflow: false,
         assoc: {
             name: false
         }
@@ -189,9 +194,9 @@ export default {
             this.child.proposals.map(el => {
                 this.associations[el.association.id].already = true;
                 this.proposalParms.associations[el.association.id] = el.association;
+                this.proposalParms.weekHours += el.association.hours_week;
             });
-            console.log(this.child);
-            console.log(this.proposalParms);
+            this.speedometr();
         });
 
     });
@@ -216,22 +221,30 @@ export default {
 
     addAssociation(id) {
         this.proposalParms.associations[id] = this.associations[id];
+        this.proposalParms.weekHours += this.associations[id].hours_week;
+        this.speedometr();
         this.selected = false;
         this.selected = true;
     },
     removeAssociation(id) {
-      delete this.proposalParms.associations[id];
-      this.anyAssociationSelected();
+        this.proposalParms.weekHours -= this.proposalParms.associations[id].hours_week;
+        this.speedometr();
+        delete this.proposalParms.associations[id];
+        this.anyAssociationSelected();
     },
 
     createProposal() {
       if (!this.selected) {
-        this.errors.needAssoc = true;
-        return;
+          this.errors.needAssoc = true;
+          return;
       }
       if (!this.proposalParms.schedule) {
-        this.errors.schedule = true
-        return;
+          this.errors.schedule = true
+          return;
+      }
+      if (this.proposalParms.overflow == 'red') {
+          this.errors.overflow = true;
+          return;
       }
       this.errors.needAssoc = false;
       this.errors.schedule = false;
@@ -259,14 +272,26 @@ export default {
         this.selected = false;
         Object.keys(this.proposalParms.associations).map(el => {
             if (!this.proposalParms.associations[el].already) {
-                console.log(this.proposalParms.associations[el]);
                 this.selected = true;
             }
         })
+    },
+    speedometr() {
+        let maxHours = AppConfig.max_hours_week;
+        if (User.calculateAge(this.child.birthday) < 14) {
+            maxHours = AppConfig.min_hours_week;
+        }
+        this.proposalParms.speedometr = this.proposalParms.weekHours / maxHours;
+        this.proposalParms.overflow = "#0086c9";
+        if (this.proposalParms.speedometr > 1) {
+            this.proposalParms.overflow = "red";
+            this.proposalParms.speedometr = 1;
+        }
+        this.proposalParms.speedometr = Math.floor(this.proposalParms.speedometr * 100);
+        console.log(this.proposalParms.speedometr);
     }
   },
   computed: {
-
   }
 }
 </script>
@@ -325,6 +350,7 @@ article.card.shadow {
     top: 0;
     left: 0;
     background-color: #0086c9;
+    height: 5px;
 }
 
 .association-cards {

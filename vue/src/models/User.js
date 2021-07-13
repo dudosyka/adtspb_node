@@ -518,4 +518,10 @@ User.removeChild = async function (id, comment, remove_account) {
   return await _request("api", req, data);
 }
 
+User.calculateAge = function (birthday) {
+    const now = Date.now();
+    const diff = now - birthday;
+    return Math.floor(diff / 31557600000);
+}
+
 export {User};
