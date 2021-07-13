@@ -257,7 +257,11 @@ module.exports = new GraphQLObjectType({
                     if (proposalEntity.__get('association_id') == null)
                         throw Error('Proposal not found');
 
-                    const buffer = await proposalEntity.generatePdf();
+                    const userModel = User.newModel();
+                    const parentModel = User.newModel();
+                    const userExtraModel = UserExtraData.newModel();
+                    const associationModel = Association.newModel();
+                    const buffer = await proposalEntity.generatePdf(userModel, parentModel, userExtraModel, associationModel);
                     return buffer.toString("base64");
                 }
             }
