@@ -222,6 +222,7 @@ User.agreeParentRequest = async function (parent_id, userData) {
 }
 
 function userDataProcessing(entity, parse = true) {
+    console.log(entity);
     let errors = {};
 
     const birth = Parser.timestampToObj(entity.birthday ?? Date.now());

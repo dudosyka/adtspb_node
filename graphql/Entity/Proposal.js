@@ -272,4 +272,10 @@ Proposal.prototype.recall = async function (requester) {
 
     return await Status.setToRecall(this.__get('id'));
 }
+
+Proposal.prototype.generateResolution = async function (child, parent) {
+    let pdf = new Pdf(this);
+    const buffer = await pdf.generateResolution(child, parent);
+    return buffer.toString('base64');
+}
 module.exports = (new Proposal());

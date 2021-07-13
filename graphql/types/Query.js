@@ -265,6 +265,20 @@ module.exports = new GraphQLObjectType({
                     const buffer = await proposalEntity.generatePdf(userModel, parentModel, userExtraModel, associationModel);
                     return buffer.toString("base64");
                 }
+            },
+            generateResolution: {
+                type: GraphQLString,
+                args: {
+                    child_id: {
+                        type: GraphQLInt,
+                    }
+                },
+                async resolve(obj, { child_id }) {
+                    const child = await User.baseCreateFrom({ id: child_id });
+                    const parent = await User.baseCreateFrom({ id: obj().viewer.id });
+                    const model = Proposal.newModel();
+                    return await model.generateResolution(child, parent);
+                }
             }
 
         };

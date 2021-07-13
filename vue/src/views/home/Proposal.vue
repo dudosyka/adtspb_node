@@ -6,8 +6,8 @@
 
             <article class="card shadow children" v-for="child in children">
                 <h2 class="child-name">{{ child.name + ' ' + child.surname }}</h2>
-                <button class="light-button">Распечатать согласие на обработку персональных данных</button>
-                
+                <button class="light-button" @click='printResolution(child.id)'>Распечатать согласие на обработку персональных данных</button>
+
                 <article class="proposals wp100">
 
                     <section class="proposal" v-for="(proposal, index) in child.proposals">
@@ -104,7 +104,10 @@
         },
         isDocumentTaken: null
         }
-      }, false).then( data => data );
+      }, false).then( data => {
+          // console.log(data);
+          return data;
+      } );
 
       children.map((child) => {
         const proposals = child.data.proposals.map(el => {
@@ -120,6 +123,7 @@
 
         if (proposals.length > 0)
           this.children.push({
+            id: child.data.id,
             name: child.data.name,
             surname: child.data.surname,
             proposals: proposals
@@ -135,6 +139,9 @@
         },
         printPdf(proposal_id) {
             Proposal.printPdf(proposal_id);
+        },
+        printResolution(child_id) {
+            Proposal.printResolution(child_id);
         },
         recall(child, proposal_id, proposal_index) {
             Proposal.recall(proposal_id)
