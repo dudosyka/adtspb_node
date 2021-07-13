@@ -1,50 +1,60 @@
 <template>
-  <main class="home">
-      <navigation />
-      <article class="home-content">
+    <main class="home">
+        <navigation />
+        <article class="home-content">
 
-        <section class="children">
+            <section class="children">
+                <section class="card child shadow" v-for="(raw, number) in childrenRaw" @click="showData(number)">
+                    <div class="child_heading">
+                        <h2 class="child-name">{{ raw.data.name + ' ' + raw.data.surname }}</h2>
+                        <button class="dark-box dark-button to-associations" @click="toAssociations(raw.data.id)" >Запись</button>
+                    </div>
+                    <span class="child-to-data"
+                    :class="{'child-from-data': number === show.childData}"
+                    ></span>
+                </section>
 
-          <section class="card child shadow" v-for="(raw, number) in childrenRaw" @click="showData(number)">
-            <div class="child_heading">
-              <h2 class="child-name">{{ raw.data.name + ' ' + raw.data.surname }}</h2>
-              <button class="dark-box dark-button to-associations" @click="toAssociations(raw.data.id)" >Запись</button>
-            </div>
-            <span class="child-to-data"
-                :class="{'child-from-data': number === show.childData}"
-            ></span>
-          </section>
+                <router-link to="/child/add" class="dark-box dark-button child-add"><span class="child-add_plus">&#43; </span>Добавить ребёнка</router-link>
+            </section>
 
-            <router-link to="/child/add" class="dark-box dark-button child-add"><span class="child-add_plus">&#43; </span>Добавить ребёнка</router-link>
+            <section class="child-form-wrapper card shadow" v-show="childrenRaw.length > 0">
+                <article class="child-data" v-for="(raw, number) in childrenRaw" v-show="show.childData === number">
 
-        </section>
+                    <FullUserData :input='JSON.stringify(raw)' ></FullUserData>
 
-        <section class="child-form-wrapper card shadow" v-show="childrenRaw.length > 0">
+                    <h2 class="form-heading"> {{ edit.message }} </h2>
+                    <p class="label-error"> {{ edit.error }} </p>
 
-          <article class="child-data" v-for="(raw, number) in childrenRaw" v-show="show.childData === number">
+                    <article  v-if="remove.hidden">
+                        <h2 class="form-heading"> {{ remove.message }} </h2>
+                        <inputField
+                            label="Комментарий к удалению"
+                            v-model="remove.comment"
+                        />
 
-              <FullUserData :input='JSON.stringify(raw)' ></FullUserData>
+                        <ul class="radio-list">
+                            <li class="radio-container">
+                                <input type="radio" v-model.number="remove.onlyUnLink" value="1" class="radio" id="removeDelet">
+                                <label class="dark radio" for="removeDelet">Удалить</label>
+                            </li>
+                            <li class="radio-container">
+                                <input type="radio" v-model.number="remove.onlyUnLink" value="0" class="radio" id="removeOnlyUnLink">
+                                <label class="dark radio" for="removeOnlyUnLink">Отвязать, но не удалять</label>
+                            </li>
+                            <!-- TODO: добавить тултип !-->
+                        </ul>
+                    </article>
 
-              <h2 class="form-heading"> {{ edit.message }} </h2>
-              <p class="label-error"> {{ edit.error }} </p>
+                    <div class="buttons">
+                        <button class="light-box light-button" v-if="!remove.hidden" @click="remove.hidden = true">Удалить</button>
+                        <button class="light-box light-button" v-if="remove.hidden" @click="removeChild(number)">Удалить</button>
+                    </div>
+                </article>
 
-              <h2 class="form-heading"> {{ remove.message }} </h2>
-              <inputField
-                  label="Комментарий к удалению"
-                  v-if="remove.hidden"
-                  v-model="remove.comment"
-              />
+            </section>
 
-            <div class="buttons">
-              <button class="light-box light-button" v-if="!remove.hidden" @click="remove.hidden = true">Удалить</button>
-              <button class="light-box light-button" v-if="remove.hidden" @click="removeChild(number)">Удалить</button>
-            </div>
-          </article>
-
-        </section>
-
-      </article>
-  </main>
+        </article>
+    </main>
 </template>
 
 <style scoped>
@@ -171,8 +181,9 @@
         },
         remove: {
           comment: null,
+          onlyUnLink: null,
           message: '',
-          hidden: false
+          hidden: false,
         },
         edit: {
           message: '',
