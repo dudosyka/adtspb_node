@@ -195,12 +195,7 @@ User.prototype.getFullData = async function (id = false, selections = {}, model 
         proposals = await model.selectProposalsList(field, [data.id], selections.proposals);
     }
 
-    console.log(proposals);
-
     data.proposals = Object.keys(proposals ?? {}).length > 0 ? proposals[data.id] : null;
-
-    console.log(data);
-
     return data;
 }
 
@@ -432,12 +427,17 @@ User.prototype.setMainDataOnEdit = async function (data, target_id) {
     return DataOnEdit.setUserOnEdit(this.__get('id'), target, data, 'user');
 }
 
-User.prototype.setExtraDataOnEdit = async function (data, target_id, autoConfirm = false) {
+User.prototype.setExtraDataOnEdit = async function (data, target_id, autoConfirm = false, child = true) {
     let target = await this.getTargetOfEditing(target_id);
 
     const model = UserExtraData.newModel();
     model.fields = {...data};
-    const validateRes = await model.checkChildData(Object.keys(data));
+    let validateRes = {};
+    if (child)
+        validateRes = await model.checkChildData(Object.keys(data));
+    else
+        validateRes = await model.checkAdultData(Object.keys(data));
+
 
     if (validateRes !== true) {
         throw Error(JSON.stringify(validateRes));

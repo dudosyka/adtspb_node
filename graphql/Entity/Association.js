@@ -43,9 +43,6 @@ Association.prototype.getAssociations = async function (age = null, selections =
         associations.push(association);
     });
 
-    // console.log(associations);
-    // console.log(associations[0]);
-
     return associations;
 }
 

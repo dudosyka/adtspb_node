@@ -20,16 +20,16 @@ Pdf.prototype.generate = async function () {
     });
 }
 
-Pdf.prototype.generateProposal = async function () {
+Pdf.prototype.generateProposal = async function (parent, child, child_extra_data, association) {
     const month = this.date.getMonth() + 1 > 9 ? this.date.getMonth() + 1 : "0" + (this.date.getMonth() + 1);
     const day = this.date.getDate() > 9 ? this.date.getDate() : "0" + this.date.getDate();
     const current_day = this.date.getFullYear() + "-" + month + "-" + day;
 
-    const parent = {...(await User.baseCreateFrom({id: this.proposal.__get('parent_id')})).fields};
-    const child = {...(await User.baseCreateFrom({id: this.proposal.__get('child_id')})).fields};
+    parent = {...parent.fields};
+    child = {...child.fields};
 
-    const child_extra_data = await UserExtraData.createFrom({user_id: this.proposal.__get('child_id')});
-    const association = await Association.baseCreateFrom({id: this.proposal.__get('association_id')});
+    // const child_extra_data = await UserExtraData.createFrom({user_id: this.proposal.__get('child_id')});
+    // const association = await Association.baseCreateFrom({id: this.proposal.__get('association_id')});
 
     const child_sex = child.sex == 1 ? 'Муж' : 'Жен';
 

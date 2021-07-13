@@ -46,39 +46,58 @@ UserExtraData.prototype.__save = async function () {
         return await this.save();
 }
 
-UserExtraData.prototype.checkChildData = function (fieldsOnValidate = null) {
+UserExtraData.prototype.baseValidate = function () {
+    return [
+        this.validator(
+            [
+                'relationship', 'state', 'studyPlace',
+                'registration_address', 'registration_flat',
+                'residence_address', 'residence_flat',
+                'ovz', 'ovz_type',
+                'disability', 'disability_group', 'birthday'
+            ],
+            'Can`t be empty'
+        ).notNull(),
+        this.validator(
+            [
+                'ovz', 'disability'
+            ],
+            'Invalid format'
+        ).match(/^[0-1]{1}$/),
+    ];
+}
+
+UserExtraData.prototype.checkChildData = async function (fieldsOnValidate = null) {
     this.validateRules = function () {
-        return [
-            this.validator(
-                [
-                    'relationship', 'state', 'studyPlace',
-                    'registration_address', 'registration_flat',
-                    'residence_address', 'residence_flat',
-                    'birth_certificate', 'ovz', 'ovz_type',
-                    'disability', 'disability_group', 'birthday'
-                ],
-                'Can`t be empty'
-            ).notNull(),
-            this.validator(
-                [
-                    'ovz', 'disability'
-                ],
-                'Invalid format'
-            ).match(/^[0-1]{1}$/),
-            this.validator(
-                [
-                    'birth_certificate'
-                ],
-                'Invalid format'
-            ).match(/^[A-Za-zА-Яа-яЕеЁёЫыЙйЪъЬьЖжЗз]{1,}[0-9]{6}$/),
-            this.validator(
-                [
-                    'birthday'
-                ],
-                'Invalid age'
-            ).age(6, 18)
-        ];
+        return this.baseValidate().concat(
+            [
+                this.validator(
+                    [
+                        'birthday'
+                    ],
+                    'Invalid age'
+                ).age(6, 18)
+            ]
+        );
     }
+
+    return await this.validate(fieldsOnValidate);
+}
+
+UserExtraData.prototype.checkAdultData = async function (fieldsOnValidate = null) {
+    this.validateRules = function () {
+        return this.baseValidate().concat(
+            [
+                this.validator(
+                    [
+                        'birthday'
+                    ],
+                    'Invalid age'
+                ).age(18)
+            ]
+        );
+    }
+
 
     return this.validate(fieldsOnValidate);
 }
