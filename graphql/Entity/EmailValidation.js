@@ -71,6 +71,7 @@ EmailValidation.prototype.generateToken = function (l) {
 }
 
 EmailValidation.prototype.setOnConfirmation = async function (user_id, email, fullname) {
+    //Rewrite code if exists
     let res = await this.db.select(this, '`user_id` = ?', [ user_id ]);
     if (res.length > 0) {
         return {
