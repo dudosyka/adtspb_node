@@ -26,7 +26,7 @@
                     class="association-card_timetable-toggle"
                     :class="{'association-card_timetable-toggle--open': card.showSchendule}"
                     @click="openTimetables(id)"
-                >Рассписание</button>
+                >Расписание</button>
                 <article class="association-card_timetable" v-show="card.showSchendule">
                     <div class="bread-crumbs">
                         <button class="bread-crumb"
@@ -95,7 +95,7 @@
           <p class="label-error" v-show="errors.schedule">Ознакомтесь с расписанием</p>
           <div class="checkbox-container" @click="proposalParms.schedule = !proposalParms.schedule">
             <input type="checkbox" v-model="proposalParms.schedule" class="checkbox" tabindex="3">
-            <label class="checkbox">С рассписанием ознакомлен</label>
+            <label class="checkbox">Пожалуйста, подтвердите ознакомление с расписанием</label>
           </div>
 
           <div class="buttons">
@@ -104,7 +104,7 @@
             <p class="label-error" v-if="errors.alreadyCreated">Заявления в {{ errors.assoc.name }} уже составлены</p>
             <p class="label-error" v-if="errors.age">Объединение {{ errors.assoc.name }} не подходит по возрасту</p>
             <p class="label-error" v-if="errors.overflow">Вы привысили ограничение по количеству часов в неделю! </p>
-            <button class="dark-box dark-button" @click="createProposal()">Составить заявления</button>
+            <button class="dark-box dark-button" @click="createProposal()">Сформировать заявления</button>
           </div>
         </div>
 

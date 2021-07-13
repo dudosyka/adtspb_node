@@ -1,70 +1,73 @@
 <template>
-  <main class="home">
-      <navigation />
+    <main class="home">
+        <navigation />
 
-      <section class="home-content">
+        <section class="home-content">
 
-        <article class="card shadow children" v-for="child in children">
-          <h2 class="child-name">{{ child.name + ' ' + child.surname }}</h2>
+            <article class="card shadow children" v-for="child in children">
+                <h2 class="child-name">{{ child.name + ' ' + child.surname }}</h2>
+                <button class="light-button">Распечатать согласие на обработку персональных данных</button>
+                
+                <article class="proposals wp100">
 
-          <article class="proposals wp100">
+                    <section class="proposal" v-for="(proposal, index) in child.proposals">
+                        <div class="child-stat">
+                            <h3 class="proposal_heading">{{ proposal.name }}</h3>
+                            <figcaption class="child-stat_heading">Статус: {{ proposal.status.text }}</figcaption>
+                        </div>
+                        <div class="buttons" v-if='proposal.status.num !== 0'>
+                            <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)">Скачать</button>
+                            <button class="dark-button wp100" @click="printPdf(proposal.id)">Печатать</button>
+                            <button v-if='!proposal.isDocumentTaken' class="dark-button wp100" @click="recall(child, proposal.id, index)">Отозвать</button>
+                        </div>
+                    </section>
+                </article>
+            </article>
 
-            <section class="proposal" v-for="(proposal, index) in child.proposals">
-              <div class="child-stat">
-                <h3 class="proposal_heading">{{ proposal.name }}</h3>
-                <figcaption class="child-stat_heading">Статус: {{ proposal.status.text }}</figcaption>
-              </div>
-              <div class="buttons" v-if='proposal.status.num !== 0'>
-                <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)">Скачать</button>
-                <button class="dark-button wp100" @click="printPdf(proposal.id)">Печатать</button>
-                <button v-if='!proposal.isDocumentTaken' class="dark-button wp100" @click="recall(child, proposal.id, index)">Отозвать</button>
-              </div>
-            </section>
-
-          </article>
-        </article>
-
-      </section>
-  </main>
+        </section>
+    </main>
 </template>
 
 <style scoped>
-  .home-content {
+.home-content {
     padding: 30px;
-  }
-  .children {
+}
+.children {
     max-width: 600px;
     min-width: 300px;
-  }
-  @media (max-width: 400px) {
+}
+@media (max-width: 400px) {
     .home-content {
-      padding: 10px;
+        padding: 10px;
     }
-  }
-  .proposals {
+}
+.proposals {
 
-  }
-  .buttons {
+}
+.buttons {
     max-width: 200px;
-  }
-  .proposal {
+}
+.proposal {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
     padding: 20px;
-  }
-  .proposal_heading {
+}
+.proposal_heading {
     font-size: 22px;
-  }
-  .child-stat {
+}
+.child-name {
+    margin-bottom: 10px;
+}
+.child-stat {
     align-self: center;
     display: grid;
     grid-gap: 20px;
     margin-bottom: 10px;
-  }
-  .child-stat_heading {
+}
+.child-stat_heading {
     font-size: 20px;
-  }
+}
 </style>
 
 <script>
