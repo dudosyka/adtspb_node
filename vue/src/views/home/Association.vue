@@ -128,7 +128,7 @@ export default {
   created() {
     const child = localStorage.getItem('childInAssociations');
 
-    Association.getAssociations().then(data => {
+    Association.getAssociations(null, child).then(data => {
         data.map(el => {
             this.associations[el.id] = el;
             this.associations[el.id].already = false;

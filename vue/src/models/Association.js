@@ -12,7 +12,7 @@ function associationDataProcessing(association) {
     return association;
 }
 
-Association.getAssociations = async function(fields = null) {
+Association.getAssociations = async function(fields = null, child_id) {
     if (fields === null) {
         fields = {
             id: null,
@@ -44,16 +44,20 @@ Association.getAssociations = async function(fields = null) {
     }
 
     const req = `
-        query {
-          getAssociations {
+        query ($child_id: Int) {
+          getAssociationsForChild (child_id: $child_id) {
             ` + Parser.objToGraphQlQuery(fields) + `
           }
         }
     `;
 
-    return _request("api", req)
+    const data = {
+        child_id: Number(child_id)
+    }
+
+    return _request("api", req, data)
         .then(data => {
-            return data.getAssociations.map(association => associationDataProcessing(association));
+            return data.getAssociationsForChild.map(association => associationDataProcessing(association));
         })
         .catch(err => console.error(err));
 
