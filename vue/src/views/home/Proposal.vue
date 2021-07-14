@@ -23,7 +23,7 @@
 
             <article class="card shadow children" v-for="child in children">
                 <h2 class="child-name">{{ child.name + ' ' + child.surname }}</h2>
-                <button class="light-button" @click='printResolution(child.id)'>Распечатать согласие на обработку персональных данных</button>
+                <button class="light-button" @click='printResolution(child.id)' :disabled="!inDev">Распечатать согласие на обработку персональных данных</button>
 
                 <article class="proposals wp100">
 
@@ -34,10 +34,10 @@
                         </div>
                         <div class="buttons" v-if='proposal.status.num !== 0'>
                         
-                            <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)" disabled>Скачать</button>
-                            <button class="dark-button wp100" @click="printPdf(proposal.id)" disabled>Печатать</button>
+                            <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)" :disabled="!inDev">Скачать</button>
+                            <button class="dark-button wp100" @click="printPdf(proposal.id)" :disabled="!inDev">Печатать</button>
 
-                            <button v-if='!proposal.isDocumentTaken' class="dark-button wp100" @click="show.sure = true" disabled>Отозвать</button>
+                            <button v-if='!proposal.isDocumentTaken' class="dark-button wp100" @click="show.sure = true">Отозвать</button>
                             <section class="card_wrapper horizontal-center" v-if="show.sure">
                                 <article class="card modal shadow">
                                     <p class="modal_heading">Вы уверены, что хотите отозвать заявления?</p>
@@ -131,6 +131,7 @@
   import {User} from '../../models/User';
   import {Proposal} from '../../models/Proposal';
   import {Parser} from '../../utils/Parser';
+  import AppConfig from '../../config/AppConfig';
 
   export default {
     name: '',
@@ -145,7 +146,8 @@
         },
         user: {
             areSure: null
-        }
+        },
+        inDev: AppConfig.inDev
       }
     },
     async created() {
