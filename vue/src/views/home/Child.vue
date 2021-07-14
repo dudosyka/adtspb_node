@@ -196,7 +196,7 @@
     },
     async created() {
       this.childrenRaw = await User.getChildren();
-      console.log(this.childrenRaw);
+      console.log("ALOHA", this.childrenRaw);
     },
     methods: {
       showData(id) {
@@ -212,8 +212,8 @@
           }
           User.removeChild(id, this.remove.comment, this.remove.onlyUnLink)
           .then(data => {
-            this.remove.hidden = false
-            this.remove.message = 'Запрос на удаление успешно отправлен'
+            this.remove.hidden = false;
+            this.remove.message = 'Запрос на удаление успешно отправлен';
           })
           .catch(err => {
             console.log(err)
