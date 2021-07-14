@@ -182,7 +182,7 @@ User.prototype.getFullData = async function (id = false, selections = {}, model 
     let proposals = null;
     if (selections.proposals) {
         let field = 'parent_id';
-        let rangeIds = [id];
+        let rangeIds = [ id ];
         if (role.includes(AppConfig.parent_role_id)) {
             field = 'child_id';
             rangeIds = data.map(el => el.user_id);

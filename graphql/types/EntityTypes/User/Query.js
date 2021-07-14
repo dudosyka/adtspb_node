@@ -19,7 +19,7 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { id }) {
-                const rights = await rbac.auth(id ?? obj.viewer.id, true);
+                const rights = await rbac.auth(obj.viewer.id, true);
                 const model = Proposal.newModel();
 
                 const res = await User.getFullData([id ?? obj.viewer.id], obj.selections, model, rights.role);
