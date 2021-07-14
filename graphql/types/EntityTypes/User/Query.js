@@ -1,5 +1,6 @@
 const graphql = require("graphql");
 const User = require('../../../Entity/User');
+const UserExtraData = require('../../../Entity/UserExtraData');
 const Proposal = require('../../../Entity/Proposal');
 const UserChild = require('../../../Entity/UserChild');
 const EmailValidation = require('../../../Entity/EmailValidation');
@@ -65,8 +66,9 @@ module.exports = new graphql.GraphQLObjectType({
             async resolve(obj, { child_id }) {
                 const child = await User.baseCreateFrom({ id: child_id });
                 const parent = await User.baseCreateFrom({ id: obj.viewer.id });
+                const childExtraData = await UserExtraData.createFrom({ user_id: child_id });
                 const model = Proposal.newModel();
-                return await model.generateResolution(child, parent);
+                return await model.generateResolution(child, parent, childExtraData);
             }
         },
         checkConfirmation: {

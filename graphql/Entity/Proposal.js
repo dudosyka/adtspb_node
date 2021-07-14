@@ -258,9 +258,9 @@ Proposal.prototype.generatePdf = async function (childModel, parentModel, userEx
     return await pdf.generateProposal(child, parent, child_extra, association);
 }
 
-Proposal.prototype.generateResolution = async function (child, parent) {
+Proposal.prototype.generateResolution = async function (child, parent, childExtraData) {
     let pdf = new Pdf(this);
-    const buffer = await pdf.generateResolution(child, parent);
+    const buffer = await pdf.generateResolution(child, parent, childExtraData);
     return buffer.toString('base64');
 }
 module.exports = (new Proposal());
