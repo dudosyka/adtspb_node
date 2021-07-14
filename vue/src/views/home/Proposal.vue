@@ -213,6 +213,7 @@
                 if (data) {
                     child.proposals[proposal_index].status.num = 0;
                     child.proposals[proposal_index].status.text = "Отозвано";
+                    this.show.sure = false;
                 }
             })
             .catch(err => {
