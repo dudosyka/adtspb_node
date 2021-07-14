@@ -18,10 +18,6 @@ DataOnEdit.prototype.fields = {
 
 DataOnEdit.prototype.table = "data_onedit";
 
-DataOnEdit.prototype.checkAlreadyOnEdit = async function (table, field) {
-    return (await this.db.select(this, '`edited_table` = ? AND `field` = ?', [ table, field ])).length > 0;
-}
-
 DataOnEdit.prototype.setOnEdit = async function (requester_id, target, data, table) {
     let query = "";
     let onEdit = [];
@@ -72,14 +68,6 @@ DataOnEdit.prototype.setUserOnEdit = async function (requester_id, target, data,
         ? await this.db.query(query, onEdit).catch(err => { console.error(err); })
         : inObj;
 }
-
-// DataOnEdit.prototype.setUserMainOnEdit = async function (requester_id, target, data) {
-//     return await this.setOnEdit(requester_id, target, data, 'user');
-// }
-//
-// DataOnEdit.prototype.setUseExtraOnEdit = async function (requester_id, target, data) {
-//     return await this.setOnEdit(requester_id, target, data, 'user_extra_data');
-// }
 
 DataOnEdit.prototype.getRequest = async function (request_id) {
     const model = this.newModel();

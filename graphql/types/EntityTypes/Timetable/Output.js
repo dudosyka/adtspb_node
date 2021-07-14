@@ -1,7 +1,7 @@
 const graphql = require("graphql");
 
 module.exports = new graphql.GraphQLObjectType({
-    name: "Timetable",
+    name: "TimetableOutput",
     fields: {
         id: {
             type: graphql.GraphQLID,

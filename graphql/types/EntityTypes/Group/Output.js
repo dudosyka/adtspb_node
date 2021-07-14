@@ -1,20 +1,24 @@
 const graphql = require("graphql");
 
 module.exports = new graphql.GraphQLObjectType({
-    name: "Status",
-    fields: {
+    name: "GroupOutput",
+    fields: () => ({
         id: {
             type: graphql.GraphQLID,
         },
-        text: {
+        name: {
             type: graphql.GraphQLString,
         },
         num: {
             type: graphql.GraphQLInt,
         },
-        // TODO: Remove?
-        hidden: {
-            type: graphql.GraphQLBoolean,
-        }
-    }
+        association_id: {
+            type: graphql.GraphQLInt
+        },
+        timetable: {
+            type: TimetableOutput,
+        },
+    })
 });
+
+const TimetableOutput = require("../Timetable/Output");

@@ -1,6 +1,5 @@
 const {GraphQLBoolean, GraphQLObjectType, GraphQLString, GraphQLID, GraphQLInt} = require("graphql");
 const User = require('../../Entity/User');
-const EmailValidationType = require('../EntityTypes/EmailValidation');
 
 module.exports = new GraphQLObjectType({
     name: 'Query',
@@ -14,18 +13,6 @@ module.exports = new GraphQLObjectType({
             },
             async resolve(obj, { email }) {
                 return await User.restorePasswordRequest(email);
-            }
-        },
-        checkUserConfirmation: {
-            type: EmailValidationType,
-            args: {
-                user_id: {
-                    type: GraphQLInt
-                }
-            },
-            async resolve(obj, { user_id }) {
-                const viewer = await User.createFrom( user_id );
-                return viewer.__get('isConfirmed').fields;
             }
         },
         checkRestoreCode: {

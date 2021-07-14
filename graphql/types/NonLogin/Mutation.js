@@ -1,12 +1,11 @@
 const {GraphQLObjectType, GraphQLString, GraphQLBoolean, GraphQLInt} = require("graphql");
 const AppConfig = require('../../config/AppConfig');
 
-const UserInput = require("../EntityTypes/InputTypes/User");
+const UserInput = require("../EntityTypes/User/Input");
 const User = require('../../Entity/User');
-const SignUpOutput = require('../OutputTypes/SignUp');
-const LoginOutput = require('../OutputTypes/Login');
-const EmailValidationType = require('../EntityTypes/EmailValidation');
-
+const SignUpOutput = require('../EntityTypes/User/OutputTypes/SignUp');
+const LoginOutput = require('../EntityTypes/User/OutputTypes/Login');
+const EmailValidationOutput = require('../EntityTypes/EmailValidation/Output');
 
 const Jwt = require('../../utils/Jwt');
 const jwt = new Jwt();
@@ -76,33 +75,6 @@ module.exports = new GraphQLObjectType({
             async resolve(obj, { email, code, password }) {
                 return User.restorePassword(email, code, password);
             }
-        },
-        confirmUser: {
-            type: EmailValidationType,
-            args: {
-                code: {
-                    type: GraphQLString
-                },
-                user_id: {
-                    type: GraphQLInt
-                }
-            },
-            async resolve (obj, { code, user_id }) {
-                const result = await EmailValidation.confirmUser(code, user_id);
-                return result;
-            }
-        },
-        // generateNewConfirmationCode: {
-                // type: EmailValidationType,
-                // args: {
-                    // user_id: {
-                        // type: GraphQLInt
-                    // }
-                // },
-                // async resolve(obj, { user_id }) {
-                    // return {}
-                    // return (await EmailValidation.setOnConfirmation(user_id)).fields;
-                // }
-        // },
+        }
     }
 });
