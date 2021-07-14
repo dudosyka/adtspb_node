@@ -1,7 +1,7 @@
 const graphql = require("graphql");
 
 module.exports = new graphql.GraphQLObjectType({
-    name: "Rule",
+    name: "DisabilityGroupOutput",
     fields: {
         id: {
             type: graphql.GraphQLID,
@@ -9,8 +9,5 @@ module.exports = new graphql.GraphQLObjectType({
         name: {
             type: graphql.GraphQLString,
         },
-        description: {
-            type: graphql.GraphQLBoolean,
-        }
     }
 });

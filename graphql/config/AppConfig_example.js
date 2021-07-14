@@ -10,7 +10,10 @@ module.exports = {
         login: "lk_support@adtspb.ru",
         pass: ""
     },
+    parentEndpoints: [
+        'user', 'association', 'proposal'
+    ],
     requestWhiteList: [
         "validToken", "viewer", "userRights", "confirmUser", "checkUserConfirmation" , "generateNewConfirmationCode"
-    ]
+    ],
 }

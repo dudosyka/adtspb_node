@@ -45,13 +45,7 @@ UserDataLog.prototype.autoConfirm = async function (inObj) {
         el.confirm_timestamp = Date.now(),
         query += "INSERT INTO "+this.table+" (edited_table, field, old_value, new_value, edit_timestamp, target_id, requester_id) VALUES (?,?,?,?,?,?,?);"
 
-        data.push(el.edited_table);
-        data.push(el.field);
-        data.push(el.old_value);
-        data.push(el.new_value);
-        data.push(el.edit_timestamp);
-        data.push(el.target_id);
-        data.push(el.requester_id);
+        data.push(el.edited_table, el.field, el.old_value, el.new_value, el.edit_timestamp, el.target_id, el.requester_id);
     });
     const res = await this.db.query(query, data).catch(err => { console.error(err); });
 }

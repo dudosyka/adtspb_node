@@ -1,7 +1,7 @@
 const graphql = require('graphql');
 
 module.exports = new graphql.GraphQLObjectType({
-    name: "EmailValidation",
+    name: "EmailValidationOutput",
     //Arrow func to prevent 'use before initialization' err
     fields: () => ({
         id: {

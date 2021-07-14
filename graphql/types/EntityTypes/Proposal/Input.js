@@ -1,7 +1,7 @@
 const graphql = require("graphql");
 
-const AssociationInput = require('./Association');
-const UserInput = require('./User');
+const AssociationInput = require('../Association/Input');
+const UserInput = require('../User/Input');
 
 module.exports = new graphql.GraphQLInputObjectType({
     name: "ProposalInput",

@@ -22,7 +22,7 @@ Association.prototype.getAssociations = async function (age = null, selections =
 
     if (ids.length <= 0)
         return [];
-        
+
     let groups = null;
     if (selections.groups) {
         const model = Group.newModel();
@@ -40,8 +40,8 @@ Association.prototype.getAssociations = async function (age = null, selections =
         delete el.association_id;
         const association = {
             ...el,
-            groups: groups[el.id],
-            proposals: proposals[el.id]
+            groups: groups === null ? [] : groups[el.id],
+            proposals: proposals === null ? [] : proposals[el.id]
         };
         associations.push(association);
     });

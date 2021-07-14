@@ -6,6 +6,19 @@ UserChildLog.prototype = Object.assign(UserChildLog.prototype, baseEntity.protot
 
 UserChildLog.prototype.getInstance = () => UserChildLog;
 
+UserChildLog.prototype.fields = {
+    id: null,
+    child_id: null,
+    child_email: null,
+    parent_id: null,
+    parent_email: null,
+    description: null,
+    parent_comment: null,
+    confirmed: null,
+    admin_id: null,
+    timestamp: null
+};
+
 UserChildLog.prototype.createFromUserChild = async function (userChild) {
     this.__set('child_id', userChild.__get('child_id'));
     this.__set('parent_id', userChild.__get('parent_id'));
@@ -28,19 +41,6 @@ UserChildLog.prototype.createFromUserChild = async function (userChild) {
     instance.fields = this.fields;
     return instance;
 }
-
-UserChildLog.prototype.fields = {
-    id: null,
-    child_id: null,
-    child_email: null,
-    parent_id: null,
-    parent_email: null,
-    description: null,
-    parent_comment: null,
-    confirmed: null,
-    admin_id: null,
-    timestamp: null
-};
 
 UserChildLog.prototype.log = async function (description, confirmed = 0, admin = null, comment = null) {
     this.__set('description', description);

@@ -14,11 +14,6 @@ UserExtraData.prototype.createNew = async function (data) {
     return await this.__save();
 }
 
-UserExtraData.prototype.validateRules = function () {
-    return [
-    ];
-}
-
 UserExtraData.prototype.fields = {
     id: null,
     relationship: null,

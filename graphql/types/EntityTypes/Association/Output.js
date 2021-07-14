@@ -1,9 +1,9 @@
 const graphql = require("graphql");
-const Proposal = require("../../Entity/Proposal");
-const AppConfig = require('../../config/AppConfig');
+const Proposal = require("../../../Entity/Proposal");
+const AppConfig = require('../../../config/AppConfig');
 
 module.exports = new graphql.GraphQLObjectType({
-    name: "Association",
+    name: "AssociationOutput",
     //Arrow func to prevent 'use before initialization' err
     fields: () => ({
         id: {
@@ -39,9 +39,6 @@ module.exports = new graphql.GraphQLObjectType({
         study_period: {
             type: graphql.GraphQLString,
         },
-        timetable: {
-            type: graphql.GraphQLString,
-        },
         isRecruiment: {
             type: graphql.GraphQLBoolean,
             resolve(obj) {
@@ -50,14 +47,14 @@ module.exports = new graphql.GraphQLObjectType({
             }
         },
         groups: {
-            type: graphql.GraphQLList(GroupType),
+            type: graphql.GraphQLList(GroupOutput),
         },
         proposals: {
-            type: graphql.GraphQLList(ProposalType),
+            type: graphql.GraphQLList(ProposalOutput),
         }
     })
 });
 
 //Moved here to prevent from circular dependence err.
-const ProposalType = require("./Proposal");
-const GroupType = require('./Group');
+const ProposalOutput = require("../Proposal/Output");
+const GroupOutput = require('../Group/Output');
