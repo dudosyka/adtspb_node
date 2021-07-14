@@ -16,7 +16,7 @@
                             <figcaption class="child-stat_heading">Статус: {{ proposal.status.text }}</figcaption>
                         </div>
                         <div class="buttons" v-if='proposal.status.num !== 0'>
-                            <p>Кнопки станут активны перед началом очного приёма документов</p>
+                            <p class="warning-container">Кнопки станут активны перед началом очного приёма документов</p>
                             <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)" disabled>Скачать</button>
                             <button class="dark-button wp100" @click="printPdf(proposal.id)" disabled>Печатать</button>
 
@@ -52,8 +52,8 @@
         padding: 10px;
     }
 }
-.proposals {
-
+.warning-container {
+    padding: 10px;
 }
 .buttons {
     max-width: 200px;
