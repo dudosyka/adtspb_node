@@ -273,3 +273,17 @@ hr {
   height: 1px;
   margin: 0;
 }
+
+.link_text:link {
+    color: #525252;
+    text-decoration: underline;
+}
+.link_text:visited {
+    color: #525252;
+}
+.link_text:hover {
+
+}
+.link_text:active {
+
+}
