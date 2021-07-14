@@ -350,8 +350,7 @@ User.prototype.createChild = async function (data) {
 
     const validation = await EmailValidation.setOnConfirmation(instance.__get('id'), instance.__get('email'), instance.fullname());
 
-    await instance.agreeParentRequest(this.__get('id'), data);
-    return res;
+    return await instance.agreeParentRequest(this.__get('id'), data);
 }
 
 User.prototype.checkRelationship = async function (child_id) {

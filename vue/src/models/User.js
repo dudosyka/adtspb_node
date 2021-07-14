@@ -182,7 +182,7 @@ User.getParentRequests = async function () {
     let req = `
       query {
           user {
-            getParentRequests {
+            parentRequests {
                 id, name, surname, phone
             }
           }
@@ -191,7 +191,7 @@ User.getParentRequests = async function () {
 
     return await _request("api", req)
       .then(data => {
-        return data.getParentRequests;
+        return data.parentRequests;
     });
 
 }
