@@ -273,3 +273,7 @@ hr {
   height: 1px;
   margin: 0;
 }
+
+iframe {
+    display: none;
+}
