@@ -16,9 +16,10 @@
                             <figcaption class="child-stat_heading">Статус: {{ proposal.status.text }}</figcaption>
                         </div>
                         <div class="buttons" v-if='proposal.status.num !== 0'>
-                            <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)">Скачать</button>
-                            <button class="dark-button wp100" @click="printPdf(proposal.id)">Печатать</button>
-                            <button v-if='!proposal.isDocumentTaken' class="dark-button wp100" @click="recall(child, proposal.id, index)">Отозвать</button>
+                            <p>Кнопки станут активны перед началом очного приёма документов</p>
+                            <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)" disabled>Скачать</button>
+                            <button class="dark-button wp100" @click="printPdf(proposal.id)" disabled>Печатать</button>
+                            <button v-if='!proposal.isDocumentTaken' class="dark-button wp100" @click="recall(child, proposal.id, index)" disabled>Отозвать</button>
                         </div>
                     </section>
                 </article>
