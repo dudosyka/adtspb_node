@@ -40,7 +40,7 @@ module.exports = new graphql.GraphQLObjectType({
                 const userModel = User.newModel();
 
                 const userChild = await UserChild.baseCreateFrom({ parent_id: obj.viewer.id });
-                const children = await userChild.getChildren(true, 1, false, selections, userModel);
+                const children = await userChild.getChildren(true, 1, selections, userModel);
 
                 return children;
             }
@@ -48,8 +48,11 @@ module.exports = new graphql.GraphQLObjectType({
         parentRequests: {
             type: graphql.GraphQLList(UserOutput),
             async resolve(obj) {
+                const selections = obj.selections;
+                const userModel = User.newModel();
+
                 const userChild = await UserChild.baseCreateFrom({ child_id: obj.viewer.id });
-                return await userChild.getParentRequests();
+                return await userChild.getParentRequests(obj.selections, userModel);
             }
         },
         generateResolution: {

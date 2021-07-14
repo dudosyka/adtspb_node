@@ -71,7 +71,7 @@ UserChild.prototype.agreeParentRequest = async function () {
     await this.update();
 }
 
-UserChild.prototype.getChildren = async function (child = true, agreed = 0, child_id = false, selections = {}, userModel = null, proposalModel = null) {
+UserChild.prototype.getChildren = async function (child = true, agreed = 0, selections = {}, userModel = null) {
     let field = 'parent_id';
     let rangeField = 'child_id';
     if (!child)
@@ -81,7 +81,7 @@ UserChild.prototype.getChildren = async function (child = true, agreed = 0, chil
     }
     const res = await this.db.select(this, field + " = ? AND `agreed` = ?", [ this.__get(field), agreed ]);
     const ids = res.map(el => el[rangeField]);
-    
+
     if (res.length) {
         proposalModel = Proposal.newModel();
         return await userModel.getFullData(ids, selections, proposalModel, [AppConfig.parent_role_id]);
@@ -94,8 +94,8 @@ UserChild.prototype.getChildRequests = async function () {
     return this.getChildren();
 }
 
-UserChild.prototype.getParentRequests = async function () {
-    return this.getChildren(false);
+UserChild.prototype.getParentRequests = async function (selections = {}, userModel = null) {
+    return this.getChildren(false, 0, selections, userModel);
 }
 
 UserChild.prototype.table = "user_child";
