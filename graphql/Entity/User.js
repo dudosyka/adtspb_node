@@ -112,7 +112,7 @@ User.prototype.encryptPassword = async function () {
 
 User.prototype.fullname = function () { return this.__get('surname') + " " + this.__get("name") + " " + this.__get('lastname'); }
 
-User.prototype.createNew = async function (roles = []) {
+User.prototype.createNew = async function (roles = [], sendEmail = true) {
     let validate = await this.validate();
     if (validate !== true) {
         throw Error(JSON.stringify(validate));
@@ -138,7 +138,10 @@ User.prototype.createNew = async function (roles = []) {
         const usr = await this.save();
         const id = usr.insertId;
 
-        const validation = await EmailValidation.setOnConfirmation(id, this.__get('email'), this.fullname());
+        if (sendEmail) {
+            console.log(sendEmail);
+            await EmailValidation.setOnConfirmation(id, this.__get('email'), this.fullname());
+        }
 
         if (usr === false)
             throw Error('Saving data failed');
@@ -334,7 +337,7 @@ User.prototype.createChild = async function (data) {
     const instance = this.newModel();
     instance.fields = {...data};
 
-    let createResult = await instance.createNew([ AppConfig.child_role_id ]);
+    let createResult = await instance.createNew([ AppConfig.child_role_id ], false);
     if (createResult.status != 'success')
         throw Error("User creating failed");
 
@@ -343,9 +346,12 @@ User.prototype.createChild = async function (data) {
     // const child = await instance.createFrom({id: createResult.id});
     const usrChild = await UserChild.baseCreateFrom({ parent_id: this.__get('id'), child_id: createResult.id });
     const request = await usrChild.addParentRequest();
-    await this.setChildData(createResult.id, data, true, instance, true);
+    const res = await this.setChildData(createResult.id, data, true, instance, true);
 
-    return await instance.agreeParentRequest(this.__get('id'), data);
+    const validation = await EmailValidation.setOnConfirmation(instance.__get('id'), instance.__get('email'), instance.fullname());
+
+    await instance.agreeParentRequest(this.__get('id'), data);
+    return res;
 }
 
 User.prototype.checkRelationship = async function (child_id) {
