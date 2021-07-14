@@ -19,7 +19,17 @@
                             <p>Кнопки станут активны перед началом очного приёма документов</p>
                             <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)" disabled>Скачать</button>
                             <button class="dark-button wp100" @click="printPdf(proposal.id)" disabled>Печатать</button>
-                            <button v-if='!proposal.isDocumentTaken' class="dark-button wp100" @click="recall(child, proposal.id, index)" disabled>Отозвать</button>
+
+                            <button v-if='!proposal.isDocumentTaken' class="dark-button wp100" @click="show.sure = true" disabled>Отозвать</button>
+                            <section class="card_wrapper horizontal-center" v-if="show.sure">
+                                <article class="card modal shadow">
+                                    <p class="modal_heading">Вы уверены, что хотите отозвать заявления?</p>
+                                    <div class="buttons-row">
+                                        <button @click="recall(child, proposal.id, index)" class="dark-button">Да</button>
+                                        <button class="dark-button" @click="show.sure = false">Нет</button>
+                                    </div>
+                                </article>
+                            </section>
                         </div>
                     </section>
                 </article>
@@ -47,6 +57,22 @@
 }
 .buttons {
     max-width: 200px;
+}
+.card_wrapper {
+    z-index: 11;
+    background-color:hsla(0, 0%, 94%, 0.5);
+    backdrop-filter: blur(10px);
+}
+.modal {
+    margin-top: 50px;
+}
+.modal_heading {
+    margin: 0;
+    margin-bottom: 20px;
+}
+.buttons-row {
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 .proposal {
     display: flex;
@@ -84,7 +110,13 @@
     },
     data() {
       return {
-        children: []
+        children: [],
+        show: {
+            sure: false,
+        },
+        user: {
+            areSure: null
+        }
       }
     },
     async created() {
