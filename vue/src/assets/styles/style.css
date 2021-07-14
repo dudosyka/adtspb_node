@@ -273,6 +273,9 @@ hr {
   height: 1px;
   margin: 0;
 }
+iframe {
+    display: none;
+}
 
 .link_text:link {
     color: #525252;
@@ -285,5 +288,4 @@ hr {
 
 }
 .link_text:active {
-
 }

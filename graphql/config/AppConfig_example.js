@@ -14,6 +14,6 @@ module.exports = {
         'user', 'association', 'proposal'
     ],
     requestWhiteList: [
-        "validToken", "viewer", "userRights", "confirmUser", "checkUserConfirmation" , "generateNewConfirmationCode"
+        "validToken", "rights", "confirm", "checkConfirmation" , "generateNewConfirmationCode"
     ],
 }
