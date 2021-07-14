@@ -1,7 +1,7 @@
 <template>
     <main class="main-content">
-        <router-link class="left-arrow" to="/login" tag="button" />
         <div class="auth">
+          <router-link class="left-arrow" to="/login" tag="button" />  
           <div class="form">
             <section v-show="step === 1">
               <h2 class="label-normal choose-heading">Кто вы?</h2>
@@ -84,6 +84,21 @@
 <style scoped>
   .form > section {
     width: 100%;
+    padding-bottom: 50px;
+  }
+  .auth {
+    display: grid;
+    grid-template-columns: 70px minmax(300px, 1fr) 70px;
+    grid-template-rows: auto 1fr auto 1fr;
+    padding: 0;
+  }
+  .left-arrow {
+    grid-row: 1;
+    grid-column: 1;
+  }
+  .form {
+    grid-row: 3;
+    grid-column: 2;
   }
   .choose-heading {
     margin-bottom: 20px;
