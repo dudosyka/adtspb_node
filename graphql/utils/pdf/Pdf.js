@@ -105,10 +105,11 @@ Pdf.prototype.generateProposal = async function (parent, child, child_extra_data
     return await this.generate();
 }
 
-Pdf.prototype.generateResolution = async function (child, parent) {
+Pdf.prototype.generateResolution = async function (child, parent, childExtraData) {
     const current_day = this.getFullDate();
     parent = {...parent.fields};
     child = {...child.fields};
+    childExtraData = {...childExtraData.fields};
     this.file = {
         content: `<style>
         p {
@@ -132,7 +133,7 @@ Pdf.prototype.generateResolution = async function (child, parent) {
 
 
             <p style='font-size: 9pt; margin-bottom: 0pt; padding-bottom: 0;'>являясь законным представителем несовершеннолетнего, приходящегося мне _____________________,</p>
-            <p style='font-size: 9pt;'>зарегистрированного по адресу: <u>{$child_registration_address}</u>, ФИО несовершеннолетнего <u>` + child.surname + ' ' + child.name + ' ' + child.lastname + `</u> в соответствии с Федеральным законом № от 27.7.2006 № 152-ФЗ «О персональных данных», даю свое согласие на обработку моих персональных данных и персональных данных несовершеннолетнего, относящихся исключительно к ниже перечисленным категориям персональных данных, в <b>ГБНОУ «Академия цифровых технологий»</b>, расположенное по адресу: 197198, Санкт-Петербург, Большой проспект П.С., 29/2 (далее Академия).</p>
+            <p style='font-size: 9pt;'>зарегистрированного по адресу: <u>` + childExtraData.registration_address + `</u>, ФИО несовершеннолетнего <u>` + child.surname + ' ' + child.name + ' ' + child.lastname + `</u> в соответствии с Федеральным законом № от 27.7.2006 № 152-ФЗ «О персональных данных», даю свое согласие на обработку моих персональных данных и персональных данных несовершеннолетнего, относящихся исключительно к ниже перечисленным категориям персональных данных, в <b>ГБНОУ «Академия цифровых технологий»</b>, расположенное по адресу: 197198, Санкт-Петербург, Большой проспект П.С., 29/2 (далее Академия).</p>
 
             <p style='font-size: 8pt; margin-bottom: 0; padding-bottom: 0;'>
                 <b style='font-size: 8pt; margin-bottom: 0; padding-bottom: 0;'><i style='font-size: 8pt; margin-bottom: 0; padding-bottom: 0;'>Перечень персональных данных, на обработку которых дается согласие:</i></b>

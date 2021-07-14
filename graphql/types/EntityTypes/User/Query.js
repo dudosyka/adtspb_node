@@ -1,5 +1,6 @@
 const graphql = require("graphql");
 const User = require('../../../Entity/User');
+const UserExtraData = require('../../../Entity/UserExtraData');
 const Proposal = require('../../../Entity/Proposal');
 const UserChild = require('../../../Entity/UserChild');
 const EmailValidation = require('../../../Entity/EmailValidation');
@@ -18,7 +19,7 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { id }) {
-                const rights = await rbac.auth(id ?? obj.viewer.id, true);
+                const rights = await rbac.auth(obj.viewer.id, true);
                 const model = Proposal.newModel();
 
                 const res = await User.getFullData([id ?? obj.viewer.id], obj.selections, model, rights.role);
@@ -40,7 +41,7 @@ module.exports = new graphql.GraphQLObjectType({
                 const userModel = User.newModel();
 
                 const userChild = await UserChild.baseCreateFrom({ parent_id: obj.viewer.id });
-                const children = await userChild.getChildren(true, 1, false, selections, userModel);
+                const children = await userChild.getChildren(true, 1, selections, userModel);
 
                 return children;
             }
@@ -48,8 +49,11 @@ module.exports = new graphql.GraphQLObjectType({
         parentRequests: {
             type: graphql.GraphQLList(UserOutput),
             async resolve(obj) {
+                const selections = obj.selections;
+                const userModel = User.newModel();
+
                 const userChild = await UserChild.baseCreateFrom({ child_id: obj.viewer.id });
-                return await userChild.getParentRequests();
+                return await userChild.getParentRequests(obj.selections, userModel);
             }
         },
         generateResolution: {
@@ -62,8 +66,9 @@ module.exports = new graphql.GraphQLObjectType({
             async resolve(obj, { child_id }) {
                 const child = await User.baseCreateFrom({ id: child_id });
                 const parent = await User.baseCreateFrom({ id: obj.viewer.id });
+                const childExtraData = await UserExtraData.createFrom({ user_id: child_id });
                 const model = Proposal.newModel();
-                return await model.generateResolution(child, parent);
+                return await model.generateResolution(child, parent, childExtraData);
             }
         },
         checkConfirmation: {

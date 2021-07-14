@@ -182,7 +182,7 @@ User.getParentRequests = async function () {
     let req = `
       query {
           user {
-            getParentRequests {
+            parentRequests {
                 id, name, surname, phone
             }
           }
@@ -191,7 +191,7 @@ User.getParentRequests = async function () {
 
     return await _request("api", req)
       .then(data => {
-        return data.getParentRequests;
+        return data.user.parentRequests;
     });
 
 }
@@ -360,8 +360,10 @@ User.getFullData = async function (fields = null, id = null, parse = true) {
       }
     `;
 
+    id = id === null ? null : Number(id);
+
     const data = {
-        id: id === null ? null : Number(id)
+        id: id == 0 ? null : id
     };
 
     return await _request("api", req, data).then(data => {
