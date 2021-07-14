@@ -185,16 +185,22 @@ export default {
                     id: null,
                     hours_week: null,
                     name: null
+                },
+                status: {
+                    num: true,
                 }
             }
         }
 
         User.getFullData(fields, child).then(data => {
             this.child = data.data;
+            console.log(this.child);
             this.child.proposals.map(el => {
-                this.associations[el.association.id].already = true;
-                this.proposalParms.associations[el.association.id] = el.association;
-                this.proposalParms.weekHours += el.association.hours_week;
+                if (el.status[0].num != 0) {
+                    this.associations[el.association.id].already = true;
+                    this.proposalParms.associations[el.association.id] = el.association;
+                    this.proposalParms.weekHours += el.association.hours_week;
+                }
             });
             this.speedometr();
         });

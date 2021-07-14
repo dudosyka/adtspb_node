@@ -9,7 +9,7 @@ module.exports = new graphql.GraphQLObjectType({
     name: "ProposalMutation",
     //Arrow func to prevent 'use before initialization' err
     fields: () => ({
-        createProposal: {
+        create: {
             type: graphql.GraphQLBoolean,
             args: {
                 proposal: {
@@ -24,7 +24,7 @@ module.exports = new graphql.GraphQLObjectType({
                 return model.createNew(userModel, userExtraDataModel);
             }
         },
-        recallProposal: {
+        recall: {
             type: graphql.GraphQLBoolean,
             args: {
                 proposal_id: {
