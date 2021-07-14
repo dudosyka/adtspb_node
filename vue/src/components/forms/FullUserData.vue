@@ -179,7 +179,7 @@
               @change="_onedit"
           />
           <inputField
-              label="Улица"
+              label="Улица / Проспект"
               v-model="data.registration_address.street"
               :error="errors.registration_address.street"
               :data_id="{name: 'street', group: 'extra', parent: 'registration_address'}"
@@ -221,7 +221,7 @@
               @change="_onedit"
           />
           <inputField
-              label="Улица"
+              label="Улица / Проспект"
               v-model="data.residence_address.street"
               :error="errors.residence_address.street"
               :data_id="{name: 'street', group: 'extra', parent: 'residence_address'}"
