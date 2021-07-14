@@ -43,17 +43,6 @@ Proposal.prototype.createFromInput = async function (proposal) {
     return await this.baseCreateFrom(data);
 }
 
-Proposal.prototype.selectByAssociation = async function (association, notRevoked = false) {
-    const status = notRevoked ? -1 : 2;
-    return await this.db.query("SELECT * FROM `proposal` as `main` LEFT JOIN `proposal_status` as `status` ON `main`.`id` = `status`.`proposal_id` WHERE `main`.`association_id` = ? AND `status`.id != ?", [ association.id, status ]).then(data => data).catch(err => { console.error(err); });
-};
-
-Proposal.prototype.selectByUser = async function (user) {
-    return (User.checkRole(AppConfig.parent_role_id, user.__role))
-    ? await this.selectByParent(user)
-    : await this.selectByChild(user.__get('id'));
-}
-
 Proposal.prototype.selectProposalsList = async function (field, arr, selections) {
     const { ids, query } = this.db.createRangeQuery(false, arr, field);
 
@@ -155,10 +144,6 @@ Proposal.prototype.selectByChild = async function (child_id) {
     return await this.db.select(this, "`child_id` = ?", [ child_id ]).then(data => data).catch(err => { console.error(err); });
 };
 
-Proposal.prototype.selectByParent = async function (parent) {
-    return await this.db.select(this, "`parent_id` = ?", [ parent.id ]).then(data => data).catch(err => { console.error(err); });
-};
-
 Proposal.prototype.checkProposalExists = async function () {
     return (await this.db.select(this, '`child_id` = ? AND `association_id` = ?', [ this.__get('child'), this.__get('association') ])).length > 0;
 }
@@ -190,7 +175,7 @@ Proposal.prototype.canJoinAssociation = async function (userModel, userExtraData
         };
 
         const parent = await userModel.createFrom(data);
-        const children = await parent.getChildren();
+        const children = await parent.getChildrenIds();
 
         //Check can parent create proposals
         if (!parent.hasAccess(13)) {
@@ -246,15 +231,6 @@ Proposal.prototype.createNew = async function (userModel, userExtraDataModel) {
     return true;
 };
 
-Proposal.prototype.generatePdf = async function (childModel, parentModel, userExtraModel, associationModel) {
-    const pdf = new Pdf(this);
-    const child = await childModel.baseCreateFrom({id: this.__get('child')});
-    const parent = await parentModel.baseCreateFrom({id: this.__get('parent')});
-    const child_extra = await userExtraModel.createFrom({user_id: this.__get('child')})
-    const association = await associationModel.baseCreateFrom({id: this.__get('association')});;
-    return await pdf.generateProposal(child, parent, child_extra, association);
-}
-
 Proposal.prototype.recall = async function (requester) {
     if (this.__get('association_id') === null)
         throw Error('Proposal not found');
@@ -271,6 +247,15 @@ Proposal.prototype.recall = async function (requester) {
     }
 
     return await Status.setToRecall(this.__get('id'));
+}
+
+Proposal.prototype.generatePdf = async function (childModel, parentModel, userExtraModel, associationModel) {
+    const pdf = new Pdf(this);
+    const child = await childModel.baseCreateFrom({id: this.__get('child')});
+    const parent = await parentModel.baseCreateFrom({id: this.__get('parent')});
+    const child_extra = await userExtraModel.createFrom({user_id: this.__get('child')})
+    const association = await associationModel.baseCreateFrom({id: this.__get('association')});;
+    return await pdf.generateProposal(child, parent, child_extra, association);
 }
 
 Proposal.prototype.generateResolution = async function (child, parent) {

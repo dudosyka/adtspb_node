@@ -66,15 +66,20 @@ function parseSelections(selection) {
 app.use('/api', async (req, res, next) =>
 {
 	console.log(req.body);
-    const endPointName = gql`
-        ${req.body.query}
-    `.definitions[0].selectionSet.selections[0].name.value;
 
-    let selections = null;
-
-    const request = gql`
+    const endPoint = gql`
         ${req.body.query}
     `.definitions[0].selectionSet.selections[0];
+
+    let endPointName = endPoint.name.value;
+    let request = endPoint;
+
+    if (AppConfig.parentEndpoints.includes(endPoint.name.value)) {
+        endPointName = endPoint.selectionSet.selections[0].name.value;
+        request = endPoint.selectionSet.selections[0];
+    }
+
+    let selections = null;
 
     if (request.selectionSet) {
         selections = parseSelections(request)
@@ -83,22 +88,18 @@ app.use('/api', async (req, res, next) =>
     //Authorization: Bearer [token]
     let token = req.header("Authorization");
 
-    if (typeof token === 'undefined')
-    {
+    if (typeof token === 'undefined') {
         res.status(403).send();
         return;
     }
-    else
-    {
+    else {
         token = token.split(" ")[1];
         console.log(token);
         let data = await jwt.parse(token);
         console.log(data);
-        if (data !== false && Object.keys(data).length != 1)
-        {
+        if (data !== false && Object.keys(data).length != 1) {
             //If request is not in white list start checking email_validation
-            if (!AppConfig.requestWhiteList.includes(endPointName))
-            {
+            if (!AppConfig.requestWhiteList.includes(endPointName)) {
                 //If email_confirmation parm is not set in token return refresh
                 if (data.confirm == null) {
                     const response = {message: "refresh"};
@@ -142,9 +143,7 @@ app.use('/api', async (req, res, next) =>
 
 app.use('/api', graphqlHTTP({
     schema: schema,
-    rootValue: () => {
-        return rootValue;
-    },
+    rootValue: () => rootValue,
     graphiql: true
 }));
 

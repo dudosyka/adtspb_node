@@ -24,6 +24,28 @@ let User = function () {  }
 
 User.prototype = Object.assign(User.prototype, baseEntity.prototype);
 
+User.prototype.getInstance = () => User;
+
+User.prototype.fields = {
+    id: null,
+    name: null,
+    surname: null,
+    lastname: null,
+    email: null,
+    phone: null,
+    sex: null,
+    password: null,
+}
+
+User.prototype.validateRules = async function () {
+    return [
+        this.validator(['name', 'surname', 'sex', 'email', 'phone', 'password'], 'Can`t be empty.').notNull(),
+        await this.validator(['phone'], 'Should be valid phone number.').phone(),
+        this.validator(['email'], 'Should be valid email.').email(),
+        this.validator(['sex'], 'Invalid format').match(/^[0-1]{1}$/),
+    ];
+}
+
 User.prototype.createFrom = async function (data, baseCreating = true, checkConfirmation = true) {
     if (baseCreating)
         await this.baseCreateFrom(data);
@@ -46,35 +68,8 @@ User.prototype.createFromUnique = async function (data) {
     return null;
 }
 
-User.prototype.getInstance = () => User;
-
-User.prototype.validateRules = async function () {
-    return [
-        this.validator(['name', 'surname', 'sex', 'email', 'phone', 'password'], 'Can`t be empty.').notNull(),
-        await this.validator(['phone'], 'Should be valid phone number.').phone(),
-        this.validator(['email'], 'Should be valid email.').email(),
-        this.validator(['sex'], 'Invalid format').match(/^[0-1]{1}$/),
-    ];
-}
-
-User.prototype.fields = {
-    id: null,
-    name: null,
-    surname: null,
-    lastname: null,
-    email: null,
-    phone: null,
-    sex: null,
-    password: null,
-}
-
 User.prototype.hasAccess = function (rule) {
     return this.__get('__accessible').indexOf(rule) != -1;
-}
-
-User.prototype._save = async function () {
-    this.pass = crypt(this.pass);
-    await this.save();
 }
 
 User.prototype.auth = async function (data) {
@@ -96,10 +91,6 @@ User.prototype.auth = async function (data) {
 }
 
 User.prototype.checkRole = function (checkFor, target = false) {
-    //If target not provided then check...
-    //...if it called on model with loaded roles...
-    //...then check and returns result...
-    //... in other situations - returns false.
     if (target === false) {
         if (this.__get('__role') == null)
             return false;
@@ -107,13 +98,11 @@ User.prototype.checkRole = function (checkFor, target = false) {
             return this.__get('__role').includes(checkFor);
     }
 
-    //Check if not object or array provided returns false
     if (typeof target == 'object')
         return target.includes(checkFor);
     else
         return false;
 
-    //In any unpredictable situations returns false
     return false;
 }
 
@@ -172,30 +161,38 @@ User.prototype.createNew = async function (roles = []) {
     }
 }
 
-User.prototype.getChildren = async function () {
+User.prototype.getChildrenIds = async function () {
     return await this.db.query('SELECT `child_id` FROM `user_child` WHERE `parent_id` = ?', [ this.__get('id') ])
     .then(data => data.map(el => el.child_id))
     .catch(err => { throw new Error('Internal server error.'); });
 }
 
 User.prototype.getFullData = async function (id = false, selections = {}, model = null, role = []) {
-    if (id === null) {
-        id = false;
+    if (id === false || id === null) {
+        id = [this.__get('id')];
     }
-    const data = (await this.db.query("SELECT * FROM `user` as `main` LEFT JOIN `user_extra_data` AS `data` ON `main`.`id` = `data`.`user_id` WHERE `main`.`id` = ?", id ? id : this.__get('id')))[0];
 
-    data.id = data.user_id;
+    const {query, ids} = this.db.createRangeQuery(false, id);
+
+    const data = (await this.db.query("SELECT * FROM `user` as `main` LEFT JOIN `user_extra_data` AS `data` ON `main`.`id` = `data`.`user_id` WHERE `main`." + query, ids));
 
     let proposals = null;
     if (selections.proposals) {
-        let field = 'child_id';
+        let field = 'parent_id';
+        let rangeIds = [id];
         if (role.includes(AppConfig.parent_role_id)) {
-            field = 'parent_id'
+            field = 'child_id';
+            rangeIds = data.map(el => el.user_id);
         }
-        proposals = await model.selectProposalsList(field, [data.id], selections.proposals);
+        proposals = await model.selectProposalsList(field, rangeIds, selections.proposals);
     }
 
-    data.proposals = Object.keys(proposals ?? {}).length > 0 ? proposals[data.id] : null;
+    data.map(user => {
+        user.id = user.user_id;
+        user.proposals = Object.keys(proposals ?? {}).length > 0 ? proposals[user.id] : null;
+        return user;
+    })
+
     return data;
 }
 
@@ -214,14 +211,14 @@ User.prototype.restorePasswordRequest = async function (email) {
     // If already exists set new code and resend email
     if (query.length > 0) {
         query = await this.db.query('UPDATE `restore_password` SET `code` = ? WHERE `user_id` = ?', [ code, user_id ]);
-        return (query !== null);
-        //call send mail function
+    }
+    else {
+        query = await this.db.query('INSERT INTO `restore_password` (`user_id`, `code`) VALUES (?, ?)', [ user_id, code ]);
     }
 
-    let res = await this.db.query('INSERT INTO `restore_password` (`user_id`, `code`) VALUES (?, ?)', [ user_id, code ]);
     const fullname = user[0].surname + " " + user[0].name + " " + user[0].lastname;
     mail.sendEmail(user[0].email, "Код подтверждения" , "Здравствуйте, " + fullname + "! Код восстановления для вашего аккаунта в личном кабинете Академии Цифровых Технологий: " + code + " (Никому не сообщайте его)");
-    return (res !== null);
+    return (query !== null);
 }
 
 User.prototype.checkRestoreCode = async function (email, code) {
@@ -284,8 +281,7 @@ User.prototype.setChildData = async function (childId, data, deleteChild = false
     data.user_id = childId;
     const childExtraData = await UserExtraData.createFrom({user_id: childId});
     childExtraData.load(data);
-    console.log(childExtraData.fields);
-    console.log(entity.fields);
+
     createResult = await childExtraData.setChildData();
 
     if (createResult !== true) {
@@ -330,7 +326,7 @@ User.prototype.agreeParentRequest = async function (parent_id, newData) {
 
     return true;
 }
-//-------------------------------------------------------------------
+
 User.prototype.createChild = async function (data) {
     if (!this.hasAccess(11))
         throw Error('Forbidden');

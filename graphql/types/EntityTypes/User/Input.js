@@ -1,19 +1,11 @@
-const graphql = require('graphql');
-const OvzType = require('../EntityTypes/Ovz');
-const DisabilityGroupType = require('../EntityTypes/DisabilityGroup');
-const ProposalType = require('../EntityTypes/Proposal');
-const Proposal = require('../../Entity/Proposal');
-const User = require('../../Entity/User');
+const graphql = require("graphql");
 
-module.exports = new graphql.GraphQLObjectType({
-    name: "UserFullData",
-    //Arrow func to prevent 'use before initialization' err
+module.exports = new graphql.GraphQLInputObjectType({
+    name: "UserInput",
+
     fields: () => ({
         id: {
-            type: graphql.GraphQLID,
-            resolve(obj) {
-                return obj.user_id ?? obj.id;
-            }
+            type: graphql.GraphQLID
         },
         name: {
             type: graphql.GraphQLString,
@@ -66,31 +58,16 @@ module.exports = new graphql.GraphQLObjectType({
             type: graphql.GraphQLInt,
         },
         ovz_type: {
-            type: OvzType,
-            async resolve(obj, data) {
-                return {
-                    id: obj.ovz_type,
-                    name: null
-                }
-            }
+            type: OvzInput,
         },
         disability: {
             type: graphql.GraphQLInt,
         },
         disability_group: {
-            type: DisabilityGroupType,
-            async resolve(obj, data) {
-                return {
-                    id: obj.disability_group,
-                    name: null
-                }
-            }
-        },
-        proposals: {
-            type: graphql.GraphQLList(ProposalType),
-            resolve (obj, data) {
-                return (obj.proposals === undefined || obj.proposals === null) ? [] : obj.proposals;
-            }
+            type: DisabilityGroupInput,
         },
     })
 });
+
+const DisabilityGroupInput = require('../DisabilityGroup/Input');
+const OvzInput = require('../Ovz/Input');
