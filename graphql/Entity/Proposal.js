@@ -145,7 +145,13 @@ Proposal.prototype.selectByChild = async function (child_id) {
 };
 
 Proposal.prototype.checkProposalExists = async function () {
-    return (await this.db.select(this, '`child_id` = ? AND `association_id` = ?', [ this.__get('child'), this.__get('association') ])).length > 0;
+    const proposals = await this.db.query('SELECT * FROM `'+ this.table +'` as `main` LEFT JOIN `proposal_status` as `sub` ON `main`.`id` = `sub`.`proposal_id` WHERE `main`.`child_id` = ? AND `main`.`association_id` = ?', [ this.__get('child'), this.__get('association') ]);
+    let exists = false;
+    proposals.map(el => {
+        if (el.num != 0)
+            exists = true;
+    })
+    return exists;
 }
 
 Proposal.prototype.checkStudyLoad = async function () {
