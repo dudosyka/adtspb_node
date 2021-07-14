@@ -3,9 +3,10 @@
     <navigation :new-proposal="messages.proposalCreated" />
 
 
-    <section class="home-content">
+    <section class="home-content">  
       <div :class="{'association-cards--opened': show.associationsList}" class="association-cards-wrapper">
         <button class="close-associations" @click="show.associationsList = false"><span></span></button>
+        <p v-if="show.warn" class="warning-container">Нет подходящих объединений</p>
         <article class="association-cards">
             <h2 v-if='Object.keys(associations).filter(el => (associations[el].already == false)).length <= 0'>Нет объединений доступных для записи.</h2>
             <article v-else class="association-card card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id" v-if='!card.already'>
@@ -154,7 +155,8 @@ export default {
         proposalCreated: false
       },
       show: {
-        associationsList: true
+        associationsList: true,
+        warn: null
     },
     selected: false,
     }
@@ -175,6 +177,8 @@ export default {
         });
 
         console.log(data);
+        console.log(23, Object.keys(this.associations))
+        this.show.warn = (Object.keys(this.associations).length < 1);
 
         const fields = {
             id: null,
@@ -205,7 +209,6 @@ export default {
             });
             this.speedometr();
         });
-
     });
   },
   methods: {
@@ -312,6 +315,10 @@ export default {
     display: grid;
     grid-template-columns: 1fr auto;
     overflow-y: hidden;
+}
+.warning-container {
+    padding: 10px;
+    margin: 30px;
 }
 
 article.card.shadow {

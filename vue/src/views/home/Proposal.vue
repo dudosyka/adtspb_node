@@ -3,7 +3,7 @@
         <navigation />
 
         <section class="home-content">
-            <section class="warning-container shadow">
+            <section v-if="children.length > 0" class="warning-container shadow">
                 <p>Кнопки <em>печати</em> и <em>скачивания</em> документов станут доступными перед началом приема документов. Объявление об это будет размещено заранее, следите за информацией в официальных сообщества Академии Цифровых Технологий и на сайте.<a href="https://adtspb.ru" target="_blank" class="link_text">на сайте</a>.</p>
                 <div class="link-container">
                     <div class="social-media-list li">
@@ -20,6 +20,8 @@
                     </div>
                 </div>
             </section>
+
+            <p v-if="children.length < 1" class="warning-container">Заявления еще не сформированы</p>
 
             <article class="card shadow children" v-for="child in children">
                 <h2 class="child-name">{{ child.name + ' ' + child.surname }}</h2>
@@ -213,6 +215,7 @@
                 if (data) {
                     child.proposals[proposal_index].status.num = 0;
                     child.proposals[proposal_index].status.text = "Отозвано";
+                    this.show.sure = false;
                 }
             })
             .catch(err => {
