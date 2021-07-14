@@ -3,7 +3,9 @@ const Proposal = {};
 Proposal.getPdfBlob = async function (proposal_id, child = false) {
     let req = `
     query($proposal: ProposalInput) {
-        generateProposalPdf(proposal: $proposal)
+        proposal {
+            generatePdf(proposal: $proposal)
+        }
       }
     `;
     let data = {
@@ -14,7 +16,9 @@ Proposal.getPdfBlob = async function (proposal_id, child = false) {
     if (child != false) {
         req = `
             query($child_id: Int) {
-                generateResolution(child_id: $child_id)
+                user {
+                    generateResolution(child_id: $child_id)
+                }
               }
         `;
         data = {
@@ -23,7 +27,12 @@ Proposal.getPdfBlob = async function (proposal_id, child = false) {
     }
 
     return await _request("api", req, data).then(async res => {
-        return await fetch("data:application/pdf;base64," + res[child == false ? "generateProposalPdf" : "generateResolution"]).then(base64 =>  base64.blob() );
+        if (child == false) {
+            return await fetch("data:application/pdf;base64," + res.proposal.generatePdf).then(base64 =>  base64.blob() );
+        }
+        else {
+            return await fetch("data:application/pdf;base64," + res.user.generateResolution).then(base64 =>  base64.blob() );
+        }
     }).catch(err => {
         console.error(err);
         throw err;
@@ -64,7 +73,9 @@ Proposal.printPdf = async function (proposal_id) {
 Proposal.create = async function (association, child) {
     const req = `
     mutation($proposal: ProposalInput) {
-        createProposal(proposal: $proposal)
+        proposal {
+            create(proposal: $proposal)
+        }
     }`;
 
     const data = {
@@ -78,7 +89,7 @@ Proposal.create = async function (association, child) {
         }
     };
 
-    return await _request("api", req, data).then(data => data.createProposal).catch(err => {throw err;});
+    return await _request("api", req, data).then(data => data.proposal.create).catch(err => {throw err;});
 }
 
 Proposal.createFromObject = async function (obj, child_id) {
@@ -97,50 +108,12 @@ Proposal.createFromObject = async function (obj, child_id) {
     }
 }
 
-Proposal.canJoinAssociation = async function (association, child) {
-    const req = `
-        query($proposal: ProposalInput) {
-            canJoinAssociation(data: $proposal)
-        }
-    `;
-
-    const data = {
-        proposal: {
-            association: association,
-            child: child
-        }
-    };
-
-    return await _request("api", req, data).then(data => data.canJoinAssociation);
-}
-
-Proposal.getChildProposal = async function (child_id) {
-    const req = `
-    query($child_id: Int) {
-        getChildProposals(child_id: $child_id) {
-            child {
-                name
-            },
-            parent {
-                name
-            },
-            association {
-                name
-            }
-        }
-    }`;
-
-    const data = {
-        child_id: child_id
-    };
-
-    return await _request("api", req, data).then(data => data);
-}
-
 Proposal.recall = async function (proposal_id) {
     const req = `
         mutation($proposal_id: Int) {
-            recallProposal(proposal_id: $proposal_id)
+            proposal {
+                recall(proposal_id: $proposal_id)
+            }
         }
     `;
 
@@ -148,7 +121,7 @@ Proposal.recall = async function (proposal_id) {
         proposal_id: Number(proposal_id)
     };
 
-    return await _request("api", req, data).then(data => data.recallProposal).catch(err => {throw err;});
+    return await _request("api", req, data).then(data => data.proposal.recall).catch(err => {throw err;});
 }
 
 export {Proposal};

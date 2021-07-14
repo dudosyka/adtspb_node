@@ -45,8 +45,10 @@ Association.getAssociations = async function(fields = null, child_id) {
 
     const req = `
         query ($child_id: Int) {
-          getAssociationsForChild (child_id: $child_id) {
-            ` + Parser.objToGraphQlQuery(fields) + `
+          association {
+              getForChild (child_id: $child_id) {
+                ` + Parser.objToGraphQlQuery(fields) + `
+              }
           }
         }
     `;
@@ -57,7 +59,7 @@ Association.getAssociations = async function(fields = null, child_id) {
 
     return _request("api", req, data)
         .then(data => {
-            return data.getAssociationsForChild.map(association => associationDataProcessing(association));
+            return data.association.getForChild.map(association => associationDataProcessing(association));
         })
         .catch(err => console.error(err));
 

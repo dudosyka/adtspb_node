@@ -313,7 +313,7 @@ article.card.shadow {
 .child {
     padding: 20px;
     margin: 0;
-    min-width: 300px;
+    width: 350px;
 }
 .child-name {
     text-align: center;

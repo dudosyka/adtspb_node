@@ -37,15 +37,17 @@ AccessControl.refreshUserRules = async function () {
 
     let req = `
     query {
-        userRights {
-            rules, roles
+        user {
+            rights {
+                rules, roles
+            }
         }
     }
     `;
 
     return _request("api", req).then(el => {
-        localStorage.setItem('rules', el.userRights.rules);
-        localStorage.setItem('roles', el.userRights.roles);
+        localStorage.setItem('rules', el.user.rights.rules);
+        localStorage.setItem('roles', el.user.rights.roles);
     });
 }
 

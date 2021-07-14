@@ -61,9 +61,11 @@ User.auth = function (token, redir = false) {
 User.checkConfirmation  = async function (id) {
     let req = `
       query {
-        checkUserConfirmation {
-            code, user_id, isConfirmed
-        }
+          user {
+              checkConfirmation {
+                  user_id, isConfirmed
+              }
+          }
       }
     `;
 
@@ -77,7 +79,7 @@ User.checkConfirmation  = async function (id) {
 
     return await _request("api", req, data).then(check => {
         console.log(check);
-        return check.checkUserConfirmation.isConfirmed;
+        return check.user.checkConfirmation.isConfirmed;
     }).catch(err => {
         console.error(err);
         throw err;
@@ -91,8 +93,10 @@ User.setOnConfirm = function () {
 User.confirmUser = async function (code) {
   let req = `
     mutation($code: String) {
-        confirmUser(code: $code) {
-            isConfirmed, token
+        user {
+            confirm(code: $code) {
+                isConfirmed, token
+            }
         }
     }
   `;
@@ -104,8 +108,8 @@ User.confirmUser = async function (code) {
   return _request("api", req, data)
     .then(data => {
         console.log(data);
-      if (data.confirmUser.isConfirmed) {
-          AccessControl.refreshApiToken(data.confirmUser.token);
+      if (data.user.confirm.isConfirmed) {
+          AccessControl.refreshApiToken(data.user.confirm.token);
           AccessControl.refreshAccess();
           window.location = '/';
           return true;
@@ -120,9 +124,11 @@ User.confirmUser = async function (code) {
 User.sendNewConfirmationCode = async function () {
     let req = `
       mutation {
-        generateNewConfirmationCode {
-            isConfirmed
-        }
+          user {
+            generateNewConfirmationCode {
+                isConfirmed
+            }
+          }
       }
     `;
 
@@ -175,9 +181,11 @@ User.signUp = async function (data, makeParent = false) {
 User.getParentRequests = async function () {
     let req = `
       query {
-        getParentRequests {
-            id, name, surname, phone
-        }
+          user {
+            getParentRequests {
+                id, name, surname, phone
+            }
+          }
       }
     `
 
@@ -202,7 +210,9 @@ User.agreeParentRequest = async function (parent_id, userData) {
 
     let req = `
       mutation ($parent_id: Int, $userData: UserInput) {
-        agreeParentRequest(parent_id: $parent_id, newData: $userData)
+          user {
+              agreeParentRequest(parent_id: $parent_id, newData: $userData)
+          }
       }
     `;
 
@@ -296,15 +306,16 @@ User.getChildren = async function (fields = null, parse = true) {
 
     let req = `
       query {
-        getChildren {
-            `+ fieldsOnGet +`
-        }
+          user {
+            children {
+                `+ fieldsOnGet +`
+            }
+          }
       }
     `;
 
     return await _request("api", req).then(data => {
-        const res = data.getChildren.map(el => userDataProcessing(el, parse));
-        console.log(res);
+        const res = data.user.children.map(el => userDataProcessing(el, parse));
         return res;
     });
 }
@@ -341,9 +352,11 @@ User.getFullData = async function (fields = null, id = null, parse = true) {
 
     let req = `
       query ($id: Int) {
-        getFullUserData (id: $id) {
-            `+ fieldsOnGet +`
-        }
+          user {
+            data (id: $id) {
+                `+ fieldsOnGet +`
+            }
+          }
       }
     `;
 
@@ -352,7 +365,7 @@ User.getFullData = async function (fields = null, id = null, parse = true) {
     };
 
     return await _request("api", req, data).then(data => {
-        const el = data.getFullUserData;
+        const el = data.user.data;
 
         return userDataProcessing(el, parse);
     });
@@ -361,7 +374,9 @@ User.getFullData = async function (fields = null, id = null, parse = true) {
 User.editMainData = async function (obj, target_id = 0) {
     let req = `
     mutation ($data: UserInput, $target_id: Int) {
-        editMainUserData(newData: $data, target_id: $target_id)
+        user {
+            editMainData(newData: $data, target_id: $target_id)
+        }
     }
     `;
 
@@ -395,7 +410,9 @@ User.editMainData = async function (obj, target_id = 0) {
 User.editExtraData = async function (obj, target_id = 0) {
     let req = `
       mutation ($data: UserInput, $target_id: Int) {
-        editExtraUserData(newData: $data, target_id: $target_id)
+        user {
+            editExtraData(newData: $data, target_id: $target_id)
+        }
       }
     `;
 
@@ -445,7 +462,9 @@ User.editExtraData = async function (obj, target_id = 0) {
 User.addChild = async function (child) {
     const req = `
       mutation ($user: UserInput) {
-        createChild(child: $user)
+          user {
+              createChild(child: $user)
+          }
       }
     `;
 
@@ -480,14 +499,16 @@ User.addChild = async function (child) {
 
     return _request("api", req, data)
       .then(data => {
-        return data.createChild;
+        return data.user.createChild;
     });
 }
 
 User.sendParentRequest = async function (login) {
   let req = `
     mutation ($child_data: String) {
-      addChild(child_data: $child_data)
+        user {
+            addChild(child_data: $child_data)
+        }
     }
   `
 
@@ -496,7 +517,7 @@ User.sendParentRequest = async function (login) {
   }
 
   return _request("api", req, data).then(data => {
-        return data.addChild;
+        return data.user.addChild;
   }).catch(err => {
       console.log(err);
       throw err;
@@ -506,7 +527,9 @@ User.sendParentRequest = async function (login) {
 User.removeChild = async function (id, comment, remove_account) {
   let req = `
     mutation ($child_id: Int, $removeAccount: Boolean, $comment: String) {
-      removeChild(child_id: $child_id, removeAccount: $removeAccount, comment: $comment)
+        user {
+            removeChild(child_id: $child_id, removeAccount: $removeAccount, comment: $comment)
+        }
     }
   `;
 
