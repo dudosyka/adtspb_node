@@ -50,8 +50,8 @@ UserExtraData.prototype.baseValidate = function () {
         this.validator(
             [
                 'relationship', 'state', 'studyPlace',
-                'registration_address', 'registration_flat',
-                'residence_address', 'residence_flat',
+                'registration_address',
+                'residence_address',
                 'ovz', 'ovz_type',
                 'disability', 'disability_group', 'birthday'
             ],

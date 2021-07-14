@@ -155,7 +155,7 @@ export default {
   computed: {
       menu: function () {
           let menu = {
-              'home': {
+              '1home': {
                   link: "/",
                   title: "Профиль",
                   class: null,
@@ -169,11 +169,11 @@ export default {
           }
 
           if (hasRole(AppConfig.parent_role_id)) {
-              menu['proposal'] = buildMenuItem('/proposal', 'Заявления', {'link-notification': this.newProposal});
               if (hasAccess(11)) {
-                  menu['child'] = buildMenuItem('/child', 'Мои дети');
+                  menu['2child'] = buildMenuItem('/child', 'Мои дети');
               }
-              menu['document'] = buildMenuItem('/document', 'Подача документов');
+              menu['3proposal'] = buildMenuItem('/proposal', 'Заявления', {'link-notification': this.newProposal});
+              menu['4document'] = buildMenuItem('/document', 'Подача документов');
           }
 
           return menu;

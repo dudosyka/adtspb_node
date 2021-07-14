@@ -200,7 +200,7 @@ User.agreeParentRequest = async function (parent_id, userData) {
     parent_id = Number(parent_id);
     console.log(parent_id, userData);
     let errs = [];
-    const validateRes = Validator.validateNotEmpty(userData, true);
+    const validateRes = Validator.validateNotEmpty(userData, true, ['lastname', 'registration_flat', 'residence_flat']);
 
     if (validateRes !== true)
         errs = validateRes;
@@ -418,7 +418,7 @@ User.editExtraData = async function (obj, target_id = 0) {
       }
     `;
 
-    const validateRes = Validator.validateNotEmpty(obj, true, [ 'lastname' ]);
+    const validateRes = Validator.validateNotEmpty(obj, true, [ 'lastname', 'registration_flat', 'residence_flat' ]);
 
     if (validateRes !== true)
         throw validateRes;
@@ -471,7 +471,7 @@ User.addChild = async function (child) {
     `;
 
     let errs = [];
-    const validateRes = Validator.validateNotEmpty(child, true);
+    const validateRes = Validator.validateNotEmpty(child, true, ['lastname', 'residence_flat', 'registration_flat']);
 
     if (validateRes !== true)
         errs = validateRes;
