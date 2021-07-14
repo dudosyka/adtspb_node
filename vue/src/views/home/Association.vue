@@ -7,7 +7,8 @@
       <div :class="{'association-cards--opened': show.associationsList}" class="association-cards-wrapper">
         <button class="close-associations" @click="show.associationsList = false"><span></span></button>
         <article class="association-cards">
-            <article class="association-card card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id" v-if='!card.already'>
+            <h2 v-if='Object.keys(associations).filter(el => (associations[el].already == false)).length <= 0'>Нет объединений доступных для записи.</h2>
+            <article v-else class="association-card card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id" v-if='!card.already'>
                 <h2 class="association-card_heading">{{ card.name }}</h2>
                 <p class="association-card_old gray-text">от {{ card.min_age + ' до ' + card.max_age}} лет</p>
                 <p class="gray-text">{{ card.description }}</p>
