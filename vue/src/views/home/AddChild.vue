@@ -240,12 +240,14 @@
             />
 
             <br>
-
+            <!-- TODO: Убрать :class пофиксить InputField -->
             <inputField
                 label="Пароль"
                 type="password"
                 v-model="childRaw.password"
                 :error="childRawErrors.password"
+
+                :class="{'input-error': childRawErrors.password}"
             />
           </article>
           <div class="buttons wp100">
@@ -447,6 +449,7 @@
                   this.childRawErrors[el] = true;
                 }
               });
+              console.log(this.childRawErrors);
 
             if (err.response) {
                 const msg = err.response.errors[0].message;

@@ -8,7 +8,7 @@
                 <button class="dark-box dark-button" @click='logout()'>Выйти</button>
             </section>
 
-            <FullUserData :independent="true"></FullUserData>
+            <FullUserData :hidden="JSON.stringify(userHiddenFields)" :independent="true"></FullUserData>
 
         </article>
     </main>
@@ -30,6 +30,7 @@
   import navigation from '../components/Navigation.vue'
   import FullUserData from '../components/forms/FullUserData'
   import {AccessControl} from '../utils/AccessControl'
+  import AppConfig from '../config/AppConfig'
 
 
   export default {
@@ -40,13 +41,22 @@
     data() {
         return {
             cards: [],
+            userHiddenFields: {}
         }
     },
     methods: {
         logout: () => AccessControl.logout()
     },
-    async created()
-    {
+    async created() {
+        if (AccessControl.checkRole(AppConfig.parent_role_id)) {
+            this.userHiddenFields = {
+                relationship: true,
+                ovz: true,
+                disability: true,
+                birthday: true,
+                studyPlace: true,
+            };
+        }
     }
   }
 </script>

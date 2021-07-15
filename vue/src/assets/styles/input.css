@@ -302,5 +302,3 @@ input[type=radio]:checked ~ label.radio::before {
         grid-column: span 1;
     }
 }
-
-

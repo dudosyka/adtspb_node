@@ -7,6 +7,7 @@
             <h2 class="child-form_heading">Личные данные</h2>
 
             <inputField
+                v-if='!hiddenFields.name'
                 label="Имя"
                 v-model="data.name"
                 :error="errors.name"
@@ -14,6 +15,7 @@
                 @change="_onedit"
             />
             <inputField
+                v-if='!hiddenFields.surname'
                 label="Фамилия"
                 v-model="data.surname"
                 :error="errors.surname"
@@ -22,6 +24,7 @@
             />
 
             <inputField
+                v-if='!hiddenFields.lastname'
                 label="Отчество"
                 v-model="data.lastname"
                 :error="errors.lastname"
@@ -29,7 +32,7 @@
                 @change="_onedit"
             />
 
-            <div class="input-container">
+            <div class="input-container" v-if='!hiddenFields.birthday'>
                 <label class="label" :class="{'label-error': errors.birthday}">Дата рождения</label><br>
                 <input
                     class="type"
@@ -43,6 +46,7 @@
             </div>
 
             <inputField
+                v-if='!hiddenFields.email'
                 label="Электронная почта"
                 v-model="data.email"
                 :error="errors.email"
@@ -50,7 +54,10 @@
                 @change="_onedit"
             />
 
-            <div class="input-container required">
+            <div
+                class="input-container required"
+                v-if='!hiddenFields.phone'
+                >
                 <label class="label" v-bind:class="{'label-error': errors.phone}">Номер телефона</label><br>
                 <masked-input
                     v-model="data.masked.phone"
@@ -64,7 +71,9 @@
                 />
             </div>
 
-            <div class="input-container child-form_span-2">
+            <div class="input-container child-form_span-2"
+                v-if='!hiddenFields.sex'
+                >
                 <h3 class="radio-heading dark" :class="{'label-error': errors.sex}">Пол</h3>
                 <ul class="radio-list" :class="{'input-error': errors.sex}">
                     <li class="radio-container">
@@ -81,13 +90,16 @@
             </div>
 
             <inputField
+                v-if='!hiddenFields.state'
                 label="Гражданство"
                 v-model="data.state"
                 :error="errors.state"
                 :data_id="{name: 'state', group: 'extra'}"
                 @change="_onedit"
             />
-            <div>
+            <div
+                v-if='!hiddenFields.relationship'
+                >
                 <inputField
                     label="Степень родства"
                     v-model="data.relationship"
@@ -105,7 +117,9 @@
                 </inputField>
             </div>
 
-          <div class="child-form_span-2 child-form_select">
+          <div class="child-form_span-2 child-form_select"
+              v-if='!hiddenFields.ovz'
+              >
             <div>
               <h2 class="child-form_select-heading" :class="{'label-error': errors.ovz}">ОВЗ</h2>
               <select class="dark-box darken"
@@ -123,7 +137,9 @@
             </div>
           </div>
 
-          <div class="child-form_span-2 child-form_select">
+          <div class="child-form_span-2 child-form_select"
+              v-if='!hiddenFields.disability'
+              >
             <div>
               <h2 class="child-form_select-heading" :class="{'label-error': errors.disability}">Инвалидность</h2>
               <select class="dark-box darken"
@@ -143,6 +159,7 @@
           </div>
 
           <inputField
+              v-if='!hiddenFields.studyPlace'
               label="Образовательное учреждение (наименование)"
               v-model="data.studyPlace"
               type="text"
@@ -162,85 +179,91 @@
             </div>
             !-->
           </div>
+          <template
+              v-if='!hiddenFields.registration'
+              >
+              <h2 class="child-form_heading">Адрес регистрации</h2>
+              <inputField
+                  label="Город"
+                  v-model="data.registration_address.city"
+                  :error="errors.registration_address.city"
+                  :data_id="{name: 'city', group: 'extra', parent: 'registration_address'}"
+                  @change="_onedit"
+              />
+              <inputField
+                  label="Район"
+                  v-model="data.registration_address.district"
+                  :error="errors.registration_address.district"
+                  :data_id="{name: 'district', group: 'extra', parent: 'registration_address'}"
+                  @change="_onedit"
+              />
+              <inputField
+                  label="Улица / Проспект"
+                  v-model="data.registration_address.street"
+                  :error="errors.registration_address.street"
+                  :data_id="{name: 'street', group: 'extra', parent: 'registration_address'}"
+                  @change="_onedit"
+              />
+              <inputField
+                  label="Дом"
+                  v-model="data.registration_address.house"
+                  :error="errors.registration_address.house"
+                  :data_id="{name: 'house', group: 'extra', parent: 'registration_address'}"
+                  @change="_onedit"
+              />
+              <inputField
+                  label="Номер квартиры"
+                  v-model="data.registration_flat"
+                  :error="errors.registration_flat"
+                  :data_id="{name: 'registration_flat', group: 'extra'}"
+                  @change="_onedit"
+              />
+          </template>
 
-          <h2 class="child-form_heading">Адрес регистрации</h2>
-          <inputField
-              label="Город"
-              v-model="data.registration_address.city"
-              :error="errors.registration_address.city"
-              :data_id="{name: 'city', group: 'extra', parent: 'registration_address'}"
-              @change="_onedit"
-          />
-          <inputField
-              label="Район"
-              v-model="data.registration_address.district"
-              :error="errors.registration_address.district"
-              :data_id="{name: 'district', group: 'extra', parent: 'registration_address'}"
-              @change="_onedit"
-          />
-          <inputField
-              label="Улица / Проспект"
-              v-model="data.registration_address.street"
-              :error="errors.registration_address.street"
-              :data_id="{name: 'street', group: 'extra', parent: 'registration_address'}"
-              @change="_onedit"
-          />
-          <inputField
-              label="Дом"
-              v-model="data.registration_address.house"
-              :error="errors.registration_address.house"
-              :data_id="{name: 'house', group: 'extra', parent: 'registration_address'}"
-              @change="_onedit"
-          />
-          <inputField
-              label="Номер квартиры"
-              v-model="data.registration_flat"
-              :error="errors.registration_flat"
-              :data_id="{name: 'registration_flat', group: 'extra'}"
-              @change="_onedit"
-          />
-
-
-          <h2 class="child-form_heading">Адрес проживания</h2>
-            <div class="input-prompt">
-                <span @click="autoResidenceAddress()">По адресу регистрации</span>
-            </div>
-            <br>
-          <inputField
-              label="Город"
-              v-model="data.residence_address.city"
-              :error="errors.residence_address.city"
-              :data_id="{name: 'city', group: 'extra', parent: 'residence_address'}"
-              @change="_onedit"
-          />
-          <inputField
-              label="Район"
-              v-model="data.residence_address.district"
-              :error="errors.residence_address.district"
-              :data_id="{name: 'district', group: 'extra', parent: 'residence_address'}"
-              @change="_onedit"
-          />
-          <inputField
-              label="Улица / Проспект"
-              v-model="data.residence_address.street"
-              :error="errors.residence_address.street"
-              :data_id="{name: 'street', group: 'extra', parent: 'residence_address'}"
-              @change="_onedit"
-          />
-          <inputField
-              label="Дом"
-              v-model="data.residence_address.house"
-              :error="errors.residence_address.house"
-              :data_id="{name: 'house', group: 'extra', parent: 'residence_address'}"
-              @change="_onedit"
-          />
-          <inputField
-              label="Номер квартиры"
-              v-model="data.residence_flat"
-              :error="errors.residence_flat"
-              :data_id="{name: 'residence_flat', group: 'extra'}"
-              @change="_onedit"
-          />
+          <template
+              v-if='!hiddenFields.residence'
+              >
+              <h2 class="child-form_heading">Адрес проживания</h2>
+                <div class="input-prompt">
+                    <span @click="autoResidenceAddress()">По адресу регистрации</span>
+                </div>
+                <br>
+              <inputField
+                  label="Город"
+                  v-model="data.residence_address.city"
+                  :error="errors.residence_address.city"
+                  :data_id="{name: 'city', group: 'extra', parent: 'residence_address'}"
+                  @change="_onedit"
+              />
+              <inputField
+                  label="Район"
+                  v-model="data.residence_address.district"
+                  :error="errors.residence_address.district"
+                  :data_id="{name: 'district', group: 'extra', parent: 'residence_address'}"
+                  @change="_onedit"
+              />
+              <inputField
+                  label="Улица / Проспект"
+                  v-model="data.residence_address.street"
+                  :error="errors.residence_address.street"
+                  :data_id="{name: 'street', group: 'extra', parent: 'residence_address'}"
+                  @change="_onedit"
+              />
+              <inputField
+                  label="Дом"
+                  v-model="data.residence_address.house"
+                  :error="errors.residence_address.house"
+                  :data_id="{name: 'house', group: 'extra', parent: 'residence_address'}"
+                  @change="_onedit"
+              />
+              <inputField
+                  label="Номер квартиры"
+                  v-model="data.residence_flat"
+                  :error="errors.residence_flat"
+                  :data_id="{name: 'residence_flat', group: 'extra'}"
+                  @change="_onedit"
+              />
+          </template>
         </article>
 
         <h2 class="form-heading"> {{ message }} </h2>
@@ -271,6 +294,10 @@ export default {
       independent: {
           type: Boolean,
           default: false
+      },
+      hidden: {
+          type: String,
+          default: '',
       }
   },
   components: {
@@ -304,6 +331,9 @@ export default {
           data_loaded: false,
           message: "",
           target_id: 0,
+          hiddenFields: {
+
+          }
       }
   },
   methods: {
@@ -383,6 +413,10 @@ export default {
   },
   async created()
   {
+      if (this.hidden.length != 0) {
+            this.hiddenFields = JSON.parse(this.hidden);
+      }
+
       if (this.input.length == 0) {
 
           await User.getFullData().then(data => {
