@@ -155,11 +155,13 @@ Proposal.prototype.checkProposalExists = async function () {
 }
 
 Proposal.prototype.checkStudyLoad = async function () {
-    const proposals = await this.selectByChild(this.__get('child'));
+    const proposals = await this.selectProposalsList('child_id', [this.__get('child')], {status: true});
+
     let association_ids = [];
 
-    proposals.map(el => {
-        association_ids.push({id: el.id});
+    proposals[this.__get('child')].map(el => {
+        if (el.status.num != 0)
+            association_ids.push({id: el.id});
     });
 
     const associations = await AssociationExraData.getList(association_ids);
@@ -180,7 +182,7 @@ Proposal.prototype.canJoinAssociation = async function (userModel, userExtraData
             id: this.__get('parent')
         };
 
-        const parent = await userModel.createFrom(data);
+        const parent = await userModel.createFrom(data, true, false);
         const children = await parent.getChildrenIds();
 
         //Check can parent create proposals
@@ -226,12 +228,13 @@ Proposal.prototype.canJoinAssociation = async function (userModel, userExtraData
 Proposal.prototype.createNew = async function (userModel, userExtraDataModel) {
     await this.canJoinAssociation(userModel, userExtraDataModel);
 
-    const proposal = await this.save();
+    const proposal = await this.save(true);
 
     if (proposal === false)
         throw Error('Saving data failed');
 
-    const status = await Status.createFrom({ proposal_id: proposal.insertId });
+    const status = Status.newModel();
+    status.load({ proposal_id: proposal.insertId });
     await status.setToCreate();
 
     return true;

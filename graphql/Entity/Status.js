@@ -23,7 +23,7 @@ Status.prototype.setToCreate = function () {
         hidden: 0
     });
 
-    this.save();
+    this.save(true);
 }
 
 Status.prototype.setToRecall = async function (proposal_id = null) {

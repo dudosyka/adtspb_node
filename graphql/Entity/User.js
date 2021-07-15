@@ -414,15 +414,16 @@ User.prototype.setMainDataOnEdit = async function (data, target_id) {
         throw Error(JSON.stringify(validateRes));
     }
 
-    let pairs = await model.checkForPairs('email', model.__get('email'));
+    if (model.__get('email') !== null || model.__get('phone') !== null) {
+        const pairs = await model.checkForPairs(['email', 'phone'], [model.__get('email'),model.__get('phone')]);
 
-    if (pairs.length > 0)
-        throw Error('Email must be unique');
-
-    pairs = await model.checkForPairs('phone', model.__get('phone'));
-
-    if (pairs.length > 0)
-        throw Error('Phone must be unique');
+        if (pairs.length) {
+            if (pairs[0].email == model.__get('email'))
+                throw Error('Email must be unique');
+            if (pairs[0].phone == model.__get('phone'))
+                throw Error('Phone must be unique');
+        }
+    }
 
     if (target !== false) {
         target = await model.baseCreateFrom({ id: target_id });
