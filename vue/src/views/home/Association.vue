@@ -3,69 +3,71 @@
     <navigation :new-proposal="messages.proposalCreated" />
 
 
-    <section class="home-content">  
+    <section class="home-content">
       <div :class="{'association-cards--opened': show.associationsList}" class="association-cards-wrapper">
         <button class="close-associations" @click="show.associationsList = false"><span></span></button>
         <p v-if="show.warn" class="warning-container">Нет подходящих объединений</p>
         <article class="association-cards">
             <h2 v-if='Object.keys(associations).filter(el => (associations[el].already == false)).length <= 0'>Нет объединений доступных для записи.</h2>
-            <article v-else class="association-card card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id" v-if='!card.already'>
-                <h2 class="association-card_heading">{{ card.name }}</h2>
-                <p class="association-card_old gray-text">от {{ card.min_age + ' до ' + card.max_age}} лет</p>
-                <p class="gray-text">{{ card.description }}</p>
-                <article class="association-card_time">
-                    <section class="association-card_time_item">
-                        <p class="black-text">{{ card.lessons_week + correctLessons(card.lessons_week)}} {{ card.hours_week + correctHours(card.hours_week) }}</p>
-                        <p class="gray-text">в неделю</p>
-                    </section>
-                    <section class="association-card_time_item">
-                        <p class="black-text">{{ card.study_years + correctYears(card.study_years) }}</p>
-                        <p class="gray-text">обучения</p>
-                    </section>
-                </article>
+            <template v-else>
+                <article  class="association-card card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id" v-if='!card.already'>
+                    <h2 class="association-card_heading">{{ card.name }}</h2>
+                    <p class="association-card_old gray-text">от {{ card.min_age + ' до ' + card.max_age}} лет</p>
+                    <p class="gray-text">{{ card.description }}</p>
+                    <article class="association-card_time">
+                        <section class="association-card_time_item">
+                            <p class="black-text">{{ card.lessons_week + correctLessons(card.lessons_week)}} {{ card.hours_week + correctHours(card.hours_week) }}</p>
+                            <p class="gray-text">в неделю</p>
+                        </section>
+                        <section class="association-card_time_item">
+                            <p class="black-text">{{ card.study_years + correctYears(card.study_years) }}</p>
+                            <p class="gray-text">обучения</p>
+                        </section>
+                    </article>
 
-                <button
-                    class="association-card_timetable-toggle"
-                    :class="{'association-card_timetable-toggle--open': card.showSchendule}"
-                    @click="openTimetables(id)"
-                >Расписание</button>
-                <article class="association-card_timetable" v-show="card.showSchendule">
-                    <div class="bread-crumbs">
-                        <button class="bread-crumb"
-                                :class="{'bread-crumb--active': group.timetable.show}"
-                                v-for="(group, groupId) of card.groups"
-                                @click="openTimetable(id, groupId)"
-                        >{{ group.name }}</button>
+                    <button
+                        class="association-card_timetable-toggle"
+                        :class="{'association-card_timetable-toggle--open': card.showSchendule}"
+                        @click="openTimetables(id)"
+                    >Расписание</button>
+                    <article class="association-card_timetable" v-show="card.showSchendule">
+                        <div class="bread-crumbs">
+                            <button class="bread-crumb"
+                                    :class="{'bread-crumb--active': group.timetable.show}"
+                                    v-for="(group, groupId) of card.groups"
+                                    @click="openTimetable(id, groupId)"
+                            >{{ group.name }}</button>
+                        </div>
+                        <section class="schedule-wrapper">
+                            <table class="schedule" v-for="(group, id) in card.groups" v-show="group.timetable.show">
+                                <tr v-for="day of group.timetable.week">
+                                    <td>{{ day.name }}</td><td>{{ day.time }}</td>
+                                </tr>
+                            </table>
+                            <hr class="black-line">
+                        </section>
+                    </article>
+
+                    <!--
+                    <div class="association-test warning-container" v-if="card.test.is">
+                        <h3 class="assoc-test-heading" v-text="card.test.name"></h3>
+                        <p class="assoc-test-description" v-text="card.test.description"></p>
                     </div>
-                    <section class="schedule-wrapper">
-                        <table class="schedule" v-for="(group, id) in card.groups" v-show="group.timetable.show">
-                            <tr v-for="day of group.timetable.week">
-                                <td>{{ day.name }}</td><td>{{ day.time }}</td>
-                            </tr>
-                        </table>
-                        <hr class="black-line">
-                    </section>
+                    !-->
+
+                    <div v-if="!card.isRecruiment" class="association-reserve fatal-container">
+                        <p class="assoc-reserve-description">Идёт набор в резерв</p>
+                    </div>
+                    <div v-else class="association-reserve accept-container">
+                        <p class="assoc-reserve-description">Идёт набор</p>
+                    </div>
+
+                    <div class="association-card_buttons buttons">
+                        <button v-if="!proposalParms.associations[id]" class="dark-box dark-button" @click="addAssociation(id)">Записать</button>
+                        <button v-else-if='!proposalParms.associations[id].already' class="dark-box dark-button" @click="removeAssociation(id)">Отмена</button>
+                    </div>
                 </article>
-
-                <!--
-                <div class="association-test warning-container" v-if="card.test.is">
-                    <h3 class="assoc-test-heading" v-text="card.test.name"></h3>
-                    <p class="assoc-test-description" v-text="card.test.description"></p>
-                </div>
-                !-->
-
-                <div v-if="!card.isRecruiment" class="association-reserve fatal-container">
-                    <p class="assoc-reserve-description">Идёт набор в резерв</p>
-                </div>
-                <div v-else class="association-reserve accept-container">
-                    <p class="assoc-reserve-description">Идёт набор</p>
-                </div>
-
-                <div class="association-card_buttons buttons">
-                    <button v-if="!proposalParms.associations[id]" class="dark-box dark-button" @click="addAssociation(id)">Записать</button>
-                    <button v-else-if='!proposalParms.associations[id].already' class="dark-box dark-button" @click="removeAssociation(id)">Отмена</button>
-                </div>
-            </article>
+            </template>
         </article>
       </div>
 
@@ -172,12 +174,12 @@ export default {
             this.$set(this.associations, id, association);
             this.$set(this.associations[id], 'already', false);
             this.$set(this.associations[id], 'showSchendule', false);
-            this.$set(this.associations[id].groups[0].timetable, 'show', true);
+            if (this.associations[id].groups.lenght > 0) {
+                this.$set(this.associations[id].groups[0].timetable, 'show', true);
+            }
 
         });
 
-        console.log(data);
-        console.log(23, Object.keys(this.associations))
         this.show.warn = (Object.keys(this.associations).length < 1);
 
         const fields = {
@@ -204,6 +206,7 @@ export default {
                 if (el.status[0].num != 0) {
                     this.associations[el.association.id].already = true;
                     this.proposalParms.associations[el.association.id] = el.association;
+                    this.proposalParms.associations[el.association.id].already = true;
                     this.proposalParms.weekHours += el.association.hours_week;
                 }
             });
@@ -230,7 +233,8 @@ export default {
 
 
     addAssociation(id) {
-        this.proposalParms.associations[id] = this.associations[id];
+        this.proposalParms.associations[id] = clone(this.associations[id]);
+        console.log(this.proposalParms.associations[id]);
         this.proposalParms.weekHours += this.associations[id].hours_week;
         this.speedometr();
         this.selected = false;
@@ -263,6 +267,9 @@ export default {
           return;
         }
 
+        console.log(this.associations);
+        console.log(this.proposalParms.associations);
+
         Proposal.createFromObject(this.proposalParms.associations, this.child.id)
           .then(data => {
               Object.keys(this.proposalParms.associations).map(el => {
@@ -273,12 +280,17 @@ export default {
           })
           .catch(err => {
               this.errors.assoc = err.assoc;
-              console.log(err.msg);
               if (err.msg == 'Age doesn`t pass') {
                   this.errors.age = true;
               }
-              else {
+              else if (err.msg == 'Too many hours') {
+                  this.errors.overflow = true;
+              }
+              else if (err.msg == 'Proposal had already created') {
                   this.errors.alreadyCreated = true;
+              }
+              else {
+                  console.log(err.msg);
               }
       });
     },
@@ -302,7 +314,6 @@ export default {
             this.proposalParms.speedometr = 1;
         }
         this.proposalParms.speedometr = Math.floor(this.proposalParms.speedometr * 100);
-        console.log(this.proposalParms.speedometr);
     }
   },
   computed: {

@@ -93,14 +93,20 @@ Proposal.create = async function (association, child) {
 }
 
 Proposal.createFromObject = async function (obj, child_id) {
+    console.log(obj);
     let result = [];
     for (let index in obj) {
         const assoc = obj[index];
         const childId = Number(child_id);
         const assocId = Number(assoc.id);
 
+        console.log(index, assocId);
+
         if (assoc.already)
-            return;
+            continue;
+
+        console.log(assoc);
+        console.log(child_id);
 
         await Proposal.create(assocId, childId).catch(err => {
             throw {msg: getError(err), assoc: assoc};

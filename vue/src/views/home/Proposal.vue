@@ -21,7 +21,7 @@
                 </div>
             </section>
 
-            <p v-if="children.length < 1" class="warning-container">Заявления еще не сформированы</p>
+            <p v-if="children.length < 1" class="warning-container">Заявления еще не сформированы. (Перейдите в раздел "Мои дети", чтобы сформировать новое заявление)</p>
 
             <article class="card shadow children" v-for="child in children">
                 <h2 class="child-name">{{ child.name + ' ' + child.surname }}</h2>

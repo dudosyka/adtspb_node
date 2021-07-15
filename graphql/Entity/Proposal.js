@@ -213,10 +213,10 @@ Proposal.prototype.canJoinAssociation = async function (userModel, userExtraData
         const loadCheck = await this.checkStudyLoad();
 
         if (age < 14) {
-            if (loadCheck > 10)
+            if (loadCheck > AppConfig.min_hours_week)
                 throw Error('Too many hours');
         } else {
-            if (loadCheck > 12)
+            if (loadCheck > AppConfig.max_hours_week)
                 throw Error('Too many hours')
         }
 

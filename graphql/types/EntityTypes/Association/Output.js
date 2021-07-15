@@ -50,6 +50,9 @@ module.exports = new graphql.GraphQLObjectType({
         },
         groups: {
             type: graphql.GraphQLList(GroupOutput),
+            resolve(obj) {
+                return obj.groups ?? [];
+            }
         },
         proposals: {
             type: graphql.GraphQLList(ProposalOutput),

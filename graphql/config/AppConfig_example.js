@@ -16,4 +16,6 @@ module.exports = {
     requestWhiteList: [
         "validToken", "rights", "confirm", "checkConfirmation" , "generateNewConfirmationCode"
     ],
+    max_hours_week: 16,
+    min_hours_week: 12,
 }
