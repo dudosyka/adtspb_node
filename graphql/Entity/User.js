@@ -124,15 +124,15 @@ User.prototype.createNew = async function (roles = [], sendEmail = true) {
             status: "success"
         }
 
-        let pairs = await this.checkForPairs('email', this.__get('email'));
 
-        if (pairs.length > 0)
-            throw Error('Email must be unique');
+        const pairs = await this.checkForPairs(['email', 'phone'], [this.__get('email'),this.__get('phone')]);
 
-        pairs = await this.checkForPairs('phone', this.__get('phone'));
-
-        if (pairs.length > 0)
-            throw Error('Phone must be unique');
+        if (pairs.length) {
+            if (pairs[0].email == this.__get('email'))
+                throw Error('Email must be unique');
+            if (pairs[0].phone == this.__get('phone'))
+                throw Error('Phone must be unique');
+        }
 
         await this.encryptPassword();
         const usr = await this.save();
@@ -341,14 +341,14 @@ User.prototype.createChild = async function (data) {
 
     instance.fields.id = createResult.id
 
-    // const child = await instance.createFrom({id: createResult.id});
-    const usrChild = await UserChild.baseCreateFrom({ parent_id: this.__get('id'), child_id: createResult.id });
-    const request = await usrChild.addParentRequest();
-    const res = await this.setChildData(createResult.id, data, true, instance, true);
+    const usrChild = await UserChild.newModel();
+    usrChild.load({ parent_id: this.__get('id'), child_id: createResult.id, agreed: 1 });
+    usrChild.save(true);
+    const res = await this.setChildData(createResult.id, data, true, instance, false);
 
     const validation = await EmailValidation.setOnConfirmation(instance.__get('id'), instance.__get('email'), instance.fullname());
 
-    return await instance.agreeParentRequest(this.__get('id'), data);
+    return true;
 }
 
 User.prototype.checkRelationship = async function (child_id) {

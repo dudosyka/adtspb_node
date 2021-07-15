@@ -123,13 +123,20 @@ Db.prototype.deleteWhere = async function (entity, query, bindings)
 
 /**
  * @param entity <Entity>
+ * @param useEntityFields <boolean>
  * @returns {Promise<unknown>}
  *
  * Update entity
  */
-Db.prototype.update = async function (entity)
+Db.prototype.update = async function (entity, useEntityFields = false)
 {
-    let columns = await this.query("SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`= ?  AND `TABLE_NAME`= ?",[ db_cnf.database, entity.table ]).then(data => data.map(el => el.COLUMN_NAME));
+    let columns;
+    if (useEntityFields) {
+        columns = Object.keys(entity.fields);
+    }
+    else {
+        columns = await this.query("SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`= ?  AND `TABLE_NAME`= ?",[ db_cnf.database, entity.table ]).then(data => data.map(el => el.COLUMN_NAME));
+    }
 
     let fields = Object.keys(entity.fields).filter(el => columns.includes(el));
     let values = fields.map(el => entity.fields[el]);
@@ -168,9 +175,16 @@ Db.prototype.updateWhere = async function (entity, fields = false, query = false
 }
 
 //TODO Create insert method (SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`='xxx'  AND `TABLE_NAME`='xxx';)
-Db.prototype.insert = async function (entity)
+Db.prototype.insert = async function (entity, useEntityFields = false)
 {
-    let columns = await this.query("SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`= ?  AND `TABLE_NAME`= ?",[ db_cnf.database, entity.table ]).then(data => data.map(el => el.COLUMN_NAME));
+    let columns;
+    if (useEntityFields) {
+        columns = Object.keys(entity.fields);
+    }
+    else {
+        columns = await this.query("SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`= ?  AND `TABLE_NAME`= ?",[ db_cnf.database, entity.table ]).then(data => data.map(el => el.COLUMN_NAME));
+    }
+
 
     let req = "INSERT INTO " + entity.table + " (";
     let reqSecondPart = ") VALUES (";

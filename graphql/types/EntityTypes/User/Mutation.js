@@ -100,7 +100,7 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { child }) {
-                const viewer = await User.createFrom(obj.viewer);
+                const viewer = await User.createFrom(obj.viewer, true, false);
                 return viewer.createChild(child);
             }
         },
