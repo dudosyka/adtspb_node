@@ -70,13 +70,21 @@ EmailValidation.prototype.generateToken = function (l) {
     return res;
 }
 
+EmailValidation.prototype.newUser = async function (user_id, email, fullname) {
+    this.__set('code', this.generateToken(4));
+    this.__set('user_id', user_id);
+    this.__set('timestamp', Math.floor(Date.now() / 1000));
+    this.save(true);
+    mail.sendEmail(email, "Код подтверждения" , "Здравствуйте, " + fullname + "! Код подтверждения для вашего аккаунта в личном кабинете Академии Цифровых Технологий: " + this.__get('code') + " (Никому не сообщайте его)");
+}
+
 EmailValidation.prototype.setOnConfirmation = async function (user_id, email, fullname) {
     //Rewrite code if exists
     let res = await this.db.select(this, '`user_id` = ?', [ user_id ]);
     this.__set('code', this.generateToken(4));
     this.__set('user_id', user_id);
     this.__set('timestamp', Math.floor(Date.now() / 1000));
-    // mail.sendEmail(email, "Код подтверждения" , "Здравствуйте, " + fullname + "! Код подтверждения для вашего аккаунта в личном кабинете Академии Цифровых Технологий: " + this.__get('code') + " (Никому не сообщайте его)");
+    mail.sendEmail(email, "Код подтверждения" , "Здравствуйте, " + fullname + "! Код подтверждения для вашего аккаунта в личном кабинете Академии Цифровых Технологий: " + this.__get('code') + " (Никому не сообщайте его)");
     if (res.length > 0) {
         this.__set('id', res[0].id);
         await this.update();

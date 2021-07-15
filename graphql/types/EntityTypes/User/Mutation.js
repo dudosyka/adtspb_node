@@ -45,7 +45,7 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { newData, target_id }) {
-                const viewer = await User.createFrom(obj.viewer);
+                const viewer = await User.createFrom(obj.viewer, true,  false);
                 return (await viewer.setMainDataOnEdit(newData, target_id)) !== false;
             }
         },
@@ -60,7 +60,7 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { newData, target_id }) {
-                const viewer = await User.createFrom(obj.viewer);
+                const viewer = await User.createFrom(obj.viewer, true, false);
                 const child = (target_id != null && target_id != 0);
                 return (await viewer.setExtraDataOnEdit(newData, target_id, false, child)) !== false;
             }

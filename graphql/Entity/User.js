@@ -346,7 +346,7 @@ User.prototype.createChild = async function (data) {
     usrChild.save(true);
     const res = await this.setChildData(createResult.id, data, true, instance, false);
 
-    const validation = await EmailValidation.setOnConfirmation(instance.__get('id'), instance.__get('email'), instance.fullname());
+    const validation = await EmailValidation.newUser(instance.__get('id'), instance.__get('email'), instance.fullname());
 
     return true;
 }
