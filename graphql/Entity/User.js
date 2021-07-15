@@ -139,7 +139,6 @@ User.prototype.createNew = async function (roles = [], sendEmail = true) {
         const id = usr.insertId;
 
         if (sendEmail) {
-            console.log(sendEmail);
             await EmailValidation.setOnConfirmation(id, this.__get('email'), this.fullname());
         }
 
@@ -288,7 +287,6 @@ User.prototype.setChildData = async function (childId, data, deleteChild = false
     createResult = await childExtraData.setChildData();
 
     if (createResult !== true) {
-        console.log(createResult);
         if (deleteChild)
             entity.delete();
         if (createResult === false)

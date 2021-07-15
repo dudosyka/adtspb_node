@@ -61,7 +61,8 @@ module.exports = new graphql.GraphQLObjectType({
             },
             async resolve(obj, { newData, target_id }) {
                 const viewer = await User.createFrom(obj.viewer);
-                return (await viewer.setExtraDataOnEdit(newData, target_id, false, false)) !== false;
+                const child = (target_id != null && target_id != 0);
+                return (await viewer.setExtraDataOnEdit(newData, target_id, false, child)) !== false;
             }
         },
         confirmEditData: {

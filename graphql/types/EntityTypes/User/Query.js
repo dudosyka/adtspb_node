@@ -36,7 +36,6 @@ module.exports = new graphql.GraphQLObjectType({
         children: {
             type: graphql.GraphQLList(UserOutput),
             async resolve(obj) {
-                console.log(obj);
                 const selections = obj.selections;
                 const userModel = User.newModel();
 

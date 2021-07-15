@@ -43,7 +43,6 @@ module.exports = new graphql.GraphQLObjectType({
             type: graphql.GraphQLBoolean,
             resolve(obj) {
                 const proposals = obj.proposals;
-                console.log(proposals);
                 if (proposals == undefined)
                     return true;
                 return (proposals.length < (obj.group_count * AppConfig.group_size));

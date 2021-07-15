@@ -14,7 +14,6 @@ AssociationExtraData.prototype.fields = {
 };
 
 AssociationExtraData.prototype.canJoinAssociation = async function (id = false, child = false) {
-    console.log(id);
     let age;
     if (id !== false) {
         const userData = await UserExtraData.createFrom({ user_id: id });
@@ -26,10 +25,7 @@ AssociationExtraData.prototype.canJoinAssociation = async function (id = false, 
     else {
         return "Age doesn`t pass";
     }
-
-    console.log(age);
-    console.log(this.fields);
-
+    
     if (age > this.__get('max_age') || age < this.__get('min_age'))
         return 'Age doesn`t pass';
 
