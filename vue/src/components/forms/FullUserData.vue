@@ -4,7 +4,7 @@
 
         <article class="child-form">
 
-            <h2 class="child-form_heading">Личные данные</h2>
+            <h2 class="child-form_heading">{{readonly ? "Данные на редактировании" : "Личные данные"}}</h2>
 
             <inputField
                 v-if='!hiddenFields.name'
@@ -13,6 +13,7 @@
                 :error="errors.name"
                 :data_id="{name: 'name', group: 'main'}"
                 @change="_onedit"
+
             />
             <inputField
                 v-if='!hiddenFields.surname'
@@ -21,6 +22,7 @@
                 :error="errors.surname"
                 :data_id="{name: 'surname', group: 'main'}"
                 @change="_onedit"
+
             />
 
             <inputField
@@ -30,6 +32,7 @@
                 :error="errors.lastname"
                 :data_id="{name: 'lastname', group: 'main'}"
                 @change="_onedit"
+
             />
 
             <div class="input-container" v-if='!hiddenFields.birthday'>
@@ -42,6 +45,7 @@
                     :data_id="JSON.stringify({name: 'birthday', group: 'extra'})"
                     tabindex="1"
                     @change="_onedit"
+
                 >
             </div>
 
@@ -52,6 +56,7 @@
                 :error="errors.email"
                 :data_id="{name: 'email', group: 'main'}"
                 @change="_onedit"
+
             />
 
             <div
@@ -68,6 +73,7 @@
                     :class="{'input-error': errors.phone}"
                     :data_id="JSON.stringify({name: 'phone', group: 'main'})"
                     tabindex="4"
+
                 />
             </div>
 
@@ -78,11 +84,13 @@
                 <ul class="radio-list" :class="{'input-error': errors.sex}">
                     <li class="radio-container">
                         <input type="radio"
+
                         @change="_onedit" v-model.number="data.sex" :data_id="JSON.stringify({name: 'sex', group: 'main'})" value="1" class="radio" tabindex="3" id="man">
                         <label class="dark radio" for="man" tabindex="5">Мужской</label>
                     </li>
                         <li class="radio-container">
                         <input type="radio"
+
                         @change="_onedit" v-model.number="data.sex" :data_id="JSON.stringify({name: 'sex', group: 'main'})" value="0" class="radio" tabindex="3" id="woman">
                         <label class="dark radio" for="woman" tabindex="6">Женский</label>
                     </li>
@@ -96,6 +104,7 @@
                 :error="errors.state"
                 :data_id="{name: 'state', group: 'extra'}"
                 @change="_onedit"
+
             />
             <div
                 v-if='!hiddenFields.relationship'
@@ -107,6 +116,7 @@
                     :data_id="{name: 'relationship', group: 'extra'}"
                     @change="_onedit"
                     style="{margin: 0}"
+
                 >
                     <template v-slot:prompt>
                         <div class="input-prompt">
@@ -123,6 +133,7 @@
             <div>
               <h2 class="child-form_select-heading" :class="{'label-error': errors.ovz}">ОВЗ</h2>
               <select class="dark-box darken"
+
               @change="_onedit" v-model.number="data.ovz" :data_id="JSON.stringify({name: 'ovz', group: 'extra'})" >
                 <option value="0">Нет</option>
                 <option value="1">Есть</option>
@@ -131,6 +142,7 @@
             <div v-if="data.ovz">
               <h2 class="child-form_select-heading" :class="{'label-error': errors.ovz_type}">Тип ОВЗ</h2>
               <select class="dark-box darken"
+
               @change="_onedit" v-model="data.ovz_type.id" :data_id="JSON.stringify({name: 'ovz_type', group: 'extra'})" >
                 <option v-for="(type, id) in ovzTypes" :value="id">{{ type }}</option>
               </select>
@@ -143,6 +155,7 @@
             <div>
               <h2 class="child-form_select-heading" :class="{'label-error': errors.disability}">Инвалидность</h2>
               <select class="dark-box darken"
+             
               @change="_onedit" v-model.number="data.disability" :data_id="JSON.stringify({name: 'disability', group: 'extra'})">
                 <option value="0">Нет</option>
                 <option value="1">Есть</option>
@@ -152,6 +165,7 @@
             <div v-show="data.disability">
               <h2 class="child-form_select-heading" :class="{'label-error': errors.disability_group}">Группа нвалидности</h2>
               <select class="dark-box darken"
+
               @change="_onedit" v-model="data.disability_group.id" :data_id="JSON.stringify({name: 'disability_group', group: 'extra'})">
                 <option v-for="(type, id) in disabilityTypes" :value="id">{{ type }}</option>
               </select>
@@ -167,6 +181,7 @@
               class="child-form_span-2"
               :data_id="{name: 'studyPlace', group: 'extra'}"
               @change.native="_onedit"
+
           />
           <div class="child-data_row">
             <!--
@@ -189,6 +204,7 @@
                   :error="errors.registration_address.city"
                   :data_id="{name: 'city', group: 'extra', parent: 'registration_address'}"
                   @change="_onedit"
+
               />
               <inputField
                   label="Район"
@@ -196,6 +212,7 @@
                   :error="errors.registration_address.district"
                   :data_id="{name: 'district', group: 'extra', parent: 'registration_address'}"
                   @change="_onedit"
+
               />
               <inputField
                   label="Улица / Проспект"
@@ -203,6 +220,7 @@
                   :error="errors.registration_address.street"
                   :data_id="{name: 'street', group: 'extra', parent: 'registration_address'}"
                   @change="_onedit"
+
               />
               <inputField
                   label="Дом"
@@ -210,6 +228,7 @@
                   :error="errors.registration_address.house"
                   :data_id="{name: 'house', group: 'extra', parent: 'registration_address'}"
                   @change="_onedit"
+
               />
               <inputField
                   label="Номер квартиры"
@@ -217,6 +236,7 @@
                   :error="errors.registration_flat"
                   :data_id="{name: 'registration_flat', group: 'extra'}"
                   @change="_onedit"
+
               />
           </template>
 
@@ -270,7 +290,7 @@
 
         <br v-if='message.length' />
 
-        <div class="buttons wp100">
+        <div v-if='!readonly' class="buttons wp100">
           <button class="dark-box dark-button register-button" @click="saveEditedData()">Сохранить</button>
         </div>
     </section>
@@ -298,6 +318,10 @@ export default {
       hidden: {
           type: String,
           default: '',
+      },
+      readonly: {
+          type: Boolean,
+          default: false,
       }
   },
   components: {
@@ -394,12 +418,9 @@ export default {
               this.setDataOnEdit(name, group, parent, value);
       },
       saveEditedData() {
-          console.log(this.data);
-          console.log(this.clearData);
           if (this.data.phone !== this.clearData.phone) {
               this.setDataOnEdit('phone', 'main', false, this.data.phone);
           }
-          console.log(this.dataOnEdit);
 
           if (Object.keys(this.dataOnEdit.main).length)
               User.editMainData(this.dataOnEdit.main, this.target_id)
@@ -430,12 +451,20 @@ export default {
       }
       else {
           const input = JSON.parse(this.input);
-          this.target_id = Number(input.data.id);
-          this.data_loaded = true;
-          this.data = clone(input.data);
-          this.clearData = clone(input.data);
-          this.errors_proto = clone(input.errors);
-          this.errors = clone(input.errors);
+          console.log(input);
+          if (input.data) {
+              this.target_id = Number(input.data.id);
+              this.data_loaded = true;
+              this.data = clone(input.data);
+              this.clearData = clone(input.data);
+              this.errors_proto = clone(input.errors);
+              this.errors = clone(input.errors);
+          }
+          else {
+              this.data_loaded = true;
+              this.data = clone(input);
+          }
+
       }
   }
 }

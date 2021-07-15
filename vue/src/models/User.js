@@ -401,6 +401,10 @@ User.editMainData = async function (obj, target_id = 0) {
     if (errs.length)
         throw {msg: errs};
 
+    if (Object.keys(obj).includes("sex")) {
+        obj.sex = Number(obj.sex);
+    }
+
     let data = {
         data: obj,
         target_id: target_id
@@ -555,7 +559,7 @@ User.getDataOnEdit = function (target = 0) {
         query ($target: Int) {
             user {
                 dataOnEdit(target_id: $target) {
-                    field, old_value, new_value, timestamp, requester_id, target_id
+                    field, new_value
                 }
             }
         }
@@ -566,7 +570,21 @@ User.getDataOnEdit = function (target = 0) {
     };
 
     return _request("api", req, data).then(data => {
-        return data.user.dataOnEdit;
+        return data.user.dataOnEdit.map(el => {
+            if (el.field == 'registration_address' || el.field == 'residence_address') {
+                el.new_value = Parser.addressToObj(el.new_value);
+            }
+            if (el.field == 'birthday') {
+                const birth = Parser.timestampToObj(Number(el.new_value));
+                el.new_value = birth.year + "-" + birth.month + "-" + birth.day;
+            }
+            if (el.field == 'disability_group' || el.field == 'ovz_type') {
+                el.new_value = {
+                    id: (Number(el.new_value) - 1)
+                };
+            }
+            return el;
+        });
     }).catch(err => {
         console.log(err);
     });
