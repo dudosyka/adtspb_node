@@ -132,7 +132,8 @@ Db.prototype.update = async function (entity, useEntityFields = false)
 {
     let columns;
     if (useEntityFields) {
-        columns = Object.keys(entity.fields);
+        const proto = entity.newModel();
+        columns = Object.keys(proto.fields);
     }
     else {
         columns = await this.query("SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`= ?  AND `TABLE_NAME`= ?",[ db_cnf.database, entity.table ]).then(data => data.map(el => el.COLUMN_NAME));
@@ -179,7 +180,8 @@ Db.prototype.insert = async function (entity, useEntityFields = false)
 {
     let columns;
     if (useEntityFields) {
-        columns = Object.keys(entity.fields);
+        const proto = entity.newModel();
+        columns = Object.keys(proto.fields);
     }
     else {
         columns = await this.query("SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`= ?  AND `TABLE_NAME`= ?",[ db_cnf.database, entity.table ]).then(data => data.map(el => el.COLUMN_NAME));
