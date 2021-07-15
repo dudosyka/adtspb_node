@@ -80,4 +80,9 @@ DataOnEdit.prototype.getRequest = async function (request_id) {
     return model;
 }
 
+DataOnEdit.prototype.getUserDataOnEdit = async function (requester_id, target_id = null) {
+    target_id = target_id ?? requester_id;
+    return await this.db.select(this, "`requester_id` = ? AND `target_id` = ?", [ requester_id, target_id ]);
+}
+
 module.exports = (new DataOnEdit());

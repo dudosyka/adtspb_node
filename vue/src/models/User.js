@@ -550,4 +550,26 @@ User.calculateAge = function (birthday) {
     return Math.floor(diff / 31557600000);
 }
 
+User.getDataOnEdit = function (target = 0) {
+    const req = `
+        query ($target: Int) {
+            user {
+                dataOnEdit(target_id: $target) {
+                    field, old_value, new_value, timestamp, requester_id, target_id
+                }
+            }
+        }
+    `;
+
+    const data = {
+        target: Number(target)
+    };
+
+    return _request("api", req, data).then(data => {
+        return data.user.dataOnEdit;
+    }).catch(err => {
+        console.log(err);
+    });
+}
+
 export {User};

@@ -30,6 +30,7 @@
   import navigation from '../components/Navigation.vue'
   import FullUserData from '../components/forms/FullUserData'
   import {AccessControl} from '../utils/AccessControl'
+  import {User} from '../models/User'
   import AppConfig from '../config/AppConfig'
 
 
@@ -48,6 +49,10 @@
         logout: () => AccessControl.logout()
     },
     async created() {
+        //TODO: Запилить отображение этих данных
+        User.getDataOnEdit().then(data => {
+            console.log(data);
+        });
         if (AccessControl.checkRole(AppConfig.parent_role_id)) {
             this.userHiddenFields = {
                 relationship: true,

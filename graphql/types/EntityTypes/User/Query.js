@@ -3,6 +3,7 @@ const User = require('../../../Entity/User');
 const UserExtraData = require('../../../Entity/UserExtraData');
 const Proposal = require('../../../Entity/Proposal');
 const UserChild = require('../../../Entity/UserChild');
+const DataOnEdit = require('../../../Entity/DataOnEdit');
 const EmailValidation = require('../../../Entity/EmailValidation');
 const Rbac = require('../../../utils/Rbac');
 
@@ -24,6 +25,19 @@ module.exports = new graphql.GraphQLObjectType({
 
                 const res = await User.getFullData([id ?? obj.viewer.id], obj.selections, model, rights.role);
                 return res[0];
+            }
+        },
+        dataOnEdit: {
+            type: graphql.GraphQLList(DataOnEditOutput),
+            args: {
+                target_id: {
+                    type: graphql.GraphQLInt
+                }
+            },
+            async resolve (obj, { target_id }) {
+                if (target_id == 0)
+                    target_id = null;
+                return await DataOnEdit.getUserDataOnEdit(obj.viewer.id, target_id);
             }
         },
         rights: {
@@ -79,5 +93,6 @@ module.exports = new graphql.GraphQLObjectType({
 
 //Moved here to prevent from circular dependence err.
 const UserOutput = require('./OutputTypes/Main');
+const DataOnEditOutput = require('../DataOnEdit/Output');
 const UserRightsOutput = require('./OutputTypes/UserRights');
 const EmailValidationOutput = require('../EmailValidation/Output');
