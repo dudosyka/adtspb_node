@@ -109,16 +109,16 @@ baseEntity.prototype.load = function (data) {
 
 baseEntity.prototype.table = "";
 
-baseEntity.prototype.save = async function () {
+baseEntity.prototype.save = async function (useFields = false) {
     if (this.validate())
-        return await db.insert(this);
+        return await db.insert(this, useFields);
     else
         return false;
 }
 
-baseEntity.prototype.update = async function () {
+baseEntity.prototype.update = async function (useFields = false) {
     if (this.validate())
-        return await db.update(this);
+        return await db.update(this, useFields);
     else
         return false;
 }
@@ -128,7 +128,13 @@ baseEntity.prototype.delete = async function () {
 }
 
 baseEntity.prototype.checkForPairs = async function (field, val) {
-    return await db.select(this, "`" + field + "`" + " = ?", [ val ]);
+    if (typeof field != 'object') {
+        return await db.select(this, "`" + field + "`" + " = ?", [ val ]);
+    }
+    else {
+        const query = field.join(" = ? OR ") + " = ?";
+        return await db.select(this, query, val);
+    }
 }
 
 baseEntity.prototype.search = async function (Search) {

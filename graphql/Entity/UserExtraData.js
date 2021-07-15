@@ -16,11 +16,20 @@ UserExtraData.prototype.createNew = async function (data) {
 
 UserExtraData.prototype.fields = {
     id: null,
+    user_id: null,
     relationship: null,
+    state: null,
     studyPlace: null,
+    study_class: null,
+    registration_address: null,
+    registration_flat: null,
+    residence_address: null,
+    residence_flat: null,
+    birthday: null,
+    ovz: null,
     ovz_type: null,
+    disability: null,
     disability_group: null,
-    birthday: null
 };
 
 UserExtraData.prototype.calculateAge = function (birthday = 0) {
@@ -40,9 +49,9 @@ UserExtraData.prototype.__save = async function () {
     if (this.__get('disability_group') == 0)
         this.__set('disability_group', null);
     if (this.fields.id)
-        return await this.update();
+        return await this.update(true);
     else
-        return await this.save();
+        return await this.save(true);
 }
 
 UserExtraData.prototype.baseValidate = function () {
