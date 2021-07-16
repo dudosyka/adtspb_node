@@ -4,7 +4,7 @@
 
         <article class="child-form">
 
-            <h2 class="child-form_heading">{{readonly ? "Данные на редактировании" : "Личные данные"}}</h2>
+            <h2 class="child-form_heading">Личные данные</h2>
 
             <inputField
                 v-if='!hiddenFields.name'
@@ -155,7 +155,7 @@
             <div>
               <h2 class="child-form_select-heading" :class="{'label-error': errors.disability}">Инвалидность</h2>
               <select class="dark-box darken"
-             
+
               @change="_onedit" v-model.number="data.disability" :data_id="JSON.stringify({name: 'disability', group: 'extra'})">
                 <option value="0">Нет</option>
                 <option value="1">Есть</option>
@@ -290,7 +290,7 @@
 
         <br v-if='message.length' />
 
-        <div v-if='!readonly' class="buttons wp100">
+        <div class="buttons wp100">
           <button class="dark-box dark-button register-button" @click="saveEditedData()">Сохранить</button>
         </div>
     </section>

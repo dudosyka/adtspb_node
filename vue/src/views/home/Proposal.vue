@@ -4,7 +4,7 @@
 
         <section class="home-content">
             <section v-if="children.length > 0" class="warning-container shadow">
-                <p>Кнопки <em>печати</em> и <em>скачивания</em> документов станут доступными перед началом приема документов. Объявление об это будет размещено заранее, следите за информацией в официальных сообщества Академии Цифровых Технологий и на сайте.<a href="https://adtspb.ru" target="_blank" class="link_text">на сайте</a>.</p>
+                <p>Кнопки <em>печати</em> и <em>скачивания</em> документов станут доступными перед началом приема документов. Объявление об это будет размещено заранее, следите за информацией в официальных сообщества Академии Цифровых Технологий и <a href="https://adtspb.ru" target="_blank" class="link_text">на сайте</a>.</p>
                 <div class="link-container">
                     <div class="social-media-list li">
                         <a href="https://t.me/adtspb" class="fab fa-telegram-plane social-media-link" target="_blank"></a>
