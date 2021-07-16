@@ -364,7 +364,7 @@ export default {
       setDataOnEdit(name, group, parent, value) {
           console.log(name, group, parent, value);
           if (parent) {
-              this.dataOnEdit[group] = { [parent]: this.data[parent] };
+              this.dataOnEdit[group] = { ...this.dataOnEdit[group], [parent]: this.data[parent] };
               this.dataOnEdit[group][parent][name] = value;
           }
           else
@@ -422,10 +422,15 @@ export default {
           const group = data_id.group;
           const parent = data_id.parent ?? false;
 
+          console.log(name);
+          console.log(this.clearData);
+
           if (this.clearData[name] === value)
               this.setDataOnEdit(name, group, parent, false);
           else
               this.setDataOnEdit(name, group, parent, value);
+
+          console.log(this.dataOnEdit);
       },
       saveEditedData() {
           if (this.data.phone !== this.clearData.phone) {

@@ -4,7 +4,7 @@
 
         <article class="child-form">
 
-            <h2 class="child-form_heading">Данные на редактировании</h2>
+            <h2 class="child-form_heading">Данные ожидающие проверки модератором</h2>
 
             <inputField
                 v-if='!hiddenFields.name'
