@@ -120,8 +120,8 @@
                 >
                     <template v-slot:prompt>
                         <div class="input-prompt">
-                            <span @click="data.relationship = 'Родитель'">Родитель</span>
-                            <span @click="data.relationship = 'Законный представитель'">Законный представитель</span>
+                            <span @click="autoRelationship('Родитель')">Родитель</span>
+                            <span @click="autoRelationship('Законный представитель')">Законный представитель</span>
                         </div>
                     </template>
                 </inputField>
@@ -370,6 +370,12 @@ export default {
           else
               this.dataOnEdit[group][name] = value;
       },
+      autoRelationship(str) {
+          if (this.data.relationship == str)
+            return;
+          this.data.relationship = str;
+          this.setDataOnEdit('relationship', 'extra', false, str);
+      },
       autoResidenceAddress() {
           Object.keys(this.data.residence_address).map(key => {
               const newValue = this.data.registration_address[key];
@@ -403,8 +409,12 @@ export default {
             });
       },
       _onedit(event) {
-          console.log(event);
-          const input = event.path[0];
+          console.log(11, event);
+          let input;
+          if (event.path)
+            input = event.path[0];
+          else
+            input = event.originalTarget;
           const value = input.value;
 
           const data_id = JSON.parse(input.attributes.data_id.nodeValue);
