@@ -34,7 +34,7 @@ User.login = async function ({login, pass}) {
         throw {msg: errs};
 
     const data = {
-        login: login,
+        login: login.trim(),
         password: pass
     }
 
@@ -153,11 +153,11 @@ User.signUp = async function (data, makeParent = false) {
     if (!Validator.validateEmail(data.email))
         errs.push('email');
 
-        console.log(errs);
-    if (errs.length) {
-        data.phone = data.phone.substr(1);
+    if (errs.length)
         throw {msg: errs};
-    }
+
+    data.phone = data.phone.trim();
+    data.email = data.email.trim();
 
     let request = `
       mutation($user: UserInput, $makeParent: Boolean) {
@@ -389,11 +389,13 @@ User.editMainData = async function (obj, target_id = 0) {
         errs = validateRes;
 
     if (obj.phone) {
+        obj.phone = obj.phone.trim();
         if (!Validator.validatePhone(obj.phone))
             errs.push('phone');
     }
 
     if (obj.email) {
+        obj.email = obj.email.trim();
         if (!Validator.validateEmail(obj.email))
             errs.push('email');
     }
@@ -489,6 +491,7 @@ User.addChild = async function (child) {
     if (errs.length)
         throw {msg: errs};
 
+    child.email = child.email.trim();
     child.registration_address = Parser.objToAddress(child.registration_address);
     child.residence_address = Parser.objToAddress(child.residence_address);
 
@@ -519,7 +522,7 @@ User.sendParentRequest = async function (login) {
   `
 
   let data = {
-      child_data: login
+      child_data: login.trim()
   }
 
   return _request("api", req, data).then(data => {
