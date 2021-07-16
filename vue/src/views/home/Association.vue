@@ -273,6 +273,7 @@ export default {
         Proposal.createFromObject(this.proposalParms.associations, this.child.id)
           .then(data => {
               Object.keys(this.proposalParms.associations).map(el => {
+                    this.proposalParms.associations[el].already = true;
                     this.associations[el].already = true;
               });
 
