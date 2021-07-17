@@ -77,7 +77,7 @@
           <div class="child-hours">
             <header class="child-hours-header">
               <h3 class="child-hours-heading">Часов в неделю</h3>
-              <h3>{{ proposalParms.weekHours }} / {{ maxHoursWeek }}</h3>
+              <h3>{{ proposalParms.weekHours }} / {{ proposalParms.maxHours }}</h3>
             </header>
             <span></span>
             <div class="child-hours_speedometr">
@@ -124,6 +124,7 @@ import {Association} from "../../models/Association.js";
 import {User} from "../../models/User.js";
 import {Timetable} from "../../models/Timetable.js";
 import {Corrector} from "../../utils/Corrector.js";
+import {Parser} from '../../utils/Parser';
 import * as AppConfig from "../../config/AppConfig.js";
 import clone from 'clone';
 
@@ -142,6 +143,7 @@ export default {
         weekHours: 0,
         speedometr: 0,
         overflow: "#0086c9",
+        maxHours: 0
       },
       errors: {
         schedule: false,
@@ -303,10 +305,8 @@ export default {
         })
     },
     speedometr() {
-        let maxHours = AppConfig.max_hours_week;
-        if (User.calculateAge(this.child.birthday) < 14) {
-            maxHours = AppConfig.min_hours_week;
-        }
+        let maxHours = this.proposalParms.maxHours
+
         this.proposalParms.speedometr = this.proposalParms.weekHours / maxHours;
         this.proposalParms.overflow = "#0086c9";
         if (this.proposalParms.speedometr > 1) {
@@ -317,11 +317,13 @@ export default {
     }
   },
   computed: {
-    maxHoursWeek() {
-        return AppConfig.max_hours_week
+    maxHours() {
+        let old = User.calculateAge(this.child.birthday);
+        this.proposalParms.maxHours = (old < 14) ? AppConfig.min_hours_week : AppConfig.max_hours_week;
     }
   }
 }
+
 </script>
 
 <style scoped>
