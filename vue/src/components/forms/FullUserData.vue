@@ -42,6 +42,7 @@
                     v-model="data.birthday"
                     :data_id="JSON.stringify({name: 'birthday', group: 'extra'})"
                     @change="_onedit"
+                    tabindex="1"
                 >
             </div>
 

@@ -187,7 +187,6 @@ input[type="url"] {
 }
 label.checkbox {
     position: relative;
-    margin-left: 30px;
     margin-bottom: 30px;
     display: grid;
     grid-template-columns: 30px 1fr;

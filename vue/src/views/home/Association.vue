@@ -6,9 +6,9 @@
     <section class="home-content">
       <div :class="{'association-cards--opened': show.associationsList}" class="association-cards-wrapper">
         <button class="close-associations" @click="show.associationsList = false"><span></span></button>
-        <p v-if="show.warn" class="warning-container">Нет подходящих объединений</p>
+        <p v-if="show.warn" class="warning-container">Нет объединений доступных для записи.</p>
         <article class="association-cards">
-            <h2 v-if='Object.keys(associations).filter(el => (associations[el].already == false)).length <= 0'>Нет объединений доступных для записи.</h2>
+            <h2 v-if='false'><!-- Елси его убрать всё сломается !--></h2>
             <template v-else>
                 <article  class="association-card card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id" v-if='!card.already'>
                     <h2 class="association-card_heading">{{ card.name }}</h2>
