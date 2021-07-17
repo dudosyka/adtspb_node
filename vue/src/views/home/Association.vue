@@ -77,7 +77,7 @@
           <div class="child-hours">
             <header class="child-hours-header">
               <h3 class="child-hours-heading">Часов в неделю</h3>
-              <h3>{{ proposalParms.weekHours }}</h3>
+              <h3>{{ proposalParms.weekHours }} / {{ maxHoursWeek }}</h3>
             </header>
             <span></span>
             <div class="child-hours_speedometr">
@@ -317,6 +317,9 @@ export default {
     }
   },
   computed: {
+    maxHoursWeek() {
+        return AppConfig.max_hours_week
+    }
   }
 }
 </script>
