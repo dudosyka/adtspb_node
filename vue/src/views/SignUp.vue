@@ -1,7 +1,7 @@
 <template>
     <main class="main-content">
         <div class="auth">
-          <router-link class="left-arrow" to="/login" tag="button" />  
+          <router-link class="left-arrow" to="/login" tag="button" />
           <div class="form">
             <section v-show="step === 1">
               <h2 class="label-normal choose-heading">Кто вы?</h2>
@@ -71,6 +71,7 @@
               </div>
 
               <div class="buttons">
+                  {{ msg }}
                 <button class="dark-button" @click="registration()" tabindex="9">Зарегистрироваться</button>
               </div>
             </section>
@@ -150,7 +151,8 @@
             password: false,
             phone: false,
             sex: false
-        }
+        },
+        msg: null,
       }
     },
     components: {
@@ -165,6 +167,7 @@
       registration() {
           this.errors = clone(this.errors_prot);
           User.signUp(this.user, this.additionalData.isParent).catch(err => {
+              this.msg = err;
               if (err.msg) {
                   console.log(err);
                   for (let msg of err.msg)
