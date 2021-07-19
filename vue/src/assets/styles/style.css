@@ -232,6 +232,11 @@ hr {
   border-left: 3px solid #613939;
 }
 
+.padding5-container {
+  padding: 5px;
+  margin: 0;
+}
+
 /* WARNING: wrapper must have ONE child */
 .card_wrapper {
   position: fixed;

@@ -50,18 +50,37 @@
                 label="Имя"
                 v-model="childRaw.name"
                 :error="childRawErrors.name"
-            />
+            >
+              <template v-slot:prompt v-if="childRawErrors.name">
+                  <div class="fatal-container">
+                      <p class="padding5-container">Пожалуйста, укажите имя</p>
+                  </div>
+              </template> 
+            </inputField>
+
             <inputField
                 label="Фамилия"
                 v-model="childRaw.surname"
                 :error="childRawErrors.surname"
-            />
+            >
+              <template v-slot:prompt v-if="childRawErrors.surname">
+                  <div class="fatal-container">
+                      <p class="padding5-container">Пожалуйста, укажите фамилию</p>
+                  </div>
+              </template> 
+            </inputField>
 
             <inputField
                 label="Отчество"
                 v-model="childRaw.lastname"
                 :error="childRawErrors.lastname"
-            />
+            >
+              <template v-slot:prompt v-if="childRawErrors.lastname">
+                  <div class="fatal-container">
+                      <p class="padding5-container">Пожалуйста, укажите отчество</p>
+                  </div>
+              </template> 
+            </inputField>   
 
             <div class="input-container">
               <label class="label" :class="{'label-error': childRawErrors.birthday}">Дата рождения</label><br>
@@ -72,13 +91,22 @@
                   v-model="childRaw.birthday"
                   tabindex="1"
               >
+              <div class="fatal-container" v-if="childRawErrors.birthday">
+                <p class="padding5-container">Пожалуйста, укажите дату рождения</p>
+              </div>
             </div>
 
             <inputField
                 label="Электронная почта"
                 v-model="childRaw.email"
                 :error="childRawErrors.email"
-            />
+            >
+              <template v-slot:prompt v-if="childRawErrors.email">
+                  <div class="fatal-container">
+                      <p class="padding5-container">Неверный формат, почта должна содержать символы @ .</p>
+                  </div>
+              </template> 
+            </inputField>
 
             <div class="input-container required">
               <label class="label" v-bind:class="{'label-error': childRawErrors.phone}">Номер телефона</label><br>
@@ -91,6 +119,9 @@
                   :class="{'input-error': childRawErrors.phone}"
                   tabindex="4"
               />
+              <div class="fatal-container" v-if="childRawErrors.phone">
+                <p class="padding5-container">Неверный формат, пример: +7 111 111 11 11 </p>
+              </div>
             </div>
 
             <div class="input-container child-form_span-2">
@@ -105,13 +136,22 @@
                   <label class="dark radio" for="woman" tabindex="6">Женский</label>
                 </li>
               </ul>
+              <div class="fatal-container" v-if="childRawErrors.sex">
+                <p class="padding5-container">Пожалуйста, выберите пол</p>
+              </div>
             </div>
 
             <inputField
                 label="Гражданство"
                 v-model="childRaw.state"
                 :error="childRawErrors.state"
-            />
+            >
+              <template v-slot:prompt v-if="childRawErrors.state">
+                  <div class="fatal-container">
+                    <p class="padding5-container">Пожалуйста, введите гражданство</p>
+                  </div>
+              </template> 
+            </inputField>
 
             <div>
                 <inputField
@@ -127,6 +167,9 @@
                         </div>
                     </template>
                 </inputField>
+                <div class="fatal-container" v-if="childRawErrors.relationship">
+                  <p class="padding5-container">Пожалуйста, введите степень родства</p>
+                </div>
             </div>
 
             <div class="child-form_span-2 child-form_select">
@@ -142,6 +185,10 @@
                 <select class="dark-box darken" v-model="childRaw.ovz_type.id"  >
                   <option v-for="(type, id) in ovzTypes" :value="id">{{ type }}</option>
                 </select>
+              </div>
+
+              <div class="fatal-container"v-if="childRawErrors.ovz_type">
+                <p class="padding5-container">Пожалуйста, выберите один из вариантов</p>
               </div>
             </div>
 
@@ -160,6 +207,10 @@
                   <option v-for="(type, id) in disabilityTypes" :value="id">{{ type }}</option>
                 </select>
               </div>
+
+              <div class="fatal-container" v-if="childRawErrors.disability_group">
+                <p class="padding5-container">Пожалуйста, выберите один из вариантов</p>
+              </div>
             </div>
 
             <inputField
@@ -168,7 +219,13 @@
                 type="text"
                 :error="childRawErrors.studyPlace"
                 class="child-form_span-2"
-            />
+            >
+              <template v-slot:prompt v-if="childRawErrors.studyPlace">
+                  <div class="fatal-container">
+                    <p class="padding5-container">Пожалуйста, введите наименование учебного учреждения</p>
+                  </div>
+              </template> 
+            </inputField>
             <div class="child-data_row">
               <!--
               <div>
@@ -186,27 +243,57 @@
                 label="Город"
                 v-model="childRaw.registration_address.city"
                 :error="childRawErrors.registration_address.city"
-            />
+            >
+              <template v-slot:prompt v-if="childRawErrors.registration_address.city">
+                  <div class="fatal-container">
+                    <p class="padding5-container">Пожалуйста, введите город регистрации</p>
+                  </div>
+              </template> 
+            </inputField>
             <inputField
                 label="Район"
                 v-model="childRaw.registration_address.district"
                 :error="childRawErrors.registration_address.district"
-            />
+            >
+              <template v-slot:prompt v-if="childRawErrors.registration_address.district">
+                  <div class="fatal-container">
+                    <p class="padding5-container">Пожалуйста, введите район регистрации</p>
+                  </div>
+              </template> 
+            </inputField>
             <inputField
                 label="Улица"
                 v-model="childRaw.registration_address.street"
                 :error="childRawErrors.registration_address.street"
-            />
+            >
+              <template v-slot:prompt v-if="childRawErrors.registration_address.street">
+                  <div class="fatal-container">
+                    <p class="padding5-container">Пожалуйста, введите улицу регистрации</p>
+                  </div>
+              </template> 
+            </inputField>
             <inputField
                 label="Дом"
                 v-model="childRaw.registration_address.house"
                 :error="childRawErrors.registration_address.house"
-            />
+            >
+              <template v-slot:prompt v-if="childRawErrors.registration_address.house">
+                  <div class="fatal-container">
+                    <p class="padding5-container">Пожалуйста, введите дом регистрации</p>
+                  </div>
+              </template> 
+            </inputField>
             <inputField
                 label="Номер квартиры"
                 v-model="childRaw.registration_flat"
                 :error="childRawErrors.registration_flat"
-            />
+            >
+              <template v-slot:prompt v-if="childRawErrors.registration_flat">
+                  <div class="fatal-container">
+                    <p class="padding5-container">Пожалуйста, введите номер квартиры регистрации</p>
+                  </div>
+              </template> 
+            </inputField>
 
             <h2 class="child-form_heading">Адрес проживания</h2>
               <div class="input-prompt">
@@ -217,27 +304,57 @@
                 label="Город"
                 v-model="childRaw.residence_address.city"
                 :error="childRawErrors.residence_address.city"
-            />
+            >
+              <template v-slot:prompt v-if="childRawErrors.residence_address.city">
+                  <div class="fatal-container">
+                    <p class="padding5-container">Пожалуйста, введите город проживаня</p>
+                  </div>
+              </template> 
+            </inputField>
             <inputField
                 label="Район"
                 v-model="childRaw.residence_address.district"
                 :error="childRawErrors.residence_address.district"
-            />
+            >
+              <template v-slot:prompt v-if="childRawErrors.residence_address.district">
+                  <div class="fatal-container">
+                    <p class="padding5-container">Пожалуйста, введите район проживания</p>
+                  </div>
+              </template> 
+            </inputField>
             <inputField
                 label="Улица"
                 v-model="childRaw.residence_address.street"
                 :error="childRawErrors.residence_address.street"
-            />
+            >
+              <template v-slot:prompt v-if="childRawErrors.residence_address.street">
+                  <div class="fatal-container">
+                    <p class="padding5-container">Пожалуйста, введите улицу проживания</p>
+                  </div>
+              </template> 
+            </inputField>
             <inputField
                 label="Дом"
                 v-model="childRaw.residence_address.house"
                 :error="childRawErrors.residence_address.house"
-            />
+            >
+              <template v-slot:prompt v-if="childRawErrors.residence_address.house">
+                  <div class="fatal-container">
+                    <p class="padding5-container">Пожалуйста, введите дом проживания</p>
+                  </div>
+              </template> 
+            </inputField>
             <inputField
                 label="Номер квартиры"
                 v-model="childRaw.residence_flat"
                 :error="childRawErrors.residence_flat"
-            />
+            >
+              <template v-slot:prompt v-if="childRawErrors.residence_flat">
+                  <div class="fatal-container">
+                    <p class="padding5-container">Пожалуйста, введите номер кваритры проживания</p>
+                  </div>
+              </template> 
+            </inputField>
 
             <br>
             <!-- TODO: Убрать :class пофиксить InputField -->
@@ -438,6 +555,7 @@
             //TODO: Обработка ошибок с бэка и фронта.
             if (err.msg)
               err.msg.map(el => {
+                console.error(el)
                 if (typeof el === 'object') {
                   Object.keys(el ?? {}).map(field => {
                     el[field].map(subfield => {
