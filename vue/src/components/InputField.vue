@@ -13,6 +13,7 @@
         :required="required"
         :readonly="readonly">
         <slot name="prompt"></slot>
+        <slot name="error" class="fatal-container"></slot>
     </div>
     <div class="password-container input-container" v-if="type === 'password'">
       <div>

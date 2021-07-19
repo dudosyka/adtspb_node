@@ -229,7 +229,8 @@ hr {
 }
 .fatal-container {
   background-color: #ffcfcf;
-  border-left: 3px solid #613939;
+  border-left: 3px solid #C90000;
+  color: #2f0000;
 }
 
 .padding5-container {
