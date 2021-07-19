@@ -373,7 +373,7 @@ User.getFullData = async function (fields = null, id = null, parse = true) {
     });
 }
 
-User.editMainData = async function (obj, target_id = 0) {
+User.editMainData = async function (obj, target_id = 0, credentials = true) {
     let req = `
     mutation ($data: UserInput, $target_id: Int) {
         user {
@@ -382,19 +382,23 @@ User.editMainData = async function (obj, target_id = 0) {
     }
     `;
 
+    const exceptValidationFields = [ 'lastname' ];
+    if (credentials)
+        exceptValidationFields.push('email', 'phone');
+
     let errs = [];
-    const validateRes = Validator.validateNotEmpty(obj, true, [ 'lastname' ]);
+    const validateRes = Validator.validateNotEmpty(obj, true, exceptValidationFields);
 
     if (validateRes !== true)
         errs = validateRes;
 
-    if (obj.phone) {
+    if (obj.phone && credentials) {
         obj.phone = obj.phone.trim();
         if (!Validator.validatePhone(obj.phone))
             errs.push('phone');
     }
 
-    if (obj.email) {
+    if (obj.email && credentials) {
         obj.email = obj.email.trim();
         if (!Validator.validateEmail(obj.email))
             errs.push('email');
@@ -477,16 +481,16 @@ User.addChild = async function (child) {
     `;
 
     let errs = [];
-    const validateRes = Validator.validateNotEmpty(child, true, ['lastname', 'residence_flat', 'registration_flat']);
+    const validateRes = Validator.validateNotEmpty(child, true, ['lastname', 'residence_flat', 'registration_flat', 'email', 'phone']);
 
     if (validateRes !== true)
         errs = validateRes;
 
-    if (!Validator.validatePhone(child.phone))
-        errs.push('phone');
-
-    if (!Validator.validateEmail(child.email))
-        errs.push('email');
+    // if (!Validator.validatePhone(child.phone))
+    //     errs.push('phone');
+    //
+    // if (!Validator.validateEmail(child.email))
+    //     errs.push('email');
 
     if (errs.length)
         throw {msg: errs};
