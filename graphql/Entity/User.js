@@ -139,18 +139,15 @@ User.prototype.createNew = async function (roles = [], sendEmail = true) {
         const id = usr.insertId;
 
         if (sendEmail) {
-            await EmailValidation.setOnConfirmation(id, this.__get('email'), this.fullname());
+            await EmailValidation.newUser(id, this.__get('email'), this.fullname());
         }
 
         if (usr === false)
             throw Error('Saving data failed');
 
-        let res = rbac.addRoleToUser(id, AppConfig.common_user_id);
+        rbac.addRoleToUser(id, AppConfig.common_user_id);
 
         const dataRes = await UserExtraData.createNew({ user_id: id });
-
-        if (res === false)
-            throw Error('Saving data failed');
 
         roles.map(role_id => {
             rbac.addRoleToUser(id, role_id);
