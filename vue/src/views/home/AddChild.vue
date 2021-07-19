@@ -96,31 +96,44 @@
               </div>
             </div>
 
-            <inputField
-                label="Электронная почта"
-                v-model="childRaw.email"
-                :error="childRawErrors.email"
-            >
-              <template v-slot:prompt v-if="childRawErrors.email">
-                  <div class="fatal-container">
-                      <p class="padding5-container">Неверный формат, почта должна содержать символы @ .</p>
-                  </div>
-              </template> 
-            </inputField>
+            <div>
+              <div class="checkbox-container">
+                <input type="checkbox" v-model="child.withoutEmail" id="email" class="checkbox">
+                <label class="checkbox" for="email">Нет электронной почты</label>
+              </div>
+              <inputField
+                  v-if="!child.withoutEmail"
+                  label="Электронная почта"
+                  v-model="childRaw.email"
+                  :error="childRawErrors.email"
+              >
+                <template v-slot:prompt v-if="childRawErrors.email">
+                    <div class="fatal-container">
+                        <p class="padding5-container">Неверный формат, почта должна содержать символы @ .</p>
+                    </div>
+                </template> 
+              </inputField>
+            </div>
 
-            <div class="input-container required">
-              <label class="label" v-bind:class="{'label-error': childRawErrors.phone}">Номер телефона</label><br>
-              <masked-input
-                  v-model="masked.phone"
-                  mask="\+\7 (111) 111-11-11"
-                  @input="childRaw.phone = arguments[1]"
-                  type="tel"
-                  class="type"
-                  :class="{'input-error': childRawErrors.phone}"
-                  tabindex="4"
-              />
-              <div class="fatal-container" v-if="childRawErrors.phone">
-                <p class="padding5-container">Неверный формат, пример: +7 111 111 11 11 </p>
+            <div>
+              <div class="checkbox-container">
+                <input type="checkbox" v-model="child.withoutPhone" id="phone" class="checkbox">
+                <label class="checkbox" for="phone">Нет телефона</label>
+              </div>
+              <div class="input-container required" v-if="!child.withoutPhone">
+                <label class="label" v-bind:class="{'label-error': childRawErrors.phone}">Номер телефона</label><br>
+                <masked-input
+                    v-model="masked.phone"
+                    mask="\+\7 (111) 111-11-11"
+                    @input="childRaw.phone = arguments[1]"
+                    type="tel"
+                    class="type"
+                    :class="{'input-error': childRawErrors.phone}"
+                    tabindex="4"
+                />
+                <div class="fatal-container" v-if="childRawErrors.phone">
+                  <p class="padding5-container">Неверный формат, пример: +7 111 111 11 11 </p>
+                </div>
               </div>
             </div>
 
@@ -534,6 +547,10 @@
           childReg: false,
           childNotReg: false,
           error: '',
+        },
+        child: {
+          withoutPhone: false,
+          withoutEmail: false
         },
         message: ''
       }
