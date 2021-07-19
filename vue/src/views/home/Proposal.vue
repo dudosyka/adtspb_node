@@ -107,17 +107,19 @@
 }
 .proposal {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: 1fr auto;
+    grid-gap: 40px;
     flex-wrap: wrap;
     padding: 20px;
 }
-@media (max-width: 540px) {
+@media (max-width: 600px) {
     .proposal {
         grid-template-columns: 1fr;
     }
 }
 .proposal_heading {
     font-size: 22px;
+    word-break: break-all;
 }
 .child-name {
     margin-bottom: 10px;
