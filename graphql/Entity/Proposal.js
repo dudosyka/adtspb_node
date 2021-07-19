@@ -159,6 +159,9 @@ Proposal.prototype.checkStudyLoad = async function () {
 
     let association_ids = [];
 
+    if (Object.keys(proposals).length <= 0)
+        return 0;
+        
     proposals[this.__get('child')].map(el => {
         if (el.status.num != 0)
             association_ids.push({id: el.id});

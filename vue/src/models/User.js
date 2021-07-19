@@ -34,7 +34,7 @@ User.login = async function ({login, pass}) {
         throw {msg: errs};
 
     const data = {
-        login: login,
+        login: login.trim(),
         password: pass
     }
 
@@ -153,11 +153,11 @@ User.signUp = async function (data, makeParent = false) {
     if (!Validator.validateEmail(data.email))
         errs.push('email');
 
-        console.log(errs);
-    if (errs.length) {
-        data.phone = data.phone.substr(1);
+    if (errs.length)
         throw {msg: errs};
-    }
+
+    data.phone = data.phone.trim();
+    data.email = data.email.trim();
 
     let request = `
       mutation($user: UserInput, $makeParent: Boolean) {
@@ -373,7 +373,7 @@ User.getFullData = async function (fields = null, id = null, parse = true) {
     });
 }
 
-User.editMainData = async function (obj, target_id = 0) {
+User.editMainData = async function (obj, target_id = 0, credentials = true) {
     let req = `
     mutation ($data: UserInput, $target_id: Int) {
         user {
@@ -382,18 +382,24 @@ User.editMainData = async function (obj, target_id = 0) {
     }
     `;
 
+    const exceptValidationFields = [ 'lastname' ];
+    if (credentials)
+        exceptValidationFields.push('email', 'phone');
+
     let errs = [];
-    const validateRes = Validator.validateNotEmpty(obj, true, [ 'lastname' ]);
+    const validateRes = Validator.validateNotEmpty(obj, true, exceptValidationFields);
 
     if (validateRes !== true)
         errs = validateRes;
 
-    if (obj.phone) {
+    if (obj.phone && credentials) {
+        obj.phone = obj.phone.trim();
         if (!Validator.validatePhone(obj.phone))
             errs.push('phone');
     }
 
-    if (obj.email) {
+    if (obj.email && credentials) {
+        obj.email = obj.email.trim();
         if (!Validator.validateEmail(obj.email))
             errs.push('email');
     }
@@ -475,20 +481,21 @@ User.addChild = async function (child) {
     `;
 
     let errs = [];
-    const validateRes = Validator.validateNotEmpty(child, true, ['lastname', 'residence_flat', 'registration_flat']);
+    const validateRes = Validator.validateNotEmpty(child, true, ['lastname', 'residence_flat', 'registration_flat', 'email', 'phone']);
 
     if (validateRes !== true)
         errs = validateRes;
 
-    if (!Validator.validatePhone(child.phone))
-        errs.push('phone');
-
-    if (!Validator.validateEmail(child.email))
-        errs.push('email');
+    // if (!Validator.validatePhone(child.phone))
+    //     errs.push('phone');
+    //
+    // if (!Validator.validateEmail(child.email))
+    //     errs.push('email');
 
     if (errs.length)
         throw {msg: errs};
 
+    child.email = child.email.trim();
     child.registration_address = Parser.objToAddress(child.registration_address);
     child.residence_address = Parser.objToAddress(child.residence_address);
 
@@ -519,7 +526,7 @@ User.sendParentRequest = async function (login) {
   `
 
   let data = {
-      child_data: login
+      child_data: login.trim()
   }
 
   return _request("api", req, data).then(data => {

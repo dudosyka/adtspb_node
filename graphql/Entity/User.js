@@ -112,8 +112,13 @@ User.prototype.encryptPassword = async function () {
 
 User.prototype.fullname = function () { return this.__get('surname') + " " + this.__get("name") + " " + this.__get('lastname'); }
 
-User.prototype.createNew = async function (roles = [], sendEmail = true) {
-    let validate = await this.validate();
+User.prototype.createNew = async function (roles = [], sendEmail = true, child = false) {
+    const fields = this.fields;
+    if (child) {
+        delete fields.email;
+        delete fields.phone;
+    }
+    let validate = await this.validate(Object.keys(fields));
     if (validate !== true) {
         throw Error(JSON.stringify(validate));
     }
@@ -139,18 +144,15 @@ User.prototype.createNew = async function (roles = [], sendEmail = true) {
         const id = usr.insertId;
 
         if (sendEmail) {
-            await EmailValidation.setOnConfirmation(id, this.__get('email'), this.fullname());
+            await EmailValidation.newUser(id, this.__get('email'), this.fullname());
         }
 
         if (usr === false)
             throw Error('Saving data failed');
 
-        let res = rbac.addRoleToUser(id, AppConfig.common_user_id);
+        rbac.addRoleToUser(id, AppConfig.common_user_id);
 
         const dataRes = await UserExtraData.createNew({ user_id: id });
-
-        if (res === false)
-            throw Error('Saving data failed');
 
         roles.map(role_id => {
             rbac.addRoleToUser(id, role_id);
@@ -335,7 +337,7 @@ User.prototype.createChild = async function (data) {
     const instance = this.newModel();
     instance.fields = {...data};
 
-    let createResult = await instance.createNew([ AppConfig.child_role_id ], false);
+    let createResult = await instance.createNew([ AppConfig.child_role_id ], false, true);
     if (createResult.status != 'success')
         throw Error("User creating failed");
 
@@ -346,7 +348,7 @@ User.prototype.createChild = async function (data) {
     usrChild.save(true);
     const res = await this.setChildData(createResult.id, data, true, instance, false);
 
-    const validation = await EmailValidation.newUser(instance.__get('id'), instance.__get('email'), instance.fullname());
+    //const validation = await EmailValidation.newUser(instance.__get('id'), instance.__get('email'), instance.fullname());
 
     return true;
 }

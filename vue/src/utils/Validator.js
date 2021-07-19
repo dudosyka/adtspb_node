@@ -2,6 +2,7 @@ const Parser = require('./Parser');
 const Validator = {};
 
 Validator.validateEmail = function (email) {
+    email = email.trim();
     return typeof email === 'string' ? email.search(/^[a-zA-Z0-9._-]{1,}[@]{1}[a-zA-Z]{1,}[.]{1}[a-zA-Z]{1,}$/) != -1 : false;
 }
 

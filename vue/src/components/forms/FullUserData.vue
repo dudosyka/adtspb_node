@@ -4,7 +4,7 @@
 
         <article class="child-form">
 
-            <h2 class="child-form_heading">{{readonly ? "Данные на редактировании" : "Личные данные"}}</h2>
+            <h2 class="child-form_heading">Личные данные</h2>
 
             <inputField
                 v-if='!hiddenFields.name'
@@ -114,8 +114,8 @@
                 >
                     <template v-slot:prompt>
                         <div class="input-prompt">
-                            <span @click="data.relationship = 'Родитель'">Родитель</span>
-                            <span @click="data.relationship = 'Законный представитель'">Законный представитель</span>
+                            <span @click="autoRelationship('Родитель')">Родитель</span>
+                            <span @click="autoRelationship('Законный представитель')">Законный представитель</span>
                         </div>
                     </template>
                 </inputField>
@@ -149,7 +149,7 @@
             <div>
               <h2 class="child-form_select-heading" :class="{'label-error': errors.disability}">Инвалидность</h2>
               <select class="dark-box darken"
-             
+
               @change="_onedit" v-model.number="data.disability" :data_id="JSON.stringify({name: 'disability', group: 'extra'})">
                 <option value="0">Нет</option>
                 <option value="1">Есть</option>
@@ -284,7 +284,7 @@
 
         <br v-if='message.length' />
 
-        <div v-if='!readonly' class="buttons wp100">
+        <div class="buttons wp100">
           <button class="dark-box dark-button register-button" @click="saveEditedData()">Сохранить</button>
         </div>
     </section>
@@ -358,11 +358,17 @@ export default {
       setDataOnEdit(name, group, parent, value) {
           console.log(name, group, parent, value);
           if (parent) {
-              this.dataOnEdit[group] = { [parent]: this.data[parent] };
+              this.dataOnEdit[group] = { ...this.dataOnEdit[group], [parent]: this.data[parent] };
               this.dataOnEdit[group][parent][name] = value;
           }
           else
               this.dataOnEdit[group][name] = value;
+      },
+      autoRelationship(str) {
+          if (this.data.relationship == str)
+            return;
+          this.data.relationship = str;
+          this.setDataOnEdit('relationship', 'extra', false, str);
       },
       autoResidenceAddress() {
           Object.keys(this.data.residence_address).map(key => {
@@ -397,8 +403,12 @@ export default {
             });
       },
       _onedit(event) {
-          console.log(event);
-          const input = event.path[0];
+          console.log(11, event);
+          let input;
+          if (event.path)
+            input = event.path[0];
+          else
+            input = event.originalTarget;
           const value = input.value;
 
           const data_id = JSON.parse(input.attributes.data_id.nodeValue);
@@ -406,10 +416,15 @@ export default {
           const group = data_id.group;
           const parent = data_id.parent ?? false;
 
+          console.log(name);
+          console.log(this.clearData);
+
           if (this.clearData[name] === value)
               this.setDataOnEdit(name, group, parent, false);
           else
               this.setDataOnEdit(name, group, parent, value);
+
+          console.log(this.dataOnEdit);
       },
       saveEditedData() {
           if (this.data.phone !== this.clearData.phone) {

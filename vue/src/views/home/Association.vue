@@ -167,7 +167,10 @@ export default {
   },
   created() {
     const child = localStorage.getItem('childInAssociations');
-
+    this.proposalParms.maxHours = AppConfig.max_hours_week;
+    if (User.calculateAge(this.child.birthday) < 14) {
+    this.proposalParms.maxHours = AppConfig.min_hours_week;
+    }
     Association.getAssociations(null, child).then(data => {
         data.map(association => {
             const id = association.id;
@@ -275,6 +278,7 @@ export default {
         Proposal.createFromObject(this.proposalParms.associations, this.child.id)
           .then(data => {
               Object.keys(this.proposalParms.associations).map(el => {
+                    this.proposalParms.associations[el].already = true;
                     this.associations[el].already = true;
               });
 
