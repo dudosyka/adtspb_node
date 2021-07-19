@@ -552,9 +552,13 @@ User.removeChild = async function (id, comment, remove_account) {
 }
 
 User.calculateAge = function (birthday) {
-    const now = Date.now();
-    const diff = now - birthday;
-    return Math.floor(diff / 31557600000);
+    console.log(birthday)
+    let d = birthday.split('-');
+    if( typeof d[2] !== "undefined" ) {
+        birthday = d[2]+'.'+d[1]+'.'+d[0];
+        return ((new Date().getTime() - new Date(birthday)) / (24 * 3600 * 365.25 * 1000)) | 0;
+    }
+    return 0;
 }
 
 User.getDataOnEdit = function (target = 0) {

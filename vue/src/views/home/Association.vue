@@ -6,9 +6,9 @@
     <section class="home-content">
       <div :class="{'association-cards--opened': show.associationsList}" class="association-cards-wrapper">
         <button class="close-associations" @click="show.associationsList = false"><span></span></button>
-        <p v-if="show.warn" class="warning-container">Нет подходящих объединений</p>
+        <p v-if="show.warn" class="warning-container">Нет объединений доступных для записи.</p>
         <article class="association-cards">
-            <h2 v-if='Object.keys(associations).filter(el => (associations[el].already == false)).length <= 0'>Нет объединений доступных для записи.</h2>
+            <h2 v-if='false'><!-- Елси его убрать всё сломается !--></h2>
             <template v-else>
                 <article  class="association-card card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id" v-if='!card.already'>
                     <h2 class="association-card_heading">{{ card.name }}</h2>
@@ -77,7 +77,7 @@
           <div class="child-hours">
             <header class="child-hours-header">
               <h3 class="child-hours-heading">Часов в неделю</h3>
-              <h3>{{ proposalParms.weekHours }}</h3>
+              <h3>{{ proposalParms.weekHours }} / {{ proposalParms.maxHours }}</h3>
             </header>
             <span></span>
             <div class="child-hours_speedometr">
@@ -124,6 +124,7 @@ import {Association} from "../../models/Association.js";
 import {User} from "../../models/User.js";
 import {Timetable} from "../../models/Timetable.js";
 import {Corrector} from "../../utils/Corrector.js";
+import {Parser} from '../../utils/Parser';
 import * as AppConfig from "../../config/AppConfig.js";
 import clone from 'clone';
 
@@ -142,6 +143,7 @@ export default {
         weekHours: 0,
         speedometr: 0,
         overflow: "#0086c9",
+        maxHours: 0
       },
       errors: {
         schedule: false,
@@ -304,10 +306,8 @@ export default {
         })
     },
     speedometr() {
-        let maxHours = AppConfig.max_hours_week;
-        if (User.calculateAge(this.child.birthday) < 14) {
-            maxHours = AppConfig.min_hours_week;
-        }
+        let maxHours = this.proposalParms.maxHours
+
         this.proposalParms.speedometr = this.proposalParms.weekHours / maxHours;
         this.proposalParms.overflow = "#0086c9";
         if (this.proposalParms.speedometr > 1) {
@@ -318,8 +318,13 @@ export default {
     }
   },
   computed: {
+    maxHours() {
+        let old = User.calculateAge(this.child.birthday);
+        this.proposalParms.maxHours = (old < 14) ? AppConfig.min_hours_week : AppConfig.max_hours_week;
+    }
   }
 }
+
 </script>
 
 <style scoped>

@@ -106,10 +106,15 @@
     box-sizing: border-box;
 }
 .proposal {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: auto 1fr;
     flex-wrap: wrap;
     padding: 20px;
+}
+@media (max-width: 540px) {
+    .proposal {
+        grid-template-columns: 1fr;
+    }
 }
 .proposal_heading {
     font-size: 22px;

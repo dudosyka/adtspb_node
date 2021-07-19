@@ -10,7 +10,6 @@
         class="type"
         :data_id="JSON.stringify(data_id)"
         :class="{'input-error': error}"
-        tabindex="1"
         :required="required"
         :readonly="readonly">
         <slot name="prompt"></slot>

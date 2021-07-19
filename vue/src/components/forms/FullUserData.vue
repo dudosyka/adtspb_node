@@ -22,7 +22,6 @@
                 :error="errors.surname"
                 :data_id="{name: 'surname', group: 'main'}"
                 @change="_onedit"
-
             />
 
             <inputField
@@ -32,7 +31,6 @@
                 :error="errors.lastname"
                 :data_id="{name: 'lastname', group: 'main'}"
                 @change="_onedit"
-
             />
 
             <div class="input-container" v-if='!hiddenFields.birthday'>
@@ -43,9 +41,8 @@
                     type="date"
                     v-model="data.birthday"
                     :data_id="JSON.stringify({name: 'birthday', group: 'extra'})"
-                    tabindex="1"
                     @change="_onedit"
-
+                    tabindex="1"
                 >
             </div>
 
@@ -56,14 +53,13 @@
                 :error="errors.email"
                 :data_id="{name: 'email', group: 'main'}"
                 @change="_onedit"
-
             />
 
             <div
                 class="input-container required"
                 v-if='!hiddenFields.phone'
                 >
-                <label class="label" v-bind:class="{'label-error': errors.phone}">Номер телефона</label><br>
+                <label class="label" tabindex="6" v-bind:class="{'label-error': errors.phone}">Номер телефона</label><br>
                 <masked-input
                     v-model="data.masked.phone"
                     mask="\+\7 (111) 111-11-11"
@@ -72,8 +68,6 @@
                     class="type"
                     :class="{'input-error': errors.phone}"
                     :data_id="JSON.stringify({name: 'phone', group: 'main'})"
-                    tabindex="4"
-
                 />
             </div>
 
@@ -163,7 +157,7 @@
             </div>
 
             <div v-show="data.disability">
-              <h2 class="child-form_select-heading" :class="{'label-error': errors.disability_group}">Группа нвалидности</h2>
+              <h2 class="child-form_select-heading" :class="{'label-error': errors.disability_group}">Группа инвалидности</h2>
               <select class="dark-box darken"
 
               @change="_onedit" v-model="data.disability_group.id" :data_id="JSON.stringify({name: 'disability_group', group: 'extra'})">
