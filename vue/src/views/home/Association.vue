@@ -175,14 +175,14 @@ export default {
             this.$set(this.associations, id, association);
             this.$set(this.associations[id], 'already', false);
             this.$set(this.associations[id], 'showSchendule', false);
-            if (this.associations[id].groups.lenght > 0) {
+            if (Object.keys(this.associations[id].groups).length) {
+                console.log('hi')
                 this.$set(this.associations[id].groups[0].timetable, 'show', true);
             }
 
         });
 
         this.show.warn = Object.keys(this.associations).length < 1;
-        console.log(23, Object.keys(this.associations).length)
 
         const fields = {
             id: null,
