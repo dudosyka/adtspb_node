@@ -15,10 +15,11 @@
         <slot name="prompt"></slot>
         <slot name="error" class="fatal-container"></slot>
     </div>
+
     <div class="password-container input-container" v-if="type === 'password'">
       <div>
-        <label class="label" v-bind:class="{'label-up': value}">{{label}}</label><br>
-        <input :type="passwordFieldType" :value="value" v-on="listeners" class="type" tabindex="1" :readonly="readonly">
+        <label class="label" :class="{'label-up': value, 'label-error': error}">{{label}}</label><br>
+        <input :type="passwordFieldType" :value="value" v-on="listeners" class="type" tabindex="1" :readonly="readonly" :class="{'input-error': error}">
       </div>
       <button
         @click="switchVisibility()"

@@ -97,12 +97,8 @@
             </div>
 
             <div>
-              <div class="checkbox-container">
-                <input type="checkbox" v-model="child.withoutEmail" id="email" class="checkbox">
-                <label class="checkbox" for="email">Нет электронной почты</label>
-              </div>
               <inputField
-                  v-if="!child.withoutEmail"
+                  v-if="!child.withoutContacts"
                   label="Электронная почта"
                   v-model="childRaw.email"
                   :error="childRawErrors.email"
@@ -116,11 +112,7 @@
             </div>
 
             <div>
-              <div class="checkbox-container">
-                <input type="checkbox" v-model="child.withoutPhone" id="phone" class="checkbox">
-                <label class="checkbox" for="phone">Нет телефона</label>
-              </div>
-              <div class="input-container required" v-if="!child.withoutPhone">
+              <div class="input-container required" v-if="!child.withoutContacts">
                 <label class="label" v-bind:class="{'label-error': childRawErrors.phone}">Номер телефона</label><br>
                 <masked-input
                     v-model="masked.phone"
@@ -135,6 +127,11 @@
                   <p class="padding5-container">Неверный формат, пример: +7 111 111 11 11 </p>
                 </div>
               </div>
+            </div>
+
+            <div class="checkbox-container child-form_span-2">
+              <input type="checkbox" v-model="child.withoutContacts" id="contacts" class="checkbox">
+              <label class="checkbox" for="contacts">Нет почты и телефона</label>
             </div>
 
             <div class="input-container child-form_span-2">
@@ -371,16 +368,13 @@
 
             <br>
             <!-- TODO: Убрать :class пофиксить InputField -->
-            <template v-if="(child.withoutPhone || child.withoutEmail)">
-                <inputField
-                    label="Пароль"
-                    type="password"
-                    v-model="childRaw.password"
-                    :error="childRawErrors.password"
-
-                    :class="{'input-error': childRawErrors.password}"
-                />
-            </template>
+            <inputField
+              v-if="!child.withoutContacts"
+              label="Пароль"
+              type="password"
+              v-model="childRaw.password"
+              :error="childRawErrors.password"
+            />
           </article>
           <div class="buttons wp100">
             <button class="dark-box dark-button register-button" @click="childRegistration">Зарегистрировать ребёнка</button>
@@ -551,8 +545,7 @@
           error: '',
         },
         child: {
-          withoutPhone: false,
-          withoutEmail: false
+          withoutContacts: false
         },
         message: ''
       }
