@@ -427,6 +427,8 @@ export default {
           console.log(this.dataOnEdit);
       },
       saveEditedData() {
+          if (this.data.phone == "")
+            this.data.phone = null;
           if (this.data.phone !== this.clearData.phone) {
               this.setDataOnEdit('phone', 'main', false, this.data.phone);
           }

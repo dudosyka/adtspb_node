@@ -500,8 +500,12 @@ User.addChild = async function (child, noCredentials) {
     if (errs.length)
         throw {msg: errs};
 
-    if (!noCredentials)
-        child.email = child.email.trim();
+    if (!noCredentials) {
+        if (typeof child.email == 'string')
+            child.email = child.email.trim();
+        else
+            throw {msg: ['email']};
+    }
 
     child.registration_address = Parser.objToAddress(child.registration_address);
     child.residence_address = Parser.objToAddress(child.residence_address);
@@ -563,7 +567,8 @@ User.removeChild = async function (id, comment, remove_account) {
 }
 
 User.calculateAge = function (birthday) {
-    console.log(birthday)
+    if (typeof birthday !== "string")
+        return 0;
     let d = birthday.split('-');
     if( typeof d[2] !== "undefined" ) {
         birthday = d[2]+'.'+d[1]+'.'+d[0];
