@@ -3,6 +3,7 @@
         <div class="auth">
           <router-link class="left-arrow" to="/login" tag="button" />
           <div class="form">
+
             <section v-show="step === 1">
               <h2 class="label-normal choose-heading">Кто вы?</h2>
               <div class="buttons">
@@ -10,19 +11,28 @@
                 <button @click="isParent(false)" class="dark-button wp100">Поступающий</button>
               </div>
             </section>
+
             <section v-show="step === 2">
               <div class="input-container required">
                 <label class="label" v-bind:class="{'label-up': user.surname, 'label-error': errors.surname}">Фамилия</label><br>
                 <input type="text" v-model="user.surname" class="type" :class="{'input-error': errors.surname}" tabindex="1" required>
+                <div class="fatal-container" v-if="errors.surname">
+                    <p class="padding5-container">Пожалуйста, укажите фамилию</p>
+                </div>
               </div>
               <div class="input-container required">
                 <label class="label" v-bind:class="{'label-up': user.name, 'label-error': errors.name}">Имя</label><br>
                 <input type="text" v-model="user.name" class="type" :class="{'input-error': errors.name}" tabindex="2">
+                <div class="fatal-container" v-if="errors.name">
+                    <p class="padding5-container">Пожалуйста, укажите имя</p>
+                </div>
               </div>
-
               <div class="input-container required">
                 <label class="label" v-bind:class="{'label-up': user.lastname, 'label-error': errors.lastname}">Отчество</label><br>
                 <input type="text" v-model="user.lastname" class="type" :class="{'input-error': errors.lastname}" tabindex="3">
+                <div class="fatal-container" v-if="errors.lastname">
+                    <p class="padding5-container">Пожалуйста, укажите отсество</p>
+                </div>
               </div>
               <div class="input-container required">
                 <label class="label" v-bind:class="{'label-up': user.phone, 'label-error': errors.phone}">Номер телефона</label><br>
@@ -34,6 +44,9 @@
                     class="type"
                     :class="{'input-error': errors.phone}"
                     tabindex="4" />
+                <div class="fatal-container" v-if="errors.phone">
+                    <p class="padding5-container">Неверный формат, пример: +7 111 111 11 11</p>
+                </div>
               </div>
 
               <div class="input-container required">
@@ -48,10 +61,16 @@
                     <label class="dark radio" for="woman" tabindex="6">Женский</label>
                   </div>
                 </ul>
+                <div class="fatal-container" v-if="errors.sex">
+                    <p class="padding5-container">Пожалуйста, укажите пол</p>
+                </div>
               </div>
               <div class="input-container required">
                 <label class="label" v-bind:class="{'label-up': user.email, 'label-error': errors.email}">Email</label><br>
                 <input type="email" v-model="user.email" class="type" :class="{'input-error': errors.email}" tabindex="7">
+                <div class="fatal-container" v-if="errors.email">
+                    <p class="padding5-container">Неверный формат, почта должна содержать символы @ .</p>
+                </div>
               </div>
 
               <div class="input-container">
@@ -71,7 +90,6 @@
               </div>
 
               <div class="buttons">
-                  {{ msg }}
                 <button class="dark-button" @click="registration()" tabindex="9">Зарегистрироваться</button>
               </div>
             </section>
