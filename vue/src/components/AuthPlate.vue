@@ -21,6 +21,17 @@
   </div>
 </template>
 
+<style>
+.title {
+    margin-top: 20px;
+}
+@media (max-width: 497px) {
+    .social-media-list {
+        display: none;
+    }
+}
+</style>
+
 <script>
   export default {
     props: {
