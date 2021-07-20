@@ -55,7 +55,7 @@
                   <div class="fatal-container">
                       <p class="padding5-container">Пожалуйста, укажите имя</p>
                   </div>
-              </template> 
+              </template>
             </inputField>
 
             <inputField
@@ -67,7 +67,7 @@
                   <div class="fatal-container">
                       <p class="padding5-container">Пожалуйста, укажите фамилию</p>
                   </div>
-              </template> 
+              </template>
             </inputField>
 
             <inputField
@@ -79,8 +79,8 @@
                   <div class="fatal-container">
                       <p class="padding5-container">Пожалуйста, укажите отчество</p>
                   </div>
-              </template> 
-            </inputField>   
+              </template>
+            </inputField>
 
             <div class="input-container">
               <label class="label" :class="{'label-error': childRawErrors.birthday}">Дата рождения</label><br>
@@ -111,7 +111,7 @@
                     <div class="fatal-container">
                         <p class="padding5-container">Неверный формат, почта должна содержать символы @ .</p>
                     </div>
-                </template> 
+                </template>
               </inputField>
             </div>
 
@@ -163,7 +163,7 @@
                   <div class="fatal-container">
                     <p class="padding5-container">Пожалуйста, введите гражданство</p>
                   </div>
-              </template> 
+              </template>
             </inputField>
 
             <div>
@@ -237,7 +237,7 @@
                   <div class="fatal-container">
                     <p class="padding5-container">Пожалуйста, введите наименование учебного учреждения</p>
                   </div>
-              </template> 
+              </template>
             </inputField>
             <div class="child-data_row">
               <!--
@@ -261,7 +261,7 @@
                   <div class="fatal-container">
                     <p class="padding5-container">Пожалуйста, введите город регистрации</p>
                   </div>
-              </template> 
+              </template>
             </inputField>
             <inputField
                 label="Район"
@@ -272,7 +272,7 @@
                   <div class="fatal-container">
                     <p class="padding5-container">Пожалуйста, введите район регистрации</p>
                   </div>
-              </template> 
+              </template>
             </inputField>
             <inputField
                 label="Улица"
@@ -283,7 +283,7 @@
                   <div class="fatal-container">
                     <p class="padding5-container">Пожалуйста, введите улицу регистрации</p>
                   </div>
-              </template> 
+              </template>
             </inputField>
             <inputField
                 label="Дом"
@@ -294,7 +294,7 @@
                   <div class="fatal-container">
                     <p class="padding5-container">Пожалуйста, введите дом регистрации</p>
                   </div>
-              </template> 
+              </template>
             </inputField>
             <inputField
                 label="Номер квартиры"
@@ -305,7 +305,7 @@
                   <div class="fatal-container">
                     <p class="padding5-container">Пожалуйста, введите номер квартиры регистрации</p>
                   </div>
-              </template> 
+              </template>
             </inputField>
 
             <h2 class="child-form_heading">Адрес проживания</h2>
@@ -322,7 +322,7 @@
                   <div class="fatal-container">
                     <p class="padding5-container">Пожалуйста, введите город проживаня</p>
                   </div>
-              </template> 
+              </template>
             </inputField>
             <inputField
                 label="Район"
@@ -333,7 +333,7 @@
                   <div class="fatal-container">
                     <p class="padding5-container">Пожалуйста, введите район проживания</p>
                   </div>
-              </template> 
+              </template>
             </inputField>
             <inputField
                 label="Улица"
@@ -344,7 +344,7 @@
                   <div class="fatal-container">
                     <p class="padding5-container">Пожалуйста, введите улицу проживания</p>
                   </div>
-              </template> 
+              </template>
             </inputField>
             <inputField
                 label="Дом"
@@ -355,7 +355,7 @@
                   <div class="fatal-container">
                     <p class="padding5-container">Пожалуйста, введите дом проживания</p>
                   </div>
-              </template> 
+              </template>
             </inputField>
             <inputField
                 label="Номер квартиры"
@@ -366,19 +366,21 @@
                   <div class="fatal-container">
                     <p class="padding5-container">Пожалуйста, введите номер кваритры проживания</p>
                   </div>
-              </template> 
+              </template>
             </inputField>
 
             <br>
             <!-- TODO: Убрать :class пофиксить InputField -->
-            <inputField
-                label="Пароль"
-                type="password"
-                v-model="childRaw.password"
-                :error="childRawErrors.password"
+            <template v-if="(child.withoutPhone || child.withoutEmail)">
+                <inputField
+                    label="Пароль"
+                    type="password"
+                    v-model="childRaw.password"
+                    :error="childRawErrors.password"
 
-                :class="{'input-error': childRawErrors.password}"
-            />
+                    :class="{'input-error': childRawErrors.password}"
+                />
+            </template>
           </article>
           <div class="buttons wp100">
             <button class="dark-box dark-button register-button" @click="childRegistration">Зарегистрировать ребёнка</button>
@@ -562,7 +564,7 @@
         },
       childRegistration() {
           this.childRawErrors = clone(this.childRawErrors_proto);
-          User.addChild({...this.childRaw}).then(res => {
+          User.addChild({...this.childRaw}, (this.child.withoutPhone || this.child.withoutEmail)).then(res => {
               if (res) {
                   this.message = 'Ребёнок успешно добавлен';
                   this.show.registration = false;
@@ -570,6 +572,7 @@
               }
           }).catch(err => {
             //TODO: Обработка ошибок с бэка и фронта.
+            console.log(err);
             if (err.msg)
               err.msg.map(el => {
                 console.error(el)

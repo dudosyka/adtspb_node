@@ -115,8 +115,9 @@ User.prototype.fullname = function () { return this.__get('surname') + " " + thi
 User.prototype.createNew = async function (roles = [], sendEmail = true, child = false) {
     const fields = this.fields;
     if (child) {
-        delete fields.email;
+        delete fields.email; 
         delete fields.phone;
+        delete fields.password;
     }
     let validate = await this.validate(Object.keys(fields));
     if (validate !== true) {
@@ -139,7 +140,9 @@ User.prototype.createNew = async function (roles = [], sendEmail = true, child =
                 throw Error('Phone must be unique');
         }
 
-        await this.encryptPassword();
+        if (!child)
+            await this.encryptPassword();
+
         const usr = await this.save();
         const id = usr.insertId;
 

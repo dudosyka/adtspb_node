@@ -262,11 +262,9 @@ function userDataProcessing(entity, parse = true) {
             errors
         };
 
-    if (entity.phone) {
-        entity.masked = {
-            phone: entity.phone
-        };
-    }
+    entity.masked = {
+        phone: entity.phone
+    };
 
     return {
         data: entity,
@@ -471,7 +469,8 @@ User.editExtraData = async function (obj, target_id = 0) {
     });
 }
 
-User.addChild = async function (child) {
+User.addChild = async function (child, noCredentials) {
+    console.log("NO", noCredentials);
     const req = `
       mutation ($user: UserInput) {
           user {
@@ -480,28 +479,36 @@ User.addChild = async function (child) {
       }
     `;
 
-    let errs = [];
-    const validateRes = Validator.validateNotEmpty(child, true, ['lastname', 'residence_flat', 'registration_flat', 'email', 'phone']);
+    let exceptFields = ['lastname', 'residence_flat', 'registration_flat'];
+    if (noCredentials)
+        exceptFields.push('email', 'phone', 'password');
 
+    const validateRes = Validator.validateNotEmpty(child, true, ['lastname', 'residence_flat', 'registration_flat', 'email', 'phone', 'password']);
+
+    let errs = [];
     if (validateRes !== true)
         errs = validateRes;
 
-    // if (!Validator.validatePhone(child.phone))
-    //     errs.push('phone');
-    //
-    // if (!Validator.validateEmail(child.email))
-    //     errs.push('email');
+    if (!noCredentials)
+        if (!Validator.validatePhone(child.phone))
+            errs.push('phone');
+
+    if (!noCredentials)
+        if (!Validator.validateEmail(child.email))
+            errs.push('email');
 
     if (errs.length)
         throw {msg: errs};
 
-    child.email = child.email.trim();
+    if (!noCredentials)
+        child.email = child.email.trim();
+
     child.registration_address = Parser.objToAddress(child.registration_address);
     child.residence_address = Parser.objToAddress(child.residence_address);
 
     child.birthday = Parser.birthdayToTimestamp(child.birthday);
 
-    child.ovz = Number(child.ovz)
+    child.ovz = Number(child.ovz);
     child.ovz_type.id = Number(child.ovz_type.id)
     child.disability = Number(child.disability)
     child.disability_group.id = Number(child.disability_group.id)
