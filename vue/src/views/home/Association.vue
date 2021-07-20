@@ -167,10 +167,6 @@ export default {
   },
   created() {
     const child = localStorage.getItem('childInAssociations');
-    this.proposalParms.maxHours = AppConfig.max_hours_week;
-    if (User.calculateAge(this.child.birthday) < 14) {
-    this.proposalParms.maxHours = AppConfig.min_hours_week;
-    }
     Association.getAssociations(null, child).then(data => {
         data.map(association => {
             const id = association.id;
@@ -185,7 +181,8 @@ export default {
 
         });
 
-        this.show.warn = (Object.keys(this.associations).length < 1);
+        this.show.warn = Object.keys(this.associations).length < 1;
+        console.log(23, Object.keys(this.associations).length)
 
         const fields = {
             id: null,
@@ -218,6 +215,8 @@ export default {
             this.speedometr();
         });
     });
+    let old = User.calculateAge();
+    this.proposalParms.maxHours = (old < 14) ? AppConfig.min_hours_week : AppConfig.max_hours_week;
   },
   methods: {
     //Методы для правильного склонения слов
@@ -324,7 +323,7 @@ export default {
     maxHours() {
         let old = User.calculateAge(this.child.birthday);
         this.proposalParms.maxHours = (old < 14) ? AppConfig.min_hours_week : AppConfig.max_hours_week;
-    }
+    },
   }
 }
 
