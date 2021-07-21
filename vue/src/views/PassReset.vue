@@ -1,8 +1,7 @@
 <template>
   <main class="main-content">
-    <router-link class="left-arrow" to="/login" tag="button" />
       <div class="auth">
-
+        <router-link class="left-arrow" to="/login" tag="button" />
         <div class="form" v-if="step === 0">
           <div class="input-container">
             <label class="label" :class="{'label-up': email}">Электронная почта</label><br>
@@ -42,6 +41,33 @@
       <AuthPlate title="Восстановление пароля"/>
   </main>
 </template>
+
+<style scoped>
+.auth {
+  display: grid;
+  grid-template-rows: 60px 1fr auto 1fr;
+  grid-template-columns: 1fr;
+
+}
+.form {
+  grid-row: 3;
+}
+@media (max-width: 479px) {
+  .main-content {
+    height: 100vh;
+  }
+  .auth {
+    grid-template-columns: 1fr;
+    grid-template-rows: 60px 1fr;
+    width: 100%;
+    box-sizing: border-box;
+    align-content: center;
+  }
+  .form {
+    grid-row: 2;
+  }
+}
+</style>
 
 <script>
   import axios from "axios"
