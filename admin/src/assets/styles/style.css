@@ -34,3 +34,44 @@ h1,h2,h3,h4,h5,h6,p,ul,ol {
 	border-radius: 40px;
 	padding: 40px;
 }
+
+.input-container {
+	display: grid;
+	grid-template-rows: auto auto;
+}
+label {
+	margin-bottom: 5px;
+}
+input[type=text],
+input[type=password] {
+	border: none;
+	background-color: #c4c4c4;
+	padding: 10px;
+	border-radius: 10px;
+	color: #191919;
+	outline: none;
+}
+input.error {
+	background-color: #DAA2A2;
+	color: #C60000;
+}
+
+button {
+	outline: none;
+	border: none;
+	border-radius: 10px;
+	padding: 10px;
+}
+button:hover {
+	cursor: pointer;
+}
+
+.button-accent {
+	background-color: #0086C9;
+	color: #fff;
+	transition: background-color 0.3s;
+}
+.button-accent:hover,
+.button-accent:active {
+	background-color: #005A87;
+}
