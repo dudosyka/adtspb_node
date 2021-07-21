@@ -557,7 +557,7 @@
         },
       childRegistration() {
           this.childRawErrors = clone(this.childRawErrors_proto);
-          User.addChild({...this.childRaw}, (this.child.withoutPhone || this.child.withoutEmail)).then(res => {
+          User.addChild({...this.childRaw}, this.child.withoutContacts).then(res => {
               if (res) {
                   this.message = 'Ребёнок успешно добавлен';
                   this.show.registration = false;
