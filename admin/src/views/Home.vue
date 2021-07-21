@@ -3,13 +3,13 @@
         <Header />
         <header class="header">
             <h2 class="ft-gray">Общее число родителей:</h2>
-            <h2 class="ft-white">ыыыы</h2>
+            <h2 class="ft-white">{{ stat.parent_amount }}</h2>
 
             <h2 class="ft-gray">Общее число детей:</h2>
-            <h2 class="ft-white">ыыы</h2>
+            <h2 class="ft-white">{{ stat.child_amount }}</h2>
 
             <h2 class="ft-gray">Всего подано заявлений:</h2>
-            <h2 class="ft-white">ы</h2>
+            <h2 class="ft-white">{{ stat.proposal_amount }}</h2>
         </header>
         <article class="card bg-card table-wrapper">
             <table class="table">
@@ -19,11 +19,11 @@
                     <td>Фактическое количество</td>
                     <td>% наполненности</td>
                 </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                <tr v-for="association in stat.associations">
+                    <td>{{ association.name }}</td>
+                    <td>{{ association.planned }}</td>
+                    <td>{{ association.actual }}</td>
+                    <td>{{ association.fullness_percent }}%</td>
                 </tr>
             </table>
         </article>
@@ -60,7 +60,7 @@ main {
 }
 .table_header {
     padding: 5px;
-    font-weight: normal;
+    font-weight: bold;
     width: 100%;
 }
 .table tr {
@@ -74,6 +74,7 @@ main {
 
 <script>
 import Header from '../components/Header'
+import {Admin} from '../models/Admin'
 
 export default {
     name: 'home',
@@ -82,8 +83,16 @@ export default {
     },
     data() {
         return {
+            stat: {
 
+            }
         }
+    },
+    async created() {
+        this.stat = Admin.getStat().then(data => {
+            this.stat = data
+            console.log(data)
+        })
     }
 }
 
