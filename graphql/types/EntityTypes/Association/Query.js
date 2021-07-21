@@ -1,6 +1,7 @@
 const graphql = require("graphql");
 const Proposal = require("../../../Entity/Proposal");
 const Association = require("../../../Entity/Association");
+const User = require("../../../Entity/User");
 const UserExtraData = require("../../../Entity/UserExtraData");
 const AppConfig = require('../../../config/AppConfig');
 
@@ -30,6 +31,18 @@ module.exports = new graphql.GraphQLObjectType({
                 return await Association.getAssociations(usr.calculateAge(), obj.selections, model);
             }
         },
+        getSelected: {
+            type: graphql.GraphQLList(graphql.GraphQLInt),
+            args: {
+                child: {
+                    type: graphql.GraphQLInt
+                }
+            },
+            async resolve(obj, { child }) {
+                const userModel = User.newModel();
+                return await Association.getSelected(obj.viewer.id, child, userModel)
+            }
+        }
     })
 });
 

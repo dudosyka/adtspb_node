@@ -49,6 +49,8 @@ User.prototype.validateRules = async function () {
 User.prototype.createFrom = async function (data, baseCreating = true, checkConfirmation = true) {
     if (baseCreating)
         await this.baseCreateFrom(data);
+    else
+        this.load(data);
     let { role, rules } = await rbac.auth(this.__get('id'));
     this.fields.__role = role;
     this.fields.__accessible = rules;
@@ -115,7 +117,7 @@ User.prototype.fullname = function () { return this.__get('surname') + " " + thi
 User.prototype.createNew = async function (roles = [], sendEmail = true, child = false) {
     const fields = this.fields;
     if (child) {
-        delete fields.email; 
+        delete fields.email;
         delete fields.phone;
         delete fields.password;
     }
