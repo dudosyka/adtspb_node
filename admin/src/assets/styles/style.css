@@ -1,0 +1,36 @@
+body {
+	margin: 0;
+	font-family: sans-serif;
+}
+h1,h2,h3,h4,h5,h6,p,ul,ol {
+	margin: 0;
+	font-weight: normal;
+}
+* {
+	color: #c4c4c4;
+}
+
+.bg-wrapper {
+	background-color: #282828;
+}
+.bg-card {
+	background-color: #191919;
+}
+.bg-note {
+	background-color: #000;
+}
+
+.ft-white {
+	color: #fff;
+}
+.ft-gary {
+	color: #C4C4C4;
+}
+.ft-dark {
+	color: #191919;
+}
+
+.card {
+	border-radius: 40px;
+	padding: 40px;
+}
