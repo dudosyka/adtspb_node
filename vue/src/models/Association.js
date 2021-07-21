@@ -69,4 +69,45 @@ Association.createTimetable = function() {
 
 }
 
+Association.setSelected = function (associations, child) {
+    const req = `
+        mutation ($associations: ListOfInt, $child: Int) {
+            association {
+                setSelected (associations: $associations, child: $child)
+            }
+        }
+    `;
+
+    const data = {
+        associations: {
+            list: associations.map(el => Number(el))
+        },
+        child: Number(child)
+    };
+
+    _request('api', req, data).then(data => {
+        console.log(data);
+    }).catch(err => {
+        console.log(err);
+    })
+}
+
+Association.getSelected = async function (child) {
+    const req = `
+        query ($child: Int) {
+            association {
+                getSelected (child: $child)
+            }
+        }
+    `;
+
+    const data = {
+        child: Number(child)
+    }
+
+    return await _request("api", req, data).then(data => {
+        return data.association.getSelected;
+    });
+}
+
 export {Association}

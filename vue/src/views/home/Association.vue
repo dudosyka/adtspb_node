@@ -217,6 +217,12 @@ export default {
             this.proposalParms.maxHours = (old < 14) ? AppConfig.min_hours_week : AppConfig.max_hours_week;
             this.speedometr();
         });
+
+        Association.getSelected(child).then(selected => {
+            selected.map(id => {
+                this.addAssociation(id);
+            });
+        })
     });
   },
   methods: {
@@ -236,6 +242,15 @@ export default {
         this.associations[assocId].groups[groupId].timetable.show = true;
     },
 
+    updateStorage() {
+        let old = {};
+        if (localStorage.getItem('selectedAssociations')) {
+            old = JSON.parse(localStorage.getItem('selectedAssociations'));
+        }
+        const associations = Object.keys(this.proposalParms.associations).filter(key => this.proposalParms.associations[key].already === false);
+        old[this.child.id] = associations;
+        localStorage.setItem('selectedAssociations', JSON.stringify(old));
+    },
 
     addAssociation(id) {
         this.proposalParms.associations[id] = clone(this.associations[id]);
@@ -244,6 +259,7 @@ export default {
         this.speedometr();
         this.selected = false;
         this.selected = true;
+        this.updateStorage();
     },
     removeAssociation(id) {
         this.proposalParms.weekHours -= this.proposalParms.associations[id].hours_week;
@@ -251,6 +267,7 @@ export default {
         delete this.proposalParms.associations[id];
         this.anyAssociationSelected();
         this.removeErrs();
+        this.updateStorage();
     },
     removeErrs() {
         this.errors.needAssoc = false;

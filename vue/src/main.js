@@ -4,6 +4,7 @@ import router from './router';
 import { request, GraphQLClient } from "graphql-request";
 import * as AppConfig from './config/AppConfig';
 import {AccessControl} from './utils/AccessControl';
+import {Association} from './models/Association';
 
 const graphql = new GraphQLClient(AppConfig.api_url, {
     headers: {
@@ -64,7 +65,18 @@ let redirectTo = (name) => {
     router.push({name: name}).catch(err => { /* QUITE! */ });
 }
 
+global.uploadSelectedAssociations = function () {
+    if (localStorage.getItem('selectedAssociations')) {
+        const data = JSON.parse(localStorage.getItem('selectedAssociations'));
+        Object.keys(data).map(child => {
+            Association.setSelected(data[child], child);
+        });
+        localStorage.removeItem('selectedAssociations');
+    }
+}
+
 router.afterEach(async (to, from) => {
+    uploadSelectedAssociations();
     let isLogin = true;
     isLogin = (token !== null);
     console.log(isLogin)
@@ -80,6 +92,7 @@ router.afterEach(async (to, from) => {
       redirectTo('Authorization');
 });
 
+window.onbeforeunload = uploadSelectedAssociations;
 (async function () {
     await AccessControl.refreshAccess();
     new Vue({
