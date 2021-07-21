@@ -212,11 +212,12 @@ export default {
                     this.proposalParms.weekHours += el.association.hours_week;
                 }
             });
+            let old = User.calculateAge(this.child.birthday);
+            console.log(old);
+            this.proposalParms.maxHours = (old < 14) ? AppConfig.min_hours_week : AppConfig.max_hours_week;
             this.speedometr();
         });
     });
-    let old = User.calculateAge();
-    this.proposalParms.maxHours = (old < 14) ? AppConfig.min_hours_week : AppConfig.max_hours_week;
   },
   methods: {
     //Методы для правильного склонения слов

@@ -571,8 +571,10 @@ User.calculateAge = function (birthday) {
         return 0;
     let d = birthday.split('-');
     if( typeof d[2] !== "undefined" ) {
-        birthday = d[2]+'.'+d[1]+'.'+d[0];
-        return ((new Date().getTime() - new Date(birthday)) / (24 * 3600 * 365.25 * 1000)) | 0;
+        birthday = d[0]+'.'+d[1]+'.'+d[2];
+        const now = Date.now();
+        const date = (new Date(birthday)).getTime();
+        return ((now - date) / (24 * 3600 * 365.25 * 1000)) | 0;
     }
     return 0;
 }
