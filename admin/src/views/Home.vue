@@ -48,15 +48,12 @@ main {
 
 .table-wrapper {
     overflow-x: auto;
+    min-height: 64vh;
 }
 .table {
     width: 100%;
     min-width: 1000px;
     border-collapse: collapse;
-}
-.tabel_col {
-    width: 25%;
-    min-width: 100px;
 }
 .table_header {
     padding: 5px;
