@@ -4,6 +4,7 @@ const graphql = require('graphql');
 const UserQuery = require('./EntityTypes/User/Query');
 const AssociationQuery = require('./EntityTypes/Association/Query');
 const ProposalQuery = require('./EntityTypes/Proposal/Query');
+const AdminQuery = require('./Admin/Query');
 
 const Jwt = require('../utils/Jwt');
 let jwt = new Jwt();
@@ -14,15 +15,19 @@ module.exports = new GraphQLObjectType({
         return {
             user: {
                 type: UserQuery,
-                resolve: (obj) => obj(),
+                resolve: obj => obj(),
+            },
+            admin: {
+                type: AdminQuery,
+                resolve: obj => obj(),
             },
             association: {
                 type: AssociationQuery,
-                resolve: (obj) => obj(),
+                resolve: obj => obj(),
             },
             proposal: {
                 type: ProposalQuery,
-                resolve: (obj) => obj(),
+                resolve: obj => obj(),
             },
             validToken: {
                 type: GraphQLBoolean,

@@ -140,6 +140,13 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections)
     return proposals;
 }
 
+Proposal.prototype.getProposalAmount = async function (association_id = null) {
+    if (association_id === null)
+        return (await this.db.query("SELECT COUNT(*) as `amount` FROM `proposal` as `main` RIGHT JOIN `proposal_status` as `sub` ON `main`.`id` = `sub`.`proposal_id` WHERE `sub`.`num` != 0"))[0].amount;
+    else
+        return (await this.db.query("SELECT COUNT(*) as `amount` FROM `proposal` as `main` RIGHT JOIN `proposal_status` as `sub` ON `main`.`id` = `sub`.`proposal_id` WHERE `sub`.`num` != 0 AND `main`.`association_id` = ?", [ association_id ]))[0].amount;
+}
+
 Proposal.prototype.selectByChild = async function (child_id) {
     return await this.db.select(this, "`child_id` = ?", [ child_id ]).then(data => data).catch(err => { console.error(err); });
 };
@@ -161,7 +168,7 @@ Proposal.prototype.checkStudyLoad = async function () {
 
     if (Object.keys(proposals).length <= 0)
         return 0;
-        
+
     proposals[this.__get('child')].map(el => {
         if (el.status.num != 0)
             association_ids.push({id: el.id});
