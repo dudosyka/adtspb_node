@@ -185,14 +185,16 @@
             <div class="child-form_span-2 child-form_select">
               <div>
                 <h2 class="child-form_select-heading" :class="{'label-error': childRawErrors.ovz}">ОВЗ</h2>
-                <select class="dark-box darken" v-model.number="childRaw.ovz"  >
-                  <option value="0">Нет</option>
+                <select class="dark-box darken" v-model.number="childRaw.ovz">
+                  <option selected="true" disabled="true"></option>
+                  <option value="0" selected>Нет</option>
                   <option value="1">Есть</option>
                 </select>
               </div>
               <div v-if="childRaw.ovz">
                 <h2 class="child-form_select-heading" :class="{'label-error': childRawErrors.ovz_type}">Тип ОВЗ</h2>
                 <select class="dark-box darken" v-model="childRaw.ovz_type.id"  >
+                  <option selected="true" disabled="true"></option>
                   <option v-for="(type, id) in ovzTypes" :value="id">{{ type }}</option>
                 </select>
               </div>
@@ -206,6 +208,7 @@
               <div>
                 <h2 class="child-form_select-heading" :class="{'label-error': childRawErrors.disability}">Инвалидность</h2>
                 <select class="dark-box darken" v-model.number="childRaw.disability"  >
+                  <option selected="true" disabled="true"></option>
                   <option value="0">Нет</option>
                   <option value="1">Есть</option>
                 </select>
@@ -214,6 +217,7 @@
               <div v-show="childRaw.disability">
                 <h2 class="child-form_select-heading" :class="{'label-error': childRawErrors.disability_group}">Группа нвалидности</h2>
                 <select class="dark-box darken" v-model="childRaw.disability_group.id"  >
+                  <option selected="true" disabled="true"></option>
                   <option v-for="(type, id) in disabilityTypes" :value="id">{{ type }}</option>
                 </select>
               </div>
