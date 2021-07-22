@@ -17,7 +17,7 @@
           <h1 class="form-heading">Вам на почту {{email}} был отправлен код, введите его</h1>
           <div class="input-container">
             <label class="label" :class="{'label-up': code}">Код</label><br>
-            <input type="numeric" v-model.number="code" class="type" :class="{invalid: isCodeInvalid}" tabindex="1" invalid>
+            <input type="numeric" v-model.number.trim="code" class="type" :class="{invalid: isCodeInvalid}" tabindex="1" invalid>
           </div>
 
           <div class="buttons">
