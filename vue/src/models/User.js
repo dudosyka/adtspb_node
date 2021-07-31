@@ -199,6 +199,13 @@ User.getParentRequests = async function () {
 User.agreeParentRequest = async function (parent_id, userData) {
     parent_id = Number(parent_id);
     console.log(parent_id, userData);
+    if (userData.masked) {
+        Object.keys(userData.masked).map(el => {
+            if (userData.masked[el] !== undefined)
+                userData[el] = userData.masked[el];
+        });
+        delete userData.masked;
+    }
     let errs = [];
     const validateRes = Validator.validateNotEmpty(userData, true, ['lastname', 'registration_flat', 'residence_flat']);
 
