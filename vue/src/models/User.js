@@ -199,6 +199,13 @@ User.getParentRequests = async function () {
 User.agreeParentRequest = async function (parent_id, userData) {
     parent_id = Number(parent_id);
     console.log(parent_id, userData);
+    if (userData.masked) {
+        Object.keys(userData.masked).map(el => {
+            if (userData.masked[el] !== undefined)
+                userData[el] = userData.masked[el];
+        });
+        delete userData.masked;
+    }
     let errs = [];
     const validateRes = Validator.validateNotEmpty(userData, true, ['lastname', 'registration_flat', 'residence_flat']);
 
@@ -572,8 +579,9 @@ User.calculateAge = function (birthday) {
     let d = birthday.split('-');
     if( typeof d[2] !== "undefined" ) {
         birthday = d[0]+'.'+d[1]+'.'+d[2];
-        const now = Date.now();
+        const now = new Date(2021, 9, 1, 0, 0);
         const date = (new Date(birthday)).getTime();
+        console.log('age', ((now - date) / (24 * 3600 * 365.25 * 1000)) | 0)
         return ((now - date) / (24 * 3600 * 365.25 * 1000)) | 0;
     }
     return 0;

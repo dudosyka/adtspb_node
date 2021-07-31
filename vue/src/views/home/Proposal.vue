@@ -39,13 +39,13 @@
                             <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)" :disabled="!inDev">Скачать</button>
                             <button class="dark-button wp100" @click="printPdf(proposal.id)" :disabled="!inDev">Печатать</button>
 
-                            <button v-if='!proposal.isDocumentTaken' class="dark-button wp100" @click="show.sure = true">Отозвать</button>
-                            <section class="card_wrapper horizontal-center" v-if="show.sure">
+                            <button v-if='!proposal.isDocumentTaken' class="dark-button wp100" @click="proposal.sure = true">Отозвать</button>
+                            <section class="card_wrapper horizontal-center" v-if="proposal.sure">
                                 <article class="card modal shadow">
                                     <p class="modal_heading">Вы уверены, что хотите отозвать заявления?</p>
                                     <div class="buttons-row">
                                         <button @click="recall(child, proposal.id, index)" class="dark-button">Да</button>
-                                        <button class="dark-button" @click="show.sure = false">Нет</button>
+                                        <button class="dark-button" @click="proposal.sure = false">Нет</button>
                                     </div>
                                 </article>
                             </section>
@@ -151,7 +151,7 @@
       return {
         children: [],
         show: {
-            sure: false,
+            sure: [],
         },
         user: {
             areSure: null
@@ -184,13 +184,13 @@
 
       children.map((child) => {
         const proposals = child.data.proposals.map(el => {
-
           return {
             id: el.id,
             name: el.association.name,
             status: el.status.length ? { ...el.status[0] } : { text: "", num: 0 },
             download: "",
-            print: ""
+            print: "",
+            sure: false,
           }
         });
 
@@ -217,6 +217,7 @@
             Proposal.printResolution(child_id);
         },
         recall(child, proposal_id, proposal_index) {
+            console.log(child, proposal_id, proposal_index);
             Proposal.recall(proposal_id)
             .then(data => {
                 if (data) {
