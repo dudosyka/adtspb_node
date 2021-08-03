@@ -54,7 +54,7 @@
                       <div :class="{'input-error': errors['ovz']}">
                         <h2 class="form-heading child-data_heading" :class="{'label-error': errors['ovz']}">ОВЗ</h2>
                         <select class="dark-box darken" v-model.number="child.ovz">
-                          <option value="0">Нету</option>
+                          <option value="0">Нет</option>
                           <option value="1">Есть</option>
                         </select>
                       </div>
@@ -70,7 +70,7 @@
                       <div :class="{'input-error': errors['disability']}">
                         <h2 class="form-heading child-data_heading" :class="{'label-error': errors['disability']}">Инвалидность</h2>
                         <select class="dark-box darken" v-model.number="child.disability" >
-                          <option value="0">Нету</option>
+                          <option value="0">Нет</option>
                           <option value="1">Есть</option>
                         </select>
                       </div>
@@ -292,6 +292,7 @@
       accept(id) {
           this.errors = clone(this.errors_proto);
           const parent_id = this.parentRequests[id].id;
+          
           User.agreeParentRequest(parent_id, clone(this.child)).then(data => {
               this.show.needData = false;
               this.show.success = true;

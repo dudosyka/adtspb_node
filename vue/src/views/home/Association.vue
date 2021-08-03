@@ -300,6 +300,7 @@ export default {
               });
 
               this.messages.proposalCreated = true;
+              localStorage.removeItem('selectedAssociations');
           })
           .catch(err => {
               this.errors.assoc = err.assoc;
