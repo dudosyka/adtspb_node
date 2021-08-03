@@ -45,7 +45,7 @@ module.exports = new graphql.GraphQLObjectType({
                 const proposals = obj.proposals;
                 if (proposals == undefined)
                     return true;
-                return (proposals.length < (obj.group_count * AppConfig.group_size));
+                return (proposals.filter(el => el.status.num != 0).length < (obj.group_count * AppConfig.group_size));
             }
         },
         groups: {
