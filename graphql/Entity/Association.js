@@ -31,7 +31,11 @@ Association.prototype.getAssociations = async function (age = null, selections =
 
     let proposals = null;
     if (selections.isRecruiment || selections.proposals) {
-        proposals = await model.selectProposalsList('association_id', ids, {});
+        console.log(selections.isRecruiment);
+        if (selections.isRecruiment)
+            proposals = await model.selectProposalsList('association_id', ids, {status: true});
+        else
+            proposals = await model.selectProposalsList('association_id', ids, {});
     }
 
     let associations = [];
