@@ -1,5 +1,6 @@
 const baseEntity = require('./BaseEntity');
 const DataOnEdit = require('./DataOnEdit');
+const AppConfig = require('../config/AppConfig');
 
 let UserExtraData = function () {}
 
@@ -24,7 +25,7 @@ UserExtraData.prototype.fields = {
 };
 
 UserExtraData.prototype.calculateAge = function (birthday = 0) {
-    const now = Date.now();
+    const now = new Date(AppConfig.year, 8, 1, 0, 0);
     const birth = (birthday == 0) ? this.__get('birthday') : birthday;
     const diff = now - birth;
     return Math.floor(diff / 31557600000);
