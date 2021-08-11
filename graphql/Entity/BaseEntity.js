@@ -110,14 +110,16 @@ baseEntity.prototype.load = function (data) {
 baseEntity.prototype.table = "";
 
 baseEntity.prototype.save = async function (useFields = false) {
-    if (this.validate())
+    const validRes = await this.validate();
+    if (validRes === true)
         return await db.insert(this, useFields);
     else
         return false;
 }
 
 baseEntity.prototype.update = async function (useFields = false, where = false) {
-    if (this.validate())
+    const validRes = await this.validate();
+    if (validRes === true)
         return await db.update(this, useFields, where);
     else
         return false;

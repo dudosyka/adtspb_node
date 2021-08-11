@@ -192,7 +192,7 @@ Db.prototype.insert = async function (entity, useEntityFields = false)
     }
 
 
-    let req = "INSERT INTO " + entity.table + " (";
+    let req = "INSERT INTO `" + entity.table + "` (";
     let reqSecondPart = ") VALUES (";
 
     let fields = Object.keys(entity.fields);

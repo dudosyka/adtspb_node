@@ -9,8 +9,18 @@ Association.prototype.table = "association";
 
 Association.prototype.getInstance = () => Association;
 
+Association.prototype.validateRules = async function () {
+    return [
+        this.validator(['name', 'description'], 'Can`t be empty.').notNull(),
+        this.validator(['name'], 'Invalid format').len(1, 200),
+        this.validator(['description'], 'Invalid format').len(1, 10000),
+    ];
+}
+
 Association.prototype.fields = {
     id: null,
+    name: null,
+    description: null,
 };
 
 Association.prototype.getAssociations = async function (age = null, selections = {}, model = null, id = null) {
@@ -100,6 +110,19 @@ Association.prototype.getSelected = async function (parent, child, userModel) {
         throw Error('Forbidden');
 
     return (await this.db.query('SELECT `association_id` FROM `selected_associations` WHERE `child_id` = ?', [ child ])).map(selected => selected.association_id);
+}
+
+Association.prototype.newFromInput = async function (input, extraModel) {
+    this.load(input);
+    const res = await this.save();
+    if (res === false) {
+        throw Error(JSON.stringify(await this.validate()));
+    }
+    console.log(input);
+    input.association_id = res.insertId;
+    extraModel.load(input);
+    await extraModel.save();
+    return input.association_id;
 }
 
 Association.prototype.edit = async function (newValue, logger, extraModel, admin_id) {

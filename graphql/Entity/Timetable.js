@@ -14,6 +14,15 @@ Timetable.prototype.createFromField = "association_id";
 
 Timetable.prototype.table = "timetable";
 
+Timetable.prototype.newFromInput = async function (input) {
+    this.load(input);
+    const res = await this.save();
+    if (res === false) {
+        throw Error(JSON.stringify(await this.validate()));
+    }
+    return res.insertId;
+}
+
 Timetable.prototype.edit = async function (newValue, logger, admin_id) {
     if (!newValue.id)
         throw Error('Must provide `id` field into `input`');

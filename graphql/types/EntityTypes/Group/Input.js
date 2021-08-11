@@ -12,6 +12,9 @@ module.exports = new graphql.GraphQLInputObjectType({
         num: {
             type: graphql.GraphQLInt,
         },
+        closed: {
+            type: graphql.GraphQLInt,
+        },
         association_id: {
             type: graphql.GraphQLInt
         },
