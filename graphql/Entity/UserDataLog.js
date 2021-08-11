@@ -1,5 +1,5 @@
 const baseEntity = require('./BaseEntity');
-const DataOnEdit = require('./DataOnEdit');
+const UserDataOnEdit = require('./UserDataOnEdit');
 
 let UserDataLog = function () {}
 
@@ -23,7 +23,7 @@ UserDataLog.prototype.fields = {
 UserDataLog.prototype.table = "user_data_log";
 
 UserDataLog.prototype.confirmEditRequest = async function (request_id, admin_id) {
-    const request = await DataOnEdit.getRequest(request_id);
+    const request = await UserDataOnEdit.getRequest(request_id);
     this.fields = Object.assign(this.fields, request.fields);
     this.__set('id', null);
     this.__set('edit_timestamp', request.__get('timestamp'));

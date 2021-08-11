@@ -116,9 +116,9 @@ baseEntity.prototype.save = async function (useFields = false) {
         return false;
 }
 
-baseEntity.prototype.update = async function (useFields = false) {
+baseEntity.prototype.update = async function (useFields = false, where = false) {
     if (this.validate())
-        return await db.update(this, useFields);
+        return await db.update(this, useFields, where);
     else
         return false;
 }

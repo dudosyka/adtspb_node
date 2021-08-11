@@ -33,5 +33,5 @@ module.exports = new graphql.GraphQLObjectType({
     }),
 });
 
-const StatOutput = require('./OutputTypes/AssociationStat');
+const StatOutput = require('./OutputTypes/StatOutput');
 const ProposalOutput = require('./OutputTypes/Proposal');

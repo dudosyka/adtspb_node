@@ -13,9 +13,14 @@ Association.prototype.fields = {
     id: null,
 };
 
-Association.prototype.getAssociations = async function (age = null, selections = {}, model = null) {
-    const whereQuery = (age == null) ? "" : "WHERE `join`.`max_age` >= ? AND `join`.min_age <= ?";
-    const data = (age == null) ? [] : [ age, age ];
+Association.prototype.getAssociations = async function (age = null, selections = {}, model = null, id = null) {
+    let whereQuery = (age == null) ? "" : "WHERE `join`.`max_age` >= ? AND `join`.min_age <= ?";
+    let data = (age == null) ? [] : [ age, age ];
+
+    if (id != null) {
+        whereQuery = "WHERE `main`.`id` = ?";
+        data = [ id ];
+    }
 
     fullQuery = "SELECT `main`.*, `join`.* FROM `association` as `main` LEFT JOIN `association_extra_data` as `join` ON `main`.`id` = `join`.`association_id` " + whereQuery;
 
@@ -95,6 +100,26 @@ Association.prototype.getSelected = async function (parent, child, userModel) {
         throw Error('Forbidden');
 
     return (await this.db.query('SELECT `association_id` FROM `selected_associations` WHERE `child_id` = ?', [ child ])).map(selected => selected.association_id);
+}
+
+Association.prototype.edit = async function (newValue, logger, extraModel, admin_id) {
+    if (!newValue.id)
+        throw Error('Must provide `id` field into `input`');
+
+    const id = newValue.id;
+    delete newValue.id;
+
+    const model = this.newModel();
+    const oldData = await model.getAssociations(null, {}, null, Number(id));
+    model.load(oldData[0]);
+
+    return await logger.logModel(model, newValue, admin_id, id).then(res => {
+        model.load(newValue);
+        model.update();
+        extraModel.load(newValue);
+        extraModel.fields.association_id = model.__get('id');
+        extraModel.update(false, "association_id");
+    });
 }
 
 module.exports = (new Association());

@@ -1,12 +1,12 @@
 const baseEntity = require('./BaseEntity');
 
-let DataOnEdit = function () {}
+let UserDataOnEdit = function () {}
 
-DataOnEdit.prototype = Object.assign(DataOnEdit.prototype, baseEntity.prototype);
+UserDataOnEdit.prototype = Object.assign(UserDataOnEdit.prototype, baseEntity.prototype);
 
-DataOnEdit.prototype.getInstance = () => DataOnEdit;
+UserDataOnEdit.prototype.getInstance = () => UserDataOnEdit;
 
-DataOnEdit.prototype.fields = {
+UserDataOnEdit.prototype.fields = {
     id: null,
     edited_table: null,
     field: null,
@@ -16,9 +16,9 @@ DataOnEdit.prototype.fields = {
     target_id: null,
 };
 
-DataOnEdit.prototype.table = "data_onedit";
+UserDataOnEdit.prototype.table = "user_data_onedit";
 
-DataOnEdit.prototype.setOnEdit = async function (requester_id, target, data, table) {
+UserDataOnEdit.prototype.setOnEdit = async function (requester_id, target, data, table) {
     let query = "";
     let onEdit = [];
     Object.keys(data).map(key => {
@@ -38,7 +38,7 @@ DataOnEdit.prototype.setOnEdit = async function (requester_id, target, data, tab
     });
 }
 
-DataOnEdit.prototype.setUserOnEdit = async function (requester_id, target, data, table, target_id = null, autoConfirm = false) {
+UserDataOnEdit.prototype.setUserOnEdit = async function (requester_id, target, data, table, target_id = null, autoConfirm = false) {
     let query = "";
     let onEdit = [];
     let inObj = [];
@@ -69,7 +69,7 @@ DataOnEdit.prototype.setUserOnEdit = async function (requester_id, target, data,
         : inObj;
 }
 
-DataOnEdit.prototype.getRequest = async function (request_id) {
+UserDataOnEdit.prototype.getRequest = async function (request_id) {
     const model = this.newModel();
     const request = await this.db.select(this, '`id` = ?', [ request_id ]);
     if (request.length < 1)
@@ -80,9 +80,9 @@ DataOnEdit.prototype.getRequest = async function (request_id) {
     return model;
 }
 
-DataOnEdit.prototype.getUserDataOnEdit = async function (requester_id, target_id = null) {
+UserDataOnEdit.prototype.getUserUserDataOnEdit = async function (requester_id, target_id = null) {
     target_id = target_id ?? requester_id;
     return await this.db.select(this, "`requester_id` = ? AND `target_id` = ?", [ requester_id, target_id ]);
 }
 
-module.exports = (new DataOnEdit());
+module.exports = (new UserDataOnEdit());

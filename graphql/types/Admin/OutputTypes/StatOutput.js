@@ -1,22 +1,21 @@
 const graphql = require('graphql');
 
 module.exports = new graphql.GraphQLObjectType({
-    name: "AdminAssociationStatOutput",
+    name: "AdminStatOutput",
     fields: () => ({
-        id: {
+        parent_amount: {
             type: graphql.GraphQLInt
         },
-        name: {
-            type: graphql.GraphQLString
-        },
-        planned: {
+        child_amount: {
             type: graphql.GraphQLInt
         },
-        actual: {
+        proposal_amount: {
             type: graphql.GraphQLInt
         },
-        fullness_percent: {
-            type: graphql.GraphQLInt
+        associations: {
+            type: graphql.GraphQLList(AssociationStatOutput)
         }
     }),
 });
+
+const AssociationStatOutput = require('./Association');
