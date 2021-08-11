@@ -228,9 +228,10 @@ Proposal.prototype.checkStudyLoad = async function () {
     return hours;
 }
 
-Proposal.prototype.canJoinAssociation = async function (userModel, userExtraDataModel) {
+Proposal.prototype.canJoinAssociation = async function (userModel, userExtraDataModel, fromAdmin = false) {
         if (this.__get('parent') == null || this.__get('child') == null || this.__get('association') == null)
-            throw Error('Bad request');
+            if (!fromAdmin)
+                throw Error('Bad request');
 
         let data = {
             id: this.__get('parent')
@@ -240,7 +241,7 @@ Proposal.prototype.canJoinAssociation = async function (userModel, userExtraData
         const children = await parent.getChildrenIds();
 
         //Check can parent create proposals
-        if (!parent.hasAccess(13)) {
+        if (!parent.hasAccess(13) && !fromAdmin) {
             throw Error('Forbidden');
         }
 
@@ -279,8 +280,8 @@ Proposal.prototype.canJoinAssociation = async function (userModel, userExtraData
         return true;
 }
 
-Proposal.prototype.createNew = async function (userModel, userExtraDataModel) {
-    await this.canJoinAssociation(userModel, userExtraDataModel);
+Proposal.prototype.createNew = async function (userModel, userExtraDataModel, fromAdmin = false) {
+    await this.canJoinAssociation(userModel, userExtraDataModel, fromAdmin);
 
     const proposal = await this.save(true);
 
