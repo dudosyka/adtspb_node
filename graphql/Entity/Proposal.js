@@ -57,53 +57,80 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections)
         sub2Query += "LEFT JOIN `proposal_status` AS `sub2` ON `sub2`.`proposal_id` = `main`.`id` ";
     }
 
+    let sub3Query = "";
+    if (selections.child) {
+        sub3Query += "LEFT JOIN `user` AS `sub3` ON `sub3`.`id` = `main`.`child_id` OR `sub3`.`id` = `main`.`parent_id`";
+    }
+
     sub1Selections = sub1Query == "" ? "" : ' "" as `sub1_decorator`, `sub1`.*, `sub1_1`.*,';
     sub2Selections = sub2Query == "" ? "" : ' "" as `sub2_decorator`, `sub2`.*,';
+    sub3Selections = sub3Query == "" ? "" : ' "" as `sub3_decorator`, `sub3`.*,';
     mainSelections = ' "" as `main_decorator`, `main`.*';
-    fullSelections = sub1Selections + sub2Selections + mainSelections;
+    fullSelections = sub1Selections + sub2Selections + sub3Selections + mainSelections;
 
-    let fullQuery = "SELECT " + fullSelections + " FROM " + this.table + " AS `main` " + sub1Query + sub2Query + "WHERE `main`." + query;
+    let fullQuery = "SELECT " + fullSelections + " FROM " + this.table + " AS `main` " + sub1Query + sub2Query + sub3Query + "WHERE `main`." + query;
     const res = await this.db.query(fullQuery, ids);
 
     if (res.length <= 0)
         return [];
 
+    let copies = {};
     proposals = {};
-    res.map(proposal => {
+
+    for (let i = 1; i < res.length; i+=2) {
+        let withChildData = res[i];
+        let withParentData = res[i - 1];
         let parsed = {};
 
         let pushIntoSub1 = false;
         let pushIntoSub2 = false;
+        let pushIntoSub3 = false;
+        let pushIntoSub4 = false;
 
         let association = {};
+        let child = {};
+        let parent = {};
         let status = {};
         let main = {};
 
-        Object.keys(proposal).map(selectedField => {
-            const value = proposal[selectedField];
+        Object.keys(withChildData).map(selectedField => {
+            const childValue = withChildData[selectedField];
+            const parentValue = withParentData[selectedField];
             if (selectedField == 'sub1_decorator') {
                 pushIntoSub1 = true;
                 pushIntoSub2 = false;
+                pushIntoSub3 = false;
             }
             if (selectedField == 'sub2_decorator') {
                 pushIntoSub1 = false;
                 pushIntoSub2 = true;
+                pushIntoSub3 = false;
+            }
+            if (selectedField == 'sub3_decorator') {
+                pushIntoSub1 = false;
+                pushIntoSub2 = false;
+                pushIntoSub3 = true;
             }
             if (selectedField == 'main_decorator') {
                 pushIntoSub1 = false;
                 pushIntoSub2 = false;
+                pushIntoSub3 = false;
             }
             if (pushIntoSub1) {
-                association[selectedField] = value;
+                association[selectedField] = childValue;
             }
             if (pushIntoSub2) {
-                status[selectedField] = value;
+                status[selectedField] = childValue;
             }
-            if (!pushIntoSub1 && !pushIntoSub2) {
-                main[selectedField] = value;
+            if (pushIntoSub3) {
+                child[selectedField] = childValue;
+                parent[selectedField] = parentValue;
+            }
+            if (!pushIntoSub1 && !pushIntoSub2 && !pushIntoSub3) {
+                main[selectedField] = childValue;
             }
             if (selectedField == field) {
-                main[selectedField] = value;
+                main[selectedField] = childValue;
             }
         });
 
@@ -117,26 +144,43 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections)
             main.id = status.proposal_id;
             delete status.proposal_id;
         }
+        delete status.sub2_decorator;
 
         delete association.sub1_decorator;
         association.id = association.association_id;
         delete association.association_id;
 
-        delete status.sub2_decorator;
+        delete child.sub3_decorator;
+        if (selections.child) {
+            child.id = Number(main.child_id);
+        }
+
+        delete parent.sub3_decorator;
+        if (selections.parent) {
+            parent.id = Number(main.parent_id);
+        }
 
         parsed = {
             ...main,
             association,
-            status
-        };
+            child,
+            parent,
+            status: [status],
+        }
 
-        if (proposals[ proposal[ field ] ]) {
-            proposals[ proposal[ field ] ].push(parsed);
+        if (copies[main.id]) {
+            proposals[ withChildData[ field ] ][ copies[main.id] ].status.push(parsed.status[0]);
         }
         else {
-            proposals[ proposal[ field ] ] = [ parsed ];
+            if (proposals[ withChildData[ field ] ]) {
+                proposals[ withChildData[ field ] ].push(parsed);
+            }
+            else {
+                proposals[ withChildData[ field ] ] = [ parsed ];
+            }
+            copies[main.id] = proposals[ withChildData[ field ] ].length - 1;
         }
-    });
+    }
     return proposals;
 }
 
