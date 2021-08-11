@@ -151,7 +151,7 @@ Db.prototype.update = async function (entity, useEntityFields = false, where = f
         whereQuery = " WHERE `id` = ?";
 
     //Build full request like UPDATE `XXX` SET id = XX, {...} WHERE `id` = XX
-    const query = "UPDATE " + entity.table + " " + set + whereQuery;
+    const query = "UPDATE `" + entity.table + "` as `main` " + set + whereQuery;
 
     //Get entity`s fields value and put it in the array
     const bindings = values.concat([ entity.fields[where === false ? 'id' : where] ]);

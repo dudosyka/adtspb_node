@@ -14,4 +14,21 @@ Timetable.prototype.createFromField = "association_id";
 
 Timetable.prototype.table = "timetable";
 
+Timetable.prototype.edit = async function (newValue, logger, admin_id) {
+    if (!newValue.id)
+        throw Error('Must provide `id` field into `input`');
+
+    const id = newValue.id;
+    delete newValue.id;
+
+    const model = this.newModel();
+    const oldValue = await this.db.query("SELECT * FROM `timetable` as `main` WHERE `main`.`id` = ?", [ Number(id) ]);
+    model.load(oldValue[0]);
+
+    return await logger.logModel(model, newValue, admin_id, id).then(res => {
+        model.load(newValue);
+        model.update();
+    });
+}
+
 module.exports = (new Timetable());

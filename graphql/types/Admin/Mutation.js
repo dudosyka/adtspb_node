@@ -1,8 +1,7 @@
 const graphql = require('graphql');
 
 const EditDataLogger = require('../../Entity/EditDataLogger');
-const Association = require('../../Entity/Association');
-const AssociationExtraData = require('../../Entity/AssociationExraData');
+const Group = require('../../Entity/Group');
 
 module.exports = new graphql.GraphQLObjectType({
     name: "AdminMutation",
@@ -22,8 +21,24 @@ module.exports = new graphql.GraphQLObjectType({
                 await association.edit(input, logger, extraData, admin_id);
                 return true;
             }
-        }
+        },
+        edit_group: {
+            type: graphql.GraphQLBoolean,
+            args: {
+                input: {
+                    type: GroupInput,
+                }
+            },
+            async resolve(obj, { input }) {
+                const admin_id = obj.viewer.id;
+                const logger = EditDataLogger.newModel();
+                const group = Group.newModel();
+                await group.edit(input, logger, admin_id);
+                return true;
+            }
+        },
     }),
 });
 
 const AssociationInput = require('../EntityTypes/Association/Input');
+const GroupInput = require('../EntityTypes/Group/Input');
