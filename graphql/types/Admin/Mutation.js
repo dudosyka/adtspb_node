@@ -102,7 +102,7 @@ module.exports = new graphql.GraphQLObjectType({
                 let model = await Proposal.createFromInput(proposal);
                 return await model.createNew(user, userExtraData, true);
             }
-        }
+        },
     }),
 });
 
