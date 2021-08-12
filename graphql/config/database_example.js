@@ -2,6 +2,6 @@
 module.exports = {
     host: "localhost",
     database: "adtspb_node",
-    user: "dudosyka",
+    user: "user",
     password: "123",
 }
