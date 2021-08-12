@@ -1,4 +1,5 @@
 const baseEntity = require('./BaseEntity');
+const Timetable = require('./Timetable');
 
 let Group = function () {}
 
@@ -74,6 +75,49 @@ Group.prototype.getAssociationGroups = async function (association_ids, selectio
     });
 
     return groups;
+}
+
+Group.prototype.newFromInput = async function (input) {
+    this.load(input);
+    const res = await this.save();
+    if (res === false) {
+        throw Error(JSON.stringify(await this.validate()));
+    }
+
+    if (input.timetable) {
+        const timetable = Timetable.newModel();
+        input.timetable.group_id = res.insertId;
+        input.timetable.association_id = input.association_id;
+        await timetable.newFromInput(input.timetable)
+    }
+
+    return res.insertId;
+}
+
+Group.prototype.edit = async function (newValue, logger, admin_id) {
+    if (!newValue.id)
+        throw Error('Must provide `id` field into `input`');
+
+    const id = newValue.id;
+    delete newValue.id;
+
+    if (newValue.timetable) {
+        const timetableData = newValue.timetable;
+        const timetable = Timetable.newModel();
+        await timetable.edit(timetableData, logger, admin_id).catch(err => {
+            throw err;
+        });
+        delete newValue.timetable;
+    }
+
+    const model = this.newModel();
+    const oldValue = await this.db.query("SELECT * FROM `group` as `main` WHERE `main`.`id` = ?", [ Number(id) ]);
+    model.load(oldValue[0]);
+
+    return await logger.logModel(model, newValue, admin_id, id).then(res => {
+        model.load(newValue);
+        model.update();
+    });
 }
 
 module.exports = (new Group());

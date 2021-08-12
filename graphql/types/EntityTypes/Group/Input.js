@@ -1,7 +1,7 @@
 const graphql = require("graphql");
 
-module.exports = new graphql.GraphQLObjectType({
-    name: "GroupOutput",
+module.exports = new graphql.GraphQLInputObjectType({
+    name: "GroupInput",
     fields: () => ({
         id: {
             type: graphql.GraphQLID,
@@ -19,9 +19,9 @@ module.exports = new graphql.GraphQLObjectType({
             type: graphql.GraphQLInt
         },
         timetable: {
-            type: TimetableOutput,
+            type: TimetableInput,
         },
     })
 });
 
-const TimetableOutput = require("../Timetable/Output");
+const TimetableInput = require("../Timetable/Input");

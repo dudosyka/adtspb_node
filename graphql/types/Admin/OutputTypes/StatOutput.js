@@ -18,4 +18,4 @@ module.exports = new graphql.GraphQLObjectType({
     }),
 });
 
-const AssociationStatOutput = require('./AssociationStatOutput');
+const AssociationStatOutput = require('./Association');
