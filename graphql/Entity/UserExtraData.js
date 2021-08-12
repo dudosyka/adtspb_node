@@ -1,5 +1,5 @@
 const baseEntity = require('./BaseEntity');
-const DataOnEdit = require('./DataOnEdit');
+const UserDataOnEdit = require('./UserDataOnEdit');
 const AppConfig = require('../config/AppConfig');
 
 let UserExtraData = function () {}
