@@ -39,4 +39,43 @@ AccessControl.prototype.getRights = async function (user_id) {
     return output;
 }
 
+AccessControl.prototype.assign = async function (role, rules) {
+    for (rule in rules) {
+        await rbac.assign(role, rules[rule], true, false);
+    }
+    await rbac.minimize();
+}
+
+AccessControl.prototype.deleteAssign = async function (role, rules) {
+    for (rule in rules) {
+        await rbac.removeAssign(role, rules[rule], true, false);
+    }
+    await rbac.minimize();
+}
+
+AccessControl.prototype.deleteRolesAssign = async function (parent, child) {
+    await rbac.removeAssign(parent, child, false);
+}
+
+AccessControl.prototype.assignRoles = async function (parent, child) {
+    await rbac.assign(parent, child, false);
+}
+
+AccessControl.prototype.createRole = async function (input) {
+    const name = input.name;
+    const description = input.description;
+
+    let rules = [];
+    if (input.rules)
+        rules = input.rules.map(el => el.id);
+
+    const role_id = await rbac.addItem(name, description, true, false);
+    await this.assign(role_id, rules, true, false);
+    await rbac.minimize();
+}
+
+AccessControl.prototype.deleteRole = async function (role) {
+    rbac.removeItem(role, true);
+}
+
 module.exports = AccessControl;

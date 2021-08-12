@@ -103,8 +103,14 @@ module.exports = new graphql.GraphQLObjectType({
                 return await model.createNew(user, userExtraData, true);
             }
         },
+        rbac: {
+            type: AccessControlMutation,
+            resolve: obj => obj
+        }
     }),
 });
+
+const AccessControlMutation = require('../AccessControl/Mutation'); 
 
 const AssociationInput = require('../EntityTypes/Association/Input');
 const AssociationOutput = require('../EntityTypes/Association/Input');
