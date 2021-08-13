@@ -75,12 +75,15 @@ textarea {
 	color: #191919;
 	outline: none;
 }
-input.error {
-	background-color: #DAA2A2;
-	color: #C60000;
-}
 textarea {
 	display: block;
+	font-family: sans-serif;
+	font-size: 16px;
+}
+input.error,
+textarea.error {
+	background-color: #DAA2A2;
+	color: #C60000;
 }
 
 button {
@@ -88,6 +91,7 @@ button {
 	border: none;
 	border-radius: 10px;
 	padding: 10px;
+	font-size: 16px;
 }
 button:hover {
 	cursor: pointer;
@@ -101,6 +105,15 @@ button:hover {
 .button-accent:hover,
 .button-accent:active {
 	background-color: #005A87;
+}
+.button-gray {
+	background-color: #282828;
+	color:  #C4C4C4;
+	transition: background-color 0.3s;
+}
+.button-gray:hover,
+.button-gray:active {
+	background-color: #4F4F4F;
 }
 
 .button-close {

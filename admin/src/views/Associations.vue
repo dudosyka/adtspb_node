@@ -4,7 +4,7 @@
 		<ul class="assoc-list">
 			<li v-for="i of associations" class="assoc-item bg-card">
 				<h2 class="assoc-title">{{ i.name }}</h2>
-				<button @click="openAssociation(i)" class="ft-dark">открыть</button>
+				<button @click="openAssociation(i)" class="ft-dark button-gray">открыть</button>
 			</li>
 		</ul>
 		<div v-if="show.association" class="card-wrapper">
@@ -18,8 +18,9 @@
 						v-model="association.description" 
 						cols="50" rows="5"
 						placeholder="Описание объединения" 
+						:readonly="true"
 					></textarea>
-					<button class="ft-dark">Редактировать описание</button>
+					<button class="ft-dark button-gray">Редактировать описание</button>
 				</section>
 
 				<section class="container">
@@ -182,7 +183,6 @@ export default {
     },
     methods: {
     	openAssociation(i) { //i - information
-    		console.log(i)
     		this.show.association = true
     		this.association = i
     	}
