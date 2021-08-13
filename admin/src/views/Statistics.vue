@@ -56,6 +56,7 @@ main {
     border-collapse: collapse;
 }
 .table_header {
+    table-layout: fixed;
     padding: 5px;
     font-weight: bold;
     width: 100%;
@@ -74,7 +75,7 @@ import Header from '../components/Header'
 import {Admin} from '../models/Admin'
 
 export default {
-    name: 'home',
+    name: 'statistics',
     components: {
         Header
     },

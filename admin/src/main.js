@@ -5,7 +5,7 @@ import { request, GraphQLClient } from "graphql-request";
 import * as AppConfig from './config/AppConfig';
 import {AccessControl} from './utils/AccessControl';
 
-
+/*
 const graphql = new GraphQLClient(AppConfig.api_url, {
     headers: {
         Authorization: "Bearer " + localStorage.getItem('token'),
@@ -68,21 +68,25 @@ let redirectTo = (name) => {
 router.afterEach(async (to, from) => {
     let isLogin = true;
     isLogin = (token !== null);
+
     console.log(isLogin)
+
     if (isLogin) {
         isLogin = await validToken();
         console.log(isLogin);
     }
-    console.log(to.path);
-    if ((to.path == '/login' || to.path == '/signup') && isLogin)
-      redirectTo('Home');
 
-    if (!isLogin && to.path != "/signup" && to.path != "/passreset")
+    console.log(to.path);
+
+    if (to.path == '/login' && isLogin) redirectTo('Statistics');
+
+    if (!isLogin && to.path != "/login")
       redirectTo('Login');
 });
+*/
 
-(async function () {
-    await AccessControl.refreshAccess();
+//(async function () {
+//    await AccessControl.refreshAccess();
     new Vue({
       router,
       render: h => h(App),
@@ -92,4 +96,4 @@ router.afterEach(async (to, from) => {
 
       }
     }).$mount('#app');
-})();
+//})();
