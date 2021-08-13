@@ -17,6 +17,11 @@ const routes = [
     path: '/associations',
     name: 'Association',
     component: () => import('../views/Associations.vue')
+  },
+  {
+    path: '/callback',
+    name: 'Callback',
+    component: () => import('../views/Callback.vue')
   }
 ]
 

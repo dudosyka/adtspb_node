@@ -19,12 +19,15 @@
 </template>
 
 <style scoped>
+main {
+	min-height: 100vh;
+}
 .assoc-list {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	flex-basis: 100px;
 	justify-content: space-between;
+	align-items: flex-end;
 	padding: 30px;
 	margin: 0;
 	list-style: none;
@@ -35,6 +38,7 @@
 	grid-template-columns: auto auto;
 	grid-gap: 20px;
 	align-items: center;
+	height: min-content;
 	width: min-content;
 	padding: 20px;
 	margin: 20px;

@@ -4,6 +4,7 @@
 		<nav class="links-container">
 			<router-link to="/statistics">Статистика</router-link>
 			<router-link to="/associations">Объединения</router-link>
+			<router-link to="/callback">Запросы</router-link>
 		</nav>
 	</header>
 </template>
@@ -17,7 +18,7 @@
 	}
 	.links-container {
 		display: grid;
-		grid-template-columns: auto auto 1fr;
+		grid-template-columns: repeat(3, auto) 1fr;
 		justify-items: center;
 		align-items: center;
 		grid-gap: 20px;
