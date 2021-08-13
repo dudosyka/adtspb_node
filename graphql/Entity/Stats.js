@@ -4,15 +4,15 @@ const db = new Db();
 
 const Proposal = require('../Entity/Proposal');
 
-let Admin = function () {
+let Stats = function () {
 
 }
 
-Admin.prototype.getParentAmount = async function () {
+Stats.prototype.getParentAmount = async function () {
     return (await db.query('SELECT COUNT(DISTINCT `parent_id`) as `amount` FROM `user_child` WHERE 1'))[0].amount;
 }
 
-Admin.prototype.getChildrenAmount = async function () {
+Stats.prototype.getChildrenAmount = async function () {
     return (await db.query('SELECT COUNT(DISTINCT `child_id`) as `amount` FROM `user_child` WHERE 1'))[0].amount;
 }
 
@@ -23,7 +23,7 @@ function getFullness(actual, planned) {
         return Math.floor((actual / planned) * 100);
 }
 
-Admin.prototype.getAssociationsStat = async function () {
+Stats.prototype.getAssociationsStat = async function () {
     const data = await db.query("" +
         "SELECT `main`.`id`, `main`.`name`, `sub1`.`group_count` as `planned`, `sub3`.`num` as `status` FROM `association` as `main`" +
         "LEFT JOIN `association_extra_data` as `sub1` ON `main`.`id` = `sub1`.`association_id`" +
@@ -60,7 +60,7 @@ Admin.prototype.getAssociationsStat = async function () {
     return res;
 }
 
-Admin.prototype.getStat = async function () {
+Stats.prototype.getStat = async function () {
     const parent_amount = await this.getParentAmount();
     const child_amount = await this.getChildrenAmount();
 
@@ -77,4 +77,4 @@ Admin.prototype.getStat = async function () {
     }
 }
 
-module.exports = Admin;
+module.exports = Stats;

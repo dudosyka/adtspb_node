@@ -13,6 +13,9 @@ module.exports = new graphql.GraphQLInputObjectType({
         description: {
             type: graphql.GraphQLString,
         },
+        closed: {
+            type: graphql.GraphQLInt,
+        },
         min_age: {
             type: graphql.GraphQLInt,
         },

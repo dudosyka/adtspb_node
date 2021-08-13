@@ -83,21 +83,25 @@ Validator.prototype.match = function (regex) {
     return this;
 }
 
-Validator.prototype.len = function (max = null, min = null) {
+Validator.prototype.len = function (min = null, max = null) {
     if (max === null && min === null)
         return this;
 
-    if (max === null && min !== null)
-    {
+    if (max === null) {
         this.fields.map(el => {
             if (el.val.length < min)
                 this.reject(el.name);
         });
     }
-    else
-    {
+    else if (min === null) {
         this.fields.map(el => {
             if (el.val.length > max)
+                this.reject(el.name);
+        });
+    }
+    else {
+        this.fields.map(el => {
+            if (el.val.length > max || el.val.length < min)
                 this.reject(el.name);
         });
     }

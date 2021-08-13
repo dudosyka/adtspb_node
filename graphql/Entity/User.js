@@ -10,7 +10,7 @@ const jwt = new Jwt();
 const UserChild = require('../Entity/UserChild');
 const UserChildOnDelete = require('../Entity/UserChildOnDelete');
 const UserExtraData = require('../Entity/UserExtraData');
-const DataOnEdit = require('../Entity/DataOnEdit');
+const UserDataOnEdit = require('../Entity/UserDataOnEdit');
 const UserDataLog = require('../Entity/UserDataLog');
 
 const AssociationExtraData = require('./AssociationExraData');
@@ -438,7 +438,7 @@ User.prototype.setMainDataOnEdit = async function (data, target_id) {
         target = this;
     }
 
-    return DataOnEdit.setUserOnEdit(this.__get('id'), target, data, 'user');
+    return UserDataOnEdit.setUserOnEdit(this.__get('id'), target, data, 'user');
 }
 
 User.prototype.setExtraDataOnEdit = async function (data, target_id, autoConfirm = false, child = true) {
@@ -459,7 +459,7 @@ User.prototype.setExtraDataOnEdit = async function (data, target_id, autoConfirm
 
     target = await UserExtraData.createFrom({ user_id: target === false ? this.__get('id') : target});
 
-    return await DataOnEdit.setUserOnEdit(this.__get('id'), target, data, 'user_extra_data', target.__get('user_id'), autoConfirm);
+    return await UserDataOnEdit.setUserOnEdit(this.__get('id'), target, data, 'user_extra_data', target.__get('user_id'), autoConfirm);
 }
 
 User.prototype.confirEditData = async function (request_id) {
