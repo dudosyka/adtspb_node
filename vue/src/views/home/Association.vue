@@ -10,7 +10,7 @@
         <article class="association-cards">
             <h2 v-if='false'><!-- Елси его убрать всё сломается !--></h2>
             <template v-else>
-                <article  class="association-card card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id" v-if='!card.already'>
+                <article  class="association-card card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id" v-if='(!card.already && card.closed != 1)'>
                     <h2 class="association-card_heading">{{ card.name }}</h2>
                     <p class="association-card_old gray-text">от {{ card.min_age + ' до ' + card.max_age}} лет</p>
                     <p class="gray-text">{{ card.description }}</p>
@@ -35,11 +35,12 @@
                             <button class="bread-crumb"
                                     :class="{'bread-crumb--active': group.timetable.show}"
                                     v-for="(group, groupId) of card.groups"
+                                    v-if='group.closed != 1'
                                     @click="openTimetable(id, groupId)"
                             >{{ group.name }}</button>
                         </div>
                         <section class="schedule-wrapper">
-                            <table class="schedule" v-for="(group, id) in card.groups" v-show="group.timetable.show">
+                            <table class="schedule" v-for="(group, id) in card.groups" v-show="group.timetable.show" v-if='group.closed != 1'>
                                 <tr v-for="day of group.timetable.week">
                                     <td>{{ day.name }}</td><td>{{ day.time }}</td>
                                 </tr>

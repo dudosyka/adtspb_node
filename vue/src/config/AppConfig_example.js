@@ -1,6 +1,6 @@
 module.exports = {
-    api_url: "localhost:8080/api",
-    endoor_url: "localhost:8080/endoor",
+    api_url: "http://localhost:8080/api",
+    endoor_url: "http://localhost:8080/endoor",
     //<ROLES>
     parent_role_id: 8,
     common_user_id: 9,
