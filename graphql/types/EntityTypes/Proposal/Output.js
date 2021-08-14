@@ -38,6 +38,9 @@ module.exports = new graphql.GraphQLObjectType({
                 return (obj.status.constructor === Array) ? obj.status : [ obj.status ];
             },
         },
+        isReserve: {
+            type: graphql.GraphQLBoolean,
+        },
         isDocumentTaken: {
             type: graphql.GraphQLBoolean,
             resolve(obj, data) {

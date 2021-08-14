@@ -181,6 +181,27 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections)
             copies[main.id] = proposals[ withChildData[ field ] ].length - 1;
         }
     }
+
+    if (selections.isReserve) {
+        for (id of Object.keys(proposals)) {
+            const child = proposals[id];
+            for (proposal of child) {
+                const data = await this.db.query("SELECT `id` FROM `proposal` WHERE `association_id` = ?", [ proposal.association.id ]);
+                let i = 1;
+                data.map(el => {
+                    const id = el.id;
+                    if (id < proposal.id) {
+                        i++;
+                    }
+                });
+                if (i > AppConfig.group_size)
+                    proposal.isReserve = true;
+                else
+                    proposal.isReserve = false;
+            }
+        }
+    }
+
     return proposals;
 }
 
