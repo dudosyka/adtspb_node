@@ -17,6 +17,7 @@
 					<textarea 
 						v-model="association.description" 
 						cols="50" rows="5"
+						maxlength="10000" 
 						placeholder="Описание объединения" 
 						:readonly="true"
 					></textarea>
