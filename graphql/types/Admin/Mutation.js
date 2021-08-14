@@ -49,7 +49,7 @@ module.exports = new graphql.GraphQLObjectType({
             },
             async resolve(obj, { input }) {
                 const admin_id = obj.viewer.id;
-                await group.edit(input, logger, admin_id);
+                await group.edit(input, logger, admin_id, extraData);
                 return true;
             }
         },
@@ -110,7 +110,7 @@ module.exports = new graphql.GraphQLObjectType({
     }),
 });
 
-const AccessControlMutation = require('../AccessControl/Mutation'); 
+const AccessControlMutation = require('../AccessControl/Mutation');
 
 const AssociationInput = require('../EntityTypes/Association/Input');
 const AssociationOutput = require('../EntityTypes/Association/Input');
