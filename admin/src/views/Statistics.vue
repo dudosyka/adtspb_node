@@ -14,7 +14,7 @@
 
         <article class="bg-card table-wrapper">
             <div class="row-right">
-                <b-button>Скачать Exel</b-button>   
+                <b-button>Скачать Excel</b-button>   
             </div> 
             <b-table striped hover :items="stat.associations"></b-table>
         </article>
