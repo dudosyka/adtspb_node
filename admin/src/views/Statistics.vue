@@ -11,21 +11,12 @@
             <h2 class="ft-gray">Всего подано заявлений:</h2>
             <h2 class="ft-white">{{ stat.proposal_amount }}</h2>
         </header>
-        <article class="card bg-card table-wrapper">
-            <table class="table">
-                <tr class="table_header">
-                    <td>Название объединения</td>
-                    <td>Планируемое количество</td>
-                    <td>Фактическое количество</td>
-                    <td>% наполненности</td>
-                </tr>
-                <tr v-for="association in stat.associations">
-                    <td>{{ association.name }}</td>
-                    <td>{{ association.planned }}</td>
-                    <td>{{ association.actual }}</td>
-                    <td>{{ association.fullness_percent }}%</td>
-                </tr>
-            </table>
+
+        <article class="bg-card table-wrapper">
+            <div class="row-right">
+                <b-button>Скачать Exel</b-button>   
+            </div> 
+            <b-table striped hover :items="stat.associations"></b-table>
         </article>
     </main>
 </template>
@@ -49,6 +40,7 @@ main {
 .table-wrapper {
     overflow-x: auto;
     min-height: 64vh;
+    padding:  30px;
 }
 .table {
     width: 100%;
@@ -81,15 +73,23 @@ export default {
     },
     data() {
         return {
-            stat: {
-
-            }
+            stat: []
         }
     },
     async created() {
         this.stat = Admin.getStat().then(data => {
+            data.associations    = data.associations.map( el => {
+                return { 
+                    '№': el.id,
+                    'Название объединения': el.name,
+                    'Планируемое количество': el.planned,
+                    'Фактическое количество': el.actual,
+                    '% наполненности': el.fullness_percent,
+                }
+            })
+            console.log()
             this.stat = data
-            console.log(data)
+            console.log(`get Stat `, data)
         })
     }
 }

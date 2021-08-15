@@ -84,8 +84,6 @@ router.afterEach(async (to, from) => {
         console.log(isLogin);
     }
 
-    console.log(to.path);
-
     if (to.path == '/' && isLogin) router.push('statistics');
 
     if (!isLogin) router.push('/');

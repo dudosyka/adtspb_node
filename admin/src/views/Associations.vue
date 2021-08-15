@@ -110,6 +110,10 @@ main {
 .container h3 {
 	margin-bottom: 5px;
 }
+.card {
+	padding: 40p;
+	background: #191919;
+}
  
 </style>
 
