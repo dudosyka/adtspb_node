@@ -4,14 +4,14 @@ Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '/',
+    name: 'Login',
+    component: () => import('../views/Login.vue')
+  },
+  {
     path: '/statistics',
     name: 'Statistics',
     component: () => import('../views/Statistics.vue')
-  },
-  {
-    path: '/login',
-    name: 'Login',
-    component: () => import('../views/Login.vue')
   },
   {
     path: '/associations',
