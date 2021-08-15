@@ -45,6 +45,7 @@ Proposal.prototype.createFromInput = async function (proposal) {
 
 Proposal.prototype.selectProposalsList = async function (field, arr, selections) {
     const { ids, query } = this.db.createRangeQuery(false, arr, field);
+    console.log(query);
 
     //Check if we have sub-selections and add them to query if exists
     let sub1Query = "";
