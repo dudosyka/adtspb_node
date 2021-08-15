@@ -10,13 +10,19 @@
 
             <h2 class="ft-gray">Всего подано заявлений:</h2>
             <h2 class="ft-white">{{ stat.proposal_amount }}</h2>
+
+            <h2 class="ft-gray">Основного набора:</h2>
+            <h2 class="ft-white">{{  }} нет данных</h2>
+
+            <h2 class="ft-gray">Резерва:</h2>
+            <h2 class="ft-white">{{  }} нет данных</h2>
         </header>
 
         <article class="bg-card table-wrapper">
             <div class="row-right">
                 <b-button>Скачать Excel</b-button>   
             </div> 
-            <b-table striped hover :items="stat.associations"></b-table>
+            <b-table striped hover :items="stat.associations" :fields="stat.fields"></b-table>
         </article>
     </main>
 </template>
@@ -78,15 +84,13 @@ export default {
     },
     async created() {
         this.stat = Admin.getStat().then(data => {
-            data.associations    = data.associations.map( el => {
-                return { 
-                    '№': el.id,
-                    'Название объединения': el.name,
-                    'Планируемое количество': el.planned,
-                    'Фактическое количество': el.actual,
-                    '% наполненности': el.fullness_percent,
-                }
-            })
+            data.fields = [
+                { key: 'id', label: '№', },
+                { key: 'name', label: 'Название объединения', },
+                { key: 'planned', label: 'Планируемое количество', },
+                { key: 'actual', label: 'Фактическое количество', },
+                { key: 'fullness_percent', label: '% наполненности', },
+            ]
             console.log()
             this.stat = data
             console.log(`get Stat `, data)
