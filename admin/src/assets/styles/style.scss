@@ -1,0 +1,6 @@
+$body-bg: #282828;
+$body-color: #c4c4c4;;
+
+// Then import Bootstrap an BootstrapVue SCSS files (order is important)
+@import 'node_modules/bootstrap/scss/bootstrap.scss';
+@import 'node_modules/bootstrap-vue/src/index.scss';

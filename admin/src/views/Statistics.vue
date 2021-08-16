@@ -10,22 +10,19 @@
 
             <h2 class="ft-gray">Всего подано заявлений:</h2>
             <h2 class="ft-white">{{ stat.proposal_amount }}</h2>
+
+            <h2 class="ft-gray">Основного набора:</h2>
+            <h2 class="ft-white">{{  }} нет данных</h2>
+
+            <h2 class="ft-gray">Резерва:</h2>
+            <h2 class="ft-white">{{  }} нет данных</h2>
         </header>
-        <article class="card bg-card table-wrapper">
-            <table class="table">
-                <tr class="table_header">
-                    <td>Название объединения</td>
-                    <td>Планируемое количество</td>
-                    <td>Фактическое количество</td>
-                    <td>% наполненности</td>
-                </tr>
-                <tr v-for="association in stat.associations">
-                    <td>{{ association.name }}</td>
-                    <td>{{ association.planned }}</td>
-                    <td>{{ association.actual }}</td>
-                    <td>{{ association.fullness_percent }}%</td>
-                </tr>
-            </table>
+
+        <article class="bg-card table-wrapper">
+            <div class="row-right">
+                <b-button>Скачать Excel</b-button>   
+            </div> 
+            <b-table striped hover :items="stat.associations" :fields="stat.fields"></b-table>
         </article>
     </main>
 </template>
@@ -49,6 +46,7 @@ main {
 .table-wrapper {
     overflow-x: auto;
     min-height: 64vh;
+    padding:  30px;
 }
 .table {
     width: 100%;
@@ -56,6 +54,7 @@ main {
     border-collapse: collapse;
 }
 .table_header {
+    table-layout: fixed;
     padding: 5px;
     font-weight: bold;
     width: 100%;
@@ -74,21 +73,27 @@ import Header from '../components/Header'
 import {Admin} from '../models/Admin'
 
 export default {
-    name: 'home',
+    name: 'statistics',
     components: {
         Header
     },
     data() {
         return {
-            stat: {
-
-            }
+            stat: []
         }
     },
     async created() {
         this.stat = Admin.getStat().then(data => {
+            data.fields = [
+                { key: 'id', label: '№', },
+                { key: 'name', label: 'Название объединения', },
+                { key: 'planned', label: 'Планируемое количество', },
+                { key: 'actual', label: 'Фактическое количество', },
+                { key: 'fullness_percent', label: '% наполненности', },
+            ]
+            console.log()
             this.stat = data
-            console.log(data)
+            console.log(`get Stat `, data)
         })
     }
 }

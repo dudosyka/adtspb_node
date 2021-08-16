@@ -4,14 +4,24 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/home',
-    name: 'Home',
-    component: () => import('../views/Home.vue')
-  },
-  {
-    path: '/login',
+    path: '/',
     name: 'Login',
     component: () => import('../views/Login.vue')
+  },
+  {
+    path: '/statistics',
+    name: 'Statistics',
+    component: () => import('../views/Statistics.vue')
+  },
+  {
+    path: '/associations',
+    name: 'Association',
+    component: () => import('../views/Associations.vue')
+  },
+  {
+    path: '/callback',
+    name: 'Callback',
+    component: () => import('../views/Callback.vue')
   }
 ]
 
