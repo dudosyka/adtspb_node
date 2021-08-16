@@ -95,7 +95,7 @@ Rbac.prototype.auth = async function (user_id, onlyRoles = false)
    };
 }
 
-Rbac.prototype.addItem = async function (name, description, role = false)
+Rbac.prototype.addItem = async function (name, description, role = false, minimize = true)
 {
     let table = "auth_rule";
     if (role)
@@ -103,7 +103,8 @@ Rbac.prototype.addItem = async function (name, description, role = false)
 
     let res = await db.query("INSERT INTO `"+ table + "` ( name, description ) VALUES ( ?, ? ) ", [ name, description ]);
 
-    await this.minimize();
+    if (minimize)
+        await this.minimize();
 
     return res.insertId;
 }
@@ -118,7 +119,7 @@ Rbac.prototype.addRule = async function (name, description)
     return await this.addItem(name, description);
 }
 
-Rbac.prototype.assign = async function (parent, child, roleToRule = true)
+Rbac.prototype.assign = async function (parent, child, roleToRule = true, minimize = true)
 {
     let issetParent = await db.query('SELECT * FROM `auth_role` WHERE `id` = ?', [ parent ]).then( data => { if (data.length) return true; else return false; } );
     let table = "auth_rule";
@@ -130,9 +131,21 @@ Rbac.prototype.assign = async function (parent, child, roleToRule = true)
     if (!issetParent || !issetChild)
         return false;
 
-    await db.query("INSERT INTO `auth_assignment` ( parent, child, type ) VALUES ( ?, ?, ? )", [ parent, child, (roleToRule) ? 1 : 2 ]);
+    await db.query("INSERT INTO `auth_assignment` ( parent, child, type ) VALUES ( ?, ?, ? )", [ parent, child, (roleToRule) ? 1 : 2 ]).catch(err => {
+        console.error(err);
+    });
 
-    await this.minimize();
+    if (minimize)
+        await this.minimize();
+}
+
+Rbac.prototype.removeAssign = async function (parent, child, roleToRule = true, minimize = true) {
+    const type = (roleToRule) ? 1 : 2;
+
+    await db.query('DELETE FROM `auth_assignment` WHERE `parent` = ? AND `child` = ? AND `type` = ?', [ parent, child, type ]);
+
+    if (minimize)
+        await this.minimize();
 }
 
 Rbac.prototype.removeItem = async function (id, role = false)
@@ -164,6 +177,14 @@ Rbac.prototype.removeRule = async function (id)
 Rbac.prototype.addRoleToUser = async function (user_id, role_id)
 {
     let res = await db.query('INSERT INTO `user_role` (`user_id`, `auth_role_id`) VALUES (?, ?)', [ user_id, role_id ]);
+    if (res === null)
+        return false;
+    return true;
+}
+
+Rbac.prototype.deleteRoleFromUser = async function (user_id, role_id)
+{
+    let res = await db.query('DELETE FROM `user_role` WHERE `user_id` = ? AND `auth_role_id` = ?', [ user_id, role_id ]);
     if (res === null)
         return false;
     return true;

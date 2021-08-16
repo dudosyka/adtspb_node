@@ -29,9 +29,15 @@ module.exports = new graphql.GraphQLObjectType({
                 proposals = await Proposal.selectProposalsList('association_id', [ association_id ], {status: true, child: true, parent: true});
                 return proposals[association_id];
             }
+        },
+        rbac: {
+            type: AccessControlQuery,
+            resolve: obj => obj
         }
     }),
 });
+
+const AccessControlQuery = require('../AccessControl/Query');
 
 const StatOutput = require('./OutputTypes/StatOutput');
 const ProposalOutput = require('./OutputTypes/Proposal');

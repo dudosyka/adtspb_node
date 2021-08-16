@@ -2,8 +2,11 @@ const graphql = require("graphql");
 
 const User = require("../../../Entity/User");
 const UserChild = require("../../../Entity/UserChild");
+const UserGroup = require('../../../Entity/UserGroup');
 const UserExtraData = require("../../../Entity/UserExtraData");
 
+const Proposal = require('../../../Entity/Proposal');
+const Group = require('../../../Entity/Group');
 const EmailValidation = require('../../../Entity/EmailValidation');
 
 const Jwt = require('../../../utils/Jwt');
@@ -173,9 +176,25 @@ module.exports = new graphql.GraphQLObjectType({
                 return await viewer.confirmRemoveChild(link);
             }
         },
+        joinGroup: {
+            type: graphql.GraphQLBoolean,
+            args: {
+                input: {
+                    type: GroupStructureInput
+                }
+            },
+            async resolve(obj, { input }) {
+                const userGroup = UserGroup.newModel();
+                const groupModel = Group.newModel();
+                const proposalModel = Proposal.newModel();
+
+                return await userGroup.joinGroup(input, groupModel, proposalModel);
+            }
+        }
     })
 });
 
 //Moved here to prevent from circular dependence err.
 const UserInput = require('./Input');
 const EmailValidationOutput = require('../EmailValidation/Output');
+const GroupStructureInput = require('../Group/StructureInput');
