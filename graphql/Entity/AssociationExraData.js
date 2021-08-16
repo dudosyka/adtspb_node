@@ -25,7 +25,7 @@ AssociationExtraData.prototype.canJoinAssociation = async function (id = false, 
     else {
         return "Age doesn`t pass";
     }
-    
+
     if (age > this.__get('max_age') || age < this.__get('min_age'))
         return 'Age doesn`t pass';
 
@@ -41,5 +41,13 @@ AssociationExtraData.prototype.getList = async function (arr) {
 }
 
 AssociationExtraData.prototype.table = "association_extra_data";
+
+AssociationExtraData.prototype.groupCreated = async function (association_id) {
+    return await this.db.query('UPDATE `' + this.table + '` SET `group_count` = `group_count` + 1 WHERE `association_id` = ?', [ association_id ]);
+}
+
+AssociationExtraData.prototype.groupClosed = async function (association_id) {
+    return await this.db.query('UPDATE `' + this.table + '` SET `group_count` = `group_count` - 1 WHERE `association_id` = ?', [ association_id ]);
+}
 
 module.exports = (new AssociationExtraData());

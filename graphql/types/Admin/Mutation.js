@@ -12,6 +12,9 @@ const association = Association.newModel();
 const Group = require('../../Entity/Group');
 const group = Group.newModel();
 
+const UserGroup = require('../../Entity/UserGroup');
+const userGroup = UserGroup.newModel();
+
 const User = require('../../Entity/User');
 const user = User.newModel();
 
@@ -49,8 +52,19 @@ module.exports = new graphql.GraphQLObjectType({
             },
             async resolve(obj, { input }) {
                 const admin_id = obj.viewer.id;
-                await group.edit(input, logger, admin_id);
+                await group.edit(input, logger, admin_id, extraData);
                 return true;
+            }
+        },
+        edit_group_structure: {
+            type: graphql.GraphQLBoolean,
+            args: {
+                input: {
+                    type: GroupStructureInput
+                }
+            },
+            async resolve(obj, { input }) {
+                return await userGroup.editGroupStructure(input, group, proposal);
             }
         },
         edit_proposal_status: {
@@ -102,14 +116,21 @@ module.exports = new graphql.GraphQLObjectType({
                 let model = await Proposal.createFromInput(proposal);
                 return await model.createNew(user, userExtraData, true);
             }
+        },
+        rbac: {
+            type: AccessControlMutation,
+            resolve: obj => obj
         }
     }),
 });
+
+const AccessControlMutation = require('../AccessControl/Mutation');
 
 const AssociationInput = require('../EntityTypes/Association/Input');
 const AssociationOutput = require('../EntityTypes/Association/Input');
 
 const GroupInput = require('../EntityTypes/Group/Input');
+const GroupStructureInput = require('../EntityTypes/Group/StructureInput');
 const GroupOutput = require('../EntityTypes/Group/Input');
 
 const ProposalInput = require('../EntityTypes/Proposal/Input');
