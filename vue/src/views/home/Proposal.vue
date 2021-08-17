@@ -33,7 +33,20 @@
                         <div class="child-stat">
                             <h3 class="proposal_heading">{{ proposal.name }}</h3>
                             <figcaption class="child-stat_heading">Статус: {{ proposal.status.text }}</figcaption>
+
+                            <!-- FA  !-->
+                            <div v-if="true" class="fatal-container">
+                                <p class="assoc-reserve-description">Идёт набор в резерв</p>
+                            </div>
+                            <div>
+                                <!-- FA (for alex) Через v-modal пихай куда удобно !-->
+                                <select class="dark-box darken" v-modal="">
+                                    <option disabled selected>Выберите группу</option> <!-- Что бы отдовал что-то другое через v-modal, могу options настроить !-->
+                                    <option v-for="" value="" v-text="group"></option>
+                                </select>
+                            </div>
                         </div>
+
                         <div class="buttons" v-if='proposal.status.num !== 0'>
 
                             <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)" :disabled="!inDev">Скачать</button>
@@ -132,6 +145,13 @@
 }
 .child-stat_heading {
     font-size: 20px;
+}
+.fatal-container {
+    margin:  0;
+    padding: 10px;
+}
+.fatal-container p {
+    margin:  0;
 }
 </style>
 

@@ -63,14 +63,6 @@
                         <p class="assoc-reserve-description">Идёт набор</p>
                     </div>
 
-                    <div>
-                        <!-- FA (for alex) Через v-modal пихай куда удобно !-->
-                        <select class="dark-box darken" v-modal="">
-                            <option disabled>Выберите группу</option> <!-- Что бы отдовал что-то другое через v-modal, могу options настроить !-->
-                            <option v-for="group of card.groups" value="" v-text="group"></option>
-                        </select>
-                    </div>
-
                     <div class="association-card_buttons buttons">
                         <button v-if="!proposalParms.associations[id]" class="dark-box dark-button" @click="addAssociation(id)">Записать</button>
                         <button v-else-if='!proposalParms.associations[id].already' class="dark-box dark-button" @click="removeAssociation(id)">Отмена</button>
