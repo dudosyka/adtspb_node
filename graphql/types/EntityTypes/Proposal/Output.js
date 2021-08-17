@@ -47,6 +47,12 @@ module.exports = new graphql.GraphQLObjectType({
                 return obj.document_taken !== 0;
             }
         },
+        isGroupSelected: {
+            type: graphql.GraphQLBoolean,
+            resolve(obj, data) {
+                return obj.group_selected !== 0;
+            }
+        },
         isHidden: {
             type: graphql.GraphQLBoolean,
         }

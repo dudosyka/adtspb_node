@@ -41,6 +41,7 @@ UserGroup.prototype.editGroupStructure = async function (input, groupModel, prop
 
     await this.db.query('DELETE FROM `user_group` WHERE `group_id` = ?;', [ input.group_id ]);
     const proposals = await proposal.selectProposalsList('id', input.proposals, { child: true, association: true });
+    proposalModel.setSelected(input.proposals);
 
     await this.execInsertQuery(proposals, association_id, input.group_id);
 
@@ -57,6 +58,7 @@ UserGroup.prototype.joinGroup = async function (input, groupModel, proposalModel
     const group = await groupModel.createFrom({ id: input.group_id });
     const association_id = group.__get('association_id');
     const proposals = await proposalModel.selectProposalsList('id', input.proposals, { child: true, association: true } );
+    proposalModel.setSelected(input.proposals);
 
     const group_size = await this.db.query('SELECT COUNT(`id`) as `count` FROM `user_group` WHERE `group_id` = ?', [ input.group_id ]).then(data => {
         return data[0].count;
@@ -65,7 +67,8 @@ UserGroup.prototype.joinGroup = async function (input, groupModel, proposalModel
     if (group_size > 14) {
         throw Error('Group is full');
     }
-    
+
+    console.log(input.proposals, proposals, association_id, input.group_id);
     await this.execInsertQuery(proposals, association_id, input.group_id);
     return true;
 }

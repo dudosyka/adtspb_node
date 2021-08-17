@@ -4,6 +4,7 @@ const User = require('./User');
 const UserExtraData = require('./UserExtraData');
 
 const AssociationExraData = require('./AssociationExraData');
+const Association = require('./Association');
 
 const Status = require('./Status');
 
@@ -45,12 +46,11 @@ Proposal.prototype.createFromInput = async function (proposal) {
 
 Proposal.prototype.selectProposalsList = async function (field, arr, selections) {
     const { ids, query } = this.db.createRangeQuery(false, arr, field);
-    console.log(query);
 
     //Check if we have sub-selections and add them to query if exists
     let sub1Query = "";
     if (selections.association) {
-        sub1Query += "LEFT JOIN `association` AS `sub1` ON `sub1`.`id` = `main`.`association_id` LEFT JOIN `association_extra_data` AS `sub1_1` ON `sub1`.`id` = `sub1_1`.`association_id` ";
+        sub1Query += "LEFT JOIN `association` AS `sub1` ON `sub1`.`id` = `main`.`association_id` LEFT JOIN `association_extra_data` AS `sub1_1` ON `sub1`.`id` = `sub1_1`.`association_id`";
     }
 
     let sub2Query = "";
@@ -203,7 +203,40 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections)
         }
     }
 
+    let links = {};
+
+    let association_ids = [];
+    let association_query = "";
+    Object.keys(proposals).map(id => {
+        let i = 0;
+        proposals[id].map(proposal => {
+            association_ids.push(proposal.association.id);
+            links[proposal.association.id] = [
+                id, i
+            ];
+            i++;
+        });
+    });
+
+    for (let i = 0; i < association_ids.length - 1; i++) {
+        association_query += "?,";
+    }
+    association_query += "?";
+
+    const associationModel = Association.newModel();
+    const result = await associationModel.getAssociations(null, selections.association, null,"WHERE `main`.`id` IN (" + association_query + ")", association_ids);
+
+    result.map(association => {
+        const index = links[association.id];
+        proposals[index[0]][index[1]].association = association;
+    });
+
     return proposals;
+}
+
+Proposal.prototype.setSelected = async function (proposals) {
+    const { ids, query } = this.db.createRangeQuery(false, proposals, "id");
+    this.db.query("UPDATE `proposal` SET `group_selected` = 1 WHERE " + query, ids);
 }
 
 Proposal.prototype.getProposalAmount = async function (association_id = null) {
