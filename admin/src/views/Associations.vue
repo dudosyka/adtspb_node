@@ -58,8 +58,11 @@
 							</b-list-group>	
 						</b-col>
 						<b-col>
+							<h6>Внимание!!! Очень важно заполнять данные в формате ЧЧ.ММ-ЧЧ.ММ ЧЧ.ММ-ЧЧ.ММ иначе объединение удалиться</h6>
 							<b-input-group v-for="(day, id) of groupOpen.timetable.week" :prepend="nToDay(id)">
 								<b-form-input v-model="groupOpen.timetable.week[id]"></b-form-input>
+								<!--<b-form-timepicker @context="timetableRaw[id].start" placeholder="начало" locale="de" />
+								<b-form-timepicker @context="timetableRaw[id].end" placeholder="конец" locale="de" />!-->
 							</b-input-group>
 						</b-col>
 					</b-row>
@@ -102,6 +105,7 @@ export default {
         	associations: [],
         	associationOpen: {},
         	groupOpen: {},
+        	timetableRaw: {},
         }
     },
     created() {
@@ -118,10 +122,25 @@ export default {
     	},
     	openGroup(group) {
     		this.groupOpen = group
+    		this.timetable = this.toRawTimetable(group.timetable)
     	},
+    	/*
+    	toRawTimetable(timetable) {
+    		this.timetable = timetable.map( day => {
+    			if (day !== "") {
+    				day = day.split(' ')
+    				return
+    			}
+    		})
+    	},
+    	*/
     	nToDay(number) { 
     		return Corrector.weekDayByNumber(number)
-    	}
+    	},
+
     },
+    computed: {
+
+    }
 }
 </script>
