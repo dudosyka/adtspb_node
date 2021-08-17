@@ -6,10 +6,11 @@
 			<b-list-group>
 				<b-list-group-item
 					v-for="association of associations"
-					@click=""
-				button>
-					{{ association.name }}
-				</b-list-group-item>
+					@click="openAssociation(association)"
+					v-text="association.name"
+					button
+					:active="associationOpen.id === association.id"
+				/>
 			</b-list-group>
 			<b-card class="association">
 				<b-form-input />
@@ -17,8 +18,7 @@
 				<b-form-input />
 
 				<article>
-					<b-list-group v-for="group of association.groups">
-						{{ group.name }}
+					<b-list-group v-for="">
 					</b-list-group>
 					<section>
 						<!-- will be schendule !-->
@@ -51,68 +51,18 @@ export default {
     },
     data() {
         return {
-        	//WARN: this is test arr for demonstartion. Just will say me, what back return arr
-            associations: [
-            	{
-            		name: 'Test association',
-            		description: 'Bla bla bla slkfh skafhsa sakfhsadkl safkjhsakfl sadkkfhsadkf sadkfhskdf fsakdfh sakdfhsdks skafhs skkafh ksahfsa  sakdfh safk saksdahfskdfhs fksadfh skadfhskd sdkfhsad sdjfhsdka sadkfjhsda',
-            		groups: [
-            			{	
-            				show: true,
-            				name: 'group 1',
-            				timetable: {
-            					'понедельник': '17:00 - 18:00',
-            					'суббота': '17:00 - 18:00',
-            					'четверг': '17:00 - 18:00',
-            					'пятница': '17:00 - 18:00',
-            				}
-            			},
-            			{	
-            				show: false,
-            				name: 'group 2',
-            				timetable: {
-            					'понедельник': '17:00 - 18:00',
-            					'суббота': '17:00 - 18:00',
-            					'четверг': '17:00 - 18:00',
-            					'пятница': '17:00 - 18:00',
-            				}
-            			}
-            		]
-            	},
-            	{
-            		name: 'Test association',
-            		description: 'Bla bla bla',
-            	},
-            	{
-            		name: 'Test association',
-            		description: 'Bla bla bla',
-            	},
-            	{
-            		name: 'Test association',
-            		description: 'Bla bla bla',
-            	},
-            	{
-            		name: 'Test association',
-            		description: 'Bla bla bla',
-            	},
-            	{
-            		name: 'Test association',
-            		description: 'Bla bla bla',
-            	},
-            ],
-            association: {
-            	name: null,
-            	description: null
-            },
-            show: {
-            	association: false,
-            }
+        	associations: [],
+        	associationOpen: {
+        		id: null,
+        	}
         }
     },
+    created() {
+ 		Admin.getAssociations().then( data => this.associations = data)
+    },
     methods: {
-    	openAssociation(i) { //i - information
-    		this.show.association = true
-    		this.association = i
+    	openAssociation(association) {
+    		this.associationOpen = association
     	}
     },
 }
