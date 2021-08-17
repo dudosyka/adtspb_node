@@ -34,16 +34,16 @@
                             <h3 class="proposal_heading">{{ proposal.name }}</h3>
                             <figcaption class="child-stat_heading">Статус: {{ proposal.status.text }}</figcaption>
 
-                            <!-- FA  !-->
-                            <div v-if="true" class="fatal-container">
-                                <p class="assoc-reserve-description">Идёт набор в резерв</p>
+                            <div v-if="proposal.isReserve" class="fatal-container">
+                                <p class="assoc-reserve-description">Заявление в резерве</p>
                             </div>
-                            <div>
+                            <div v-if='!proposal.isReserve && !proposal.isGroupSelected'>
                                 <!-- FA (for alex) Через v-modal пихай куда удобно !-->
-                                <select class="dark-box darken" v-modal="">
-                                    <option disabled selected>Выберите группу</option> <!-- Что бы отдовал что-то другое через v-modal, могу options настроить !-->
-                                    <option v-for="" value="" v-text="group"></option>
+                                <select class="dark-box darken" v-model="proposal.selected_group">
+                                    <option disabled selected :value='null'>Выберите группу</option> <!-- Что бы отдовал что-то другое через v-modal, могу options настроить !-->
+                                    <option v-for="(group, groupIndex) in proposal.groups" :value="group.id" v-text="group.name"></option>
                                 </select>
+                                <button @click='joinGroup(proposal.selected_group, proposal.id)'>Выбрать группу</button>
                             </div>
                         </div>
 
@@ -180,8 +180,7 @@
       }
     },
     async created() {
-      localStorage.setItem('newProposal', false)
-      console.log(111, User, Proposal);
+      localStorage.setItem('newProposal', false);
       const children = await User.getChildren({
         id: null,
         name: null,
@@ -189,13 +188,19 @@
         proposals: {
           id: null,
           association: {
-            name: null
+            name: null,
+            groups: {
+              id: null,
+              name: null,
+            },
           },
           status: {
             text: null,
             num: null
-        },
-        isDocumentTaken: null
+          },
+          isReserve: null,
+          isDocumentTaken: null,
+          isGroupSelected: null,
         }
       }, false).then( data => {
           // console.log(data);
@@ -204,9 +209,14 @@
 
       children.map((child) => {
         const proposals = child.data.proposals.map(el => {
+            console.log(el);
           return {
             id: el.id,
+            isReserve: el.isReserve,
             name: el.association.name,
+            groups: el.association.groups,
+            isGroupSelected: el.isGroupSelected,
+            selected_group: null,
             status: el.status.length ? { ...el.status[0] } : { text: "", num: 0 },
             download: "",
             print: "",
@@ -249,6 +259,9 @@
             .catch(err => {
                 console.log(err);
             });
+        },
+        joinGroup(group, proposal_id) {
+            Proposal.joinGroup(group, proposal_id);
         }
     },
     computed: {
