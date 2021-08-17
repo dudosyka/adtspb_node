@@ -1,53 +1,31 @@
 <template>
 	<main class="bg-wrapper">
 		<Header /> 
-		<ul class="assoc-list">
-			<li v-for="i of associations" class="assoc-item bg-card">
-				<h2 class="assoc-title">{{ i.name }}</h2>
-				<button @click="openAssociation(i)" class="ft-dark button-gray">открыть</button>
-			</li>
-		</ul>
-		<div v-if="show.association" class="card-wrapper">
-			<article class="card bg-card">
-				<button @click="show.association = false" class="bg-card ft-gray button-close">Х</button>
-				<h2 class="card-title" v-text="association.name"></h2>
-				
-				<section class="container assoc-description">
-					<h3>Описание</h3>
-					<textarea 
-						v-model="association.description" 
-						cols="50" rows="5"
-						maxlength="10000" 
-						placeholder="Описание объединения" 
-						:readonly="true"
-					></textarea>
-					<button class="ft-dark button-gray">Редактировать описание</button>
-				</section>
+		<!-- layout system of bootstrap is bad !-->
+		<article class="content">
+			<b-list-group>
+				<b-list-group-item
+					v-for="association of associations"
+					@click=""
+				button>
+					{{ association.name }}
+				</b-list-group-item>
+			</b-list-group>
+			<b-card class="association">
+				<b-form-input />
+				<b-form-textarea></b-form-textarea>
+				<b-form-input />
 
-				<section class="container">
-					<h3>Рассписание групп</h3>
-					<article class="groups-container">
-						<ul class="group-list">
-							<li class="group-list_item"
-								:class="{'group-list_item--active': group.show}" 
-								v-for="group of association.groups" 
-								v-text="group.name" 
-								@click="association.groups.map(el => el.show = false); group.show = true"
-							></li>
-						</ul>
-						<ul class="group-data-list">
-							<li v-for="group of association.groups">
-								<table>
-									<tr v-for="(time, day) of group.timetable" v-if="group.show">
-										<td v-text="day"></td><td v-text="time"></td>
-									</tr>
-								</table>
-							</li>
-						</ul>
-					</article>
-				</section>
-			</article>
-		</div>
+				<article>
+					<b-list-group v-for="group of association.groups">
+						{{ group.name }}
+					</b-list-group>
+					<section>
+						<!-- will be schendule !-->
+					</section>
+				</article>
+			</b-card>
+		</article>
 	</main>
 </template>
 
@@ -55,64 +33,9 @@
 main {
 	min-height: 100vh;
 }
-.card-wrapper {
-	padding: 30px 30px 0 30px;
-}
-.assoc-list {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	align-items: flex-end;
-	padding: 30px;
-	margin: 0;
-	list-style: none;
-}
-.assoc-item {
-	flex-grow: 1;
-	display: grid;
-	grid-template-columns: auto auto;
-	grid-gap: 20px;
-	align-items: center;
-	height: min-content;
-	width: min-content;
-	padding: 20px;
-	margin: 20px;
-	border-radius: 20px;
-}
-.assoc-title {
-	white-space: nowrap;
-}
-.assoc-description textarea {
-	margin-bottom: 5px;
-}
-.groups-container {
+.content {
 	display: grid;
 	grid-template-columns: auto 1fr;
-}
-.group-list, .group-data-list {
-	list-style: none;
-	padding: 0;
-	margin: 0;
-}
-.group-list_item {
-	padding: 5px;
-}
-.group-list_item:hover {
-	cursor: pointer;
-}
-.group-list_item--active {
-	text-decoration: underline;
-}
-.group-data-list td {
-	padding: 5px 10px;
-}
-.container h3 {
-	margin-bottom: 5px;
-}
-.card {
-	padding: 40p;
-	background: #191919;
 }
  
 </style>
