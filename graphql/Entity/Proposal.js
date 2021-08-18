@@ -69,8 +69,12 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
     mainSelections = ' "" as `main_decorator`, `main`.*';
     fullSelections = sub1Selections + sub2Selections + sub3Selections + mainSelections;
 
+    if (where == null)
+        where = "";
+
     let fullQuery = "SELECT " + fullSelections + " FROM " + this.table + " AS `main` " + sub1Query + sub2Query + sub3Query + "WHERE `main`." + query + where;
-    const res = await this.db.query(fullQuery, Array.concat(ids, whereData));
+    whereData=ids.concat(whereData);
+    const res = await this.db.query(fullQuery, ids);
 
     if (res.length <= 0)
         return [];

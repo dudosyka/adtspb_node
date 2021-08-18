@@ -38,12 +38,17 @@
                                 <p class="assoc-reserve-description">Заявление в резерве</p>
                             </div>
                             <div v-if='!proposal.isReserve && !proposal.isGroupSelected'>
-                                <!-- FA (for alex) Через v-modal пихай куда удобно !-->
                                 <select class="dark-box darken" v-model="proposal.selected_group">
                                     <option disabled selected :value='null'>Выберите группу</option> <!-- Что бы отдовал что-то другое через v-modal, могу options настроить !-->
                                     <option v-for="(group, groupIndex) in proposal.groups" :value="group.id" v-text="group.name"></option>
                                 </select>
                                 <button @click='joinGroup(proposal.selected_group, proposal.id)'>Выбрать группу</button>
+                                <p v-if='joinGroupError'>
+                                    Группа переполнена
+                                </p>
+                                <p v-if='joinGroupSuccess'>
+                                    Вы зачислены в группу
+                                </p>
                             </div>
                         </div>
 
@@ -176,7 +181,9 @@
         user: {
             areSure: null
         },
-        inDev: AppConfig.inDev
+        inDev: AppConfig.inDev,
+        joinGroupError: false,
+        joinGroupSuccess: false,
       }
     },
     async created() {
@@ -261,7 +268,14 @@
             });
         },
         joinGroup(group, proposal_id) {
-            Proposal.joinGroup(group, proposal_id);
+            this.joinGroupError = false;
+            this.joinGroupSuccess = false;
+            Proposal.joinGroup(group, proposal_id).then(data => {
+                this.joinGroupSuccess = true;
+            }).catch(err => {
+                this.joinGroupError = true;
+                console.log(err);
+            });
         }
     },
     computed: {
