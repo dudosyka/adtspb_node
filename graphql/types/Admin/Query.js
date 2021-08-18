@@ -12,7 +12,7 @@ module.exports = new graphql.GraphQLObjectType({
             type: StatOutput,
             args: {},
             async resolve(obj) {
-                if (!obj.adminModel.hasAccess(15))
+                if (!obj.adminModel.hasAccess(15)) //Viewing stats
                     throw Error('Forbidden');
                 return await stats.getStat();
             }
@@ -25,6 +25,8 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { association_id }) {
+                if (!obj.adminModel.hasAccess(16)) //Uploading recruiment statistic
+                    throw Error('Forbidden');
                 proposals = await Proposal.selectProposalsList('association_id', [ association_id ], {status: true, child: true, parent: true});
                 return proposals[association_id];
             }

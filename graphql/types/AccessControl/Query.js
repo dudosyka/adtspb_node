@@ -14,8 +14,9 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { user_id }) {
+                if (!obj.adminModel.hasAccess(32)) //Get user rights
+                    throw Error('Forbidden');
                 const rights = await accessControl.getRights(user_id);
-                console.log(rights);
                 return {
                     user_id,
                     roles: rights
