@@ -12,8 +12,7 @@ module.exports = new graphql.GraphQLObjectType({
             type: StatOutput,
             args: {},
             async resolve(obj) {
-                const user = await User.createFrom({id: obj.viewer.id}, false, false);
-                if (!user.hasAccess(15))
+                if (!obj.adminModel.hasAccess(15))
                     throw Error('Forbidden');
                 return await stats.getStat();
             }

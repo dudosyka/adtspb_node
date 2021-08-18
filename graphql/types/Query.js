@@ -9,6 +9,8 @@ const AdminQuery = require('./Admin/Query');
 const Jwt = require('../utils/Jwt');
 let jwt = new Jwt();
 
+const User = require('../Entity/User');
+
 module.exports = new GraphQLObjectType({
     name: 'Query',
     fields: function () {
@@ -19,7 +21,14 @@ module.exports = new GraphQLObjectType({
             },
             admin: {
                 type: AdminQuery,
-                resolve: obj => obj(),
+                resolve: async obj => {
+                    const admin_id = obj().viewer.id;
+                    const adminModel = await User.createFrom({ id: admin_id });
+                    return {
+                        ...obj(),
+                        adminModel
+                    };
+                },
             },
             association: {
                 type: AssociationQuery,
