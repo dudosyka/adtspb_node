@@ -81,7 +81,8 @@ module.exports = new graphql.GraphQLObjectType({
                 if (!obj.adminModel.hasAccess(36)) //Group`s structure editing
                     throw Error('Forbidden');
 
-                return await userGroup.editGroupStructure(input, group, proposal);
+                const allowed = await obj.adminModel.getAllowedAssociations();
+                return await userGroup.editGroupStructure(input, group, proposal, allowed);
             }
         },
         edit_proposal_status: {
@@ -95,8 +96,9 @@ module.exports = new graphql.GraphQLObjectType({
                 if (!obj.adminModel.hasAccess(28)) //Proposal status editing
                     throw Error('Forbidden');
 
+                const allowed = await obj.adminModel.getAllowedAssociations();
                 const admin_id = obj.viewer.id;
-                await status.editStatus(input, logger, admin_id);
+                await status.editStatus(input, logger, admin_id, proposal, allowed);
             }
         },
         create_association: {

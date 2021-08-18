@@ -14,7 +14,7 @@ module.exports = new graphql.GraphQLObjectType({
             async resolve(obj) {
                 if (!obj.adminModel.hasAccess(15)) //Viewing stats
                     throw Error('Forbidden');
-                return await stats.getStat();
+                return await stats.getStat(obj.adminModel);
             }
         },
         association_proposal_list: {
@@ -27,7 +27,12 @@ module.exports = new graphql.GraphQLObjectType({
             async resolve(obj, { association_id }) {
                 if (!obj.adminModel.hasAccess(16)) //Uploading recruiment statistic
                     throw Error('Forbidden');
-                proposals = await Proposal.selectProposalsList('association_id', [ association_id ], {status: true, child: true, parent: true});
+
+                const allowed = await obj.adminModel.getAllowedAssociations();
+                const { query, ids } = db.createRangeQuery(false, arr, "id");
+                query = " AND `sub1`."+query;
+
+                proposals = await Proposal.selectProposalsList('association_id', [ association_id ], {status: true, child: true, parent: true}, query, ids);
                 return proposals[association_id];
             }
         },

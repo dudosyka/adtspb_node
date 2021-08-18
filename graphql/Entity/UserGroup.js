@@ -26,7 +26,7 @@ UserGroup.prototype.execInsertQuery = async function (proposals, association_id,
     return await this.db.query(query, ids);
 }
 
-UserGroup.prototype.editGroupStructure = async function (input, groupModel, proposal) {
+UserGroup.prototype.editGroupStructure = async function (input, groupModel, proposal, allowed) {
     if (!input.group_id)
         throw Error('Must provide `group_id` to `input` object');
 
@@ -39,8 +39,12 @@ UserGroup.prototype.editGroupStructure = async function (input, groupModel, prop
     const group = await groupModel.createFrom({ id: input.group_id });
     const association_id = group.__get('association_id');
 
+    if (allowed.indexOf(association_id) == -1)
+        throw Error('Forbidden');
+
     await this.db.query('DELETE FROM `user_group` WHERE `group_id` = ?;', [ input.group_id ]);
     const proposals = await proposal.selectProposalsList('id', input.proposals, { child: true, association: true });
+
     proposalModel.setSelected(input.proposals);
 
     await this.execInsertQuery(proposals, association_id, input.group_id);

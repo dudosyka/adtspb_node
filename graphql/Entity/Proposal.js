@@ -44,7 +44,7 @@ Proposal.prototype.createFromInput = async function (proposal) {
     return await this.baseCreateFrom(data);
 }
 
-Proposal.prototype.selectProposalsList = async function (field, arr, selections) {
+Proposal.prototype.selectProposalsList = async function (field, arr, selections, where = null, whereData = []) {
     const { ids, query } = this.db.createRangeQuery(false, arr, field);
 
     //Check if we have sub-selections and add them to query if exists
@@ -69,8 +69,8 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections)
     mainSelections = ' "" as `main_decorator`, `main`.*';
     fullSelections = sub1Selections + sub2Selections + sub3Selections + mainSelections;
 
-    let fullQuery = "SELECT " + fullSelections + " FROM " + this.table + " AS `main` " + sub1Query + sub2Query + sub3Query + "WHERE `main`." + query;
-    const res = await this.db.query(fullQuery, ids);
+    let fullQuery = "SELECT " + fullSelections + " FROM " + this.table + " AS `main` " + sub1Query + sub2Query + sub3Query + "WHERE `main`." + query + where;
+    const res = await this.db.query(fullQuery, Array.concat(ids, whereData));
 
     if (res.length <= 0)
         return [];
