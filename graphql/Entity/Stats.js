@@ -23,15 +23,17 @@ function getFullness(actual, planned) {
         return Math.floor((actual / planned) * 100);
 }
 
-Stats.prototype.getAssociationsStat = async function () {
+Stats.prototype.getAssociationsStat = async function (arr) {
+    const { query, ids } = db.createRangeQuery(false, arr, "id");
+
     const data = await db.query("" +
         "SELECT `main`.`id`, `main`.`name`, `sub1`.`group_count` as `planned`, `sub3`.`num` as `status` FROM `association` as `main`" +
         "LEFT JOIN `association_extra_data` as `sub1` ON `main`.`id` = `sub1`.`association_id`" +
         "LEFT JOIN `proposal` as `sub2` ON `main`.`id` = `sub2`.`association_id`" +
-        "LEFT JOIN `proposal_status` as `sub3` ON `sub2`.`id` = `sub3`.`proposal_id`"
+        "LEFT JOIN `proposal_status` as `sub3` ON `sub2`.`id` = `sub3`.`proposal_id` WHERE `main`." + query, ids
     );
     let parsed = {};
-    console.log(data);
+
     data.map(item => {
         const id = item.id;
         if (parsed[id] && item.status !== null && item.status != 0) {
@@ -48,7 +50,7 @@ Stats.prototype.getAssociationsStat = async function () {
             };
         }
     });
-    console.log(parsed);
+
     const res = [];
     Object.keys(parsed).map(id => {
         res.push({
@@ -60,14 +62,16 @@ Stats.prototype.getAssociationsStat = async function () {
     return res;
 }
 
-Stats.prototype.getStat = async function () {
+Stats.prototype.getStat = async function (adminModel) {
+    const allowed = await adminModel.getAllowedAssociations();
+
     const parent_amount = await this.getParentAmount();
     const child_amount = await this.getChildrenAmount();
 
     const proposal = Proposal.newModel();
     const proposal_amount = await proposal.getProposalAmount();
 
-    const associations = await this.getAssociationsStat(proposal_amount);
+    const associations = await this.getAssociationsStat(allowed);
 
     return {
         parent_amount,

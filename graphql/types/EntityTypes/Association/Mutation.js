@@ -17,7 +17,6 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { associations, child }) {
-                console.log(obj);
                 const parent = await User.createFrom({id: obj.viewer.id}, false, false);
                 return await Association.setSelected(associations.list, parent, child);
             }

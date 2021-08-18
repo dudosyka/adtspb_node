@@ -5,6 +5,8 @@ const ProposalMutation = require('./EntityTypes/Proposal/Mutation');
 const AssociationMutation = require('./EntityTypes/Association/Mutation');
 const AdminMutation = require('./Admin/Mutation');
 
+const User = require('../Entity/User');
+
 module.exports = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
@@ -22,7 +24,14 @@ module.exports = new GraphQLObjectType({
         },
         admin: {
             type: AdminMutation,
-            resolve: obj => obj(),
+            resolve: async obj => {
+                const admin_id = obj().viewer.id;
+                const adminModel = await User.createFrom({ id: admin_id });
+                return {
+                    ...obj(),
+                    adminModel
+                };
+            },
         }
     }
 });

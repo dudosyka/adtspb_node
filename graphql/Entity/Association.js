@@ -23,13 +23,13 @@ Association.prototype.fields = {
     description: null,
 };
 
-Association.prototype.getAssociations = async function (age = null, selections = {}, model = null, id = null) {
+Association.prototype.getAssociations = async function (age = null, selections = {}, model = null, where = null, whereData = null) {
     let whereQuery = (age == null) ? "" : "WHERE `join`.`max_age` >= ? AND `join`.min_age <= ?";
     let data = (age == null) ? [] : [ age, age ];
 
-    if (id != null) {
-        whereQuery = "WHERE `main`.`id` = ?";
-        data = [ id ];
+    if (where != null) {
+        whereQuery = where;
+        data = whereData;
     }
 
     fullQuery = "SELECT `main`.*, `join`.* FROM `association` as `main` LEFT JOIN `association_extra_data` as `join` ON `main`.`id` = `join`.`association_id` " + whereQuery;
@@ -48,7 +48,6 @@ Association.prototype.getAssociations = async function (age = null, selections =
 
     let proposals = null;
     if (selections.isRecruiment || selections.proposals) {
-        console.log(selections.isRecruiment);
         if (selections.isRecruiment)
             proposals = await model.selectProposalsList('association_id', ids, {status: true});
         else
@@ -133,7 +132,7 @@ Association.prototype.edit = async function (newValue, logger, extraModel, admin
     delete newValue.id;
 
     const model = this.newModel();
-    const oldData = await model.getAssociations(null, {}, null, Number(id));
+    const oldData = await model.getAssociations(null, {}, null, "WHERE `main`.`id` = ?", [ Number(id) ]);
     model.load(oldData[0]);
 
     return await logger.logModel(model, newValue, admin_id, id).then(res => {

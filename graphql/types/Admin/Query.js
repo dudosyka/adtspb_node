@@ -12,10 +12,9 @@ module.exports = new graphql.GraphQLObjectType({
             type: StatOutput,
             args: {},
             async resolve(obj) {
-                const user = await User.createFrom({id: obj.viewer.id}, false, false);
-                if (!user.hasAccess(15))
+                if (!obj.adminModel.hasAccess(15)) //Viewing stats
                     throw Error('Forbidden');
-                return await stats.getStat();
+                return await stats.getStat(obj.adminModel);
             }
         },
         association_proposal_list: {
@@ -26,7 +25,14 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { association_id }) {
-                proposals = await Proposal.selectProposalsList('association_id', [ association_id ], {status: true, child: true, parent: true});
+                if (!obj.adminModel.hasAccess(16)) //Uploading recruiment statistic
+                    throw Error('Forbidden');
+
+                const allowed = await obj.adminModel.getAllowedAssociations();
+                const { query, ids } = db.createRangeQuery(false, arr, "id");
+                query = " AND `sub1`."+query;
+
+                proposals = await Proposal.selectProposalsList('association_id', [ association_id ], {status: true, child: true, parent: true}, query, ids);
                 return proposals[association_id];
             }
         },

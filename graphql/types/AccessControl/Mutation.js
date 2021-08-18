@@ -17,6 +17,9 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { user_role }) {
+                if (!obj.adminModel.hasAccess(35)) //User-role editing
+                    throw Error('Forbidden');
+
                 await rbac.addRoleToUser(user_role.user_id, user_role.role_id).catch(err => {
                     console.log(err.code);
                     if (err.code) {
@@ -35,6 +38,9 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { user_role }) {
+                if (!obj.adminModel.hasAccess(35)) //User-role editing
+                    throw Error('Forbidden');
+
                 await rbac.deleteRoleFromUser(user_role.user_id, user_role.role_id);
                 return true;
             }
@@ -47,6 +53,9 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, {input}) {
+                if (!obj.adminModel.hasAccess(34)) //Roles editing
+                    throw Error('Forbidden');
+
                 await accessControl.assign(input.id, input.rules.map(el => el.id));
                 return true;
             }
@@ -59,6 +68,9 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, {input}) {
+                if (!obj.adminModel.hasAccess(34)) //Roles editing
+                    throw Error('Forbidden');
+
                 await accessControl.deleteAssign(input.id, input.rules.map(el => el.id));
                 return true;
             }
@@ -74,6 +86,9 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { parent_role, child_role }) {
+                if (!obj.adminModel.hasAccess(34)) //Roles editing
+                    throw Error('Forbidden');
+
                 await accessControl.assignRoles(parent_role, child_role);
                 return true;
             }
@@ -89,6 +104,9 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { parent_role, child_role }) {
+                if (!obj.adminModel.hasAccess(34)) //Roles editing
+                    throw Error('Forbidden');
+
                 await accessControl.deleteRolesAssign(parent_role, child_role);
                 return true;
             }
@@ -101,6 +119,9 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, {input}) {
+                if (!obj.adminModel.hasAccess(33)) //Managing roles
+                    throw Error('Forbidden');
+
                 await accessControl.createRole(input);
                 return true;
             }
@@ -113,6 +134,9 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, {role}) {
+                if (!obj.adminModel.hasAccess(33)) //Managing roles
+                    throw Error('Forbidden');
+
                 await accessControl.deleteRole(role);
                 return true;
             }
