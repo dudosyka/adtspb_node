@@ -20,8 +20,13 @@
 
         <article class="bg-card table-wrapper">
             <div class="row-right">
-                <b-button>Скачать Excel</b-button>   
-            </div> 
+                <download-excel
+                    :data   = "dataForExcel"
+                    worksheet = "ADT-stats"
+                    name    = "adt_stats.xls">
+                    <b-button>Скачать Excel</b-button>
+                </download-excel>
+            </div>
             <b-table striped hover :items="stat.associations" :fields="stat.fields"></b-table>
         </article>
     </main>
@@ -60,7 +65,7 @@ main {
     width: 100%;
 }
 .table tr {
-    
+
 }
 .table td {
     border-bottom: 3px solid #626161;
@@ -71,15 +76,29 @@ main {
 <script>
 import Header from '../components/Header'
 import {Admin} from '../models/Admin'
+import json_excel from 'vue-json-excel'
+
+console.log('JSON', json_excel);
 
 export default {
     name: 'statistics',
     components: {
-        Header
+        Header,
+        "download-excel": json_excel,
     },
     data() {
         return {
-            stat: []
+            stat: [],
+            dataForExcel: [
+              { colA: "Hello", colB: "World" },
+              {
+                colA: "Multi-line",
+                /* Multi-line value: */
+                colB:
+                  "This is a long paragraph\nwith multiple lines\nthat should show in a single cell.",
+              },
+              { colA: "Another", colB: "Regular cell" },
+            ],
         }
     },
     async created() {
@@ -90,10 +109,39 @@ export default {
                 { key: 'planned', label: 'Планируемое количество', },
                 { key: 'actual', label: 'Фактическое количество', },
                 { key: 'fullness_percent', label: '% наполненности', },
-            ]
-            console.log()
-            this.stat = data
-            console.log(`get Stat `, data)
+            ];
+            const fields = {
+                id: "#",
+                name: "Название объединения",
+                planned: "Планируемое количество",
+                actual: "Фактическое количество",
+                fullness_percent: "% наполненности",
+            }
+            console.log();
+            this.stat = data;
+            console.log(`get Stat `, data);
+            let first = true;
+            this.dataForExcel = data.associations.map(el => {
+                let res = {
+                    "Общее число детей": "",
+                    "Общее число родителей": "",
+                    "Всего подано заявлений": "",
+                };
+                if (first) {
+                    first = false;
+                    res["Общее число детей"] = data.child_amount;
+                    res["Общее число родителей"] = data.parent_amount;
+                    res["Всего подано заявлений"] = data.proposal_amount;
+                }
+                Object.keys(el).map(key => {
+                    res[fields[key]] = el[key];
+                    if (key == "name") {
+                        res['Количество групп'] = el.planned / 15;
+                    }
+                });
+                return res;
+            });
+            console.log(this.dataForExcel);
         })
     }
 }
