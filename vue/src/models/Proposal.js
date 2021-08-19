@@ -130,4 +130,25 @@ Proposal.recall = async function (proposal_id) {
     return await _request("api", req, data).then(data => data.proposal.recall).catch(err => {throw err;});
 }
 
+Proposal.joinGroup = async function (group, proposal_id) {
+    const req = `
+        mutation($input: GroupStructureInput) {
+            user {
+                joinGroup(input: $input)
+            }
+        }
+    `;
+
+    const data = {
+        input: {
+            group_id: Number(group),
+            proposals: [ Number(proposal_id) ]
+        }
+    };
+
+    return await _request("api", req, data).then(data => {
+        console.log(data);
+    })
+}
+
 export {Proposal};

@@ -33,7 +33,25 @@
                         <div class="child-stat">
                             <h3 class="proposal_heading">{{ proposal.name }}</h3>
                             <figcaption class="child-stat_heading">Статус: {{ proposal.status.text }}</figcaption>
+
+                            <div v-if="proposal.isReserve" class="fatal-container">
+                                <p class="assoc-reserve-description">Заявление в резерве</p>
+                            </div>
+                            <div v-if='!proposal.isReserve && !proposal.isGroupSelected'>
+                                <select class="dark-box darken" v-model="proposal.selected_group">
+                                    <option disabled selected :value='null'>Выберите группу</option> <!-- Что бы отдовал что-то другое через v-modal, могу options настроить !-->
+                                    <option v-for="(group, groupIndex) in proposal.groups" :value="group.id" v-text="group.name"></option>
+                                </select>
+                                <button @click='joinGroup(proposal.selected_group, proposal.id)'>Выбрать группу</button>
+                                <p v-if='joinGroupError'>
+                                    Группа переполнена
+                                </p>
+                                <p v-if='joinGroupSuccess'>
+                                    Вы зачислены в группу
+                                </p>
+                            </div>
                         </div>
+
                         <div class="buttons" v-if='proposal.status.num !== 0'>
 
                             <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)" :disabled="!inDev">Скачать</button>
@@ -133,6 +151,13 @@
 .child-stat_heading {
     font-size: 20px;
 }
+.fatal-container {
+    margin:  0;
+    padding: 10px;
+}
+.fatal-container p {
+    margin:  0;
+}
 </style>
 
 <script>
@@ -156,12 +181,13 @@
         user: {
             areSure: null
         },
-        inDev: AppConfig.inDev
+        inDev: AppConfig.inDev,
+        joinGroupError: false,
+        joinGroupSuccess: false,
       }
     },
     async created() {
-      localStorage.setItem('newProposal', false)
-      console.log(111, User, Proposal);
+      localStorage.setItem('newProposal', false);
       const children = await User.getChildren({
         id: null,
         name: null,
@@ -169,13 +195,19 @@
         proposals: {
           id: null,
           association: {
-            name: null
+            name: null,
+            groups: {
+              id: null,
+              name: null,
+            },
           },
           status: {
             text: null,
             num: null
-        },
-        isDocumentTaken: null
+          },
+          isReserve: null,
+          isDocumentTaken: null,
+          isGroupSelected: null,
         }
       }, false).then( data => {
           // console.log(data);
@@ -184,9 +216,14 @@
 
       children.map((child) => {
         const proposals = child.data.proposals.map(el => {
+            console.log(el);
           return {
             id: el.id,
+            isReserve: el.isReserve,
             name: el.association.name,
+            groups: el.association.groups,
+            isGroupSelected: el.isGroupSelected,
+            selected_group: null,
             status: el.status.length ? { ...el.status[0] } : { text: "", num: 0 },
             download: "",
             print: "",
@@ -227,6 +264,16 @@
                 }
             })
             .catch(err => {
+                console.log(err);
+            });
+        },
+        joinGroup(group, proposal_id) {
+            this.joinGroupError = false;
+            this.joinGroupSuccess = false;
+            Proposal.joinGroup(group, proposal_id).then(data => {
+                this.joinGroupSuccess = true;
+            }).catch(err => {
+                this.joinGroupError = true;
                 console.log(err);
             });
         }

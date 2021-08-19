@@ -75,7 +75,7 @@ let redirectTo = (name) => {
 router.afterEach(async (to, from) => {
     console.log(to)
     let isLogin = true;
-    isLogin = (token !== null); 
+    isLogin = (token !== null);
 
     console.log(isLogin)
 

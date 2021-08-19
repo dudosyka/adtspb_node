@@ -14,6 +14,7 @@ const UserDataOnEdit = require('../Entity/UserDataOnEdit');
 const UserDataLog = require('../Entity/UserDataLog');
 
 const AssociationExtraData = require('./AssociationExraData');
+const Association = require('./Association');
 
 const Mail = require('../utils/Mail');
 const mail = new Mail();
@@ -72,6 +73,37 @@ User.prototype.createFromUnique = async function (data) {
 
 User.prototype.hasAccess = function (rule) {
     return this.__get('__accessible').indexOf(rule) != -1;
+}
+
+User.prototype.hasRole = function (role) {
+    return this.__get('__role').indexOf(role) != -1;
+}
+
+User.prototype.getSector = async function () {
+    const sector = await this.db.query('SELECT `sector_id` as `id` FROM `user_sector` WHERE `id` = ?', [ this.__get('id') ]);
+    if (sector.length > 0)
+        return sector[0].id;
+    else
+        return false;
+}
+
+User.prototype.getAllowedAssociations = async function () {
+    const sector_id = await this.getSector();
+    let query = " WHERE `join`.`teacher_id` = ?";
+    let data = [ this.__get('id') ];
+
+    if (sector_id !== false) {
+        query += "`join`.`sector_id` = ?";
+        data.push(sector_id);
+    }
+
+    if (this.hasRole(11)) {
+        query = "WHERE `main`.`id` != ?";
+        data = [ -1 ];
+    }
+
+    const association = Association.newModel();
+    return await association.getAssociations(null, {}, null, query, data).then(data => data.map(association => association.id));
 }
 
 User.prototype.auth = async function (data) {

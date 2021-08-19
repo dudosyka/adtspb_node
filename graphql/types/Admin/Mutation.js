@@ -38,6 +38,13 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { input }) {
+                if (!obj.adminModel.hasAccess(21)) //Association editing
+                    throw Error('Forbidden');
+                else
+                    if (input.closed)
+                        if (!obj.adminModel.hasAccess(17)) //Managing recruiment
+                            throw Error('Forbidden');
+
                 const admin_id = obj.viewer.id;
                 await association.edit(input, logger, extraData, admin_id);
                 return true;
@@ -51,6 +58,13 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { input }) {
+                if (!obj.adminModel.hasAccess(22)) //Groups editing
+                    throw Error('Forbidden');
+                else
+                    if (input.closed)
+                        if (!obj.adminModel.hasAccess(27)) //Managing group`s recruiment
+                            throw Error('Forbidden');
+
                 const admin_id = obj.viewer.id;
                 await group.edit(input, logger, admin_id, extraData);
                 return true;
@@ -64,7 +78,11 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { input }) {
-                return await userGroup.editGroupStructure(input, group, proposal);
+                if (!obj.adminModel.hasAccess(36)) //Group`s structure editing
+                    throw Error('Forbidden');
+
+                const allowed = await obj.adminModel.getAllowedAssociations();
+                return await userGroup.editGroupStructure(input, group, proposal, allowed);
             }
         },
         edit_proposal_status: {
@@ -75,8 +93,12 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { input }) {
+                if (!obj.adminModel.hasAccess(28)) //Proposal status editing
+                    throw Error('Forbidden');
+
+                const allowed = await obj.adminModel.getAllowedAssociations();
                 const admin_id = obj.viewer.id;
-                await status.editStatus(input, logger, admin_id);
+                await status.editStatus(input, logger, admin_id, proposal, allowed);
             }
         },
         create_association: {
@@ -87,6 +109,9 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { input }) {
+                if (!obj.adminModel.hasAccess(24)) //Association creating
+                    throw Error('Forbidden');
+
                 const admin_id = obj.viewer.id;
                 const association_id = await association.newFromInput(input, extraData);
                 return association_id;
@@ -100,6 +125,9 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { input }) {
+                if (!obj.adminModel.hasAccess(25)) //Groups creating
+                    throw Error('Forbidden');
+
                 const admin_id = obj.viewer.id;
                 const group_id = await group.newFromInput(input, extraData);
                 return group_id;
@@ -113,6 +141,9 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { proposal }) {
+                if (!obj.adminModel.hasAccess(31)) //Proposal creating (for admins)
+                    throw Error('Forbidden');
+
                 let model = await Proposal.createFromInput(proposal);
                 return await model.createNew(user, userExtraData, true);
             }
