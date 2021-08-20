@@ -82,15 +82,17 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
     let copies = {};
     proposals = {};
 
-    for (let i = 1; i < res.length; i+=2) {
+    for (let i = (selections.child) ? 1 : 0; i < res.length; i+=(selections.child) ? 2 : 1) {
         let withChildData = res[i];
-        let withParentData = res[i - 1];
+        let withParentData = {};
+        if (selections.child) {
+            withParentData = res[i - 1];
+        }
         let parsed = {};
 
         let pushIntoSub1 = false;
         let pushIntoSub2 = false;
         let pushIntoSub3 = false;
-        let pushIntoSub4 = false;
 
         let association = {};
         let child = {};
