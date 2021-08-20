@@ -148,6 +148,7 @@ User.prototype.fullname = function () { return this.__get('surname') + " " + thi
 
 User.prototype.createNew = async function (roles = [], sendEmail = true, child = false) {
     const fields = this.fields;
+    console.log(child);
     if (child) {
         delete fields.email;
         delete fields.phone;
@@ -187,17 +188,17 @@ User.prototype.createNew = async function (roles = [], sendEmail = true, child =
         if (usr === false)
             throw Error('Saving data failed');
 
-        rbac.addRoleToUser(id, AppConfig.common_user_id);
+        await rbac.addRoleToUser(id, AppConfig.common_user_id);
+        for (role in roles) {
+            const role_id = roles[role];
+            await rbac.addRoleToUser(id, role_id);
+        }
 
         const dataRes = await UserExtraData.createNew({ user_id: id });
 
-        roles.map(role_id => {
-            rbac.addRoleToUser(id, role_id);
-        });
-
         answ.id = id;
         answ.token = await jwt.sign({id: id, confirm: false});
-
+        
         return answ;
     }
 }
@@ -374,7 +375,8 @@ User.prototype.createChild = async function (data) {
     const instance = this.newModel();
     instance.fields = {...data};
 
-    let createResult = await instance.createNew([ AppConfig.child_role_id ], false, true);
+    let child = (instance.fields.phone == null || instance.fields.email == null || instance.fields.password == null);
+    let createResult = await instance.createNew([ AppConfig.child_role_id ], false, child);
     if (createResult.status != 'success')
         throw Error("User creating failed");
 
@@ -382,7 +384,7 @@ User.prototype.createChild = async function (data) {
 
     const usrChild = await UserChild.newModel();
     usrChild.load({ parent_id: this.__get('id'), child_id: createResult.id, agreed: 1 });
-    usrChild.save(true);
+    await usrChild.save(true);
     const res = await this.setChildData(createResult.id, data, true, instance, false);
 
     //const validation = await EmailValidation.newUser(instance.__get('id'), instance.__get('email'), instance.fullname());
