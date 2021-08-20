@@ -23,7 +23,7 @@
                                     <option disabled selected :value='null'>Выберите группу</option> <!-- Что бы отдовал что-то другое через v-modal, могу options настроить !-->
                                     <option v-for="(group, groupIndex) in proposal.groups" :value="group.id" v-text="group.name"></option>
                                 </select>
-                                <button @click='joinGroup(proposal.selected_group, proposal.id)'>Выбрать группу</button>
+                                <button @click='joinGroup(proposal.selected_group, proposal.id)' class="dark-button" style="margin-top: 10px">Выбрать группу</button>
                                 <p v-if='joinGroupError'>
                                     Группа переполнена
                                 </p>
