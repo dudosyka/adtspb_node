@@ -16,10 +16,10 @@
                             <h3 class="proposal_heading">{{ proposal.name }}</h3>
                             <figcaption class="child-stat_heading">Статус: {{ proposal.status.text }}</figcaption>
 
-                            <div v-if="proposal.isReserve" class="fatal-container">
+                            <div v-if="proposal.isReserve && proposal.status.num !== 0" class="fatal-container">
                                 <p class="assoc-reserve-description">Заявление в резерве</p>
                             </div>
-                            <div v-if='!proposal.isReserve && !proposal.isGroupSelected'>
+                            <div v-if='!proposal.isReserve && !proposal.isGroupSelected && proposal.status.num !== 0'>
                                 <select class="dark-box darken" v-model="proposal.selected_group">
                                     <option disabled selected :value='null'>Выберите группу</option> <!-- Что бы отдовал что-то другое через v-modal, могу options настроить !-->
                                     <option v-for="(group, groupIndex) in proposal.groups" :value="group.id" v-text="group.name"></option>
