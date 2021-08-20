@@ -49,6 +49,7 @@ UserExtraData.prototype.__save = async function () {
         this.__set('ovz_type', null);
     if (this.__get('disability_group') == 0)
         this.__set('disability_group', null);
+        
     if (this.fields.id)
         return await this.update(true);
     else
@@ -62,8 +63,8 @@ UserExtraData.prototype.baseValidate = function () {
                 'relationship', 'state', 'studyPlace',
                 'registration_address',
                 'residence_address',
-                'ovz', 'ovz_type',
-                'disability', 'disability_group', 'birthday'
+                'ovz',
+                'disability', 'birthday'
             ],
             'Can`t be empty'
         ).notNull(),
