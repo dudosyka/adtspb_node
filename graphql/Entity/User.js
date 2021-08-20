@@ -198,7 +198,7 @@ User.prototype.createNew = async function (roles = [], sendEmail = true, child =
 
         answ.id = id;
         answ.token = await jwt.sign({id: id, confirm: false});
-        
+
         return answ;
     }
 }

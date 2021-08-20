@@ -82,15 +82,17 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
     let copies = {};
     proposals = {};
 
-    for (let i = 1; i < res.length; i+=2) {
+    for (let i = (selections.child) ? 1 : 0; i < res.length; i+=(selections.child) ? 2 : 1) {
         let withChildData = res[i];
-        let withParentData = res[i - 1];
+        let withParentData = {};
+        if (selections.child) {
+            withParentData = res[i - 1];
+        }
         let parsed = {};
 
         let pushIntoSub1 = false;
         let pushIntoSub2 = false;
         let pushIntoSub3 = false;
-        let pushIntoSub4 = false;
 
         let association = {};
         let child = {};
@@ -207,33 +209,37 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
         }
     }
 
-    let links = {};
+    if (selections.association && Object.keys(proposals).length > 0) {
+        let links = {};
 
-    let association_ids = [];
-    let association_query = "";
-    Object.keys(proposals).map(id => {
-        let i = 0;
-        proposals[id].map(proposal => {
-            association_ids.push(proposal.association.id);
-            links[proposal.association.id] = [
-                id, i
-            ];
-            i++;
+        let association_ids = [];
+        let association_query = "";
+        Object.keys(proposals).map(id => {
+            let i = 0;
+            console.log(proposals[id]);
+            proposals[id].map(proposal => {
+                console.log(proposal);
+                association_ids.push(proposal.association.id);
+                links[proposal.association.id] = [
+                    id, i
+                ];
+                i++;
+            });
         });
-    });
 
-    for (let i = 0; i < association_ids.length - 1; i++) {
-        association_query += "?,";
+        for (let i = 0; i < association_ids.length - 1; i++) {
+            association_query += "?,";
+        }
+        association_query += "?";
+
+        const associationModel = Association.newModel();
+        const result = await associationModel.getAssociations(null, selections.association, null,"WHERE `main`.`id` IN (" + association_query + ")", association_ids);
+
+        result.map(association => {
+            const index = links[association.id];
+            proposals[index[0]][index[1]].association = association;
+        });
     }
-    association_query += "?";
-
-    const associationModel = Association.newModel();
-    const result = await associationModel.getAssociations(null, selections.association, null,"WHERE `main`.`id` IN (" + association_query + ")", association_ids);
-
-    result.map(association => {
-        const index = links[association.id];
-        proposals[index[0]][index[1]].association = association;
-    });
 
     return proposals;
 }
