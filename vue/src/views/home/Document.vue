@@ -1,11 +1,11 @@
 <template>
-  <main class="home">
-      <navigation />
+    <main class="home">
+        <navigation />
 
-      <article class="home-content">
-
-      </article>
-  </main>
+        <article class="home-content">
+            
+        </article>
+    </main>
 </template>
 
 <style scoped>
