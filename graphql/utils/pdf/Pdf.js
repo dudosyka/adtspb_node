@@ -26,10 +26,10 @@ Pdf.prototype.getFullDate = function () {
     return this.date.getFullYear() + "-" + month + "-" + day;
 }
 
-Pdf.prototype.generateProposal = async function (parent, child, child_extra_data, association) {
+Pdf.prototype.generateProposal = async function (child, parent, child_extra_data, association) {
     const current_day = this.getFullDate();
-    parent = {...parent.fields};
     child = {...child.fields};
+    parent = {...parent.fields};
 
     // const child_extra_data = await UserExtraData.createFrom({user_id: this.proposal.__get('child_id')});
     // const association = await Association.baseCreateFrom({id: this.proposal.__get('association_id')});
@@ -51,7 +51,13 @@ Pdf.prototype.generateProposal = async function (parent, child, child_extra_data
     const child_day = (child_birthday_date.getDate()) > 9 ? (child_birthday_date.getDate()) : "0" + (child_birthday_date.getDate());
     const child_birthday = child_birthday_date.getFullYear() + '-' + child_month + '-' + child_day;
 
+    const child_residence_flat = child_extra_data.__get('residence_flat') == null ? "" : `, кв. ` + child_extra_data.__get('residence_flat');
+    const child_residence_address = child_extra_data.__get('residence_address') + child_residence_flat;
+    const child_registration_flat = child_extra_data.__get('registration_flat') == null ? "" : `, кв. ` + child_extra_data.__get('registration_flat');
+    const child_registration_address = child_extra_data.__get('registration_address') + child_residence_flat;
+
     const child_ovz = child_extra_data.ovz == 1 ? 'Да' : 'Нет';
+
 
     this.file = {
         content: `<style>
@@ -85,8 +91,8 @@ Pdf.prototype.generateProposal = async function (parent, child, child_extra_data
                 <li><b>Дата рождения:</b> 															<u>` + child_birthday + `</u></li>
                 <li><b>Гражданство</b> <i>(государство)</i><b>:</b> 								<u>` + child_extra_data.__get('state') + `</u></li>
                 <li><b>Регистрация</b> <i>(постоянная/временная)</i><b>:</b> 						<u>` + 'Постоянная' + `</u></li>
-                <li><b>Адрес фактического проживания:</b> 											<u>` + child_extra_data.__get('residence_address') + `, кв. ` + child_extra_data.__get('residence_flat') + `</u></li>
-                <li><b>Адрес регистрации по месту жительства:</b> 									<u>` + child_extra_data.__get('registration_address') + `, кв. ` + child_extra_data.__get('registration_flat') + `</u></li>
+                <li><b>Адрес фактического проживания:</b> 											<u>` + child_residence_address + `</u></li>
+                <li><b>Адрес регистрации по месту жительства:</b> 									<u>` + child_registration_address +  `</u></li>
                 <li><b>Контактный телефон ребенка:</b> 												<u>` + child.phone + `</u></li>
                 <li><b>Контактный телефон родителя (законного представителя):</b> 					<u>` + parent.phone + `</u></li>
                 <li><b>Адрес электронной почты:</b> 												<u>` + parent.email + `</u></li>
