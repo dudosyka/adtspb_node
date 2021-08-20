@@ -1,118 +1,91 @@
 <template>
 	<main class="bg-wrapper">
 		<Header /> 
-		<ul class="assoc-list">
-			<li v-for="i of associations" class="assoc-item bg-card">
-				<h2 class="assoc-title">{{ i.name }}</h2>
-				<button @click="openAssociation(i)" class="ft-dark button-gray">открыть</button>
-			</li>
-		</ul>
-		<div v-if="show.association" class="card-wrapper">
-			<article class="card bg-card">
-				<button @click="show.association = false" class="bg-card ft-gray button-close">Х</button>
-				<h2 class="card-title" v-text="association.name"></h2>
-				
-				<section class="container assoc-description">
-					<h3>Описание</h3>
-					<textarea 
-						v-model="association.description" 
-						cols="50" rows="5"
-						maxlength="10000" 
-						placeholder="Описание объединения" 
-						:readonly="true"
-					></textarea>
-					<button class="ft-dark button-gray">Редактировать описание</button>
-				</section>
+		<!-- layout system of bootstrap is bad !-->
+		<article class="content">
+			<b-list-group class="assoc-list">
+				<b-list-group-item
+					v-for="association of associations"
+					@click="openAssociation(association)"
+					v-text="association.name"
+					button
+					:active="associationOpen.id === association.id"
+				/>
+			</b-list-group>
+			<b-card>
+				<b-form-input v-model="associationOpen.name" />
+				<b-form-textarea v-model="associationOpen.description"></b-form-textarea>
 
-				<section class="container">
-					<h3>Рассписание групп</h3>
-					<article class="groups-container">
-						<ul class="group-list">
-							<li class="group-list_item"
-								:class="{'group-list_item--active': group.show}" 
-								v-for="group of association.groups" 
-								v-text="group.name" 
-								@click="association.groups.map(el => el.show = false); group.show = true"
-							></li>
-						</ul>
-						<ul class="group-data-list">
-							<li v-for="group of association.groups">
-								<table>
-									<tr v-for="(time, day) of group.timetable" v-if="group.show">
-										<td v-text="day"></td><td v-text="time"></td>
-									</tr>
-								</table>
-							</li>
-						</ul>
-					</article>
-				</section>
-			</article>
-		</div>
+				<!-- the prop append must be string !-->
+				<b-card-body>
+					<b-input-group prepend="Минимальный возраст" :append="`${associationOpen.min_age}`">
+						<b-form-input type="range" min="6" max="18" v-model="associationOpen.min_age" /> 				
+					</b-input-group>
+					<b-input-group prepend="Максимальный возраст" :append="`${associationOpen.max_age}`">
+						<b-form-input type="range" min="6" max="18" v-model="associationOpen.max_age" /> 				
+					</b-input-group>
+				</b-card-body>
+
+				<b-card-body>
+					<b-input-group prepend="Лет обучения" :append="`${associationOpen.study_years}`">
+						<b-form-spinbutton v-model="associationOpen.study_years" /> 				
+					</b-input-group>
+					<b-input-group prepend="Часов в неделю" :append="`${associationOpen.hours_week}`">
+						<b-form-spinbutton v-model="associationOpen.hours_week" /> 				
+					</b-input-group>
+					<b-input-group prepend="Зантий в неделю" :append="`${associationOpen.lessons_week}`">
+						<b-form-spinbutton v-model="associationOpen.lessons_week" /> 				
+					</b-input-group>
+				</b-card-body>
+
+				<b-card-body>
+					<b-row no-gutters>
+						<b-col>
+							<b-list-group>
+								<b-list-group-item
+									v-for="group of associationOpen.groups"
+									@click="openGroup(group)"
+									button
+									:active="group === groupOpen"
+								>
+									<b-input-group>
+										<b-form-input v-model="group.name"></b-form-input>
+										<b-input-group-append>
+											<b-button variant="light">></b-button>
+										</b-input-group-append>
+									</b-input-group>
+								</b-list-group-item>
+							</b-list-group>	
+						</b-col>
+						<b-col>
+							<h6>Внимание!!! Очень важно заполнять данные в формате ЧЧ.ММ-ЧЧ.ММ ЧЧ.ММ-ЧЧ.ММ иначе объединение удалиться</h6>
+							<b-input-group v-for="(day, id) of groupOpen.timetable.week" :prepend="nToDay(id)">
+								<b-form-input v-model="groupOpen.timetable.week[id]"></b-form-input>
+								<!--<b-form-timepicker @context="timetableRaw[id].start" placeholder="начало" locale="de" />
+								<b-form-timepicker @context="timetableRaw[id].end" placeholder="конец" locale="de" />!-->
+							</b-input-group>
+						</b-col>
+					</b-row>
+				</b-card-body>
+			</b-card>
+		</article>
 	</main>
 </template>
 
 <style scoped>
-main {
-	min-height: 100vh;
-}
-.card-wrapper {
-	padding: 30px 30px 0 30px;
-}
-.assoc-list {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	align-items: flex-end;
-	padding: 30px;
-	margin: 0;
-	list-style: none;
-}
-.assoc-item {
-	flex-grow: 1;
-	display: grid;
-	grid-template-columns: auto auto;
-	grid-gap: 20px;
-	align-items: center;
-	height: min-content;
-	width: min-content;
-	padding: 20px;
-	margin: 20px;
-	border-radius: 20px;
-}
-.assoc-title {
-	white-space: nowrap;
-}
-.assoc-description textarea {
-	margin-bottom: 5px;
-}
-.groups-container {
+.content {
 	display: grid;
 	grid-template-columns: auto 1fr;
 }
-.group-list, .group-data-list {
-	list-style: none;
-	padding: 0;
-	margin: 0;
+
+.assoc-list {
+	overflow-y: scroll;
+	max-height: 100vh;
 }
-.group-list_item {
-	padding: 5px;
-}
-.group-list_item:hover {
-	cursor: pointer;
-}
-.group-list_item--active {
-	text-decoration: underline;
-}
-.group-data-list td {
-	padding: 5px 10px;
-}
-.container h3 {
-	margin-bottom: 5px;
-}
-.card {
-	padding: 40p;
-	background: #191919;
+.association {
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-gap: 10px;
 }
  
 </style>
@@ -120,6 +93,7 @@ main {
 <script>
 import Header from '../components/Header'
 import {Admin} from '../models/Admin'
+import {Corrector} from '../utils/Corrector'
 
 export default {
     name: 'associations',
@@ -128,69 +102,45 @@ export default {
     },
     data() {
         return {
-        	//WARN: this is test arr for demonstartion. Just will say me, what back return arr
-            associations: [
-            	{
-            		name: 'Test association',
-            		description: 'Bla bla bla slkfh skafhsa sakfhsadkl safkjhsakfl sadkkfhsadkf sadkfhskdf fsakdfh sakdfhsdks skafhs skkafh ksahfsa  sakdfh safk saksdahfskdfhs fksadfh skadfhskd sdkfhsad sdjfhsdka sadkfjhsda',
-            		groups: [
-            			{	
-            				show: true,
-            				name: 'group 1',
-            				timetable: {
-            					'понедельник': '17:00 - 18:00',
-            					'суббота': '17:00 - 18:00',
-            					'четверг': '17:00 - 18:00',
-            					'пятница': '17:00 - 18:00',
-            				}
-            			},
-            			{	
-            				show: false,
-            				name: 'group 2',
-            				timetable: {
-            					'понедельник': '17:00 - 18:00',
-            					'суббота': '17:00 - 18:00',
-            					'четверг': '17:00 - 18:00',
-            					'пятница': '17:00 - 18:00',
-            				}
-            			}
-            		]
-            	},
-            	{
-            		name: 'Test association',
-            		description: 'Bla bla bla',
-            	},
-            	{
-            		name: 'Test association',
-            		description: 'Bla bla bla',
-            	},
-            	{
-            		name: 'Test association',
-            		description: 'Bla bla bla',
-            	},
-            	{
-            		name: 'Test association',
-            		description: 'Bla bla bla',
-            	},
-            	{
-            		name: 'Test association',
-            		description: 'Bla bla bla',
-            	},
-            ],
-            association: {
-            	name: null,
-            	description: null
-            },
-            show: {
-            	association: false,
-            }
+        	associations: [],
+        	associationOpen: {},
+        	groupOpen: {},
+        	timetableRaw: {},
         }
     },
-    methods: {
-    	openAssociation(i) { //i - information
-    		this.show.association = true
-    		this.association = i
-    	}
+    created() {
+ 		Admin.getAssociations().then( data => {
+ 			this.associations = data
+ 			this.associationOpen = this.associations[0]
+ 			this.groupOpen = this.associationOpen.groups[0]
+ 		})
     },
+    methods: {
+    	openAssociation(association) {
+    		this.associationOpen = association
+    		this.groupOpen = association.groups[0]
+    	},
+    	openGroup(group) {
+    		this.groupOpen = group
+    		this.timetable = this.toRawTimetable(group.timetable)
+    	},
+    	/*
+    	toRawTimetable(timetable) {
+    		this.timetable = timetable.map( day => {
+    			if (day !== "") {
+    				day = day.split(' ')
+    				return
+    			}
+    		})
+    	},
+    	*/
+    	nToDay(number) { 
+    		return Corrector.weekDayByNumber(number)
+    	},
+
+    },
+    computed: {
+
+    }
 }
 </script>

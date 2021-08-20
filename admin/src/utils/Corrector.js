@@ -10,6 +10,32 @@ Corrector.translateWeekDay = function (day) {
     if (day === 'sunday') return 'воскресенье';
 }
 
+Corrector.weekDayByNumber = function (number) {
+  switch(number) {
+    case 0: 
+      return 'понедельник'
+      break;
+    case 1:
+      return 'вторник'
+      break;
+    case 2: 
+      return 'среда'
+      break;
+    case 3: 
+      return 'четверг'
+      break;
+    case 4:
+      return 'пятница'
+      break;
+    case 5:
+      return 'суббота'
+      break;
+    case 6:
+      return 'воскресенье'
+      break;
+  }
+}
+
 Corrector.correctYears = function (years) {
   if (years > 1) {
     return ' года'
