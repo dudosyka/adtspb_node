@@ -3,7 +3,10 @@
         <navigation />
 
         <article class="home-content">
-            
+            <div class="card shadow">
+                <h1>Если не произошло автоматическое направление, нажмите на кнопку ниже</h1>
+                <a class="dark-button" href="https://widget.easyweek.io/act/">Открыть</a>
+            </div>
         </article>
     </main>
 </template>
@@ -27,6 +30,11 @@
     background-color: #615d39;
     border-radius: 30px;
 }  
+.card {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+}
 </style>
 
 <script>
@@ -36,6 +44,9 @@
     name: '',
     components: {
       navigation,
+    },
+    mounted() {
+        window.open('https://widget.easyweek.io/act/', '_blank')
     },
     data() {
       return {
