@@ -4,6 +4,7 @@
 
             <p v-if="children.length < 1" class="warning-container">Заявления еще не сформированы. (Перейдите в раздел "Мои дети", чтобы сформировать новое заявление)</p>
 
+            <section class="home-content">
             <article class="card shadow children" v-for="child in children">
                 <h2 class="child-name">{{ child.name + ' ' + child.surname }}</h2>
                 <button class="light-button" @click='printResolution(child.id)'>Распечатать согласие на обработку персональных данных</button>
@@ -23,7 +24,7 @@
                                     <option disabled selected :value='null'>Выберите группу</option> <!-- Что бы отдовал что-то другое через v-modal, могу options настроить !-->
                                     <option v-for="(group, groupIndex) in proposal.groups" :value="group.id" v-text="group.name"></option>
                                 </select>
-                                <button @click='joinGroup(proposal.selected_group, proposal.id)' class="dark-button" style="margin-top: 10px">Выбрать группу</button>
+                                <button @click='joinGroup(proposal.selected_group, proposal.id)' class="dark-button" style="margin-top: 10px ">Выбрать группу</button>
                                 <p v-if='joinGroupError'>
                                     Группа переполнена
                                 </p>
