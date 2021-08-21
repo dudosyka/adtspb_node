@@ -57,6 +57,7 @@ Association.prototype.getAssociations = async function (age = null, selections =
     let associations = [];
     res.map(el => {
         el.id = el.association_id;
+        console.log(el.id);
         delete el.association_id;
         const association = {
             ...el,
@@ -65,6 +66,10 @@ Association.prototype.getAssociations = async function (age = null, selections =
         };
         associations.push(association);
     });
+
+    // associations.map(el => {
+    //     console.log(el.groups);
+    // });
 
     return associations;
 }
