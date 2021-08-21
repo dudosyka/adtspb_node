@@ -193,15 +193,15 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
         for (id of Object.keys(proposals)) {
             const child = proposals[id];
             for (proposal of child) {
-                const data = await this.db.query("SELECT `id` FROM `proposal` WHERE `association_id` = ?", [ proposal.association.id ]);
+                const data = await this.db.query("SELECT `proposal`.`id` as `id`, `status`.`num` as `num` FROM `proposal` LEFT JOIN `proposal_status` as `status` ON `status`.`proposal_id` = `proposal`.`id` WHERE `proposal`.`association_id` = ?", [ proposal.association.id ]);
                 let i = 1;
                 data.map(el => {
                     const id = el.id;
-                    if (id < proposal.id) {
+                    if (id < proposal.id && el.num != 0) {
                         i++;
                     }
                 });
-                if (i > AppConfig.group_size)
+                if (i > AppConfig.group_size * proposal.association.group_count)
                     proposal.isReserve = true;
                 else
                     proposal.isReserve = false;
@@ -210,7 +210,6 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
     }
 
     if (selections.association && Object.keys(proposals).length > 0) {
-        console.log('fdshjfdsgjhfjhsdghfsdhgfsdghfghsdgfsdjhfgjds');
         let links = {};
 
         let association_ids = [];
@@ -379,9 +378,6 @@ Proposal.prototype.recall = async function (requester) {
         throw Error('Proposal not found');
 
     if (requester !== this.__get('parent_id')) {
-        // const user = User.createFrom({id: requester});
-        // Проверять тут проавило позволяющее админам отзывыать любые заявления
-        // if ()
         throw Error('Forbidden');
     }
 
