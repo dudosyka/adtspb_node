@@ -28,6 +28,7 @@ Group.prototype.getAssociationGroups = async function (association_ids, selectio
 
     const res = await this.db.query(fullQuery, ids);
     let groups = {};
+
     res.map(group => {
         let parsed = {};
         let pushIntoSub1 = false;

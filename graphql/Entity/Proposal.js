@@ -210,19 +210,23 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
     }
 
     if (selections.association && Object.keys(proposals).length > 0) {
+        console.log('fdshjfdsgjhfjhsdghfsdhgfsdghfghsdgfsdjhfgjds');
         let links = {};
 
         let association_ids = [];
         let association_query = "";
         Object.keys(proposals).map(id => {
             let i = 0;
-            console.log(proposals[id]);
             proposals[id].map(proposal => {
-                console.log(proposal);
                 association_ids.push(proposal.association.id);
-                links[proposal.association.id] = [
-                    id, i
-                ];
+                if (links[proposal.association.id]) {
+                    links[proposal.association.id].push(id, i);
+                }
+                else {
+                    links[proposal.association.id] = [
+                        id, i
+                    ];
+                }
                 i++;
             });
         });
@@ -237,16 +241,21 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
 
         result.map(association => {
             const index = links[association.id];
-            proposals[index[0]][index[1]].association = association;
+            for (let i = 1; i < index.length; i+=2) {
+                const first = index[i - 1];
+                const second = index[i];
+                proposals[first][second].association = association;
+            }
         });
     }
 
     return proposals;
 }
 
-Proposal.prototype.setSelected = async function (proposals) {
+Proposal.prototype.setSelected = async function (proposals, group_id) {
     const { ids, query } = this.db.createRangeQuery(false, proposals, "id");
-    this.db.query("UPDATE `proposal` SET `group_selected` = 1 WHERE " + query, ids);
+    ids.unshift(group_id);
+    this.db.query("UPDATE `proposal` SET `group_selected` = ? WHERE " + query, ids);
 }
 
 Proposal.prototype.getProposalAmount = async function (association_id = null) {
