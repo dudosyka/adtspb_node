@@ -38,7 +38,7 @@
                             </div>
                         </div>
 
-                        <div class="buttons" v-if='proposal.status.num !== 0'>
+                        <div class="buttons" v-if='proposal.status.num !== 0 && !proposal.isReserve'>
 
                             <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)">Скачать</button>
                             <button class="dark-button wp100" @click="printPdf(proposal.id)">Печатать</button>
