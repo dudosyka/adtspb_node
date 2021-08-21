@@ -249,12 +249,13 @@
             Proposal.printResolution(child_id);
         },
         recall(child, proposal_id, proposal_index) {
-            console.log(child, proposal_id, proposal_index);
             Proposal.recall(proposal_id)
             .then(data => {
                 if (data) {
                     child.proposals[proposal_index].status.num = 0;
                     child.proposals[proposal_index].status.text = "Отозвано";
+                    child.proposals[proposal_index].selected_group_title = null;
+                    child.proposals[proposal_index].isGroupSelected = 0;
                     this.show.sure = false;
                 }
             })
