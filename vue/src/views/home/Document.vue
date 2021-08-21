@@ -5,7 +5,7 @@
         <article class="home-content">
             <div class="card shadow">
                 <!--<h1>Если не произошло автоматическое направление, нажмите на кнопку ниже</h1>!-->
-                <a v-if="show" class="dark-button" href="https://widget.easyweek.io/act/">Запись <!-- Открыть !--></a>
+                <a v-if="show" class="dark-button" target="_blank" href="https://widget.easyweek.io/act/">Запись <!-- Открыть !--></a>
                 <h1 v-else>{{msg}}</h1>
             </div>
         </article>
