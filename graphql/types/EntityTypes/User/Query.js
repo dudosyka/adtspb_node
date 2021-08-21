@@ -77,8 +77,10 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { child_id }) {
-                const child = await User.baseCreateFrom({ id: child_id });
-                const parent = await User.baseCreateFrom({ id: obj.viewer.id });
+                const child = await User.newModel().baseCreateFrom({ id: child_id });
+                const parent = await User.newModel().baseCreateFrom({ id: obj.viewer.id });
+                console.log(child.fields);
+                console.log(parent.fields);
                 const childExtraData = await UserExtraData.createFrom({ user_id: child_id });
                 const model = Proposal.newModel();
                 return await model.generateResolution(child, parent, childExtraData);
