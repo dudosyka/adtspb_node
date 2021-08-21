@@ -5,6 +5,9 @@
             <p v-if="children.length < 1" class="warning-container">Заявления еще не сформированы. (Перейдите в раздел "Мои дети", чтобы сформировать новое заявление)</p>
 
             <section class="home-content">
+            <div class="shadow card horizontal-center children">
+                <h1>Расписание <a href="dark-button" target="_blank" class="dark-button">Открыть</a></h1>
+            </div>
             <article class="card shadow children" v-for="child in children">
                 <h2 class="child-name">{{ child.name + ' ' + child.surname }}</h2>
                 <button class="light-button" @click='printResolution(child.id)'>Распечатать согласие на обработку персональных данных</button>
@@ -15,6 +18,7 @@
                         <div class="child-stat">
                             <h3 class="proposal_heading">{{ proposal.name }}</h3>
                             <figcaption class="child-stat_heading">Статус: {{ proposal.status.text }}</figcaption>
+                            <figcaption class="child-stat_heading">Группа: {{ proposal.selected_group }}</figcaption>
 
                             <div v-if="proposal.isReserve && proposal.status.num !== 0" class="fatal-container">
                                 <p class="assoc-reserve-description">Заявление в резерве</p>
