@@ -76,6 +76,7 @@
       {
           User.login(this).catch(err => {
               //Ошибка с сервера
+              console.log(err.response)
               if (err.response) {
                   const msg = err.response.errors[0].message;
                   if (msg === 'login incorrect') {

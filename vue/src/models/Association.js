@@ -27,9 +27,11 @@ Association.getAssociations = async function(fields = null, child_id) {
             hours_count: null,
             study_period: null,
             isRecruiment: null,
+            closed: null,
             groups: {
                 name: null,
                 num: null,
+                closed: null,
                 timetable: {
                     monday: null,
                     tuesday: null,

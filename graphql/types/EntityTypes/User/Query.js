@@ -3,7 +3,7 @@ const User = require('../../../Entity/User');
 const UserExtraData = require('../../../Entity/UserExtraData');
 const Proposal = require('../../../Entity/Proposal');
 const UserChild = require('../../../Entity/UserChild');
-const DataOnEdit = require('../../../Entity/DataOnEdit');
+const UserDataOnEdit = require('../../../Entity/UserDataOnEdit');
 const EmailValidation = require('../../../Entity/EmailValidation');
 const Rbac = require('../../../utils/Rbac');
 
@@ -28,7 +28,7 @@ module.exports = new graphql.GraphQLObjectType({
             }
         },
         dataOnEdit: {
-            type: graphql.GraphQLList(DataOnEditOutput),
+            type: graphql.GraphQLList(UserDataOnEditOutput),
             args: {
                 target_id: {
                     type: graphql.GraphQLInt
@@ -37,7 +37,7 @@ module.exports = new graphql.GraphQLObjectType({
             async resolve (obj, { target_id }) {
                 if (target_id == 0)
                     target_id = null;
-                return await DataOnEdit.getUserDataOnEdit(obj.viewer.id, target_id);
+                return await UserDataOnEdit.getUserDataOnEdit(obj.viewer.id, target_id);
             }
         },
         rights: {
@@ -77,8 +77,10 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { child_id }) {
-                const child = await User.baseCreateFrom({ id: child_id });
-                const parent = await User.baseCreateFrom({ id: obj.viewer.id });
+                const child = await User.newModel().baseCreateFrom({ id: child_id });
+                const parent = await User.newModel().baseCreateFrom({ id: obj.viewer.id });
+                console.log(child.fields);
+                console.log(parent.fields);
                 const childExtraData = await UserExtraData.createFrom({ user_id: child_id });
                 const model = Proposal.newModel();
                 return await model.generateResolution(child, parent, childExtraData);
@@ -93,6 +95,6 @@ module.exports = new graphql.GraphQLObjectType({
 
 //Moved here to prevent from circular dependence err.
 const UserOutput = require('./OutputTypes/Main');
-const DataOnEditOutput = require('../DataOnEdit/Output');
+const UserDataOnEditOutput = require('../DataOnEdit/UserOutput');
 const UserRightsOutput = require('./OutputTypes/UserRights');
 const EmailValidationOutput = require('../EmailValidation/Output');

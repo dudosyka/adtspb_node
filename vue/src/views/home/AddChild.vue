@@ -47,18 +47,6 @@
             <h2 class="child-form_heading">Регистрация ребёнка</h2>
 
             <inputField
-                label="Имя"
-                v-model="childRaw.name"
-                :error="childRawErrors.name"
-            >
-              <template v-slot:prompt v-if="childRawErrors.name">
-                  <div class="fatal-container">
-                      <p class="padding5-container">Пожалуйста, укажите имя</p>
-                  </div>
-              </template>
-            </inputField>
-
-            <inputField
                 label="Фамилия"
                 v-model="childRaw.surname"
                 :error="childRawErrors.surname"
@@ -66,6 +54,18 @@
               <template v-slot:prompt v-if="childRawErrors.surname">
                   <div class="fatal-container">
                       <p class="padding5-container">Пожалуйста, укажите фамилию</p>
+                  </div>
+              </template>
+            </inputField>
+
+             <inputField
+                label="Имя"
+                v-model="childRaw.name"
+                :error="childRawErrors.name"
+            >
+              <template v-slot:prompt v-if="childRawErrors.name">
+                  <div class="fatal-container">
+                      <p class="padding5-container">Пожалуйста, укажите имя</p>
                   </div>
               </template>
             </inputField>

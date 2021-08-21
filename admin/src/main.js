@@ -1,10 +1,17 @@
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
+
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
 import { request, GraphQLClient } from "graphql-request";
 import * as AppConfig from './config/AppConfig';
 import {AccessControl} from './utils/AccessControl';
 
+Vue.use(BootstrapVue)
+Vue.use(IconsPlugin)
 
 const graphql = new GraphQLClient(AppConfig.api_url, {
     headers: {
@@ -66,19 +73,20 @@ let redirectTo = (name) => {
 }
 
 router.afterEach(async (to, from) => {
+    console.log(to)
     let isLogin = true;
     isLogin = (token !== null);
+
     console.log(isLogin)
+
     if (isLogin) {
         isLogin = await validToken();
         console.log(isLogin);
     }
-    console.log(to.path);
-    if ((to.path == '/login' || to.path == '/signup') && isLogin)
-      redirectTo('Home');
 
-    if (!isLogin && to.path != "/signup" && to.path != "/passreset")
-      redirectTo('Login');
+    if (to.path == '/' && isLogin) router.push('statistics');
+
+    if (!isLogin) router.push('/');
 });
 
 (async function () {

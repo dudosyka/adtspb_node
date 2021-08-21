@@ -1,9 +1,15 @@
 //To app work correct add new AppConfig.js file into this dir. It content should be like this: (If you need then change it compared with your data)
 module.exports = {
-    parent_role_id: 8, //Id of `parent` role in your `role` table
-    common_user_id: 9, //Id of `simmple user` role in your `role` table
-    child_role_id: 10, //Id of `child` role in your `role` table
-    admin_role_id: 11, //Id of `admin` role in your `role` table
+    //<ROLES>
+    parent_role_id: 8,
+    common_user_id: 9,
+    child_role_id: 10,
+    super_admin_role_id: 11,
+    teacher_role_id: 12,
+    common_admin_role_id: 13,
+    admissions_officer_role_id: 14,
+    sector_admin_role_id: 15,
+    //</ROLES>
     port: 8080,
     year: 2021,
     group_size: 15,

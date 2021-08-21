@@ -1,27 +1,15 @@
 <template>
-  <main class="home">
-      <navigation />
+    <main class="home">
+        <navigation />
 
-      <article class="home-content">
-        <section class="warning-container shadow">
-                <p>Функционал станет доступнен в даты подачи заявлений. Объявление будет размещено заранее, следите за информацией в официальных сообщества Академии Цифровых Технологий и <a href="https://adtspb.ru" target="_blank" class="link_text">на сайте</a>.</p>
-                <div class="link-container">
-                    <div class="social-media-list li">
-                        <a href="https://t.me/adtspb" class="fab fa-telegram-plane social-media-link" target="_blank"></a>
-                    </div>
-                    <div class="social-media-list li">
-                        <a href="https://vk.com/adtspb" class="fab fa-vk social-media-link" target="_blank"></a>
-                    </div>
-                    <div class="social-media-list li">
-                        <a href="https://www.facebook.com/adtspb" class="fab fa-facebook-square social-media-link" target="_blank"></a>
-                    </div>
-                    <div class="social-media-list li">
-                        <a href="https://www.instagram.com/adtspb" class="fab fa-instagram social-media-link" target="_blank"></a>
-                    </div>
-                </div>
-            </section>
-      </article>
-  </main>
+        <article class="home-content">
+            <div class="card shadow">
+                <!--<h1>Если не произошло автоматическое направление, нажмите на кнопку ниже</h1>!-->
+                <a v-if="show" class="dark-button" target="_blank" href="https://widget.easyweek.io/act/">Запись <!-- Открыть !--></a>
+                <h1 v-else>{{msg}}</h1>
+            </div>
+        </article>
+    </main>
 </template>
 
 <style scoped>
@@ -43,10 +31,19 @@
     background-color: #615d39;
     border-radius: 30px;
 }  
+.card {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+}
 </style>
 
 <script>
   import navigation from '../../components/Navigation.vue'
+  import {User} from '../../models/User';
+  import {Proposal} from '../../models/Proposal';
+  import {Parser} from '../../utils/Parser';
+  import AppConfig from '../../config/AppConfig';
 
   export default {
     name: '',
@@ -55,8 +52,51 @@
     },
     data() {
       return {
-
+        show: false,
+        msg: '',
       }
+    },
+    async created() {
+      User.getChildren({
+        proposals: {
+          isReserve: null,
+        }
+      }, false)
+      .then( data => {
+        const originalLength = data.length
+        const test = {
+            haveProposals: false,
+            allIsNotReserve: false,
+        }
+
+        if (data.length > 0) { 
+            test.haveProposals = true
+        } else {
+            this.msg = 'У Вас нет заявлений'
+            this.show = false
+            return
+        }
+
+        data = data.filter(el => {
+            el.data.proposals = el.data.proposals.filter( _el => {
+                return _el.isReserve
+            })
+            return (el.data.proposals.length > 0)
+        })
+
+        if (data.length !== originalLength) { 
+            test.allIsNotReserve = true
+        } else {
+            this.msg = 'Все Ваши зявления в резерве'
+            this.show = false
+            return
+        }
+
+        this.show = true
+
+        console.log(data)
+      });
+
     },
   }
 </script>

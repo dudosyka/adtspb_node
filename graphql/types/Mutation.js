@@ -3,6 +3,9 @@ const {GraphQLObjectType, GraphQLString, GraphQLBoolean, GraphQLInt} = require("
 const UserMutation = require('./EntityTypes/User/Mutation');
 const ProposalMutation = require('./EntityTypes/Proposal/Mutation');
 const AssociationMutation = require('./EntityTypes/Association/Mutation');
+const AdminMutation = require('./Admin/Mutation');
+
+const User = require('../Entity/User');
 
 module.exports = new GraphQLObjectType({
     name: 'Mutation',
@@ -17,7 +20,18 @@ module.exports = new GraphQLObjectType({
         },
         association: {
             type: AssociationMutation,
-            resolve: obj => obj()
+            resolve: obj => obj(),
+        },
+        admin: {
+            type: AdminMutation,
+            resolve: async obj => {
+                const admin_id = obj().viewer.id;
+                const adminModel = await User.createFrom({ id: admin_id });
+                return {
+                    ...obj(),
+                    adminModel
+                };
+            },
         }
     }
 });

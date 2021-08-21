@@ -10,10 +10,11 @@ const jwt = new Jwt();
 const UserChild = require('../Entity/UserChild');
 const UserChildOnDelete = require('../Entity/UserChildOnDelete');
 const UserExtraData = require('../Entity/UserExtraData');
-const DataOnEdit = require('../Entity/DataOnEdit');
+const UserDataOnEdit = require('../Entity/UserDataOnEdit');
 const UserDataLog = require('../Entity/UserDataLog');
 
 const AssociationExtraData = require('./AssociationExraData');
+const Association = require('./Association');
 
 const Mail = require('../utils/Mail');
 const mail = new Mail();
@@ -74,6 +75,37 @@ User.prototype.hasAccess = function (rule) {
     return this.__get('__accessible').indexOf(rule) != -1;
 }
 
+User.prototype.hasRole = function (role) {
+    return this.__get('__role').indexOf(role) != -1;
+}
+
+User.prototype.getSector = async function () {
+    const sector = await this.db.query('SELECT `sector_id` as `id` FROM `user_sector` WHERE `id` = ?', [ this.__get('id') ]);
+    if (sector.length > 0)
+        return sector[0].id;
+    else
+        return false;
+}
+
+User.prototype.getAllowedAssociations = async function () {
+    const sector_id = await this.getSector();
+    let query = " WHERE `join`.`teacher_id` = ?";
+    let data = [ this.__get('id') ];
+
+    if (sector_id !== false) {
+        query += "`join`.`sector_id` = ?";
+        data.push(sector_id);
+    }
+
+    if (this.hasRole(11)) {
+        query = "WHERE `main`.`id` != ?";
+        data = [ -1 ];
+    }
+
+    const association = Association.newModel();
+    return await association.getAssociations(null, {}, null, query, data).then(data => data.map(association => association.id));
+}
+
 User.prototype.auth = async function (data) {
     return new Promise(async (resolve, reject) => {
         let res = await this.db.select(this, "`email` = ? OR `phone` = ?", [ data['user'], data['user'] ]);
@@ -116,6 +148,7 @@ User.prototype.fullname = function () { return this.__get('surname') + " " + thi
 
 User.prototype.createNew = async function (roles = [], sendEmail = true, child = false) {
     const fields = this.fields;
+    console.log(child);
     if (child) {
         delete fields.email;
         delete fields.phone;
@@ -155,13 +188,13 @@ User.prototype.createNew = async function (roles = [], sendEmail = true, child =
         if (usr === false)
             throw Error('Saving data failed');
 
-        rbac.addRoleToUser(id, AppConfig.common_user_id);
+        await rbac.addRoleToUser(id, AppConfig.common_user_id);
+        for (role in roles) {
+            const role_id = roles[role];
+            await rbac.addRoleToUser(id, role_id);
+        }
 
         const dataRes = await UserExtraData.createNew({ user_id: id });
-
-        roles.map(role_id => {
-            rbac.addRoleToUser(id, role_id);
-        });
 
         answ.id = id;
         answ.token = await jwt.sign({id: id, confirm: false});
@@ -342,7 +375,8 @@ User.prototype.createChild = async function (data) {
     const instance = this.newModel();
     instance.fields = {...data};
 
-    let createResult = await instance.createNew([ AppConfig.child_role_id ], false, true);
+    let child = (instance.fields.phone == null || instance.fields.email == null || instance.fields.password == null);
+    let createResult = await instance.createNew([ AppConfig.child_role_id ], false, child);
     if (createResult.status != 'success')
         throw Error("User creating failed");
 
@@ -350,7 +384,7 @@ User.prototype.createChild = async function (data) {
 
     const usrChild = await UserChild.newModel();
     usrChild.load({ parent_id: this.__get('id'), child_id: createResult.id, agreed: 1 });
-    usrChild.save(true);
+    await usrChild.save(true);
     const res = await this.setChildData(createResult.id, data, true, instance, false);
 
     //const validation = await EmailValidation.newUser(instance.__get('id'), instance.__get('email'), instance.fullname());
@@ -438,7 +472,7 @@ User.prototype.setMainDataOnEdit = async function (data, target_id) {
         target = this;
     }
 
-    return DataOnEdit.setUserOnEdit(this.__get('id'), target, data, 'user');
+    return UserDataOnEdit.setUserOnEdit(this.__get('id'), target, data, 'user');
 }
 
 User.prototype.setExtraDataOnEdit = async function (data, target_id, autoConfirm = false, child = true) {
@@ -459,7 +493,7 @@ User.prototype.setExtraDataOnEdit = async function (data, target_id, autoConfirm
 
     target = await UserExtraData.createFrom({ user_id: target === false ? this.__get('id') : target});
 
-    return await DataOnEdit.setUserOnEdit(this.__get('id'), target, data, 'user_extra_data', target.__get('user_id'), autoConfirm);
+    return await UserDataOnEdit.setUserOnEdit(this.__get('id'), target, data, 'user_extra_data', target.__get('user_id'), autoConfirm);
 }
 
 User.prototype.confirEditData = async function (request_id) {

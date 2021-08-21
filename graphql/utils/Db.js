@@ -128,7 +128,7 @@ Db.prototype.deleteWhere = async function (entity, query, bindings)
  *
  * Update entity
  */
-Db.prototype.update = async function (entity, useEntityFields = false)
+Db.prototype.update = async function (entity, useEntityFields = false, where = false)
 {
     let columns;
     if (useEntityFields) {
@@ -139,18 +139,22 @@ Db.prototype.update = async function (entity, useEntityFields = false)
         columns = await this.query("SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`= ?  AND `TABLE_NAME`= ?",[ db_cnf.database, entity.table ]).then(data => data.map(el => el.COLUMN_NAME));
     }
 
-    let fields = Object.keys(entity.fields).filter(el => columns.includes(el));
+    let fields = Object.keys(entity.fields).filter(el => (columns.includes(el) && el != 'id'));
     let values = fields.map(el => entity.fields[el]);
 
 
     //Build SET part of request (SET id = ?, field = ?, fieldN = ?.....)
     const set = 'SET ' + fields.join(' = ?,') + ' = ?';
 
+    let whereQuery = " WHERE `"+ where +"` = ?";
+    if (where === false)
+        whereQuery = " WHERE `id` = ?";
+
     //Build full request like UPDATE `XXX` SET id = XX, {...} WHERE `id` = XX
-    const query = "UPDATE " + entity.table + " " + set + " WHERE id = ?";
+    const query = "UPDATE `" + entity.table + "` as `main` " + set + whereQuery;
 
     //Get entity`s fields value and put it in the array
-    const bindings = values.concat([ entity.fields['id'] ]);
+    const bindings = values.concat([ entity.fields[where === false ? 'id' : where] ]);
 
     return await this.query(query, bindings)
 }
@@ -188,7 +192,7 @@ Db.prototype.insert = async function (entity, useEntityFields = false)
     }
 
 
-    let req = "INSERT INTO " + entity.table + " (";
+    let req = "INSERT INTO `" + entity.table + "` (";
     let reqSecondPart = ") VALUES (";
 
     let fields = Object.keys(entity.fields);

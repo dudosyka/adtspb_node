@@ -32,6 +32,23 @@ Status.prototype.setToRecall = async function (proposal_id = null) {
     return await this.db.query("UPDATE " + this.table + " SET `text` = ?, `num` = ? WHERE `proposal_id` = ? AND `hidden` = ?", [ this.__get('text'), 0, this.__get('proposal_id'), 0 ]);
 }
 
+Status.prototype.editStatus = async function (input, logger, admin_id, proposal, allowed) {
+    if (!input.id)
+        throw Error('Must provide `id` field into `input`');
+
+    const model = this.newModel();
+    const oldData = await model.db.query('SELECT * FROM `proposal_status` WHERE `id` = ?', [ input.id ]);
+
+    const association_id = await this.db.query('SELECT `association_id` FROM `proposal` WHERE `id` = ?', [ oldData[0].proposal_id ]).then(data => data[0].association_id);
+    if (allowed.indexOf(association_id) == -1)
+        throw Error('Forbidden');
+
+    model.load(oldData[0]);
+    await logger.logModel(model, input, admin_id);
+    this.load(input);
+    await this.update();
+}
+
 Status.prototype.table = "proposal_status";
 
 module.exports = (new Status());

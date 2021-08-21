@@ -2,30 +2,15 @@
     <main class="home">
         <navigation />
 
-        <section class="home-content">
-            <section v-if="children.length > 0" class="warning-container shadow">
-                <p>Кнопки <em>печати</em> и <em>скачивания</em> документов станут доступными перед началом приема документов. Объявление об это будет размещено заранее, следите за информацией в официальных сообщества Академии Цифровых Технологий и <a href="https://adtspb.ru" target="_blank" class="link_text">на сайте</a>.</p>
-                <div class="link-container">
-                    <div class="social-media-list li">
-                        <a href="https://t.me/adtspb" class="fab fa-telegram-plane social-media-link" target="_blank"></a>
-                    </div>
-                    <div class="social-media-list li">
-                        <a href="https://vk.com/adtspb" class="fab fa-vk social-media-link" target="_blank"></a>
-                    </div>
-                    <div class="social-media-list li">
-                        <a href="https://www.facebook.com/adtspb" class="fab fa-facebook-square social-media-link" target="_blank"></a>
-                    </div>
-                    <div class="social-media-list li">
-                        <a href="https://www.instagram.com/adtspb" class="fab fa-instagram social-media-link" target="_blank"></a>
-                    </div>
-                </div>
-            </section>
-
             <p v-if="children.length < 1" class="warning-container">Заявления еще не сформированы. (Перейдите в раздел "Мои дети", чтобы сформировать новое заявление)</p>
 
+            <section class="home-content">
+            <div class="shadow card horizontal-center children">
+                <h1>Расписание <a href="https://adtspb.ru/parents/schedule/" target="_blank" class="dark-button">Открыть</a></h1>
+            </div>
             <article class="card shadow children" v-for="child in children">
                 <h2 class="child-name">{{ child.name + ' ' + child.surname }}</h2>
-                <button class="light-button" @click='printResolution(child.id)' :disabled="!inDev">Распечатать согласие на обработку персональных данных</button>
+                <button class="light-button" @click='printResolution(child.id)'>Распечатать согласие на обработку персональных данных</button>
 
                 <article class="proposals wp100">
 
@@ -33,11 +18,31 @@
                         <div class="child-stat">
                             <h3 class="proposal_heading">{{ proposal.name }}</h3>
                             <figcaption class="child-stat_heading">Статус: {{ proposal.status.text }}</figcaption>
-                        </div>
-                        <div class="buttons" v-if='proposal.status.num !== 0'>
+                            <figcaption v-if="!proposal.isReserve && proposal.selected_group_title != null" class="child-stat_heading">Группа: {{ proposal.selected_group_title }}</figcaption>
 
-                            <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)" :disabled="!inDev">Скачать</button>
-                            <button class="dark-button wp100" @click="printPdf(proposal.id)" :disabled="!inDev">Печатать</button>
+                            <div v-if="proposal.isReserve && proposal.status.num !== 0" class="fatal-container">
+                                <p class="assoc-reserve-description">Заявление в резерве</p>
+                            </div>
+
+                            <div v-if='!proposal.isReserve && proposal.selected_group_title == null && proposal.status.num !== 0'>
+                                <select class="dark-box darken" v-model="proposal.isGroupSelected">
+                                    <option disabled selected :value='0'>Выберите группу</option> <!-- Что бы отдовал что-то другое через v-modal, могу options настроить !-->
+                                    <option v-for="(group, groupIndex) in proposal.groups" :value="group.id" v-text="group.name"></option>
+                                </select>
+                                <button @click='joinGroup(proposal)' class="dark-button" style="margin-top: 10px ">Выбрать группу</button>
+                                <p v-if='joinGroupError'>
+                                    Группа переполнена
+                                </p>
+                                <p v-if='joinGroupSuccess'>
+                                    Ваше пожелание сохранено
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="buttons" v-if='proposal.status.num !== 0 && !proposal.isReserve'>
+
+                            <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)">Скачать</button>
+                            <button class="dark-button wp100" @click="printPdf(proposal.id)">Печатать</button>
 
                             <button v-if='!proposal.isDocumentTaken' class="dark-button wp100" @click="proposal.sure = true">Отозвать</button>
                             <section class="card_wrapper horizontal-center" v-if="proposal.sure">
@@ -133,6 +138,13 @@
 .child-stat_heading {
     font-size: 20px;
 }
+.fatal-container {
+    margin:  0;
+    padding: 10px;
+}
+.fatal-container p {
+    margin:  0;
+}
 </style>
 
 <script>
@@ -156,12 +168,12 @@
         user: {
             areSure: null
         },
-        inDev: AppConfig.inDev
+        inDev: AppConfig.inDev,
+        joinGroupError: false,
+        joinGroupSuccess: false,
       }
     },
     async created() {
-      localStorage.setItem('newProposal', false)
-      console.log(111, User, Proposal);
       const children = await User.getChildren({
         id: null,
         name: null,
@@ -169,13 +181,19 @@
         proposals: {
           id: null,
           association: {
-            name: null
+            name: null,
+            groups: {
+              id: null,
+              name: null,
+            },
           },
           status: {
             text: null,
             num: null
-        },
-        isDocumentTaken: null
+          },
+          isReserve: null,
+          isDocumentTaken: null,
+          isGroupSelected: null,
         }
       }, false).then( data => {
           // console.log(data);
@@ -184,9 +202,14 @@
 
       children.map((child) => {
         const proposals = child.data.proposals.map(el => {
+            console.log(el.association);
           return {
             id: el.id,
+            isReserve: el.isReserve,
             name: el.association.name,
+            groups: el.association.groups,
+            isGroupSelected: el.isGroupSelected,
+            selected_group_title: this.getGroupName({id: el.id, groups: el.association.groups}, el.isGroupSelected),
             status: el.status.length ? { ...el.status[0] } : { text: "", num: 0 },
             download: "",
             print: "",
@@ -204,6 +227,15 @@
       });
     },
     methods: {
+        getGroupName(proposal, group_id) {
+            console.log(proposal, group_id);
+            let res = null;
+            proposal.groups.map(el => {
+                if (el.id == group_id)
+                    res = el.name;
+            });
+            return res;
+        },
         generateProposalName(child, proposal_index) {
             return child.surname + "_" + child.name + "_" + child.proposals[proposal_index].name;
         },
@@ -217,16 +249,28 @@
             Proposal.printResolution(child_id);
         },
         recall(child, proposal_id, proposal_index) {
-            console.log(child, proposal_id, proposal_index);
             Proposal.recall(proposal_id)
             .then(data => {
                 if (data) {
                     child.proposals[proposal_index].status.num = 0;
                     child.proposals[proposal_index].status.text = "Отозвано";
+                    child.proposals[proposal_index].selected_group_title = null;
+                    child.proposals[proposal_index].isGroupSelected = 0;
                     this.show.sure = false;
                 }
             })
             .catch(err => {
+                console.log(err);
+            });
+        },
+        joinGroup(proposal) {
+            this.joinGroupError = false;
+            this.joinGroupSuccess = false;
+            Proposal.joinGroup(proposal.isGroupSelected, proposal.id).then(data => {
+                proposal.selected_group_title = this.getGroupName(proposal, proposal.isGroupSelected);
+                this.joinGroupSuccess = true;
+            }).catch(err => {
+                this.joinGroupError = true;
                 console.log(err);
             });
         }

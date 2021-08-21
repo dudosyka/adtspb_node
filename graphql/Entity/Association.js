@@ -9,13 +9,28 @@ Association.prototype.table = "association";
 
 Association.prototype.getInstance = () => Association;
 
+Association.prototype.validateRules = async function () {
+    return [
+        this.validator(['name', 'description'], 'Can`t be empty.').notNull(),
+        this.validator(['name'], 'Invalid format').len(1, 200),
+        this.validator(['description'], 'Invalid format').len(1, 10000),
+    ];
+}
+
 Association.prototype.fields = {
     id: null,
+    name: null,
+    description: null,
 };
 
-Association.prototype.getAssociations = async function (age = null, selections = {}, model = null) {
-    const whereQuery = (age == null) ? "" : "WHERE `join`.`max_age` >= ? AND `join`.min_age <= ?";
-    const data = (age == null) ? [] : [ age, age ];
+Association.prototype.getAssociations = async function (age = null, selections = {}, model = null, where = null, whereData = null) {
+    let whereQuery = (age == null) ? "" : "WHERE `join`.`max_age` >= ? AND `join`.min_age <= ?";
+    let data = (age == null) ? [] : [ age, age ];
+
+    if (where != null) {
+        whereQuery = where;
+        data = whereData;
+    }
 
     fullQuery = "SELECT `main`.*, `join`.* FROM `association` as `main` LEFT JOIN `association_extra_data` as `join` ON `main`.`id` = `join`.`association_id` " + whereQuery;
 
@@ -33,7 +48,6 @@ Association.prototype.getAssociations = async function (age = null, selections =
 
     let proposals = null;
     if (selections.isRecruiment || selections.proposals) {
-        console.log(selections.isRecruiment);
         if (selections.isRecruiment)
             proposals = await model.selectProposalsList('association_id', ids, {status: true});
         else
@@ -43,6 +57,7 @@ Association.prototype.getAssociations = async function (age = null, selections =
     let associations = [];
     res.map(el => {
         el.id = el.association_id;
+        console.log(el.id);
         delete el.association_id;
         const association = {
             ...el,
@@ -51,6 +66,10 @@ Association.prototype.getAssociations = async function (age = null, selections =
         };
         associations.push(association);
     });
+
+    // associations.map(el => {
+    //     console.log(el.groups);
+    // });
 
     return associations;
 }
@@ -79,6 +98,9 @@ Association.prototype.setSelected = async function (associations, parent, child)
         data.push(association_id, child);
     });
     query += values.join(",");
+    if (data.length <= 0) {
+        return true;
+    }
     this.db.query(query, data);
     return true;
 }
@@ -95,6 +117,39 @@ Association.prototype.getSelected = async function (parent, child, userModel) {
         throw Error('Forbidden');
 
     return (await this.db.query('SELECT `association_id` FROM `selected_associations` WHERE `child_id` = ?', [ child ])).map(selected => selected.association_id);
+}
+
+Association.prototype.newFromInput = async function (input, extraModel) {
+    this.load(input);
+    const res = await this.save();
+    if (res === false) {
+        throw Error(JSON.stringify(await this.validate()));
+    }
+    console.log(input);
+    input.association_id = res.insertId;
+    extraModel.load(input);
+    await extraModel.save();
+    return input.association_id;
+}
+
+Association.prototype.edit = async function (newValue, logger, extraModel, admin_id) {
+    if (!newValue.id)
+        throw Error('Must provide `id` field into `input`');
+
+    const id = newValue.id;
+    delete newValue.id;
+
+    const model = this.newModel();
+    const oldData = await model.getAssociations(null, {}, null, "WHERE `main`.`id` = ?", [ Number(id) ]);
+    model.load(oldData[0]);
+
+    return await logger.logModel(model, newValue, admin_id, id).then(res => {
+        model.load(newValue);
+        model.update();
+        extraModel.load(newValue);
+        extraModel.fields.association_id = model.__get('id');
+        extraModel.update(false, "association_id");
+    });
 }
 
 module.exports = (new Association());

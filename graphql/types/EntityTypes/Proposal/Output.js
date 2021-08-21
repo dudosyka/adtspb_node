@@ -38,10 +38,19 @@ module.exports = new graphql.GraphQLObjectType({
                 return (obj.status.constructor === Array) ? obj.status : [ obj.status ];
             },
         },
+        isReserve: {
+            type: graphql.GraphQLBoolean,
+        },
         isDocumentTaken: {
             type: graphql.GraphQLBoolean,
             resolve(obj, data) {
                 return obj.document_taken !== 0;
+            }
+        },
+        isGroupSelected: {
+            type: graphql.GraphQLInt,
+            resolve(obj, data) {
+                return obj.group_selected;
             }
         },
         isHidden: {

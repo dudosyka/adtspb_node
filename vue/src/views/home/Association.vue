@@ -10,7 +10,7 @@
         <article class="association-cards">
             <h2 v-if='false'><!-- Елси его убрать всё сломается !--></h2>
             <template v-else>
-                <article  class="association-card card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id" v-if='!card.already'>
+                <article  class="association-card card shadow" v-for="(card, id) in associations" v-bind:key="associations[id].id" v-if='(!card.already && card.closed != 1)'>
                     <h2 class="association-card_heading">{{ card.name }}</h2>
                     <p class="association-card_old gray-text">от {{ card.min_age + ' до ' + card.max_age}} лет</p>
                     <p class="gray-text">{{ card.description }}</p>
@@ -35,11 +35,12 @@
                             <button class="bread-crumb"
                                     :class="{'bread-crumb--active': group.timetable.show}"
                                     v-for="(group, groupId) of card.groups"
+                                    v-if='group.closed != 1'
                                     @click="openTimetable(id, groupId)"
                             >{{ group.name }}</button>
                         </div>
                         <section class="schedule-wrapper">
-                            <table class="schedule" v-for="(group, id) in card.groups" v-show="group.timetable.show">
+                            <table class="schedule" v-for="(group, id) in card.groups" v-show="group.timetable.show" v-if='group.closed != 1'>
                                 <tr v-for="day of group.timetable.week">
                                     <td>{{ day.name }}</td><td>{{ day.time }}</td>
                                 </tr>
@@ -203,17 +204,19 @@ export default {
 
         User.getFullData(fields, child).then(data => {
             this.child = data.data;
-            console.log(this.child);
+            // console.log("CHILD", this.child);
             this.child.proposals.map(el => {
                 if (el.status[0].num != 0) {
                     this.associations[el.association.id].already = true;
                     this.proposalParms.associations[el.association.id] = el.association;
                     this.proposalParms.associations[el.association.id].already = true;
+                    console.log(el.association.name, el.association.hours_week, this.proposalParms.weekHours);
                     this.proposalParms.weekHours += el.association.hours_week;
+                    console.log(this.proposalParms.weekHours);
                 }
             });
             let old = User.calculateAge(this.child.birthday);
-            console.log(old);
+            // console.log(old);
             this.proposalParms.maxHours = (old < 14) ? AppConfig.min_hours_week : AppConfig.max_hours_week;
             this.speedometr();
         });
@@ -253,9 +256,11 @@ export default {
     },
 
     addAssociation(id) {
+        const lengthBefore = Object.keys(this.proposalParms.associations).length;
         this.proposalParms.associations[id] = clone(this.associations[id]);
         console.log(this.proposalParms.associations[id]);
-        this.proposalParms.weekHours += this.associations[id].hours_week;
+        if (lengthBefore != Object.keys(this.proposalParms.associations).length)
+            this.proposalParms.weekHours += this.associations[id].hours_week;
         this.speedometr();
         this.selected = false;
         this.selected = true;
