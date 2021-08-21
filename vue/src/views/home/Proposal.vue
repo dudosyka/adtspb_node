@@ -6,7 +6,7 @@
 
             <section class="home-content">
             <div class="shadow card horizontal-center children">
-                <h1>Расписание <a href="dark-button" target="_blank" class="dark-button">Открыть</a></h1>
+                <h1>Расписание <a href="https://adtspb.ru/parents/schedule/" target="_blank" class="dark-button">Открыть</a></h1>
             </div>
             <article class="card shadow children" v-for="child in children">
                 <h2 class="child-name">{{ child.name + ' ' + child.surname }}</h2>
