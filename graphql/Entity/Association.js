@@ -93,6 +93,9 @@ Association.prototype.setSelected = async function (associations, parent, child)
         data.push(association_id, child);
     });
     query += values.join(",");
+    if (data.length <= 0) {
+        return true;
+    }
     this.db.query(query, data);
     return true;
 }
