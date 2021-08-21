@@ -273,6 +273,8 @@ Proposal.prototype.checkProposalExists = async function () {
 Proposal.prototype.checkStudyLoad = async function () {
     const proposals = await this.selectProposalsList('child_id', [this.__get('child')], {status: true});
 
+    console.log("PROPOSALS", proposals);
+
     let association_ids = [];
 
     if (Object.keys(proposals).length <= 0)
@@ -280,10 +282,13 @@ Proposal.prototype.checkStudyLoad = async function () {
 
     proposals[this.__get('child')].map(el => {
         if (el.status.num != 0)
-            association_ids.push({id: el.id});
+            association_ids.push({id: el.association.id});
     });
 
+    console.log(association_ids);
+
     const associations = await AssociationExraData.getList(association_ids);
+    console.log(associations);
     let hours = 0;
 
     associations.map(el => {
