@@ -204,17 +204,19 @@ export default {
 
         User.getFullData(fields, child).then(data => {
             this.child = data.data;
-            console.log(this.child);
+            // console.log("CHILD", this.child);
             this.child.proposals.map(el => {
                 if (el.status[0].num != 0) {
                     this.associations[el.association.id].already = true;
                     this.proposalParms.associations[el.association.id] = el.association;
                     this.proposalParms.associations[el.association.id].already = true;
+                    console.log(el.association.name, el.association.hours_week, this.proposalParms.weekHours);
                     this.proposalParms.weekHours += el.association.hours_week;
+                    console.log(this.proposalParms.weekHours);
                 }
             });
             let old = User.calculateAge(this.child.birthday);
-            console.log(old);
+            // console.log(old);
             this.proposalParms.maxHours = (old < 14) ? AppConfig.min_hours_week : AppConfig.max_hours_week;
             this.speedometr();
         });
@@ -254,9 +256,11 @@ export default {
     },
 
     addAssociation(id) {
+        const lengthBefore = Object.keys(this.proposalParms.associations).length;
         this.proposalParms.associations[id] = clone(this.associations[id]);
         console.log(this.proposalParms.associations[id]);
-        this.proposalParms.weekHours += this.associations[id].hours_week;
+        if (lengthBefore != Object.keys(this.proposalParms.associations).length)
+            this.proposalParms.weekHours += this.associations[id].hours_week;
         this.speedometr();
         this.selected = false;
         this.selected = true;
