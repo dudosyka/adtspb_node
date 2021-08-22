@@ -69,6 +69,36 @@ Admin.getAssociations = async function() {
 		.catch( err => console.error(err))
 }
 
+Admin.getProposals = async function(association_id) {
+	const req = `
+		query ($association_id: Int) {
+		    admin {
+		        association_proposal_list (association_id: $association_id) {
+		            id,
+		            child {
+		                id, name, surname, lastname
+		            },
+		            status {
+		                id, text
+		            },
+		            parent {
+		                id, name, surname, lastname
+		            }
+		        }
+		    }
+		}
+	`
+
+	const data = { association_id }
+
+	return await _request('api', req)
+		.then( data => {
+			console.log(data)
+			return data
+		})
+		.catch( err => console.error(err))
+}
+
 Admin.editUserData = async function (id, dataOnEdit) {
 	const req = `
 		mutation ($input: UserInput) {

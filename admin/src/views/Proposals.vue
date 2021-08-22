@@ -246,15 +246,24 @@ export default {
         return {
             associations: [{name:'adf', proposals: [{child:{name: 'name', surname: 'surname'}, status: {num: 3, id: 3}}]}],
             associationOpen: {},
+            associationOpenProposals: [],
+
             ovz_types: [{text:'I', value: 1},{text:'II', value: 2},{text:'III', value: 3}, {text:'IV', value: 4},{text:'V', value: 5},{text:'VI', value: 6},{text:'VII', value: 7},{text:'VIII', value: 8}],
             disability_types: [{text:'I', value: 1}, {text:'II', value: 2}, {text:'III', value: 3}],
         }
     },
     created() {
-        this.associationOpen = this.associations[0]
+        Admin.getAssociations().then(data => {
+            this.associations = data
+            this.associationOpen = this.associations[0]
+            Admin.getProposals(this.associationOpen.id).then(data => {
+                this.associationsOpenProposals = data
+            })
+        })
     },
     methods: {
         openAssociation(association) {
+            Admin.getProposals(association.id)
             this.associationOpen = association
         },
         documentsIsHere(proposal) {
