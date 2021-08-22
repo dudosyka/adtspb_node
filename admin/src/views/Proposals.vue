@@ -17,30 +17,40 @@
                     v-for="proposal of associationOpen.proposals"
                     :title="`${proposal.child.surname} ${proposal.child.name}`"
                 >
-                    <b-card-body>
-                        <div>
-                            <b-form-checkbox
-                              unchecked-value="false"
-                            >Документы принесены</b-form-checkbox>
-                        </div>
-                        <b-button @click="documentsIsHere(proposal)" variant="success">Сохранить</b-button>
-                    </b-card-body>
-                    <b-card-body>
-                        <b-card-text>
-                            Статус заявлени
-                        </b-card-text>
-                        <b-form-select options="" /><br> 
-                            <!-- 
-                                options="" to> :options="variable" ; and add v-model="" 
-                                options = arr of objects: {value: '', text: ''}
-                            !-->
-                        <b-button @click="changeProposalStatus(proposal)" variant="success">Сохранить</b-button>
-                    </b-card-body>
-                    <b-card-body>
-                        <b-button @click="returnProposal(proposal)" variant="danger">
-                            Отозвать
-                        </b-button>
-                    </b-card-body>
+                    <b-tabs>
+                        <b-tab title="Заявление" active>
+                            <b-card-body>
+                                <div>
+                                    <b-form-checkbox
+                                      unchecked-value="false"
+                                    >Документы принесены</b-form-checkbox>
+                                </div>
+                                <b-button @click="documentsIsHere(proposal)" variant="success">Сохранить</b-button>
+                            </b-card-body>
+                            <b-card-body>
+                                <b-card-text>
+                                    Статус заявлени
+                                </b-card-text>
+                                <b-form-select options="" /><br> 
+                                    <!-- 
+                                        options="" to> :options="variable" ; and add v-model="" 
+                                        options = arr of objects: {value: '', text: ''}
+                                    !-->
+                                <b-button @click="changeProposalStatus(proposal)" variant="success">Сохранить</b-button>
+                            </b-card-body>
+                            <b-card-body>
+                                <b-button @click="returnProposal(proposal)" variant="danger">
+                                    Отозвать
+                                </b-button>
+                            </b-card-body>
+                        </b-tab>
+                        <b-tab title="Ребёнок">
+                            
+                        </b-tab>
+                        <b-tab title="Родитель">
+                            
+                        </b-tab>
+                    </b-tabs>
                 </b-card>
             </b-card>
         </article>

@@ -32,6 +32,12 @@ h1,h2,h3,h4,h5,h6,p,ul,ol {
 .ft-dark {
 	color: #191919;
 }
+
+.content {
+    display: grid;
+    grid-template-columns: auto 1fr;
+}
+
 /*
 .card-wrapper {
 	position: fixed;
