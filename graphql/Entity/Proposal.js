@@ -373,12 +373,28 @@ Proposal.prototype.createNew = async function (userModel, userExtraDataModel, fr
     return true;
 };
 
-Proposal.prototype.recall = async function (requester) {
+Proposal.prototype.setDocumentTaken = async function (proposal, logger, admin_id, allowed)  {
+    const oldData = await this.db.select(this, "`id` = ?", [ proposal ]).then(data => {
+        return data[0];
+    });
+
+    if (allowed.indexOf(oldData.association_id) == -1)
+        throw Error('Forbidden');
+
+    const model = this.newModel();
+    model.load(oldData);
+    await logger.logModel(model, { document_taken: 1 }, admin_id);
+    model.__set('document_taken', 1);
+    await model.update(true);
+    return true;
+}
+
+Proposal.prototype.recall = async function (requester, admin = false) {
     if (this.__get('association_id') === null)
         throw Error('Proposal not found');
 
-    if (requester !== this.__get('parent_id')) {
-        throw Error('Forbidden');
+    if (requester !== this.__get('parent_id') && !admin) {
+            throw Error('Forbidden');
     }
 
     if (this.__get('document_taken') == 1) {
@@ -406,4 +422,5 @@ Proposal.prototype.generateResolution = async function (child, parent, childExtr
     const buffer = await pdf.generateResolution(child, parent, childExtraData);
     return buffer.toString('base64');
 }
+
 module.exports = (new Proposal());

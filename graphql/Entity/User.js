@@ -511,6 +511,28 @@ User.prototype.confirEditData = async function (request_id) {
     return (await request.delete()) !== false;
 }
 
+//For administration
+User.prototype.editData = async function (newValue, logger, extraModel, admin_id) {
+    console.log(newValue);
+    if (!newValue.id)
+        throw Error('Must provide `id` field into `input`');
+
+    const id = newValue.id;
+    delete newValue.id;
+
+    const model = this.newModel();
+    const oldData = await model.db.select(this, "`id` = ?", [ Number(id) ]);
+    model.load(oldData[0]);
+
+    return await logger.logModel(model, newValue, admin_id, id).then(res => {
+        model.load(newValue);
+        model.update();
+        extraModel.load(newValue);
+        extraModel.fields.user_id = model.__get('id');
+        extraModel.update(false, "user_id");
+    });
+}
+
 User.prototype.table = 'user';
 
 module.exports = (new User());
