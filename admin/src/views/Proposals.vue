@@ -1,6 +1,7 @@
 <template>
 	<main class="bg-wrapper">
 		<Header />
+        <b-overlay :show="overlay">
         <article class="bg-wrapper content" fluid>
             <b-list-group>
                 <b-list-group-item
@@ -8,11 +9,11 @@
                     v-text="association.name"
                     @click="openAssociation(association)"
                     button
-                    :active="association.id === associationOpen.id"
+                    :active="association === associationOpen"
                 >
                 </b-list-group-item>
             </b-list-group>
-            <b-card :title="associationOpen.name">
+            <b-card :title="associationOpen.name" class="sladjkfsdalsf">
                 <b-card
                     v-for="proposal of associationOpen.proposals"
                     :title="`${proposal.child.surname} ${proposal.child.name}`"
@@ -35,10 +36,24 @@
 							    <b-form-select :options="statuses" v-model='proposal.selectedStatus.value' /><br>
 							    <b-button @click="changeProposalStatus(proposal)" variant="success">Сохранить</b-button>
 							</b-card-body>
+                            <b-card-body v-if='proposal.selectedStatus.value != 0'>
+                                <b-card-text>
+                                    Группа
+                                </b-card-text>
+                                <b-form-select :options="associationOpen.selectedGroups" v-model="proposal.isGroupSelected"/><br>
+                                <b-button @click="joinGroup(proposal)" variant="success">Сохранить</b-button>
+                            </b-card-body>
 							<b-card-body v-if='proposal.selectedStatus.value != 0 && proposal.isDocumentTaken != 1'>
-							    <b-button @click="recallProposal(proposal)" variant="danger">
+							    <b-button variant="danger" v-b-modal.confirmReturn>
 							        Отозвать
 							    </b-button>
+                                <b-modal 
+                                    title="Вы уверенеы что хотите отозвать заявление? Его нельзя будет призвать обратно" 
+                                    id="confirmReturn"
+                                    hide-footer 
+                                    >
+                                    <b-button @click="recallProposal(proposal)" variant="danger">Отозвать</b-button>
+                                </b-modal>
 							</b-card-body>
                         </b-tab>
                         <b-tab title="Ребёнок">
@@ -71,8 +86,8 @@
                             </b-card-body>
                             <b-card-body>
                                 Пол
-                                <b-form-radio name="sex" v-model='proposal.child.sex' :value="1">Мужской</b-form-radio>
-                                <b-form-radio name="sex" v-model='proposal.child.sex' :value="0">Женский</b-form-radio>
+                                <b-form-radio :name="`sexChild${proposal.id}`" v-model='proposal.child.sex' :value="1">Мужской</b-form-radio>
+                                <b-form-radio :name="`sexChild${proposal.id}`" v-model='proposal.child.sex' :value="0">Женский</b-form-radio>
                             </b-card-body>
                             <b-card-body>
                                 <b-form-checkbox
@@ -82,16 +97,17 @@
                                 >
                                     ОВЗ
                                 </b-form-checkbox>
-                                Тип ОВЗ<b-form-select :options="ovz_types" />
+                                Тип ОВЗ<b-form-select :options="ovz_types" v-model="proposal.child.ovz_type.id" />
                             </b-card-body>
                             <b-card-body>
                                 <b-form-checkbox
                                     :value="1"
                                     :unchecked-value="0"
+                                    v-model='proposal.child.disability'
                                 >
                                     Инвалидность
                                 </b-form-checkbox>
-                                Группа инвалидности<b-form-select :options="disability_types" />
+                                Группа инвалидности<b-form-select :options="disability_types" v-model="proposal.child.disability_group.id"/>
                             </b-card-body>
                             <b-card-body>
                                 <b-input-group prepend="Учебное заведение (наименование)">
@@ -170,8 +186,8 @@
                             </b-card-body>
                             <b-card-body>
                                 Пол
-                                <b-form-radio name="sex" v-model='proposal.parent.sex' :value="1">Мужской</b-form-radio>
-                                <b-form-radio name="sex" v-model='proposal.parent.sex' :value="0">Женский</b-form-radio>
+                                <b-form-radio :name="`sexParent${proposal.id}`" v-model='proposal.parent.sex' :value="1">Мужской</b-form-radio>
+                                <b-form-radio :name="`sexParent${proposal.id}`" v-model='proposal.parent.sex' :value="0">Женский</b-form-radio>
                             </b-card-body>
 							<b-input-group  prepend="Гражданство">
 								<b-input v-model='proposal.parent.state' />
@@ -222,6 +238,7 @@
                 </b-card>
             </b-card>
         </article>
+        </b-overlay>
 	</main>
 </template>
 
@@ -229,6 +246,12 @@
 .content {
     display: grid;
     grid-template-columns: auto 1fr;
+}
+.sladjkfsdalsf {
+    overflow-y: scroll;
+    max-height: 100vh;
+    position: sticky;
+    top: 0px;
 }
 </style>
 
@@ -246,7 +269,7 @@ export default {
     },
     data() {
         return {
-            associations: [{name:'adf', proposals: [{child:{name: 'name', surname: 'surname'}, status: {num: 3, id: 3}}]}],
+            associations: [],
             associationOpen: {},
 			statuses: [
 				{
@@ -268,10 +291,11 @@ export default {
 			],
 			ovz_types: [{text:'I', value: 1},{text:'II', value: 2},{text:'III', value: 3}, {text:'IV', value: 4},{text:'V', value: 5},{text:'VI', value: 6},{text:'VII', value: 7},{text:'VIII', value: 8}],
             disability_types: [{text:'I', value: 1}, {text:'II', value: 2}, {text:'III', value: 3}],
-
+            overlay: false,
         }
     },
     async created() {
+        this.overlay = true
 		const fields = {
 			name: null,
 			groups: {
@@ -341,28 +365,45 @@ export default {
 				}
 			}
 		}
-		this.associations = await Admin.getAssociations(fields)
-		.then(res => res.map(el => {
-			el.proposals = (el.proposals ?? []).map(proposal => {
-				proposal.selectedStatus = {
-					value: proposal.status[0].num,
-					text: proposal.status[0].text
-				};
-				const birth = Parser.timestampToObj(proposal.child.birthday);
+		Admin.getAssociations(fields)
+            .then( res => {
+                this.associations = res
+                this.associationOpen = this.associations[0]
+                res.map( el => {
+        			el.proposals = (el.proposals ?? []).map(proposal => {
+        				proposal.selectedStatus = {
+        					value: proposal.status[0].num,
+        					text: proposal.status[0].text
+        				};
+        				const birth = Parser.timestampToObj(proposal.child.birthday);
 
-				proposal.child.birthday = birth.year + "-" + birth.month + "-" + birth.day;
+        				proposal.child.birthday = birth.year + "-" + birth.month + "-" + birth.day;
 
-				proposal.child.registration_address = Parser.addressToObj(proposal.child.registration_address);
-				proposal.child.residence_address = Parser.addressToObj(proposal.child.residence_address);
+        				proposal.child.registration_address = Parser.addressToObj(proposal.child.registration_address);
+        				proposal.child.residence_address = Parser.addressToObj(proposal.child.residence_address);
 
-				proposal.parent.registration_address = Parser.addressToObj(proposal.parent.registration_address);
-				proposal.parent.residence_address = Parser.addressToObj(proposal.parent.residence_address);
+        				proposal.parent.registration_address = Parser.addressToObj(proposal.parent.registration_address);
+        				proposal.parent.residence_address = Parser.addressToObj(proposal.parent.residence_address);
 
-				return proposal;
-			})
-			return el;
-		}));
-        this.associationOpen = this.associations[0]
+        				return proposal;
+        			})
+        			return el;
+    		    })
+                res.map( el => {
+                    console.log(el)
+                    el.groups = (el.groups ?? []).filter(group => { return !(group.closed) })
+                    el.selectedGroups = []
+                    el.groups = (el.groups ?? []).map(group => {
+                        const obj = {
+                            value: group.id,
+                            text: group.name
+                        }
+                        el.selectedGroups.push(obj)   
+                    })
+                    console.log(el)
+                })
+                this.overlay = false
+            });
     },
     methods: {
         openAssociation(association) {
@@ -397,8 +438,11 @@ export default {
 			Admin.editUserData(onSend.id, onSend);
         },
 		joinGroup(proposal) {
-			Proposal.joinGroup(proposal.id, proposal.isGroupSelected);
-		}
+            this.overlay = true
+            proposal.isGroupSelected = Number(proposal.isGroupSelected)
+            proposal.id = Number(proposal.id)
+			Proposal.joinGroup(proposal.id, proposal.isGroupSelected)
+		},
      },
 }
 </script>
