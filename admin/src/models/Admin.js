@@ -2,7 +2,7 @@ let Admin = {};
 
 Admin.confirmRemoveChild = async function(link) {
 	const req = `
-		mutation($link: Int) { 
+		mutation($link: Int) {
 		    confirmRemoveChild(link: $link)
 		}
 	`
@@ -42,9 +42,9 @@ Admin.getAssociations = async function() {
 		query {
 		    association {
 		        getAll {
-		            id, 
-		            name, 
-		            description,  
+		            id,
+		            name,
+		            description,
 		            closed,
 		            min_age,
 		            max_age,
@@ -67,6 +67,66 @@ Admin.getAssociations = async function() {
 			return(data.association.getAll)
 		})
 		.catch( err => console.error(err))
+}
+
+Admin.editUserData = async function (id, dataOnEdit) {
+	const req = `
+		mutation ($input: UserInput) {
+			admin {
+				edit_user (input: $input)
+			}
+		}
+	`;
+
+	const data = {
+		input: {
+			id,
+			...dataOnEdit
+		}
+	};
+
+	return await __request('api', req, data).then(res => {
+		console.log(res);
+		return res.admin ?? res;
+	})
+}
+
+Admin.confirmDataEditing = async function (request) {
+	const req = `
+		mutation ($request: Int) {
+			user {
+				confirmEditData (request_id: $request)
+			}
+		}
+	`;
+
+	const data = {
+		request
+	};
+
+	return await _request('api', req, data).then(res => {
+		console.log(res);
+		return res.user ?? res;
+	});
+}
+
+Admin.confirmChildDeleting = async function (link) {
+	const req = `
+		mutation ($link: Int) {
+			user {
+				confirmChildDeleting (link: $link)
+			}
+		}
+	`;
+
+	const data = {
+		link
+	};
+
+	return await _request('api', req, data).then(res => {
+		console.log(res);
+		return res.user ?? res;
+	});
 }
 
 export {Admin};
