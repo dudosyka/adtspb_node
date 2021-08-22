@@ -4,13 +4,13 @@
 
 			<b-card-text>
 				<b-input-group prepend="Логин">
-					<b-input type="text" v-model="user.login" />
+					<b-input type="text" :state="errors.login" v-model="user.login" />
 				</b-input-group>
 			</b-card-text>
 
 			<b-card-text>
 				<b-input-group prepend="Пароль">
-					<b-input type="text" v-model="user.pass" />
+					<b-input type="text" :state="errors.pass" v-model="user.pass" />
 				</b-input-group>
 			</b-card-text>
 
@@ -54,8 +54,9 @@ export default {
 	},
 	methods: {
 		auth() {
-			console.log('hi');
-	        User.login(this.user).catch(err => {
+			console.log('hi')
+	        User.login(this.user)
+	        .catch(err => {
 	            //Ошибка с сервера
 	            if (err.response) {
 	                const msg = err.response.errors[0].message;
@@ -77,7 +78,10 @@ export default {
 	                  //['password', 'login'] ...
 	                  //['login'] ...
 	            }
-	        });
+	        })
+	        .then( data => {
+	        	console.log(data)
+	        })
 	    },
 	}
 }
