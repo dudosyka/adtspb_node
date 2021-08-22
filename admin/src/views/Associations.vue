@@ -68,6 +68,7 @@
 						</b-col>
 					</b-row>
 				</b-card-body>
+				<b-button variant="success" @click="saveAssociation(associationOpen)">Сохранить</b-button>
 			</b-card>
 		</article>
 		</b-overlay>
@@ -142,7 +143,10 @@ export default {
     	nToDay(number) { 
     		return Corrector.weekDayByNumber(number)
     	},
-
+    	saveAssociation(association) {
+    		this.overlay = true
+    		setTimeout(() => this.overlay = false , 1000)
+    	},
     },
     computed: {
 
