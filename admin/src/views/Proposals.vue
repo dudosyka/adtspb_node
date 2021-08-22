@@ -1,6 +1,7 @@
 <template>
 	<main class="bg-wrapper">
 		<Header />
+        <b-overlay :show="overlay">
         <article class="bg-wrapper content" fluid>
             <b-list-group>
                 <b-list-group-item
@@ -8,11 +9,11 @@
                     v-text="association.name"
                     @click="openAssociation(association)"
                     button
-                    :active="association.id === associationOpen.id"
+                    :active="association === associationOpen"
                 >
                 </b-list-group-item>
             </b-list-group>
-            <b-card :title="associationOpen.name">
+            <b-card :title="associationOpen.name" class="sladjkfsdalsf">
                 <b-card
                     v-for="proposal of associationOpen.proposals"
                     :title="`${proposal.child.surname} ${proposal.child.name}`"
@@ -35,10 +36,24 @@
 							    <b-form-select :options="statuses" v-model='proposal.selectedStatus.value' /><br>
 							    <b-button @click="changeProposalStatus(proposal)" variant="success">Сохранить</b-button>
 							</b-card-body>
+                            <b-card-body>
+                                <b-card-text>
+                                    Группа
+                                </b-card-text>
+                                <b-form-select /><br>
+                                <b-button @click="changeProposalStatus(proposal)" variant="success">Сохранить</b-button>
+                            </b-card-body>
 							<b-card-body v-if='proposal.selectedStatus.value != 0 && proposal.isDocumentTaken != 1'>
-							    <b-button @click="recallProposal(proposal)" variant="danger">
+							    <b-button variant="danger" v-b-modal.confirmReturn>
 							        Отозвать
 							    </b-button>
+                                <b-modal 
+                                    title="Вы уверенеы что хотите отозвать заявление? Его нельзя будет призвать обратно" 
+                                    id="confirmReturn"
+                                    hide-footer 
+                                    >
+                                    <b-button @click="recallProposal(proposal)" variant="danger">Отозвать</b-button>
+                                </b-modal>
 							</b-card-body>
                         </b-tab>
                         <b-tab title="Ребёнок">
@@ -222,6 +237,7 @@
                 </b-card>
             </b-card>
         </article>
+        </b-overlay>
 	</main>
 </template>
 
@@ -229,6 +245,12 @@
 .content {
     display: grid;
     grid-template-columns: auto 1fr;
+}
+.sladjkfsdalsf {
+    overflow-y: scroll;
+    max-height: 100vh;
+    position: sticky;
+    top: 0px;
 }
 </style>
 
@@ -246,7 +268,7 @@ export default {
     },
     data() {
         return {
-            associations: [{name:'adf', proposals: [{child:{name: 'name', surname: 'surname'}, status: {num: 3, id: 3}}]}],
+            associations: [],
             associationOpen: {},
 			statuses: [
 				{
@@ -268,10 +290,11 @@ export default {
 			],
 			ovz_types: [{text:'I', value: 1},{text:'II', value: 2},{text:'III', value: 3}, {text:'IV', value: 4},{text:'V', value: 5},{text:'VI', value: 6},{text:'VII', value: 7},{text:'VIII', value: 8}],
             disability_types: [{text:'I', value: 1}, {text:'II', value: 2}, {text:'III', value: 3}],
-
+            overlay: false,
         }
     },
     async created() {
+        this.overlay = true
 		const fields = {
 			name: null,
 			groups: {
@@ -279,7 +302,7 @@ export default {
 				name: null,
 				num: null,
 				closed: null,
-			}
+			},
 			proposals: {
 				id: null,
 				child: {
@@ -360,6 +383,7 @@ export default {
 
 				return proposal;
 			})
+            this.overlay = false
 			return el;
 		}));
         this.associationOpen = this.associations[0]
