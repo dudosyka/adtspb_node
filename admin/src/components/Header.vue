@@ -5,6 +5,7 @@
 			<router-link to="/statistics">Статистика в тесте</router-link>
 			<router-link to="/associations">Объединения</router-link>
 			<router-link to="/proposals">Заявления</router-link>
+			<router-link to="/users">Пользователи</router-link>
 			<router-link to="/callback">Запросы</router-link>
 		</nav>
 	</header>
@@ -22,7 +23,7 @@
 	}
 	.links-container {
 		display: grid;
-		grid-template-columns: repeat(4, auto) 1fr;
+		grid-template-columns: repeat(5, auto) 1fr;
 		justify-items: center;
 		align-items: center;
 		grid-gap: 20px;
