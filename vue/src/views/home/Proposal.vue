@@ -10,7 +10,7 @@
             </div>
             <article class="card shadow children" v-for="child in children">
                 <h2 class="child-name">{{ child.name + ' ' + child.surname }}</h2>
-                <button class="light-button" @click='printResolution(child.id)'>Распечатать согласие на обработку персональных данных</button>
+                <button class="light-button" @click='printResolution(child.id)'>Скачать согласие на обработку персональных данных</button>
 
                 <article class="proposals wp100">
 
@@ -18,17 +18,18 @@
                         <div class="child-stat">
                             <h3 class="proposal_heading">{{ proposal.name }}</h3>
                             <figcaption class="child-stat_heading">Статус: {{ proposal.status.text }}</figcaption>
-                            <figcaption class="child-stat_heading">Группа: {{ proposal.selected_group }}</figcaption>
+                            <figcaption v-if="!proposal.isReserve && proposal.selected_group_title != null" class="child-stat_heading">Группа: {{ proposal.selected_group_title }}</figcaption>
 
                             <div v-if="proposal.isReserve && proposal.status.num !== 0" class="fatal-container">
                                 <p class="assoc-reserve-description">Заявление в резерве</p>
                             </div>
-                            <div v-if='!proposal.isReserve && !proposal.isGroupSelected && proposal.status.num !== 0'>
-                                <select class="dark-box darken" v-model="proposal.selected_group">
-                                    <option disabled selected :value='null'>Выберите группу</option> <!-- Что бы отдовал что-то другое через v-modal, могу options настроить !-->
+
+                            <div v-if='!proposal.isReserve && proposal.selected_group_title == null && proposal.status.num !== 0'>
+                                <select class="dark-box darken" v-model="proposal.isGroupSelected">
+                                    <option disabled selected :value='0'>Выберите группу</option> <!-- Что бы отдовал что-то другое через v-modal, могу options настроить !-->
                                     <option v-for="(group, groupIndex) in proposal.groups" :value="group.id" v-text="group.name"></option>
                                 </select>
-                                <button @click='joinGroup(proposal.selected_group, proposal.id)' class="dark-button" style="margin-top: 10px ">Выбрать группу</button>
+                                <button @click='joinGroup(proposal)' class="dark-button" style="margin-top: 10px ">Выбрать группу</button>
                                 <p v-if='joinGroupError'>
                                     Группа переполнена
                                 </p>
@@ -38,10 +39,10 @@
                             </div>
                         </div>
 
-                        <div class="buttons" v-if='proposal.status.num !== 0 && !proposal.isReserve'>
+                        <div class="buttons" v-if='proposal.status.num !== 0'>
 
-                            <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)">Скачать</button>
-                            <button class="dark-button wp100" @click="printPdf(proposal.id)">Печатать</button>
+                            <button class="dark-button wp100" @click="downloadPdf(proposal.id, child, index)" v-if="!proposal.isReserve">Скачать</button>
+                            <!--button class="dark-button wp100" @click="printPdf(proposal.id)" v-if="!proposal.isReserve">Печатать</button-->
 
                             <button v-if='!proposal.isDocumentTaken' class="dark-button wp100" @click="proposal.sure = true">Отозвать</button>
                             <section class="card_wrapper horizontal-center" v-if="proposal.sure">
@@ -201,14 +202,14 @@
 
       children.map((child) => {
         const proposals = child.data.proposals.map(el => {
-            console.log(el);
+            console.log(el.association);
           return {
             id: el.id,
             isReserve: el.isReserve,
             name: el.association.name,
             groups: el.association.groups,
             isGroupSelected: el.isGroupSelected,
-            selected_group: null,
+            selected_group_title: this.getGroupName({id: el.id, groups: el.association.groups}, el.isGroupSelected),
             status: el.status.length ? { ...el.status[0] } : { text: "", num: 0 },
             download: "",
             print: "",
@@ -226,6 +227,15 @@
       });
     },
     methods: {
+        getGroupName(proposal, group_id) {
+            console.log(proposal, group_id);
+            let res = null;
+            proposal.groups.map(el => {
+                if (el.id == group_id)
+                    res = el.name;
+            });
+            return res;
+        },
         generateProposalName(child, proposal_index) {
             return child.surname + "_" + child.name + "_" + child.proposals[proposal_index].name;
         },
@@ -239,12 +249,13 @@
             Proposal.printResolution(child_id);
         },
         recall(child, proposal_id, proposal_index) {
-            console.log(child, proposal_id, proposal_index);
             Proposal.recall(proposal_id)
             .then(data => {
                 if (data) {
                     child.proposals[proposal_index].status.num = 0;
                     child.proposals[proposal_index].status.text = "Отозвано";
+                    child.proposals[proposal_index].selected_group_title = null;
+                    child.proposals[proposal_index].isGroupSelected = 0;
                     this.show.sure = false;
                 }
             })
@@ -252,10 +263,11 @@
                 console.log(err);
             });
         },
-        joinGroup(group, proposal_id) {
+        joinGroup(proposal) {
             this.joinGroupError = false;
             this.joinGroupSuccess = false;
-            Proposal.joinGroup(group, proposal_id).then(data => {
+            Proposal.joinGroup(proposal.isGroupSelected, proposal.id).then(data => {
+                proposal.selected_group_title = this.getGroupName(proposal, proposal.isGroupSelected);
                 this.joinGroupSuccess = true;
             }).catch(err => {
                 this.joinGroupError = true;

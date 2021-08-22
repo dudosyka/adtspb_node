@@ -62,7 +62,7 @@ UserGroup.prototype.joinGroup = async function (input, groupModel, proposalModel
     const group = await groupModel.createFrom({ id: input.group_id });
     const association_id = group.__get('association_id');
     const proposals = await proposalModel.selectProposalsList('id', input.proposals, { child: true, association: true } );
-    proposalModel.setSelected(input.proposals);
+    proposalModel.setSelected(input.proposals, input.group_id);
 
     const group_size = await this.db.query('SELECT COUNT(`id`) as `count` FROM `user_group` WHERE `group_id` = ?', [ input.group_id ]).then(data => {
         return data[0].count;
