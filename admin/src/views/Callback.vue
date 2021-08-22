@@ -1,9 +1,6 @@
 <template>
 	<main class="bg-wrapper">
 		<Header />
-        <article>
-            
-        </article>
 	</main>
 </template>
 
