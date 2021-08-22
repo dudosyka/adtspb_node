@@ -122,7 +122,7 @@ export default {
     	},
     	openGroup(group) {
     		this.groupOpen = group
-    		this.timetable = this.toRawTimetable(group.timetable)
+    		//this.timetable = this.toRawTimetable(group.timetable)
     	},
     	/*
     	toRawTimetable(timetable) {

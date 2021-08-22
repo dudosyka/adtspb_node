@@ -43,6 +43,7 @@ main {
     grid-template-columns: max-content auto;
     grid-gap: 15px 10px;
     overflow-x: auto;
+    color: #c4c4c4;
 }
 .card {
     border-radius: 40px 40px 0 0;

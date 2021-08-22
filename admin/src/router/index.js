@@ -22,6 +22,16 @@ const routes = [
     path: '/callback',
     name: 'Callback',
     component: () => import('../views/Callback.vue')
+  },
+  {
+    path: '/proposals',
+    name: 'Proposals',
+    component: () => import('../views/Proposals.vue')
+  },
+  {
+    path: '/users',
+    name: 'Users',
+    component: () => import('../views/Users.vue')
   }
 ]
 
