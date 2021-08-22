@@ -37,9 +37,16 @@
 							    <b-button @click="changeProposalStatus(proposal)" variant="success">Сохранить</b-button>
 							</b-card-body>
 							<b-card-body v-if='proposal.selectedStatus.value != 0 && proposal.isDocumentTaken != 1'>
-							    <b-button @click="recallProposal(proposal)" variant="danger">
+							    <b-button variant="danger" v-b-modal.confirmReturn>
 							        Отозвать
 							    </b-button>
+                                <b-modal 
+                                    title="Вы уверенеы что хотите отозвать заявление? Его нельзя будет призвать обратно" 
+                                    id="confirmReturn"
+                                    hide-footer 
+                                    >
+                                    <b-button @click="recallProposal(proposal)" variant="danger">Отозвать</b-button>
+                                </b-modal>
 							</b-card-body>
                         </b-tab>
                         <b-tab title="Ребёнок">
