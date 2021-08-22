@@ -9,7 +9,7 @@
                     v-text="association.name"
                     @click="openAssociation(association)"
                     button
-                    :active="association.id === associationOpen.id"
+                    :active="association === associationOpen"
                 >
                 </b-list-group-item>
             </b-list-group>
