@@ -13,7 +13,7 @@
                 >
                 </b-list-group-item>
             </b-list-group>
-            <b-card :title="associationOpen.name">
+            <b-card :title="associationOpen.name" class="sladjkfsdalsf">
                 <b-card
                     v-for="proposal of associationOpen.proposals"
                     :title="`${proposal.child.surname} ${proposal.child.name}`"
@@ -229,6 +229,12 @@
 .content {
     display: grid;
     grid-template-columns: auto 1fr;
+}
+.sladjkfsdalsf {
+    overflow-y: scroll;
+    max-height: 100vh;
+    position: sticky;
+    top: 0px;
 }
 </style>
 
