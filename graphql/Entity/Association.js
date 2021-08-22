@@ -51,13 +51,12 @@ Association.prototype.getAssociations = async function (age = null, selections =
         if (selections.isRecruiment)
             proposals = await model.selectProposalsList('association_id', ids, {status: true});
         else
-            proposals = await model.selectProposalsList('association_id', ids, {status: true});
+            proposals = await model.selectProposalsList('association_id', ids, Object.assign(selections.proposals, {status: true}));
     }
 
     let associations = [];
     res.map(el => {
         el.id = el.association_id;
-        console.log(el.id);
         delete el.association_id;
         const association = {
             ...el,

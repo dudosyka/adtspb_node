@@ -15,7 +15,9 @@ module.exports = new graphql.GraphQLObjectType({
             },
             async resolve(obj, {  }) {
                 const model = Proposal.newModel();
-                return await Association.getAssociations(null, obj.selections, model);
+                const associations = await Association.getAssociations(null, obj.selections, model);
+                console.log(associations[0].proposals[0])
+                return associations;
             }
         },
         getForChild: {

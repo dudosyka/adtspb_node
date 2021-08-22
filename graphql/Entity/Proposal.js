@@ -45,6 +45,7 @@ Proposal.prototype.createFromInput = async function (proposal) {
 }
 
 Proposal.prototype.selectProposalsList = async function (field, arr, selections, where = null, whereData = []) {
+    console.log(selections);
     const { ids, query } = this.db.createRangeQuery(false, arr, field);
 
     //Check if we have sub-selections and add them to query if exists
@@ -60,12 +61,12 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
 
     let sub3Query = "";
     if (selections.child) {
-        sub3Query += "LEFT JOIN `user` AS `sub3` ON `sub3`.`id` = `main`.`child_id` OR `sub3`.`id` = `main`.`parent_id`";
+        sub3Query += "LEFT JOIN `user` AS `sub3` ON `sub3`.`id` = `main`.`child_id` OR `sub3`.`id` = `main`.`parent_id` LEFT JOIN `user_extra_data` AS `sub3_extra` ON `sub3`.`id` = `sub3_extra`.`user_id` ";
     }
 
     sub1Selections = sub1Query == "" ? "" : ' "" as `sub1_decorator`, `sub1`.*, `sub1_1`.*,';
     sub2Selections = sub2Query == "" ? "" : ' "" as `sub2_decorator`, `sub2`.*,';
-    sub3Selections = sub3Query == "" ? "" : ' "" as `sub3_decorator`, `sub3`.*,';
+    sub3Selections = sub3Query == "" ? "" : ' "" as `sub3_decorator`, `sub3`.*, `sub3_extra`.*,';
     mainSelections = ' "" as `main_decorator`, `main`.*';
     fullSelections = sub1Selections + sub2Selections + sub3Selections + mainSelections;
 
@@ -247,6 +248,8 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
             }
         });
     }
+
+    console.log(proposals[1]);
 
     return proposals;
 }
