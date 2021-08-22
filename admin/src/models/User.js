@@ -37,6 +37,7 @@ User.login = async function ({login, pass}) {
         login: login.trim(),
         password: pass
     }
+    console.log(data)
 
     return _request("endoor", req, data).then(data => {
         console.log(data);
