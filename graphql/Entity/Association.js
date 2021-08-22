@@ -51,7 +51,7 @@ Association.prototype.getAssociations = async function (age = null, selections =
         if (selections.isRecruiment)
             proposals = await model.selectProposalsList('association_id', ids, {status: true});
         else
-            proposals = await model.selectProposalsList('association_id', ids, {});
+            proposals = await model.selectProposalsList('association_id', ids, {status: true});
     }
 
     let associations = [];
@@ -66,10 +66,6 @@ Association.prototype.getAssociations = async function (age = null, selections =
         };
         associations.push(association);
     });
-
-    // associations.map(el => {
-    //     console.log(el.groups);
-    // });
 
     return associations;
 }
