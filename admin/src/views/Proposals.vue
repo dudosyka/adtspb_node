@@ -279,7 +279,7 @@ export default {
 				name: null,
 				num: null,
 				closed: null,
-			}
+			},
 			proposals: {
 				id: null,
 				child: {
