@@ -5,7 +5,6 @@
 			<router-link to="/statistics">Статистика в тесте</router-link>
 			<router-link to="/associations">Объединения</router-link>
 			<router-link to="/proposals">Заявления</router-link>
-			<router-link to="/users">Пользователи</router-link>
 			<router-link to="/callback">Запросы</router-link>
 		</nav>
 	</header>

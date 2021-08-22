@@ -18,7 +18,7 @@
             <h2 class="ft-white">{{  }} нет данных</h2>
         </header>
 
-        <article class="bg-card table-wrapper">
+        <b-card>
             <div class="row-right">
                 <download-excel
                     :data   = "dataForExcel"
@@ -27,8 +27,8 @@
                     <b-button>Скачать Excel</b-button>
                 </download-excel>
             </div>
-            <b-table striped hover :items="stat.associations" :fields="stat.fields"></b-table>
-        </article>
+            <b-table striped hover :items="stat.associations" :fields="stat.fields" class="sdfsdkfajha"></b-table>
+        </b-card>
     </main>
 </template>
 
