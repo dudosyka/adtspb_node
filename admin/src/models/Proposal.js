@@ -26,7 +26,8 @@ Proposal.joinGroup = async function (proposal, group_id) {
             }
         }
     `;
-    const data {
+
+    const data = {
         input: {
             group_id,
             proposals: [ proposal ]
@@ -57,3 +58,5 @@ Proposal.setDocumentTaken = async function (proposal) {
         return res.admin ?? res;
     })
 }
+
+export {Proposal}
