@@ -1,6 +1,15 @@
 <template>
 	<main class="bg-wrapper">
 		<Header />
+
+        <b-card-group deck>
+            <b-card>
+                sss
+            </b-card>
+            <b-card>
+                sss
+            </b-card>
+        </b-card-group>
 	</main>
 </template>
 

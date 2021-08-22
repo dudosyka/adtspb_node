@@ -1,6 +1,7 @@
 <template>
 	<main class="bg-wrapper">
 		<Header />
+        <b-overlay :show="show.overlay">
         <article class="bg-wrapper content" fluid>
             <b-list-group>
                 <b-list-group-item 
@@ -39,9 +40,16 @@
                                 <b-button @click="changeProposalStatus(proposal)" variant="success">Сохранить</b-button>
                             </b-card-body>
                             <b-card-footer footer-border-variant="danger">
-                                <b-button @click="returnProposal(proposal)" variant="danger">
+                                <b-button @click="$bvModal.show('confirm')" variant="danger">
                                     Отозвать
                                 </b-button>
+                                <b-modal id="confirm" hide-footer>
+                                    <template #modal-title>
+                                        Вы точно хотите отозвать заявление? Его нельзя будет восстановить
+                                    </template>
+                                    <b-button @click="returnProposal(proposal)" variant="danger" block>Отозвать</b-button>
+                                    <b-button @click="$bvModal.hide('confirm')" block>Отмена</b-button>
+                                </b-modal>
                             </b-card-footer>
                         </b-tab>
                         <b-tab title="Ребёнок">
@@ -223,6 +231,7 @@
                 </b-card>
             </b-card>
         </article>
+        </b-overlay>
 	</main>
 </template>
 
@@ -246,6 +255,10 @@ export default {
         return {
             associations: [{name:'adf', proposals: [{child:{name: 'name', surname: 'surname'}, status: {num: 3, id: 3}}]}],
             associationOpen: {},
+            show: {
+                modal: false,
+                overlay: false,
+            },
             ovz_types: [{text:'I', value: 1},{text:'II', value: 2},{text:'III', value: 3}, {text:'IV', value: 4},{text:'V', value: 5},{text:'VI', value: 6},{text:'VII', value: 7},{text:'VIII', value: 8}],
             disability_types: [{text:'I', value: 1}, {text:'II', value: 2}, {text:'III', value: 3}],
         }
@@ -271,7 +284,7 @@ export default {
         },
         saveParentData(parent) {
 
-        }
+        },
      },
 }
 </script>
