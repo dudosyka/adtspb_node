@@ -16,15 +16,15 @@ module.exports = new graphql.GraphQLObjectType({
         },
         child: {
             type: UserOutput,
-            async resolve (obj, data) {
-              return (await User.baseCreateFrom({id: obj.child_id})).fields;
-            }
+            // async resolve (obj, data) {
+            //   return obj.child;
+            // }
         },
         parent: {
             type: UserOutput,
-            async resolve (obj, data) {
-              return (await User.baseCreateFrom({id: obj.parent_id})).fields;
-            }
+            // async resolve (obj, data) {
+            //   return odj.parent;
+            // }
         },
         status: {
             type: graphql.GraphQLList(StatusOutput),

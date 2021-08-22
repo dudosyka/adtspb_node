@@ -76,7 +76,7 @@ Admin.getAssociations = async function(
 
 	return await _request('api', req)
 		.then(data => {
-			console.log(data);
+			console.log("DATA", data);
 			return(data.association.getAll);
 		})
 		.catch( err => console.error(err));
@@ -98,7 +98,7 @@ Admin.editUserData = async function (id, dataOnEdit) {
 		}
 	};
 
-	return await __request('api', req, data).then(res => {
+	return await _request('api', req, data).then(res => {
 		console.log(res);
 		return res.admin ?? res;
 	})
