@@ -38,14 +38,27 @@
                                     !-->
                                 <b-button @click="changeProposalStatus(proposal)" variant="success">Сохранить</b-button>
                             </b-card-body>
-                            <b-card-body>
+                            <b-card-footer footer-border-variant="danger">
                                 <b-button @click="returnProposal(proposal)" variant="danger">
                                     Отозвать
                                 </b-button>
-                            </b-card-body>
+                            </b-card-footer>
                         </b-tab>
                         <b-tab title="Ребёнок">
-                            
+                            <b-card-text>
+                                Данные
+                            </b-card-text>
+                            <b-card-body>
+                                <b-input-group prepend="Фамилия">
+                                <b-input />
+                            </b-input-group>
+                            <b-input-group prepend="Имя">
+                                <b-input />
+                            </b-input-group>
+                            <b-input-group prepend="Отчество">
+                                <b-input />
+                            </b-input-group>
+                            </b-card-body>
                         </b-tab>
                         <b-tab title="Родитель">
                             
