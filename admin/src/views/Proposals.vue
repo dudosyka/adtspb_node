@@ -274,6 +274,12 @@ export default {
     async created() {
 		const fields = {
 			name: null,
+			groups: {
+				id: null,
+				name: null,
+				num: null,
+				closed: null,
+			}
 			proposals: {
 				id: null,
 				child: {
@@ -327,6 +333,7 @@ export default {
 		            residence_flat: null,
 				},
 				isDocumentTaken: null,
+				isGroupSelected: null,
 				status: {
 					id: null,
 					num: null,
@@ -388,7 +395,10 @@ export default {
 			onSend.residence_address = Parser.objToAddress(onSend.residence_address);
 
 			Admin.editUserData(onSend.id, onSend);
-        }
+        },
+		joinGroup(proposal) {
+			Proposal.joinGroup(proposal.id, proposal.isGroupSelected);
+		}
      },
 }
 </script>
