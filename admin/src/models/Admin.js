@@ -69,7 +69,7 @@ Admin.getAssociations = async function() {
 		.catch( err => console.error(err))
 }
 
-Admin.editUserData = async function (id, data) {
+Admin.editUserData = async function (id, dataOnEdit) {
 	const req = `
 		mutation ($input: UserInput) {
 			admin {
@@ -81,7 +81,7 @@ Admin.editUserData = async function (id, data) {
 	const data = {
 		input: {
 			id,
-			...data
+			...dataOnEdit
 		}
 	};
 
