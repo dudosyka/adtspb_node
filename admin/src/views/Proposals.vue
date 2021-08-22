@@ -50,16 +50,43 @@
                             </b-card-text>
                             <b-card-body>
                                 <b-input-group prepend="Фамилия">
-                                <b-input />
-                            </b-input-group>
-                            <b-input-group prepend="Имя">
-                                <b-input />
-                            </b-input-group>
-                            <b-input-group prepend="Отчество">
-                                <b-input />
-                            </b-input-group>
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Имя">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Отчество">
+                                    <b-input />
+                                </b-input-group>
+                            </b-card-body>
+                            <b-card-body>
+                                <b-input-group prepend="Дата рождения">
+                                    <b-form-datepicker placeholder="" />
+                                </b-input-group>
+                            </b-card-body>
+                            <b-card-body>
+                                <b-input-group  prepend="Почта">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group  prepend="Номер телефона">
+                                    <b-input />
+                                </b-input-group>
+                            </b-card-body>
+                            <b-card-body>
+                                Пол
+                                <b-form-radio name="sex" :value="1">Мужской</b-form-radio>
+                                <b-form-radio name="sex" :value="0">Женский</b-form-radio>
+                            </b-card-body>
+                            <b-card-body>
+                                <b-form-select :opions="ovzTypes"></b-form-select>
+                                <b-form-select opions=""></b-form-select>
+                            </b-card-body>
+                            <b-card-body>
+                                <b-form-select opions=""></b-form-select>
+                                <b-form-select opions=""></b-form-select>
                             </b-card-body>
                         </b-tab>
+
                         <b-tab title="Родитель">
                             
                         </b-tab>
@@ -89,7 +116,9 @@ export default {
     data() {
         return {
             associations: [{name:'adf', proposals: [{child:{name: 'name', surname: 'surname'}, status: {num: 3, id: 3}}]}],
-            associationOpen: {}
+            associationOpen: {},
+            ovzTypes: ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'],
+            disabilityTypes: ['I', 'II', 'III'],
         }
     },
     created() {
