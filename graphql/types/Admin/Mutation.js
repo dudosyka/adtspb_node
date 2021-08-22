@@ -201,6 +201,20 @@ module.exports = new graphql.GraphQLObjectType({
                 return true;
             }
         },
+        join_group: {
+            type: graphql.GraphQLBoolean,
+            args: {
+                input: {
+                    type: GroupStructureInput
+                }
+            },
+            async resolve(obj, { input }) {
+                if (!obj.adminModel.hasAccess(36)) //Group`s structure editing
+                    throw Error('Forbidden');
+
+                return await userGroup.joinGroup(input, group, proposal);
+            }
+        },
         rbac: {
             type: AccessControlMutation,
             resolve: obj => obj
