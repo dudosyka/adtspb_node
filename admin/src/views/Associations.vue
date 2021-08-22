@@ -2,6 +2,7 @@
 	<main class="bg-wrapper">
 		<Header /> 
 		<!-- layout system of bootstrap is bad !-->
+		<b-overlay :show="overlay">
 		<article class="content">
 			<b-list-group class="assoc-list">
 				<b-list-group-item
@@ -69,6 +70,7 @@
 				</b-card-body>
 			</b-card>
 		</article>
+		</b-overlay>
 	</main>
 </template>
 
@@ -106,13 +108,16 @@ export default {
         	associationOpen: {},
         	groupOpen: {},
         	timetableRaw: {},
+        	overlay: false
         }
     },
     created() {
+    	this.overlay = true
  		Admin.getAssociations().then( data => {
  			this.associations = data
  			this.associationOpen = this.associations[0]
  			this.groupOpen = this.associationOpen.groups[0]
+ 			this.overlay = false
  		})
     },
     methods: {

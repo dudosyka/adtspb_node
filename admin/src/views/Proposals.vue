@@ -287,6 +287,7 @@ export default {
         }
     },
     async created() {
+        this.show.overlay = true
 		const fields = {
 			name: null,
 			proposals: {
@@ -311,6 +312,7 @@ export default {
 				};
 				return proposal;
 			})
+            this.show.overlay = false
 			return el;
 		}));
 		console.log(this.associations);

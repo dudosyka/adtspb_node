@@ -1,6 +1,7 @@
 <template>
     <main class="bg-wrapper">
         <Header />
+        <b-overlay :show="overlay">
         <header class="header">
             <h2 class="ft-gray">Общее число родителей:</h2>
             <h2 class="ft-white">{{ stat.parent_amount }}</h2>
@@ -29,6 +30,7 @@
             </div>
             <b-table striped hover :items="stat.associations" :fields="stat.fields" class="sdfsdkfajha"></b-table>
         </b-card>
+        </b-overlay>
     </main>
 </template>
 
@@ -100,9 +102,11 @@ export default {
               },
               { colA: "Another", colB: "Regular cell" },
             ],
+            overlay: false
         }
     },
     async created() {
+        this.overlay = true
         this.stat = Admin.getStat().then(data => {
             data.fields = [
                 { key: 'id', label: '№', },
@@ -140,6 +144,7 @@ export default {
                         res['Количество групп'] = el.planned / 15;
                     }
                 });
+                this.overlay = false
                 return res;
             });
             console.log(this.dataForExcel);
