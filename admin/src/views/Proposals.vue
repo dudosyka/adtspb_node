@@ -4,7 +4,7 @@
         <b-overlay :show="show.overlay">
         <article class="bg-wrapper content" fluid>
             <b-list-group>
-                <b-list-group-item 
+                <b-list-group-item
                     v-for="association of associations"
                     v-text="association.name"
                     @click="openAssociation(association)"
@@ -14,43 +14,33 @@
                 </b-list-group-item>
             </b-list-group>
             <b-card :title="associationOpen.name">
-                <b-card 
+                <b-card
                     v-for="proposal of associationOpen.proposals"
                     :title="`${proposal.child.surname} ${proposal.child.name}`"
                 >
                     <b-tabs>
                         <b-tab title="Заявление" active>
-                            <b-card-body>
-                                <div>
-                                    <b-form-checkbox
-                                      unchecked-value="false"
-                                    >Документы принесены</b-form-checkbox>
-                                </div>
-                                <b-button @click="documentsIsHere(proposal)" variant="success">Сохранить</b-button>
-                            </b-card-body>
-                            <b-card-body>
-                                <b-card-text>
-                                    Статус заявлени
-                                </b-card-text>
-                                <b-form-select options="" /><br> 
-                                    <!-- 
-                                        options="" to> :options="variable" ; and add v-model="" 
-                                        options = arr of objects: {value: '', text: ''}
-                                    !-->
-                                <b-button @click="changeProposalStatus(proposal)" variant="success">Сохранить</b-button>
-                            </b-card-body>
-                            <b-card-footer footer-border-variant="danger">
-                                <b-button @click="$bvModal.show('confirm')" variant="danger">
-                                    Отозвать
-                                </b-button>
-                                <b-modal id="confirm" hide-footer>
-                                    <template #modal-title>
-                                        Вы точно хотите отозвать заявление? Его нельзя будет восстановить
-                                    </template>
-                                    <b-button @click="returnProposal(proposal)" variant="danger" block>Отозвать</b-button>
-                                    <b-button @click="$bvModal.hide('confirm')" block>Отмена</b-button>
-                                </b-modal>
-                            </b-card-footer>
+							<b-card-body v-if='proposal.selectedStatus.value != 0'>
+							    <div>
+							        <b-form-checkbox
+							          unchecked-value="false"
+							          v-model='proposal.isDocumentTaken'
+							        >Документы принесены</b-form-checkbox>
+							    </div>
+							    <b-button v-if='proposal.isDocumentTaken != 1' @click="documentsTaken(proposal)" variant="success">Сохранить</b-button>
+							</b-card-body>
+							<b-card-body>
+							    <b-card-text>
+							        Статус заявления
+							    </b-card-text>
+							    <b-form-select :options="statuses" v-model='proposal.selectedStatus.value' /><br>
+							    <b-button @click="changeProposalStatus(proposal)" variant="success">Сохранить</b-button>
+							</b-card-body>
+							<b-card-body v-if='proposal.selectedStatus.value != 0 && proposal.isDocumentTaken != 1'>
+							    <b-button @click="recallProposal(proposal)" variant="danger">
+							        Отозвать
+							    </b-button>
+							</b-card-body>
                         </b-tab>
                         <b-tab title="Ребёнок">
                             <b-card-text>
@@ -145,7 +135,7 @@
                                 </b-input-group>
                             </b-card-body>
 
-                            <b-button 
+                            <b-button
                                 @click="saveChildData(proposal.child)"
                                 variant="success">
                                 Сохранить
@@ -221,7 +211,7 @@
                                     <b-input />
                                 </b-input-group>
                             </b-card-body>
-                            <b-button 
+                            <b-button
                                 @click="saveParentData(proposal.parent)"
                                 variant="success">
                                 Сохранить
@@ -245,6 +235,7 @@
 <script>
 import Header from '../components/Header'
 import {Admin} from '../models/Admin'
+import {Proposal} from '../models/Proposal'
 
 export default {
     name: 'Proposals',
@@ -259,25 +250,72 @@ export default {
                 modal: false,
                 overlay: false,
             },
-            ovz_types: [{text:'I', value: 1},{text:'II', value: 2},{text:'III', value: 3}, {text:'IV', value: 4},{text:'V', value: 5},{text:'VI', value: 6},{text:'VII', value: 7},{text:'VIII', value: 8}],
+			statuses: [
+				{
+					value: 0,
+					text: "Отозвано"
+				},
+				{
+					value: 1,
+					text: "Подано"
+				},
+				{
+					value: 2,
+					text: "Кандидат на поступление"
+				},
+				{
+					value: 3,
+					text: "Другой статус"
+				}
+			],
+			ovz_types: [{text:'I', value: 1},{text:'II', value: 2},{text:'III', value: 3}, {text:'IV', value: 4},{text:'V', value: 5},{text:'VI', value: 6},{text:'VII', value: 7},{text:'VIII', value: 8}],
             disability_types: [{text:'I', value: 1}, {text:'II', value: 2}, {text:'III', value: 3}],
+
         }
     },
-    created() {
+    async created() {
+		const fields = {
+			name: null,
+			proposals: {
+				id: null,
+				child: {
+					name: null,
+					surname: null,
+				},
+				isDocumentTaken: null,
+				status: {
+					id: null,
+					num: null,
+					text: null,
+				}
+			}
+		}
+		this.associations = await Admin.getAssociations(fields).then(res => res.map(el => {
+			el.proposals = (el.proposals ?? []).map(proposal => {
+				proposal.selectedStatus = {
+					value: proposal.status[0].num,
+					text: proposal.status[0].text
+				};
+				return proposal;
+			})
+			return el;
+		}));
+		console.log(this.associations);
         this.associationOpen = this.associations[0]
     },
     methods: {
         openAssociation(association) {
             this.associationOpen = association
         },
-        documentsIsHere(proposal) {
-
+        documentsTaken(proposal) {
+			Proposal.setDocumentTaken(proposal.id);
         },
         changeProposalStatus(proposal) {
-
-        }, 
-        returnProposal(propoasl) {
-
+			//TODO Когда бэк будет готов запилить
+        },
+        recallProposal(proposal) {
+			console.log(proposal);2
+			Proposal.recall(Number(proposal.id));
         },
         saveChildData(child) {
 

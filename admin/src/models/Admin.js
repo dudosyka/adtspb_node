@@ -1,3 +1,5 @@
+import {Parser} from '../utils/Parser'
+
 let Admin = {};
 
 Admin.confirmRemoveChild = async function(link) {
@@ -37,36 +39,47 @@ Admin.getStat = async function() {
 		.catch( err => console.error(err))
 }
 
-Admin.getAssociations = async function() {
+Admin.getAssociations = async function(
+	fields = {
+		id: null,
+		name: null,
+		description: null,
+		closed: null,
+		min_age: null,
+		max_age: null,
+		study_years: null,
+		hours_week: null,
+		lessons_week: null,
+		study_form: null,
+		hours_count: null,
+		study_period: null,
+		isRecruiment: null,
+		groups: {
+			id: null,
+			name: null,
+			timetable: {
+				week: null
+			}
+		}
+	}
+)
+{
 	const req = `
 		query {
 		    association {
 		        getAll {
-		            id,
-		            name,
-		            description,
-		            closed,
-		            min_age,
-		            max_age,
-		            study_years,
-		            hours_week,
-		            lessons_week,
-		            study_form,
-		            hours_count,
-		            study_period,
-		            isRecruiment,
-		            groups { id, name, timetable { week } },
+		            ` + Parser.objToGraphQlQuery(fields) + `
 		        }
 		    }
 		}
-	`
+	`;
 
 	return await _request('api', req)
 		.then(data => {
-			console.log(data)
-			return(data.association.getAll)
+			console.log(data);
+			return(data.association.getAll);
 		})
-		.catch( err => console.error(err))
+		.catch( err => console.error(err));
 }
 
 Admin.editUserData = async function (id, dataOnEdit) {
