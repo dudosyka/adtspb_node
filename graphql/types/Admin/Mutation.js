@@ -30,6 +30,22 @@ const status = Status.newModel();
 module.exports = new graphql.GraphQLObjectType({
     name: "AdminMutation",
     fields: () => ({
+        create_association: {
+            type: graphql.GraphQLInt,
+            args: {
+                input: {
+                    type: AssociationInput
+                }
+            },
+            async resolve(obj, { input }) {
+                if (!obj.adminModel.hasAccess(24)) //Association creating
+                    throw Error('Forbidden');
+
+                const admin_id = obj.viewer.id;
+                const association_id = await association.newFromInput(input, extraData);
+                return association_id;
+            }
+        },
         edit_association: {
             type: graphql.GraphQLBoolean,
             args: {
@@ -48,6 +64,23 @@ module.exports = new graphql.GraphQLObjectType({
                 const admin_id = obj.viewer.id;
                 await association.edit(input, logger, extraData, admin_id);
                 return true;
+            }
+        },
+
+        create_group: {
+            type: graphql.GraphQLInt,
+            args: {
+                input: {
+                    type: GroupInput
+                }
+            },
+            async resolve(obj, { input }) {
+                if (!obj.adminModel.hasAccess(25)) //Groups creating
+                    throw Error('Forbidden');
+
+                const admin_id = obj.viewer.id;
+                const group_id = await group.newFromInput(input, extraData);
+                return group_id;
             }
         },
         edit_group: {
@@ -85,6 +118,22 @@ module.exports = new graphql.GraphQLObjectType({
                 return await userGroup.editGroupStructure(input, group, proposal, allowed);
             }
         },
+
+        create_proposal: {
+            type: graphql.GraphQLInt,
+            args: {
+                proposal: {
+                    type: ProposalInput
+                }
+            },
+            async resolve(obj, { proposal }) {
+                if (!obj.adminModel.hasAccess(31)) //Proposal creating (for admins)
+                    throw Error('Forbidden');
+
+                let model = await Proposal.createFromInput(proposal);
+                return await model.createNew(user, userExtraData, true);
+            }
+        },
         edit_proposal_status: {
             type: graphql.GraphQLBoolean,
             args: {
@@ -101,57 +150,61 @@ module.exports = new graphql.GraphQLObjectType({
                 await status.editStatus(input, logger, admin_id, proposal, allowed);
             }
         },
-        create_association: {
-            type: graphql.GraphQLInt,
-            args: {
-                input: {
-                    type: AssociationInput
-                }
-            },
-            async resolve(obj, { input }) {
-                if (!obj.adminModel.hasAccess(24)) //Association creating
-                    throw Error('Forbidden');
-
-                const admin_id = obj.viewer.id;
-                const association_id = await association.newFromInput(input, extraData);
-                return association_id;
-            }
-        },
-        create_group: {
-            type: graphql.GraphQLInt,
-            args: {
-                input: {
-                    type: GroupInput
-                }
-            },
-            async resolve(obj, { input }) {
-                if (!obj.adminModel.hasAccess(25)) //Groups creating
-                    throw Error('Forbidden');
-
-                const admin_id = obj.viewer.id;
-                const group_id = await group.newFromInput(input, extraData);
-                return group_id;
-            }
-        },
-        create_proposal: {
-            type: graphql.GraphQLInt,
+        set_document_taken: {
+            type: graphql.GraphQLBoolean,
             args: {
                 proposal: {
-                    type: ProposalInput
+                    type: graphql.GraphQLInt
                 }
             },
-            async resolve(obj, { proposal }) {
-                if (!obj.adminModel.hasAccess(31)) //Proposal creating (for admins)
+            async resolve (obj, data) {
+            if (!obj.adminModel.hasAccess(28)) //Proposal status editing
+                throw Error('Forbidden');
+
+            const allowed = await obj.adminModel.getAllowedAssociations();
+            const admin_id = obj.viewer.id;
+            await proposal.setDocumentTaken(data.proposal, logger, admin_id, allowed);
+            return true;
+            }
+        },
+        recall_proposal: {
+            type: graphql.GraphQLBoolean,
+            args: {
+                proposal: {
+                    type: graphql.GraphQLInt
+                }
+            },
+            async resolve(obj, data) {
+                if (!obj.adminModel.hasAccess(28)) //Proposal status editing
                     throw Error('Forbidden');
 
-                let model = await Proposal.createFromInput(proposal);
-                return await model.createNew(user, userExtraData, true);
+                const admin_id = obj.viewer.id;
+                const model = await Proposal.createFrom({ id: data.proposal });
+                await model.recall(admin_id, true);
+                return true;
+            }
+        },
+
+        edit_user: {
+            type: graphql.GraphQLBoolean,
+            args: {
+                input: {
+                    type: UserInput
+                }
+            },
+            async resolve(obj, { input }) {
+                if (!obj.adminModel.hasAccess(29)) //User data editing
+                    throw Error('Forbidden');
+
+                const admin_id = obj.viewer.id;
+                await user.editData(input, logger, userExtraData, admin_id);
+                return true;
             }
         },
         rbac: {
             type: AccessControlMutation,
             resolve: obj => obj
-        }
+        },
     }),
 });
 
@@ -166,3 +219,5 @@ const GroupOutput = require('../EntityTypes/Group/Input');
 
 const ProposalInput = require('../EntityTypes/Proposal/Input');
 const ProposalStatusInput = require('../EntityTypes/Status/Input');
+
+const UserInput = require('../EntityTypes/User/Input');
