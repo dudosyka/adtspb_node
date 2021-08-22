@@ -36,12 +36,12 @@
 							    <b-form-select :options="statuses" v-model='proposal.selectedStatus.value' /><br>
 							    <b-button @click="changeProposalStatus(proposal)" variant="success">Сохранить</b-button>
 							</b-card-body>
-                            <b-card-body>
+                            <b-card-body v-if='proposal.selectedStatus.value != 0'>
                                 <b-card-text>
                                     Группа
                                 </b-card-text>
-                                <b-form-select /><br>
-                                <b-button @click="changeProposalStatus(proposal)" variant="success">Сохранить</b-button>
+                                <b-form-select :options="associationOpen.selectedGroups" v-model="proposal.isGroupSelected"/><br>
+                                <b-button @click="joinGroup(proposal)" variant="success">Сохранить</b-button>
                             </b-card-body>
 							<b-card-body v-if='proposal.selectedStatus.value != 0 && proposal.isDocumentTaken != 1'>
 							    <b-button variant="danger" v-b-modal.confirmReturn>
@@ -86,8 +86,8 @@
                             </b-card-body>
                             <b-card-body>
                                 Пол
-                                <b-form-radio name="sex" v-model='proposal.child.sex' :value="1">Мужской</b-form-radio>
-                                <b-form-radio name="sex" v-model='proposal.child.sex' :value="0">Женский</b-form-radio>
+                                <b-form-radio :name="`sexChild${proposal.id}`" v-model='proposal.child.sex' :value="1">Мужской</b-form-radio>
+                                <b-form-radio :name="`sexChild${proposal.id}`" v-model='proposal.child.sex' :value="0">Женский</b-form-radio>
                             </b-card-body>
                             <b-card-body>
                                 <b-form-checkbox
@@ -97,16 +97,17 @@
                                 >
                                     ОВЗ
                                 </b-form-checkbox>
-                                Тип ОВЗ<b-form-select :options="ovz_types" />
+                                Тип ОВЗ<b-form-select :options="ovz_types" v-model="proposal.child.ovz_type.id" />
                             </b-card-body>
                             <b-card-body>
                                 <b-form-checkbox
                                     :value="1"
                                     :unchecked-value="0"
+                                    v-model='proposal.child.disability'
                                 >
                                     Инвалидность
                                 </b-form-checkbox>
-                                Группа инвалидности<b-form-select :options="disability_types" />
+                                Группа инвалидности<b-form-select :options="disability_types" v-model="proposal.child.disability_group.id"/>
                             </b-card-body>
                             <b-card-body>
                                 <b-input-group prepend="Учебное заведение (наименование)">
@@ -185,8 +186,8 @@
                             </b-card-body>
                             <b-card-body>
                                 Пол
-                                <b-form-radio name="sex" v-model='proposal.parent.sex' :value="1">Мужской</b-form-radio>
-                                <b-form-radio name="sex" v-model='proposal.parent.sex' :value="0">Женский</b-form-radio>
+                                <b-form-radio :name="`sexParent${proposal.id}`" v-model='proposal.parent.sex' :value="1">Мужской</b-form-radio>
+                                <b-form-radio :name="`sexParent${proposal.id}`" v-model='proposal.parent.sex' :value="0">Женский</b-form-radio>
                             </b-card-body>
 							<b-input-group  prepend="Гражданство">
 								<b-input v-model='proposal.parent.state' />
@@ -364,29 +365,45 @@ export default {
 				}
 			}
 		}
-		this.associations = await Admin.getAssociations(fields)
-		.then(res => res.map(el => {
-			el.proposals = (el.proposals ?? []).map(proposal => {
-				proposal.selectedStatus = {
-					value: proposal.status[0].num,
-					text: proposal.status[0].text
-				};
-				const birth = Parser.timestampToObj(proposal.child.birthday);
+		Admin.getAssociations(fields)
+            .then( res => {
+                this.associations = res
+                this.associationOpen = this.associations[0]
+                res.map( el => {
+        			el.proposals = (el.proposals ?? []).map(proposal => {
+        				proposal.selectedStatus = {
+        					value: proposal.status[0].num,
+        					text: proposal.status[0].text
+        				};
+        				const birth = Parser.timestampToObj(proposal.child.birthday);
 
-				proposal.child.birthday = birth.year + "-" + birth.month + "-" + birth.day;
+        				proposal.child.birthday = birth.year + "-" + birth.month + "-" + birth.day;
 
-				proposal.child.registration_address = Parser.addressToObj(proposal.child.registration_address);
-				proposal.child.residence_address = Parser.addressToObj(proposal.child.residence_address);
+        				proposal.child.registration_address = Parser.addressToObj(proposal.child.registration_address);
+        				proposal.child.residence_address = Parser.addressToObj(proposal.child.residence_address);
 
-				proposal.parent.registration_address = Parser.addressToObj(proposal.parent.registration_address);
-				proposal.parent.residence_address = Parser.addressToObj(proposal.parent.residence_address);
+        				proposal.parent.registration_address = Parser.addressToObj(proposal.parent.registration_address);
+        				proposal.parent.residence_address = Parser.addressToObj(proposal.parent.residence_address);
 
-				return proposal;
-			})
-            this.overlay = false
-			return el;
-		}));
-        this.associationOpen = this.associations[0]
+        				return proposal;
+        			})
+        			return el;
+    		    })
+                res.map( el => {
+                    console.log(el)
+                    el.groups = (el.groups ?? []).filter(group => { return !(group.closed) })
+                    el.selectedGroups = []
+                    el.groups = (el.groups ?? []).map(group => {
+                        const obj = {
+                            value: group.id,
+                            text: group.name
+                        }
+                        el.selectedGroups.push(obj)   
+                    })
+                    console.log(el)
+                })
+                this.overlay = false
+            });
     },
     methods: {
         openAssociation(association) {
@@ -421,8 +438,11 @@ export default {
 			Admin.editUserData(onSend.id, onSend);
         },
 		joinGroup(proposal) {
-			Proposal.joinGroup(proposal.id, proposal.isGroupSelected);
-		}
+            this.overlay = true
+            proposal.isGroupSelected = Number(proposal.isGroupSelected)
+            proposal.id = Number(proposal.id)
+			Proposal.joinGroup(proposal.id, proposal.isGroupSelected)
+		},
      },
 }
 </script>
