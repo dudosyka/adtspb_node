@@ -13,7 +13,7 @@
 					:active="associationOpen.id === association.id"
 				/>
 			</b-list-group>
-			<b-card>
+			<b-card class="skdljfsladk">
 				<b-form-input v-model="associationOpen.name" />
 				<b-form-textarea v-model="associationOpen.description"></b-form-textarea>
 
@@ -80,15 +80,16 @@
 	display: grid;
 	grid-template-columns: auto 1fr;
 }
-
-.assoc-list {
-	overflow-y: scroll;
-	max-height: 100vh;
-}
 .association {
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-gap: 10px;
+}
+.skdljfsladk {
+	max-height: 100vh;
+	overflow-y: scroll;
+	position: sticky;
+	top:  0;
 }
  
 </style>
