@@ -78,17 +78,146 @@
                                 <b-form-radio name="sex" :value="0">Женский</b-form-radio>
                             </b-card-body>
                             <b-card-body>
-                                <b-form-select :opions="ovzTypes"></b-form-select>
-                                <b-form-select opions=""></b-form-select>
+                                <b-form-checkbox
+                                    :value="1"
+                                    :unchecked-value="0"
+                                >
+                                    ОВЗ
+                                </b-form-checkbox>
+                                Тип ОВЗ<b-form-select :options="ovz_types" />
                             </b-card-body>
                             <b-card-body>
-                                <b-form-select opions=""></b-form-select>
-                                <b-form-select opions=""></b-form-select>
+                                <b-form-checkbox
+                                    :value="1"
+                                    :unchecked-value="0"
+                                >
+                                    Инвалидность
+                                </b-form-checkbox>
+                                Группа инвалидности<b-form-select :options="disability_types" />
                             </b-card-body>
+                            <b-card-body>
+                                <b-input-group prepend="Учебное заведение (наименование)">
+                                    <b-input />
+                                </b-input-group>
+                            </b-card-body>
+                            <b-card-body>
+                                Адрес регистрации
+                                <b-input-group prepend="Город">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Район">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Улица">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Дом">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Квартира">
+                                    <b-input />
+                                </b-input-group>
+                            </b-card-body>
+                            <b-card-body>
+                                Адрес проживания
+                                <b-input-group prepend="Город">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Район">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Улица">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Дом">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Квартира">
+                                    <b-input />
+                                </b-input-group>
+                            </b-card-body>
+
+                            <b-button 
+                                @click="saveChildData(proposal.child)"
+                                variant="success">
+                                Сохранить
+                            </b-button>
                         </b-tab>
 
                         <b-tab title="Родитель">
-                            
+                            <b-card-text>
+                                Данные
+                            </b-card-text>
+                            <b-card-body>
+                                <b-input-group prepend="Фамилия">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Имя">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Отчество">
+                                    <b-input />
+                                </b-input-group>
+                            </b-card-body>
+                            <b-card-body>
+                                <b-input-group prepend="Дата рождения">
+                                    <b-form-datepicker placeholder="" />
+                                </b-input-group>
+                            </b-card-body>
+                            <b-card-body>
+                                <b-input-group  prepend="Почта">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group  prepend="Номер телефона">
+                                    <b-input />
+                                </b-input-group>
+                            </b-card-body>
+                            <b-card-body>
+                                Пол
+                                <b-form-radio name="sex" :value="1">Мужской</b-form-radio>
+                                <b-form-radio name="sex" :value="0">Женский</b-form-radio>
+                            </b-card-body>
+                            <b-card-body>
+                                Адрес регистрации
+                                <b-input-group prepend="Город">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Район">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Улица">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Дом">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Квартира">
+                                    <b-input />
+                                </b-input-group>
+                            </b-card-body>
+                            <b-card-body>
+                                Адрес проживания
+                                <b-input-group prepend="Город">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Район">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Улица">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Дом">
+                                    <b-input />
+                                </b-input-group>
+                                <b-input-group prepend="Квартира">
+                                    <b-input />
+                                </b-input-group>
+                            </b-card-body>
+                            <b-button 
+                                @click="saveParentData(proposal.parent)"
+                                variant="success">
+                                Сохранить
+                            </b-button>
                         </b-tab>
                     </b-tabs>
                 </b-card>
@@ -117,8 +246,8 @@ export default {
         return {
             associations: [{name:'adf', proposals: [{child:{name: 'name', surname: 'surname'}, status: {num: 3, id: 3}}]}],
             associationOpen: {},
-            ovzTypes: ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'],
-            disabilityTypes: ['I', 'II', 'III'],
+            ovz_types: [{text:'I', value: 1},{text:'II', value: 2},{text:'III', value: 3}, {text:'IV', value: 4},{text:'V', value: 5},{text:'VI', value: 6},{text:'VII', value: 7},{text:'VIII', value: 8}],
+            disability_types: [{text:'I', value: 1}, {text:'II', value: 2}, {text:'III', value: 3}],
         }
     },
     created() {
@@ -137,7 +266,12 @@ export default {
         returnProposal(propoasl) {
 
         },
+        saveChildData(child) {
 
-    },
+        },
+        saveParentData(parent) {
+
+        }
+     },
 }
 </script>
