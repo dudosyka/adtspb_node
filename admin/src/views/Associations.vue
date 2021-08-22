@@ -2,6 +2,7 @@
 	<main class="bg-wrapper">
 		<Header /> 
 		<!-- layout system of bootstrap is bad !-->
+		<b-overlay :show="overlay">
 		<article class="content">
 			<b-list-group class="assoc-list">
 				<b-list-group-item
@@ -12,7 +13,7 @@
 					:active="associationOpen.id === association.id"
 				/>
 			</b-list-group>
-			<b-card>
+			<b-card class="skdljfsladk">
 				<b-form-input v-model="associationOpen.name" />
 				<b-form-textarea v-model="associationOpen.description"></b-form-textarea>
 
@@ -67,8 +68,10 @@
 						</b-col>
 					</b-row>
 				</b-card-body>
+				<b-button variant="success" @click="saveAssociation(associationOpen)">Сохранить</b-button>
 			</b-card>
 		</article>
+		</b-overlay>
 	</main>
 </template>
 
@@ -77,15 +80,16 @@
 	display: grid;
 	grid-template-columns: auto 1fr;
 }
-
-.assoc-list {
-	overflow-y: scroll;
-	max-height: 100vh;
-}
 .association {
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-gap: 10px;
+}
+.skdljfsladk {
+	max-height: 100vh;
+	overflow-y: scroll;
+	position: sticky;
+	top:  0;
 }
  
 </style>
@@ -106,13 +110,16 @@ export default {
         	associationOpen: {},
         	groupOpen: {},
         	timetableRaw: {},
+        	overlay: false
         }
     },
     created() {
+    	this.overlay = true
  		Admin.getAssociations().then( data => {
  			this.associations = data
  			this.associationOpen = this.associations[0]
  			this.groupOpen = this.associationOpen.groups[0]
+ 			this.overlay = false
  		})
     },
     methods: {
@@ -122,7 +129,7 @@ export default {
     	},
     	openGroup(group) {
     		this.groupOpen = group
-    		this.timetable = this.toRawTimetable(group.timetable)
+    		//this.timetable = this.toRawTimetable(group.timetable)
     	},
     	/*
     	toRawTimetable(timetable) {
@@ -137,7 +144,10 @@ export default {
     	nToDay(number) { 
     		return Corrector.weekDayByNumber(number)
     	},
-
+    	saveAssociation(association) {
+    		this.overlay = true
+    		setTimeout(() => this.overlay = false , 1000)
+    	},
     },
     computed: {
 

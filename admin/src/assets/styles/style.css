@@ -7,9 +7,11 @@ h1,h2,h3,h4,h5,h6,p,ul,ol {
 	font-weight: normal;
 }
 
+/*
 * {
 	color: #c4c4c4;
 }
+*/
 
 .bg-wrapper {
 	background-color: #282828;
@@ -25,11 +27,17 @@ h1,h2,h3,h4,h5,h6,p,ul,ol {
 	color: #fff;
 }
 .ft-gary {
-	color: #C4C4C4;
+	color: #C4C4C4 !important;
 }
 .ft-dark {
 	color: #191919;
 }
+
+.content {
+    display: grid;
+    grid-template-columns: auto 1fr;
+}
+
 /*
 .card-wrapper {
 	position: fixed;

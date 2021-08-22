@@ -73,20 +73,21 @@ let redirectTo = (name) => {
 }
 
 router.afterEach(async (to, from) => {
-    console.log(to)
+    console.log('to', to)
+    console.log('from', from)
     let isLogin = true;
     isLogin = (token !== null);
 
-    console.log(isLogin)
+    console.log(`isLogin !== null ${isLogin}`)
 
     if (isLogin) {
         isLogin = await validToken();
-        console.log(isLogin);
+        console.log(`validToken ${isLogin}`);
     }
 
-    if (to.path == '/' && isLogin) router.push('statistics');
+    if (to.path == '/' && isLogin) router.push('/statistics');
 
-    if (!isLogin) router.push('/');
+    if (!isLogin && to.path !== '/') router.push('/');
 });
 
 (async function () {
