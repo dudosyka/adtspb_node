@@ -42,11 +42,12 @@ Proposal.getPdfBlob = async function (proposal_id, child = false) {
 Proposal.printResolution = async function (child_id) {
     const blob = await this.getPdfBlob(false, child_id);
     let url = window.URL.createObjectURL(blob);
-    const iframe = document.createElement('iframe');
-    iframe.src = url;
-    document.body.appendChild(iframe);
-    url = URL.revokeObjectURL(blob);
-    iframe.contentWindow.print();
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = "Согласие.pdf";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
 }
 
 Proposal.downloadPdf = async function (proposal_id, name) {

@@ -1,20 +1,21 @@
 <template>
 	<div class="bg-wrapper body">
-		<main class="card bg-card auth">
-			<h1>Авторизация</h1>
+		<b-card class="card bg-card auth" title="Авторизация">
 
-			<div class="input-container">
-				<label>логин</label>
-				<input type="text" v-model="user.login">
-			</div>
+			<b-card-text>
+				<b-input-group prepend="Логин">
+					<b-input type="text" :state="errors.login" v-model="user.login" />
+				</b-input-group>
+			</b-card-text>
 
-			<div class="input-container">
-				<label>Пароль</label>
-				<input type="password" @keydown.enter="auth" v-model="user.pass">
-			</div>
+			<b-card-text>
+				<b-input-group prepend="Пароль">
+					<b-input type="text" :state="errors.pass" v-model="user.pass" />
+				</b-input-group>
+			</b-card-text>
 
-			<button @click="auth" class="button-accent">Войти</button>
-		</main>
+			<b-button @click="auth" variant="primary">Войти</b-button>
+		</b-card>
 	</div>
 </template>
 
@@ -53,8 +54,9 @@ export default {
 	},
 	methods: {
 		auth() {
-			console.log('hi');
-	        User.login(this.user).catch(err => {
+			console.log('hi')
+	        User.login(this.user)
+	        .catch(err => {
 	            //Ошибка с сервера
 	            if (err.response) {
 	                const msg = err.response.errors[0].message;
@@ -76,7 +78,10 @@ export default {
 	                  //['password', 'login'] ...
 	                  //['login'] ...
 	            }
-	        });
+	        })
+	        .then( data => {
+	        	console.log(data)
+	        })
 	    },
 	}
 }
