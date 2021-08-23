@@ -543,7 +543,7 @@ User.prototype.editData = async function (newValue, logger, extraModel, admin_id
 
         model.load(newValue);
         model.update();
-        model.db.query('UPDATE `user` SET ``');
+        model.db.query('UPDATE `user` SET `name` = ?, `surname` = ?, `lastname` = ?, `email` = ?, phone = ?, sex = ? WHERE `id` = ?', [ model.__get('name'), model.__get('surname'), model.__get('lastname'), model.__get('email'), model.__get('phone'), model.__get('sex'), model.__get('id') ]);
         extraModel.load(newValue);
         extraModel.fields.user_id = model.__get('id');
         extraModel.update(false, "user_id");
