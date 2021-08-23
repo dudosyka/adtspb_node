@@ -28,8 +28,6 @@ Parser.addressToObj = function (address) {
     if (address === null || address === undefined)
         return obj;
 
-    console.log(address);
-
     const arr = address.split(',');
 
     obj.city = arr[0];
