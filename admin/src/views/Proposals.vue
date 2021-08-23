@@ -404,7 +404,6 @@ export default {
               }
             }
           }
-          console.log(association);
             Admin.getAssociationById(fields, Number(association))
                   .then( res => {
                     console.log(res);
@@ -436,8 +435,8 @@ export default {
                               }
                         this.associationOpen.selectedGroups.push(obj)
                           });
+                    this.overlay = false
                       })
-                      this.overlay = false
         },
         documentsTaken(proposal) {
             proposal.id = Number(proposal.id)

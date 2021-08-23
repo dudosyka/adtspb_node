@@ -209,6 +209,7 @@
             name: el.association.name,
             groups: el.association.groups,
             isGroupSelected: el.isGroupSelected,
+            isDocumentTaken: el.isDocumentTaken,
             selected_group_title: this.getGroupName({id: el.id, groups: el.association.groups}, el.isGroupSelected),
             status: el.status.length ? { ...el.status[0] } : { text: "", num: 0 },
             download: "",

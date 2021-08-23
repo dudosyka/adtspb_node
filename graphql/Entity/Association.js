@@ -23,7 +23,11 @@ Association.prototype.fields = {
     description: null,
 };
 
-Association.prototype.getAssociations = async function (age = null, selections = {}, model = null, where = null, whereData = null, userModel = null) {
+Association.prototype.getAssociationsAsObject = async function (age = null, selections = {}, model = null, where = null, whereData = null, userModel = null) {
+    return await this.getAssociations(age, selections, model, where, whereData, userModel, true);
+}
+
+Association.prototype.getAssociations = async function (age = null, selections = {}, model = null, where = null, whereData = null, userModel = null, asObject = false) {
     let whereQuery = (age == null) ? "" : "WHERE `join`.`max_age` >= ? AND `join`.min_age <= ?";
     let data = (age == null) ? [] : [ age, age ];
 
@@ -55,6 +59,7 @@ Association.prototype.getAssociations = async function (age = null, selections =
     }
 
     let associations = [];
+    let associationsObject = {};
     res.map(el => {
         el.id = el.association_id;
         delete el.association_id;
@@ -64,8 +69,10 @@ Association.prototype.getAssociations = async function (age = null, selections =
             proposals: proposals === null ? [] : proposals[el.id]
         };
         associations.push(association);
+        associationsObject[association.id] = association;
     });
-
+    if (asObject)
+        return associationsObject;
     return associations;
 }
 
