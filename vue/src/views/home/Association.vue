@@ -297,6 +297,8 @@ export default {
         console.log(this.associations);
         console.log(this.proposalParms.associations);
 
+        console.log(this.child);
+
         Proposal.createFromObject(this.proposalParms.associations, this.child.id)
           .then(data => {
               Object.keys(this.proposalParms.associations).map(el => {
@@ -319,7 +321,7 @@ export default {
                   this.errors.alreadyCreated = true;
               }
               else {
-                  console.log(err.msg);
+                throw err;
               }
       });
     },

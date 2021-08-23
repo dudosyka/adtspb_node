@@ -48,6 +48,8 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
     const { ids, query } = this.db.createRangeQuery(false, arr, field);
     let fullQuery = "SELECT `main`.* FROM " + this.table + " AS `main` WHERE `main`." + query + where;
     const proposals = await this.db.query(fullQuery, ids);
+    if (proposals.length <= 0)
+        return [];
 
     let associations = {};
     if (selections.association) {
@@ -120,7 +122,7 @@ Proposal.prototype.checkProposalExists = async function () {
 }
 
 Proposal.prototype.checkStudyLoad = async function () {
-    const proposals = await this.selectProposalsList('child_id', [this.__get('child')], {status: true});
+    const proposals = await this.selectProposalsList('child_id', [this.__get('child')], {status: true, association: true});
 
     console.log("PROPOSALS", proposals);
 
@@ -201,6 +203,7 @@ Proposal.prototype.canJoinAssociation = async function (userModel, userExtraData
 
 Proposal.prototype.createNew = async function (userModel, userExtraDataModel, fromAdmin = false) {
     await this.canJoinAssociation(userModel, userExtraDataModel, fromAdmin);
+    console.log("djhdjahjdkjsa");
 
     const proposal = await this.save(true);
 
