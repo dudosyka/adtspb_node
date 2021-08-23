@@ -44,6 +44,20 @@ Proposal.prototype.createFromInput = async function (proposal) {
     return await this.baseCreateFrom(data);
 }
 
+function calculateReserve(association, proposal_id) {
+    if (association == undefined)
+        return null;
+
+    let i = 1;
+    for (proposal of association.proposals) {
+        if (proposal.id == proposal_id) {
+            return (i > AppConfig.group_size * association.group_count);
+        }
+        if (proposal.status[0].num != 0)
+            i++
+    }
+}
+
 Proposal.prototype.selectProposalsList = async function (field, arr, selections, where = "", whereData = [], userModel = null) {
     const { ids, query } = this.db.createRangeQuery(false, arr, field);
     let fullQuery = "SELECT `main`.* FROM " + this.table + " AS `main` WHERE `main`." + query + where;
@@ -53,35 +67,49 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
 
     let associations = {};
     if (selections.association) {
-        console.log(selections);
         const association = Association.newModel();
         const range = this.db.createRangeQuery('association_id', proposals, 'id');
         associations = await association.getAssociationsAsObject(null, selections.association, null, " WHERE `main`." + range.query, range.ids);
     }
+
     let statuses = {};
     if (selections.status) {
-        console.log(selections);
         const status = Status.newModel();
         const range = this.db.createRangeQuery('id', proposals, 'proposal_id');
         statuses = await status.getAll(range.query, range.ids, selections, true);
     }
+
     let parents = {};
     if (selections.parent) {
         parents = await userModel.getFullDataAsObject(proposals.map(el => el.parent_id), selections);
     }
+
     let children = {};
     if (selections.child) {
         const range = this.db.createRangeQuery('id', proposals, 'child_id');
         children = await userModel.getFullDataAsObject(proposals.map(el => el.child_id), selections);
     }
+    let isReserve = {};
+    if (selections.isReserve) {
+        if (Object.keys(associations) > 0) {
+            //GET FROM `associations` object
+        } else {
+            const association = Association.newModel();
+            const range = this.db.createRangeQuery('association_id', proposals, 'id');
+            isReserve = await association.getAssociationsAsObject(null, {proposals: {status: true}}, this.newModel(), " WHERE `main`." + range.query, range.ids);
+        }
+    }
 
     const res = {};
+
+    console.log(isReserve);
 
     proposals.map(el => {
         el.child = children[el.child_id];
         el.parent = parents[el.parent_id];
         el.status = statuses[el.id] == undefined ? [] : statuses[el.id];
         el.association = associations[el.association_id];
+        el.isReserve = calculateReserve(isReserve[el.association_id], el.id);
         if (res[el[field]]) {
             res[el[field]].push(el);
         }

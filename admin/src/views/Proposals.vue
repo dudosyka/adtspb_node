@@ -392,6 +392,7 @@ export default {
               },
               isDocumentTaken: null,
               isGroupSelected: null,
+			  isReserve: null,
               status: {
                 id: null,
                 num: null,
