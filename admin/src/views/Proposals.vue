@@ -7,13 +7,13 @@
                 <b-list-group-item
                     v-for="association of associations"
                     v-text="association.name"
-                    @click="openAssociation(association)"
+                    @click="openAssociation(association.id)"
                     button
-                    :active="association === associationOpen"
+                    :active="association.id === associationOpen.id"
                 >
                 </b-list-group-item>
             </b-list-group>
-            <b-card :title="associationOpen.name" class="sladjkfsdalsf">
+            <b-card v-if="associationOpen != null" :title="associationOpen.name" class="sladjkfsdalsf">
                 <b-card
                     v-for="proposal of associationOpen.proposals"
                     :title="`${proposal.child.surname} ${proposal.child.name}`"
@@ -45,17 +45,17 @@
                                 <b-card-text>
                                     Группа
                                 </b-card-text>
-                                <b-form-select :options="associationOpen.selectedGroups" :disabled='proposal.groupAlreadySelected' v-model="proposal.isGroupSelected"/><br>
-                                <b-button @click="joinGroup(proposal)" v-if='!proposal.groupAlreadySelected' variant="success">Сохранить</b-button>
+                                <b-form-select :options="associationOpen.selectedGroups" v-model="proposal.isGroupSelected"/><br>
+                                <b-button @click="joinGroup(proposal)" variant="success">Сохранить</b-button>
                             </b-card-body>
 							<b-card-body v-if='proposal.selectedStatus.value != 0 && proposal.isDocumentTaken != 1'>
 							    <b-button variant="danger" v-b-modal.confirmReturn>
 							        Отозвать
 							    </b-button>
-                                <b-modal 
-                                    title="Вы уверенеы что хотите отозвать заявление? Его нельзя будет призвать обратно" 
+                                <b-modal
+                                    title="Вы уверенеы что хотите отозвать заявление? Его нельзя будет призвать обратно"
                                     id="confirmReturn"
-                                    hide-footer 
+                                    hide-footer
                                     >
                                     <b-button @click="recallProposal(proposal)" variant="danger">Отозвать</b-button>
                                 </b-modal>
@@ -317,114 +317,10 @@ export default {
     },
     async created() {
         this.overlay = true
-		const fields = {
-			name: null,
-			groups: {
-				id: null,
-				name: null,
-				num: null,
-				closed: null,
-			},
-			proposals: {
-				id: null,
-				child: {
-					id: null,
-		            name: null,
-		            surname: null,
-		            lastname: null,
-		            email: null,
-		            phone: null,
-		            sex: null,
-		            birthday: null,
-		            state: null,
-		            relationship: null,
-		            studyPlace: null,
-		            ovz: null,
-		            ovz_type: {
-		                id: null
-		            },
-		            disability: null,
-		            disability_group: {
-		                id: null,
-		            },
-		            registration_address: null,
-		            registration_flat: null,
-		            residence_address: null,
-		            residence_flat: null,
-				},
-				parent: {
-					id: null,
-		            name: null,
-		            surname: null,
-		            lastname: null,
-		            email: null,
-		            phone: null,
-		            sex: null,
-		            birthday: null,
-		            state: null,
-		            relationship: null,
-		            studyPlace: null,
-		            ovz: null,
-		            ovz_type: {
-		                id: null
-		            },
-		            disability: null,
-		            disability_group: {
-		                id: null,
-		            },
-		            registration_address: null,
-		            registration_flat: null,
-		            residence_address: null,
-		            residence_flat: null,
-				},
-				isDocumentTaken: null,
-				isGroupSelected: null,
-				status: {
-					id: null,
-					num: null,
-					text: null,
-				}
-			}
-		}
-		Admin.getAssociations(fields)
+		await Admin.getAssociations({id: null, name: null})
             .then( res => {
-                this.associations = res
-                this.associationOpen = this.associations[0]
-                res.map( el => {
-        			el.proposals = (el.proposals ?? []).map(proposal => {
-        				proposal.selectedStatus = {
-        					value: proposal.status[0].num,
-        					text: proposal.status[0].text
-        				};
-
-					proposal.groupAlreadySelected = proposal.isGroupSelected != 0;
-
-        				const birth = Parser.timestampToObj(proposal.child.birthday);
-
-        				proposal.child.birthday = birth.year + "-" + birth.month + "-" + birth.day;
-
-        				proposal.child.registration_address = Parser.addressToObj(proposal.child.registration_address);
-        				proposal.child.residence_address = Parser.addressToObj(proposal.child.residence_address);
-
-        				proposal.parent.registration_address = Parser.addressToObj(proposal.parent.registration_address);
-        				proposal.parent.residence_address = Parser.addressToObj(proposal.parent.residence_address);
-
-        				return proposal;
-        			})
-        			return el;
-    		    })
-                res.map( el => {
-                    el.groups = (el.groups ?? []).filter(group => { return !(group.closed) })
-                    el.selectedGroups = []
-                    el.groups = (el.groups ?? []).map(group => {
-                        const obj = {
-                            value: group.id,
-                            text: group.name
-                        }
-                        el.selectedGroups.push(obj)   
-                    });
-                })
-                this.overlay = false
+                this.associations = res;
+                this.overlay = false;
             });
     },
     methods: {
@@ -433,7 +329,112 @@ export default {
             setTimeout(() => {this.alert = false}, 3000)
         },
         openAssociation(association) {
-            this.associationOpen = association
+          this.overlay = true;
+          const fields = {
+            name: null,
+            groups: {
+              id: null,
+              name: null,
+              num: null,
+              closed: null,
+            },
+            proposals: {
+              id: null,
+              child: {
+                id: null,
+                name: null,
+                surname: null,
+                lastname: null,
+                email: null,
+                phone: null,
+                sex: null,
+                birthday: null,
+                state: null,
+                relationship: null,
+                studyPlace: null,
+                ovz: null,
+                ovz_type: {
+                  id: null
+                },
+                disability: null,
+                disability_group: {
+                  id: null,
+                },
+                registration_address: null,
+                registration_flat: null,
+                residence_address: null,
+                residence_flat: null,
+              },
+              parent: {
+                id: null,
+                name: null,
+                surname: null,
+                lastname: null,
+                email: null,
+                phone: null,
+                sex: null,
+                birthday: null,
+                state: null,
+                relationship: null,
+                studyPlace: null,
+                ovz: null,
+                ovz_type: {
+                  id: null
+                },
+                disability: null,
+                disability_group: {
+                  id: null,
+                },
+                registration_address: null,
+                registration_flat: null,
+                residence_address: null,
+                residence_flat: null,
+              },
+              isDocumentTaken: null,
+              isGroupSelected: null,
+              status: {
+                id: null,
+                num: null,
+                text: null,
+              }
+            }
+          }
+          console.log(association);
+            Admin.getAssociationById(fields, Number(association))
+                  .then( res => {
+                    console.log(res);
+                      this.associationOpen = res;
+                    this.associationOpen.proposals = (this.associationOpen.proposals ?? []).map(proposal => {
+                          proposal.selectedStatus = {
+                            value: proposal.status[0].num,
+                            text: proposal.status[0].text
+                          };
+
+                          const birth = Parser.timestampToObj(proposal.child.birthday);
+
+                          proposal.child.birthday = birth.year + "-" + birth.month + "-" + birth.day;
+
+                          proposal.child.registration_address = Parser.addressToObj(proposal.child.registration_address);
+                          proposal.child.residence_address = Parser.addressToObj(proposal.child.residence_address);
+
+                          proposal.parent.registration_address = Parser.addressToObj(proposal.parent.registration_address);
+                          proposal.parent.residence_address = Parser.addressToObj(proposal.parent.residence_address);
+
+                          return proposal;
+              			    })
+                    this.associationOpen.proposals.map( el => {
+                          el.groups = (el.groups ?? []).filter(group => { return !(group.closed) })
+                          el.selectedGroups = []
+                          el.groups = (el.groups ?? []).map(group => {
+                              const obj = {
+                                  value: group.id,
+                                  text: group.name
+                              }
+                              el.selectedGroups.push(obj)
+                          });
+                      })
+                      this.overlay = false
+                  });
         },
         documentsTaken(proposal) {
             proposal.id = Number(proposal.id)
@@ -464,16 +465,13 @@ export default {
 			Admin.editUserData(onSend.id, onSend).then(this.showAlert());
         },
 		joinGroup(proposal) {
-      if (proposal.groupAlreadySelected)
-				return;
 	    this.overlay = true
-            proposal.isGroupSelected = Number(proposal.isGroupSelected)
-            proposal.id = Number(proposal.id)
-			Proposal.joinGroup(proposal.id, proposal.isGroupSelected).then(res => {
-				proposal.groupAlreadySelected = true;
-			}).finally(() => {
-				this.overlay = false;
-			});
+      proposal.isGroupSelected = Number(proposal.isGroupSelected)
+      proposal.id = Number(proposal.id)
+			Proposal.joinGroup(proposal.id, proposal.isGroupSelected)
+          .finally(() => {
+            this.overlay = false;
+          });
 		},
         printProposal(proposal) {
             this.overlay = true

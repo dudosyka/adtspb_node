@@ -209,7 +209,11 @@ User.prototype.getChildrenIds = async function () {
     .catch(err => { throw new Error('Internal server error.'); });
 }
 
-User.prototype.getFullData = async function (id = false, selections = {}, model = null, role = []) {
+User.prototype.getFullDataAsObject = async function (id = false, selections = {}, model = null, role = []) {
+    return this.getFullData(id, selections, model, role, true);
+}
+
+User.prototype.getFullData = async function (id = false, selections = {}, model = null, role = [], asObject = false) {
     if (id === false || id === null) {
         id = [this.__get('id')];
     }
@@ -229,12 +233,17 @@ User.prototype.getFullData = async function (id = false, selections = {}, model 
         proposals = await model.selectProposalsList(field, rangeIds, selections.proposals);
     }
 
+    const result = {};
+
     data.map(user => {
         user.id = user.user_id;
         user.proposals = Object.keys(proposals ?? {}).length > 0 ? proposals[user.id] : null;
+        result[user.id] = user;
         return user;
     })
 
+    if (asObject)
+        return result;
     return data;
 }
 

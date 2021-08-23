@@ -77,8 +77,12 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             },
             async resolve(obj, { child_id }) {
+                const modelUser = User.newModel();
+                const parent_id = await modelUser.db.query('SELECT `parent_id` from `user_child` where `child_id` = ? ', [ child_id ]).then(data => {
+                    return data[0].parent_id;
+                });
                 const child = await User.newModel().baseCreateFrom({ id: child_id });
-                const parent = await User.newModel().baseCreateFrom({ id: obj.viewer.id });
+                const parent = await User.newModel().baseCreateFrom({ id: parent_id });
                 console.log(child.fields);
                 console.log(parent.fields);
                 const childExtraData = await UserExtraData.createFrom({ user_id: child_id });

@@ -1,9 +1,9 @@
-const redis = require("redis");
-const redisClient = redis.createClient();
+/* const redis = require("redis"); */
+// const redisClient = redis.createClient();
 
-module.exports = {
-    instance: redisClient,
-    client: null,
+// module.exports = {
+    // instance: redisClient,
+    // client: null,
     //TODO Create redis 'orm' client (need?)
     //{
     //     hmset: (data, callback) => {
@@ -17,4 +17,4 @@ module.exports = {
     //         })
     //     }
     // }
-}
+// }

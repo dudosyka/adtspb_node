@@ -61,7 +61,8 @@ Admin.getAssociations = async function(
 				week: null
 			}
 		}
-	}
+	},
+	id = null
 )
 {
 	const req = `
@@ -78,6 +79,48 @@ Admin.getAssociations = async function(
 		.then(data => {
 			console.log("DATA", data);
 			return(data.association.getAll);
+		})
+		.catch( err => console.error(err));
+}
+
+Admin.getAssociationById = async function (
+	fields = {
+		id: null,
+		name: null,
+		description: null,
+		closed: null,
+		min_age: null,
+		max_age: null,
+		study_years: null,
+		hours_week: null,
+		lessons_week: null,
+		study_form: null,
+		hours_count: null,
+		study_period: null,
+		isRecruiment: null,
+		groups: {
+			id: null,
+			name: null,
+			timetable: {
+				week: null
+			}
+		}
+	},
+	id
+) {
+	const req = `
+		query ($id: Int) {
+		    association {
+		        getById (id: $id) {
+		            ` + Parser.objToGraphQlQuery(fields) + `
+		        }
+		    }
+		}
+	`;
+
+	return await _request('api', req, { id })
+		.then(data => {
+			return(data.association.getById);
 		})
 		.catch( err => console.error(err));
 }

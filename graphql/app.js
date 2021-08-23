@@ -10,7 +10,7 @@ const {GraphQLSchema} = require("graphql");
 const {gql} = require('graphql-tag');
 const User = require("./Entity/User");
 
-const { instance } = require('./utils/Redis');
+// const { instance } = require('./utils/Redis');
 
 const Jwt = require('./utils/Jwt');
 const bodyParser = require("body-parser");
