@@ -414,7 +414,6 @@ export default {
         			return el;
     		    })
                 res.map( el => {
-                    console.log(el)
                     el.groups = (el.groups ?? []).filter(group => { return !(group.closed) })
                     el.selectedGroups = []
                     el.groups = (el.groups ?? []).map(group => {
@@ -423,8 +422,7 @@ export default {
                             text: group.name
                         }
                         el.selectedGroups.push(obj)   
-                    })
-                    console.log(el)
+                    });
                 })
                 this.overlay = false
             });
@@ -445,8 +443,7 @@ export default {
 			//TODO Когда бэк будет готов запилить
         },
         recallProposal(proposal) {
-			console.log(proposal);2
-			Proposal.recall(Number(proposal.id));
+			  Proposal.recall(Number(proposal.id));
         },
         saveChildData(child) {
 			const onSend = clone(child);
