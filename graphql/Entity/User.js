@@ -525,8 +525,16 @@ User.prototype.editData = async function (newValue, logger, extraModel, admin_id
     model.load(oldData[0]);
 
     return await logger.logModel(model, newValue, admin_id, id).then(res => {
+
+        if (newValue.ovz_type)
+            newValue.ovz_type = newValue.ovz_type.id;
+
+        if (newValue.disability_group)
+            newValue.disability_group = newValue.disability_group.id;
+
         model.load(newValue);
         model.update();
+        model.db.query('UPDATE `user` SET ``');
         extraModel.load(newValue);
         extraModel.fields.user_id = model.__get('id');
         extraModel.update(false, "user_id");

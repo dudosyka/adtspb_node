@@ -32,7 +32,7 @@
 							          v-model='proposal.isDocumentTaken'
 							        >Документы принесены</b-form-checkbox>
 							    </div>
-							    <b-button v-if='proposal.isDocumentTaken != 1' @click="documentsTaken(proposal)" variant="success">Сохранить</b-button>
+							    <b-button @click="documentsTaken(proposal)" variant="success">Сохранить</b-button>
 							</b-card-body>
 							<b-card-body>
 							    <b-card-text>
@@ -45,8 +45,8 @@
                                 <b-card-text>
                                     Группа
                                 </b-card-text>
-                                <b-form-select :options="associationOpen.selectedGroups" v-model="proposal.isGroupSelected"/><br>
-                                <b-button @click="joinGroup(proposal)" variant="success">Сохранить</b-button>
+                                <b-form-select :options="associationOpen.selectedGroups" :disabled='proposal.groupAlreadySelected' v-model="proposal.isGroupSelected"/><br>
+                                <b-button @click="joinGroup(proposal)" v-if='!proposal.groupAlreadySelected' variant="success">Сохранить</b-button>
                             </b-card-body>
 							<b-card-body v-if='proposal.selectedStatus.value != 0 && proposal.isDocumentTaken != 1'>
 							    <b-button variant="danger" v-b-modal.confirmReturn>
@@ -396,6 +396,9 @@ export default {
         					value: proposal.status[0].num,
         					text: proposal.status[0].text
         				};
+
+					proposal.groupAlreadySelected = proposal.isGroupSelected != 0;
+
         				const birth = Parser.timestampToObj(proposal.child.birthday);
 
         				proposal.child.birthday = birth.year + "-" + birth.month + "-" + birth.day;
@@ -464,9 +467,16 @@ export default {
 			Admin.editUserData(onSend.id, onSend).then(this.showAlert());
         },
 		joinGroup(proposal) {
+      if (proposal.groupAlreadySelected)
+				return;
+	    this.overlay = true
             proposal.isGroupSelected = Number(proposal.isGroupSelected)
             proposal.id = Number(proposal.id)
-			Proposal.joinGroup(proposal.id, proposal.isGroupSelected)
+			Proposal.joinGroup(proposal.id, proposal.isGroupSelected).then(res => {
+				proposal.groupAlreadySelected = true;
+			}).finally(() => {
+				this.overlay = false;
+			});
 		},
         printProposal(proposal) {
             this.overlay = true

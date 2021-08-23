@@ -40,7 +40,7 @@ UserExtraData.prototype.calculateAge = function (birthday = 0) {
     return Math.floor(diff / 31557600000);
 }
 
-UserExtraData.prototype.__save = async function () {
+UserExtraData.prototype.__save = async function (fields = true) {
     if (this.__get('ovz_type') !== null && typeof this.__get('ovz_type') == 'object')
         this.__set('ovz_type', this.__get('ovz_type').id);
     if (this.__get('disability_group') !== null && typeof this.__get('disability_group') == 'object')
@@ -51,9 +51,9 @@ UserExtraData.prototype.__save = async function () {
         this.__set('disability_group', null);
         
     if (this.fields.id)
-        return await this.update(true);
+        return await this.update(fields);
     else
-        return await this.save(true);
+        return await this.save(fields);
 }
 
 UserExtraData.prototype.baseValidate = function () {
@@ -117,7 +117,7 @@ UserExtraData.prototype.setChildData = async function () {
     if (validate !== true) {
         return JSON.stringify(validate);
     }
-    return (await this.__save().catch(err => { throw Error("Saving data failed") })) !== false;
+    return (await this.__save(false).catch(err => { throw Error("Saving data failed") })) !== false;
 }
 
 UserExtraData.prototype.table = "user_extra_data";
