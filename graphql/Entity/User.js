@@ -230,6 +230,7 @@ User.prototype.getFullData = async function (id = false, selections = {}, model 
             field = 'child_id';
             rangeIds = data.map(el => el.user_id);
         }
+        console.log(rangeIds)
         proposals = await model.selectProposalsList(field, rangeIds, selections.proposals);
     }
 
