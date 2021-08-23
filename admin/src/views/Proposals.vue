@@ -19,7 +19,12 @@
                     :title="`${proposal.child.surname} ${proposal.child.name}`"
                 >
                     <b-tabs>
+                        <b-alert variant="success" class="slakjfklsdaf" :show="alert">Успешно 🥳</b-alert>
                         <b-tab title="Заявление" active>
+                            <b-button-group>
+                                <b-button @click="printProposal(proposal)">Печать заявления</b-button>
+                                <b-button @click="printResolution(proposal)">Печать согласия на обработку персональных данных</b-button>
+                            </b-button-group>
 							<b-card-body v-if='proposal.selectedStatus.value != 0'>
 							    <div>
 							        <b-form-checkbox
@@ -73,7 +78,7 @@
                             </b-card-body>
                             <b-card-body>
                                 <b-input-group prepend="Дата рождения">
-                                    <b-form-datepicker placeholder="" />
+                                    <b-form-datepicker placeholder="" v-model="proposal.child.birthday" />
                                 </b-input-group>
                             </b-card-body>
                             <b-card-body>
@@ -114,9 +119,17 @@
                                     <b-input v-model='proposal.child.studyPlace' />
                                 </b-input-group>
                             </b-card-body>
-							<b-input-group  prepend="Гражданство">
-								<b-input v-model='proposal.child.state' />
-							</b-input-group>
+                            <b-card-body>
+                                <b-input-group  prepend="Гражданство">
+                                    <b-input v-model='proposal.child.state' />
+                                </b-input-group>
+                            </b-card-body>
+                            <b-card-body>
+                                <b-input-group prepend="Степень родства">
+                                    <b-input v-model="proposal.child.relationship" />
+                                    <b-button @click="proposal.child.relationship = 'Законный представитель'">Законный представитель</b-button>
+                                </b-input-group>
+                            </b-card-body>
                             <b-card-body>
                                 Адрес регистрации
                                 <b-input-group prepend="Город">
@@ -253,6 +266,13 @@
     position: sticky;
     top: 0px;
 }
+.slakjfklsdaf {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99999;
+}
 </style>
 
 <script>
@@ -292,6 +312,7 @@ export default {
 			ovz_types: [{text:'I', value: 1},{text:'II', value: 2},{text:'III', value: 3}, {text:'IV', value: 4},{text:'V', value: 5},{text:'VI', value: 6},{text:'VII', value: 7},{text:'VIII', value: 8}],
             disability_types: [{text:'I', value: 1}, {text:'II', value: 2}, {text:'III', value: 3}],
             overlay: false,
+            alert: false
         }
     },
     async created() {
@@ -406,10 +427,15 @@ export default {
             });
     },
     methods: {
+        showAlert() {
+            this.alert = true
+            setTimeout(() => {this.alert = false}, 3000)
+        },
         openAssociation(association) {
             this.associationOpen = association
         },
         documentsTaken(proposal) {
+            proposal.id = Number(proposal.id)
 			Proposal.setDocumentTaken(proposal.id);
         },
         changeProposalStatus(proposal) {
@@ -426,7 +452,7 @@ export default {
 			onSend.registration_address = Parser.objToAddress(onSend.registration_address);
 			onSend.residence_address = Parser.objToAddress(onSend.residence_address);
 
-			Admin.editUserData(onSend.id, onSend);
+			Admin.editUserData(onSend.id, onSend).then(this.showAlert())
         },
         saveParentData(parent) {
 			const onSend = clone(parent);
@@ -435,14 +461,22 @@ export default {
 			onSend.registration_address = Parser.objToAddress(onSend.registration_address);
 			onSend.residence_address = Parser.objToAddress(onSend.residence_address);
 
-			Admin.editUserData(onSend.id, onSend);
+			Admin.editUserData(onSend.id, onSend).then(this.showAlert());
         },
 		joinGroup(proposal) {
-            this.overlay = true
             proposal.isGroupSelected = Number(proposal.isGroupSelected)
             proposal.id = Number(proposal.id)
 			Proposal.joinGroup(proposal.id, proposal.isGroupSelected)
 		},
+        printProposal(proposal) {
+            this.overlay = true
+            const fileName = `${proposal.child.surname}_${proposal.child.name}`
+            Proposal.downloadPdf(proposal.id, fileName).then(data => this.overlay = false)
+        },
+        printResolution(proposal) {
+            this.overlay = true
+            Proposal.printResolution(proposal.child.id).then(data => this.overlay = false)
+        },
      },
 }
 </script>
