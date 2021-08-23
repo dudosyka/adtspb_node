@@ -3,7 +3,7 @@
 		<img src="../assets/images/pjaka.jpg" style="display: none">
 		<h1>ADTSPB Admin</h1>
 		<nav class="links-container">
-			<router-link to="/statistics">Статистика в тесте</router-link>
+			<router-link to="/statistics">Сосистика в тесте</router-link>
 			<router-link to="/associations">Объединения</router-link>
 			<router-link to="/proposals">Заявления</router-link>
 			<router-link to="/callback">Запросы</router-link>

@@ -13,7 +13,8 @@
                 >
                 </b-list-group-item>
             </b-list-group>
-            <b-card v-if="associationOpen != null" :title="associationOpen.name" class="sladjkfsdalsf">
+            <b-card v-if="associationOpen != null" class="sladjkfsdalsf">
+                <b-card-header>{{associationOpen.name}} <b-badge pill variant='primary' class="woqewer">{{computedLength(associationOpen.proposals)}}</b-badge></b-card-header >
                 <b-card
                     v-for="proposal of associationOpen.proposals"
                     :title="`${proposal.child.surname} ${proposal.child.name}`"
@@ -273,6 +274,10 @@
     transform: translateX(-50%);
     z-index: 99999;
 }
+.woqewer {
+    background-color: #00008b;
+    padding: 5px;
+}
 </style>
 
 <script>
@@ -480,6 +485,9 @@ export default {
             this.overlay = true
             Proposal.printResolution(proposal.child.id).then(data => this.overlay = false)
         },
+        computedLength(arr) {
+            if (arr !== undefined) return arr.length
+        }
      },
 }
 </script>
