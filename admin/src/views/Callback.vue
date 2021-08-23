@@ -66,7 +66,6 @@ export default {
                 name: null,
                 surname: null,
                 lastname: null,
-                isChild: null,
             },
             requests: [{id:1},{id:2},{id:3}],  
             overlay: false  
