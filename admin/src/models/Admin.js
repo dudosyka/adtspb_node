@@ -2,6 +2,64 @@ import {Parser} from '../utils/Parser'
 
 let Admin = {};
 
+Admin.getDataOnEdit = async function(search) {
+	const req = `
+		query ($search: String) {
+		    admin {
+		        user_data_on_edit (search: $search) {
+		            id,
+		            target {
+		                surname, name, lastname
+		            },
+		            requester {
+		                surname, name, lastname
+		            },
+		            field,
+		            old_value,
+		            new_value
+		        }
+		    }
+		}
+	`
+
+	var data = { search }
+	console.log(data)
+	
+	return await _request('api', req, data)
+		.then( data => {
+			console.log(data.admin.user_data_on_edit)	
+			return data.admin.user_data_on_edit
+		} )
+		.catch( err => console.error(err) )
+}
+
+Admin.getChildOnDelet = async function() {
+	const req = `
+		query {
+		    admin {
+		        child_on_delete {
+		            id,
+		            child {
+		                surname, name, lastname
+		            },
+		            parent {
+		                surname, name, lastname
+		            },
+		            comment,
+		            remove,
+		        }
+		    }
+		}
+	`
+
+	return await _request('api', req)
+		.then( data => {
+			console.log(data.admin.child_on_delete)
+			return data.admin.child_on_delete
+		} )
+		.catch( err => console.error(err) )
+}
+
 Admin.confirmRemoveChild = async function(link) {
 	const req = `
 		mutation($link: Int) {
