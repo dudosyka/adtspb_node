@@ -422,19 +422,17 @@ export default {
 
                           return proposal;
               			    })
-                    this.associationOpen.proposals.map( el => {
-                          el.groups = (el.groups ?? []).filter(group => { return !(group.closed) })
-                          el.selectedGroups = []
-                          el.groups = (el.groups ?? []).map(group => {
+                      this.associationOpen.groups = (this.associationOpen.groups ?? []).filter(group => { return !(group.closed) })
+                      this.associationOpen.selectedGroups = []
+                      this.associationOpen.groups = (this.associationOpen.groups ?? []).map(group => {
                               const obj = {
                                   value: group.id,
                                   text: group.name
                               }
-                              el.selectedGroups.push(obj)
+                        this.associationOpen.selectedGroups.push(obj)
                           });
                       })
                       this.overlay = false
-                  });
         },
         documentsTaken(proposal) {
             proposal.id = Number(proposal.id)
