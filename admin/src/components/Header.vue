@@ -1,5 +1,6 @@
 <template>
 	<header class="bg-card">
+		<img src="../assets/images/pjaka.jpg" style="display: none">
 		<h1>ADTSPB Admin</h1>
 		<nav class="links-container">
 			<router-link to="/statistics">Статистика в тесте</router-link>

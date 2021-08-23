@@ -209,7 +209,11 @@ User.prototype.getChildrenIds = async function () {
     .catch(err => { throw new Error('Internal server error.'); });
 }
 
-User.prototype.getFullData = async function (id = false, selections = {}, model = null, role = []) {
+User.prototype.getFullDataAsObject = async function (id = false, selections = {}, model = null, role = []) {
+    return this.getFullData(id, selections, model, role, true);
+}
+
+User.prototype.getFullData = async function (id = false, selections = {}, model = null, role = [], asObject = false) {
     if (id === false || id === null) {
         id = [this.__get('id')];
     }
@@ -229,12 +233,17 @@ User.prototype.getFullData = async function (id = false, selections = {}, model 
         proposals = await model.selectProposalsList(field, rangeIds, selections.proposals);
     }
 
+    const result = {};
+
     data.map(user => {
         user.id = user.user_id;
         user.proposals = Object.keys(proposals ?? {}).length > 0 ? proposals[user.id] : null;
+        result[user.id] = user;
         return user;
     })
 
+    if (asObject)
+        return result;
     return data;
 }
 
@@ -525,8 +534,16 @@ User.prototype.editData = async function (newValue, logger, extraModel, admin_id
     model.load(oldData[0]);
 
     return await logger.logModel(model, newValue, admin_id, id).then(res => {
+
+        if (newValue.ovz_type)
+            newValue.ovz_type = newValue.ovz_type.id;
+
+        if (newValue.disability_group)
+            newValue.disability_group = newValue.disability_group.id;
+
         model.load(newValue);
         model.update();
+        model.db.query('UPDATE `user` SET ``');
         extraModel.load(newValue);
         extraModel.fields.user_id = model.__get('id');
         extraModel.update(false, "user_id");

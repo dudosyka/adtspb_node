@@ -49,6 +49,24 @@ Status.prototype.editStatus = async function (input, logger, admin_id, proposal,
     await this.update();
 }
 
+Status.prototype.getAll = async function (query, queryData, selections = {}, asObject = false) {
+    const res = await this.db.select(this, query, queryData);
+    if (asObject) {
+        const result = {};
+        res.map(el => {
+            if (!result[el.proposal_id]) {
+                result[el.proposal_id] = [ el ];
+            }
+            else {
+                result[el.proposal_id].push(el);
+            }
+        });
+        return result;
+    }
+    return res;
+    console.log(res);
+}
+
 Status.prototype.table = "proposal_status";
 
 module.exports = (new Status());

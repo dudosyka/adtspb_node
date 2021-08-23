@@ -23,7 +23,7 @@ Association.prototype.fields = {
     description: null,
 };
 
-Association.prototype.getAssociations = async function (age = null, selections = {}, model = null, where = null, whereData = null) {
+Association.prototype.getAssociations = async function (age = null, selections = {}, model = null, where = null, whereData = null, userModel = null) {
     let whereQuery = (age == null) ? "" : "WHERE `join`.`max_age` >= ? AND `join`.min_age <= ?";
     let data = (age == null) ? [] : [ age, age ];
 
@@ -49,9 +49,9 @@ Association.prototype.getAssociations = async function (age = null, selections =
     let proposals = null;
     if (selections.isRecruiment || selections.proposals) {
         if (selections.isRecruiment)
-            proposals = await model.selectProposalsList('association_id', ids, {status: true});
+            proposals = await model.selectProposalsList('association_id', ids, {status: true}, "", [], userModel);
         else
-            proposals = await model.selectProposalsList('association_id', ids, Object.assign(selections.proposals, {status: true}));
+            proposals = await model.selectProposalsList('association_id', ids, Object.assign(selections.proposals, {status: true}), "", [], userModel);
     }
 
     let associations = [];

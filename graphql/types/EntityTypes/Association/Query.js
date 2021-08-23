@@ -15,9 +15,22 @@ module.exports = new graphql.GraphQLObjectType({
             },
             async resolve(obj, {  }) {
                 const model = Proposal.newModel();
-                const associations = await Association.getAssociations(null, obj.selections, model);
+                const associations = await Association.getAssociations(null, obj.selections, model, null, [], User.newModel());
                 console.log(associations[0].proposals[0])
                 return associations;
+            }
+        },
+        getById: {
+            type: AssociationOutput,
+            args: {
+                id: {
+                    type: graphql.GraphQLInt
+                }
+            },
+            async resolve(obj, { id }) {
+                const model = Proposal.newModel();
+                const association = await Association.getAssociations(null, obj.selections, model, " WHERE `main`.`id` = ?", [id], User.newModel());
+                return association[0];
             }
         },
         getForChild: {
