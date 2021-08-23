@@ -6,7 +6,7 @@
                 <b-button v-b-toggle="`${request.id}child`">{{request}}</b-button>
                 <b-collapse :id="`${request.id}child`">
                     <b-card-body>
-                        <b-button variant='succcess'>Сохранить</b-button>
+                        <b-button variant='success'>Сохранить</b-button>
                         <b-button variant='danger'>Удалить</b-button>
                     </b-card-body>
                 </b-collapse>
