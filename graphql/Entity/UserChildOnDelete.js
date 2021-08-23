@@ -32,6 +32,29 @@ UserChildOnDelete.prototype.confirmRemoveChild = async function (userChild, admi
     return true;
 }
 
+UserChildOnDelete.prototype.getList = async function (userModel) {
+    const requests = await this.db.select(this, '`id` != ?', [ 0 ]);
+    let range = this.db.createRangeQuery('user_child_id', requests, 'id');
+
+    const userChild = await this.db.query('select * from `user_child` where ' + range.query, range.ids);
+    let arr = [...new Set(userChild.map(el => el.child_id).concat(userChild.map(el => el.parent_id)))];
+    range = this.db.createRangeQuery(false, arr, '`main`.`id`')
+    const users = await userModel.getFullDataAsObject(false, {}, null, [], range.query, range.ids);
+    let userChildObject = {};
+    userChild.map(el => {
+        el.child = users[el.child_id];
+        el.parent = users[el.parent_id];
+        userChildObject[el.id] = el;
+    });
+
+    return requests.map(request => {
+        request.child = userChildObject[request.user_child_id].child;
+        request.parent = userChildObject[request.user_child_id].parent;
+        request.remove = request.remove_account;
+        return request;
+    });
+}
+
 UserChildOnDelete.prototype.table = "user_child_ondelete";
 
 module.exports = (new UserChildOnDelete());

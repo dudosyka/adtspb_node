@@ -3,6 +3,9 @@ const Stats = require('../../Entity/Stats');
 const stats = new Stats();
 
 const User = require('../../Entity/User');
+const UserDataOnEdit = require('../../Entity/UserDataOnEdit');
+const UserChildOnDelete = require('../../Entity/UserChildOnDelete');
+
 const Proposal = require('../../Entity/Proposal');
 
 module.exports = new graphql.GraphQLObjectType({
@@ -39,11 +42,42 @@ module.exports = new graphql.GraphQLObjectType({
         rbac: {
             type: AccessControlQuery,
             resolve: obj => obj
+        },
+        user_data_on_edit: {
+            type: graphql.GraphQLList(DataOnEdit),
+            args: {
+                search: {
+                    type: graphql.GraphQLString
+                }
+            },
+            async resolve(obj, { search }) {
+                if (!obj.adminModel.hasAccess(14)) //Confirm data edit
+                    throw Error('Forbidden');
+
+                const userDataOnEdit = UserDataOnEdit.newModel();
+                const list = await userDataOnEdit.getListByUser(search, User.newModel());
+
+                return list;
+            }
+        },
+        child_on_delete: {
+            type: graphql.GraphQLList(ChildOnDelete),
+            async resolve(obj) {
+                if (!obj.adminModel.hasAccess(12)) //Confirm child delete
+                    throw Error('Forbidden');
+
+                const userChildOnDelete = UserChildOnDelete.newModel();
+                const list = await userChildOnDelete.getList(User.newModel());
+
+                return list;
+            }
         }
     }),
 });
 
 const AccessControlQuery = require('../AccessControl/Query');
 
+const DataOnEdit = require('./OutputTypes/DataOnConfirm');
+const ChildOnDelete = require('./OutputTypes/ChildOnDelete');
 const StatOutput = require('./OutputTypes/StatOutput');
 const ProposalOutput = require('./OutputTypes/Proposal');

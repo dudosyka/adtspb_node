@@ -209,18 +209,24 @@ User.prototype.getChildrenIds = async function () {
     .catch(err => { throw new Error('Internal server error.'); });
 }
 
-User.prototype.getFullDataAsObject = async function (id = false, selections = {}, model = null, role = []) {
-    return this.getFullData(id, selections, model, role, true);
+User.prototype.getFullDataAsObject = async function (id = false, selections = {}, model = null, role = [], where = "", whereData = []) {
+    return this.getFullData(id, selections, model, role, true, where, whereData);
 }
 
-User.prototype.getFullData = async function (id = false, selections = {}, model = null, role = [], asObject = false) {
+User.prototype.getFullData = async function (id = false, selections = {}, model = null, role = [], asObject = false, where = "", whereData = []) {
     if (id === false || id === null) {
         id = [this.__get('id')];
     }
 
-    const {query, ids} = this.db.createRangeQuery(false, id);
+    let {query, ids} = this.db.createRangeQuery(false, id);
+    query = "`main`."+query;
 
-    const data = (await this.db.query("SELECT * FROM `user` as `main` LEFT JOIN `user_extra_data` AS `data` ON `main`.`id` = `data`.`user_id` WHERE `main`." + query, ids));
+    if (where != "") {
+        query = where;
+        ids = whereData;
+    }
+
+    const data = (await this.db.query("SELECT * FROM `user` as `main` LEFT JOIN `user_extra_data` AS `data` ON `main`.`id` = `data`.`user_id` WHERE " + query, ids));
 
     let proposals = null;
     if (selections.proposals) {
@@ -230,7 +236,6 @@ User.prototype.getFullData = async function (id = false, selections = {}, model 
             field = 'child_id';
             rangeIds = data.map(el => el.user_id);
         }
-        console.log(rangeIds)
         proposals = await model.selectProposalsList(field, rangeIds, selections.proposals);
     }
 
