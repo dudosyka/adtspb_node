@@ -48,6 +48,7 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
     const { ids, query } = this.db.createRangeQuery(false, arr, field);
     let fullQuery = "SELECT `main`.* FROM " + this.table + " AS `main` WHERE `main`." + query + where;
     const proposals = await this.db.query(fullQuery, ids);
+
     let associations = {};
     if (selections.association) {
         console.log(selections);

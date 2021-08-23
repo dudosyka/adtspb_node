@@ -212,7 +212,7 @@ module.exports = new graphql.GraphQLObjectType({
                 if (!obj.adminModel.hasAccess(36)) //Group`s structure editing
                     throw Error('Forbidden');
 
-                return await userGroup.joinGroup(input, group, proposal);
+                return await userGroup.joinGroup(input, group, proposal, user);
             }
         },
         rbac: {
