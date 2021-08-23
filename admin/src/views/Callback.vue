@@ -27,6 +27,7 @@
                             <b-card-body>
                                 <b-input-group prepend="Фамилия">
                                     <b-input  v-model='proposal.child.surname' />
+                                    <b-input  v-model='target' />
                                 </b-input-group>
                                 <b-input-group prepend="Имя">
                                     <b-input v-model='proposal.child.name' />
