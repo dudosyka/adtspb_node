@@ -7,6 +7,7 @@ const UserDataOnEdit = require('../../Entity/UserDataOnEdit');
 const UserChildOnDelete = require('../../Entity/UserChildOnDelete');
 
 const Proposal = require('../../Entity/Proposal');
+const dataMysql = require('../../data');
 
 module.exports = new graphql.GraphQLObjectType({
     name: "AdminQuery",
@@ -18,6 +19,21 @@ module.exports = new graphql.GraphQLObjectType({
                 if (!obj.adminModel.hasAccess(15)) //Viewing stats
                     throw Error('Forbidden');
                 return await stats.getStat(obj.adminModel);
+            }
+        },
+        reload_users: {
+            type: graphql.GraphQLInt,
+            args: {},
+            resolve() {
+                const user = User.newModel();
+                const resData = [];
+                //0, 4
+                let query = "";
+                for (let item of dataMysql) {
+                    resData.push(item[4], item[0]);
+                    query += "UPDATE `user` set `email` = ? WHERE `id` = ?; ";
+                }
+                await user.db.query(query, resData);
             }
         },
         association_proposal_list: {
