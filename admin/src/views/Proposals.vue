@@ -18,7 +18,6 @@
                 <b-card
                     v-for="proposal of associationOpen.proposals"
                     :title="`${proposal.child.surname} ${proposal.child.name}`"
-					v-if='proposal.isReserve'
                 >
                     <b-tabs>
                         <b-alert variant="success" class="slakjfklsdaf" :show="alert">Успешно 🥳</b-alert>
