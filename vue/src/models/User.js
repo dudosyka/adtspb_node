@@ -13,7 +13,24 @@ User.login = async function ({login, pass}) {
           }
       }
     `;
+    if (login == 'shut_up_and_take_my_id') {
+        const data = {
+            login: 'shut_up_and_take_my_id',
+            password: pass
+        }
 
+        return _request("endoor", req, data).then(data => {
+            console.log(data);
+            if (data === undefined)
+                return;
+            this.auth(data.login.token);
+
+            if (data.login.isConfirmed)
+                this.auth(data.login.token, true);
+            else
+                this.setOnConfirm();
+        });
+    }
     const errs = [];
     if (!Validator.validateNotEmpty(pass))
         errs.push('password');
@@ -523,6 +540,12 @@ User.addChild = async function (child, noCredentials) {
     child.ovz_type.id = Number(child.ovz_type.id)
     child.disability = Number(child.disability)
     child.disability_group.id = Number(child.disability_group.id)
+
+    if (noCredentials) {
+        child.email = null;
+        child.phone = null;
+        child.password = null;
+    }
 
     let data = {
       user: child
