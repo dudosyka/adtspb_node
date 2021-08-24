@@ -44,7 +44,7 @@ Proposal.prototype.createFromInput = async function (proposal) {
     return await this.baseCreateFrom(data);
 }
 
-Proposal.prototype.calculateReserve = async function (association, proposal_id) {
+Proposal.prototype.calculateReserve = function (association, proposal_id) {
     if (association == undefined)
         return null;
 
@@ -91,13 +91,9 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
     }
     let isReserve = {};
     if (selections.isReserve) {
-        if (Object.keys(associations) > 0) {
-            //GET FROM `associations` object
-        } else {
-            const association = Association.newModel();
-            const range = this.db.createRangeQuery('association_id', proposals, 'id');
-            isReserve = await association.getAssociationsAsObject(null, {proposals: {status: true}}, this.newModel(), " WHERE `main`." + range.query, range.ids);
-        }
+        const association = Association.newModel();
+        const range = this.db.createRangeQuery('association_id', proposals, 'id');
+        isReserve = await association.getAssociationsAsObject(null, {proposals: {status: true}}, this.newModel(), " WHERE `main`." + range.query, range.ids);
     }
 
     const res = {};
@@ -155,22 +151,17 @@ Proposal.prototype.checkProposalExists = async function () {
 Proposal.prototype.checkStudyLoad = async function () {
     const proposals = await this.selectProposalsList('child_id', [this.__get('child')], {status: true, association: true});
 
-    console.log("PROPOSALS", proposals);
-
     let association_ids = [];
 
     if (Object.keys(proposals).length <= 0)
         return 0;
 
     proposals[this.__get('child')].map(el => {
-        if (el.status.num != 0)
+        if (el.status[0].num != 0)
             association_ids.push({id: el.association.id});
     });
 
-    console.log(association_ids);
-
     const associations = await AssociationExraData.getList(association_ids);
-    console.log(associations);
     let hours = 0;
 
     associations.map(el => {
@@ -268,9 +259,10 @@ Proposal.prototype.recall = async function (requester, admin = false) {
     if (this.__get('association_id') === null)
         throw Error('Proposal not found');
 
-    if (requester !== this.__get('parent_id') && !admin) {
+    if (Number(requester) !== this.__get('parent_id') && !admin) {
             throw Error('Forbidden');
     }
+    console.log(requester, !admin, this.__get('parent_id'));
 
     if (this.__get('document_taken') == 1) {
         throw Error('Document taken');
