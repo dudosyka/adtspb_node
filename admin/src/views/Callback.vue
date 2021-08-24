@@ -12,9 +12,9 @@
                             </b-input-group>
                         </b-card-body>
                         <b-button @click="search" variant="primary" block size="lg" style="width: 100%">Найти</b-button>     
-                        </b-card>
+                        </b-card><br>
                         <b-overlay :show="overlay">
-                            <b-card v-for="request of requestsOnEdit">
+                            <b-card v-for="request of requestsOnEdit" style="margin-top: 10px">
                                 <b-container>
                                     <b-row>
                                         <b-card 
@@ -26,30 +26,33 @@
                                             :title="`кому ${request.requester.surname} ${request.requester.name} ${request.requester.lastname}`"
                                         />
                                     </b-row>
-                                    <b-row>
-                                        <b-card 
-                                            class="col-sm"
-                                            title="Старые данные"
-                                        >
-                                            <b-card-text
-                                                v-text="request.old_value"
-                                            />
-                                        </b-card>
-                                        <b-card 
-                                            class="col-sm"
-                                            title="Новые данные"
-                                        >
-                                            <b-card-text
-                                                v-text="request.new_value"
-                                            />
-                                        </b-card>
-                                    </b-row>
-                                    <b-card-body>
+                                    <b-button v-b-toggle="`requestsOnEdit${request.id}`">Развернуть</b-button>
+                                    <b-collapse :id="`requestsOnEdit${request.id}`">
                                         <b-row>
-                                            <b-button class="col-sm" variant="success" @click="acceptEditData(request)">Одобрить</b-button>
-                                            <b-button class="col-sm" variant="danger" @click="cancelEditData(request)">Отклонить</b-button>
+                                            <b-card 
+                                                class="col-sm"
+                                                title="Старые данные"
+                                            >
+                                                <b-card-text
+                                                    v-text="request.old_value"
+                                                />
+                                            </b-card>
+                                            <b-card 
+                                                class="col-sm"
+                                                title="Новые данные"
+                                            >
+                                                <b-card-text
+                                                    v-text="request.new_value"
+                                                />
+                                            </b-card>
                                         </b-row>
-                                    </b-card-body>
+                                        <b-card-body>
+                                            <b-row>
+                                                <b-button class="col-sm" variant="success" @click="acceptEditData(request)">Одобрить</b-button>
+                                                <b-button class="col-sm" variant="danger" @click="cancelEditData(request)">Отклонить</b-button>
+                                            </b-row>
+                                        </b-card-body>
+                                    </b-collapse>
                                 </b-container>
                             </b-card>
                         </b-overlay>
