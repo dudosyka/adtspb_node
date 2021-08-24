@@ -18,6 +18,7 @@
                 <b-card
                     v-for="proposal of associationOpen.proposals"
                     :title="`${proposal.child.surname} ${proposal.child.name}`"
+					v-if='proposal.isReserve'
                 >
                     <b-tabs>
                         <b-alert variant="success" class="slakjfklsdaf" :show="alert">Успешно 🥳</b-alert>
@@ -26,6 +27,11 @@
                                 <b-button @click="printProposal(proposal)">Печать заявления</b-button>
                                 <b-button @click="printResolution(proposal)">Печать согласия на обработку персональных данных</b-button>
                             </b-button-group>
+							<b-card-body>
+								<b-badge variant='primary' pill class='woqewer-red' v-if='proposal.isReserve'>
+									Заявление в резерве
+								</b-badge>
+							</b-card-body>
 							<b-card-body v-if='proposal.selectedStatus.value != 0'>
 							    <div>
 							        <b-form-checkbox
@@ -276,6 +282,12 @@
 }
 .woqewer {
     background-color: #00008b;
+    padding: 5px;
+}
+
+.woqewer-red {
+    background-color: red;
+	color: white;
     padding: 5px;
 }
 </style>
