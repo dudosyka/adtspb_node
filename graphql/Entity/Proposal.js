@@ -44,7 +44,7 @@ Proposal.prototype.createFromInput = async function (proposal) {
     return await this.baseCreateFrom(data);
 }
 
-function calculateReserve(association, proposal_id) {
+Proposal.prototype.calculateReserve = async function (association, proposal_id) {
     if (association == undefined)
         return null;
 
@@ -102,14 +102,12 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
 
     const res = {};
 
-    console.log(isReserve);
-
     proposals.map(el => {
         el.child = children[el.child_id];
         el.parent = parents[el.parent_id];
         el.status = statuses[el.id] == undefined ? [] : statuses[el.id];
         el.association = associations[el.association_id];
-        el.isReserve = calculateReserve(isReserve[el.association_id], el.id);
+        el.isReserve = this.calculateReserve(isReserve[el.association_id], el.id);
         if (res[el[field]]) {
             res[el[field]].push(el);
         }
@@ -122,7 +120,12 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
     return res;
 }
 
-Proposal.prototype.setSelected = async function (proposals, group_id) {
+Proposal.prototype.setSelected = async function (proposals, group_id, dataForReserve) {
+    for (proposal of proposals) {
+        const isReserve = await this.calculateReserve(dataForReserve, proposal);
+        if (isReserve)
+            throw Error('Proposal in reserve');
+    }
     const { ids, query } = this.db.createRangeQuery(false, proposals, "id");
     ids.unshift(group_id);
     this.db.query("UPDATE `proposal` SET `group_selected` = ? WHERE " + query, ids);
@@ -285,7 +288,12 @@ Proposal.prototype.generatePdf = async function (childModel, parentModel, userEx
     const child = await childModel.baseCreateFrom({id: this.__get('child')});
     const parent = await parentModel.baseCreateFrom({id: this.__get('parent')});
     const child_extra = await userExtraModel.createFrom({user_id: this.__get('child')})
-    const association = await associationModel.baseCreateFrom({id: this.__get('association')});;
+    const association = await associationModel.baseCreateFrom({id: this.__get('association')});
+    const data = await association.getAssociationsAsObject(null, {proposals: {status: true}}, this.newModel(), " WHERE `main`.`id` = ?", [ this.__get('association') ]);
+    const isReserve = await this.calculateReserve(data[this.__get('association')], this.__get('id'));
+    if (isReserve)
+        throw Error('Proposal in reserve');
+
     return await pdf.generateProposal(child, parent, child_extra, association);
 }
 
