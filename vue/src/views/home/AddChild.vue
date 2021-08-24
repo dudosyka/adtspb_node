@@ -559,7 +559,7 @@
             this.childRaw.residence_address = clone(this.childRaw.registration_address);
             this.childRaw.residence_flat = this.childRaw.registration_flat;
         },
-      childRegistration() {
+        childRegistration() {
           this.childRawErrors = clone(this.childRawErrors_proto);
           User.addChild({...this.childRaw}, this.child.withoutContacts).then(res => {
               if (res) {

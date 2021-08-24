@@ -20,7 +20,7 @@
                             <figcaption class="child-stat_heading">Статус: {{ proposal.status.text }}</figcaption>
                             <figcaption v-if="!proposal.isReserve && proposal.selected_group_title != null" class="child-stat_heading">Группа: {{ proposal.selected_group_title }}</figcaption>
 
-                            <div v-if="proposal.isReserve && proposal.status.num !== 0" class="fatal-container">
+                            <div v-if="proposal.isReserve && proposal.status.num !== 0 && !proposal.isDocumentTaken" class="fatal-container">
                                 <p class="assoc-reserve-description">Заявление в резерве</p>
                             </div>
 

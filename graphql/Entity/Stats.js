@@ -23,46 +23,34 @@ function getFullness(actual, planned) {
         return Math.floor((actual / planned) * 100);
 }
 
-Stats.prototype.getAssociationsStat = async function (arr) {
+Stats.prototype.getAssociationsStat = async function (arr, associationModel, userModel, proposalModel) {
     const { query, ids } = db.createRangeQuery(false, arr, "id");
 
-    const data = await db.query("" +
-        "SELECT `main`.`id`, `main`.`name`, `sub1`.`group_count` as `planned`, `sub3`.`num` as `status` FROM `association` as `main`" +
-        "LEFT JOIN `association_extra_data` as `sub1` ON `main`.`id` = `sub1`.`association_id`" +
-        "LEFT JOIN `proposal` as `sub2` ON `main`.`id` = `sub2`.`association_id`" +
-        "LEFT JOIN `proposal_status` as `sub3` ON `sub2`.`id` = `sub3`.`proposal_id` WHERE `main`." + query, ids
-    );
-    let parsed = {};
+    const whereQuery = " WHERE `main`." + query;
 
-    data.map(item => {
-        const id = item.id;
-        if (parsed[id] && item.status !== null && item.status != 0) {
-            parsed[id].actual++;
-        }
-        else {
-            let actual = 0;
-            if (item.status != 0 && item.status != null)
-                actual = 1;
-            parsed[id] = {
-                name: item.name,
-                planned: item.planned * AppConfig.group_size,
-                actual,
-            };
-        }
-    });
+    const associations = await associationModel.getAssociations(null, { proposals: true }, proposalModel, whereQuery, ids, userModel);
 
-    const res = [];
-    Object.keys(parsed).map(id => {
-        res.push({
-            id: id,
-            ...parsed[id],
-            fullness_percent: getFullness(parsed[id].actual, parsed[id].planned),
+    const res = associations.map(association => {
+        //name, planned, actual, fullness_percent
+        let actual = 0;
+
+        (association.proposals ?? []).map(el => {
+            if (el.status[0].num != 0)
+                actual++;
         });
+
+        return {
+            name: association.name,
+            planned: association.group_count * AppConfig.group_size,
+            actual,
+            fullness_percent: getFullness(actual, association.group_count * AppConfig.group_size)
+        }
     });
+
     return res;
 }
 
-Stats.prototype.getStat = async function (adminModel) {
+Stats.prototype.getStat = async function (adminModel, associationModel, userModel, proposalModel) {
     const allowed = await adminModel.getAllowedAssociations();
 
     const parent_amount = await this.getParentAmount();
@@ -71,7 +59,7 @@ Stats.prototype.getStat = async function (adminModel) {
     const proposal = Proposal.newModel();
     const proposal_amount = await proposal.getProposalAmount();
 
-    const associations = await this.getAssociationsStat(allowed);
+    const associations = await this.getAssociationsStat(allowed, associationModel, userModel, proposalModel);
 
     return {
         parent_amount,

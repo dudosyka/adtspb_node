@@ -6,6 +6,9 @@ const User = require('../../Entity/User');
 const UserDataOnEdit = require('../../Entity/UserDataOnEdit');
 const UserChildOnDelete = require('../../Entity/UserChildOnDelete');
 
+const Association = require('../../Entity/Association');
+const associationModel = Association.newModel();
+
 const Proposal = require('../../Entity/Proposal');
 
 module.exports = new graphql.GraphQLObjectType({
@@ -17,7 +20,7 @@ module.exports = new graphql.GraphQLObjectType({
             async resolve(obj) {
                 if (!obj.adminModel.hasAccess(15)) //Viewing stats
                     throw Error('Forbidden');
-                return await stats.getStat(obj.adminModel);
+                return await stats.getStat(obj.adminModel, associationModel, User.newModel(), Proposal.newModel());
             }
         },
         association_proposal_list: {

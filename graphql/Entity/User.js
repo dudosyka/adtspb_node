@@ -148,7 +148,6 @@ User.prototype.fullname = function () { return this.__get('surname') + " " + thi
 
 User.prototype.createNew = async function (roles = [], sendEmail = true, child = false) {
     const fields = this.fields;
-    console.log(child);
     if (child) {
         delete fields.email;
         delete fields.phone;
@@ -528,7 +527,6 @@ User.prototype.confirEditData = async function (request_id) {
 
 //For administration
 User.prototype.editData = async function (newValue, logger, extraModel, admin_id) {
-    console.log(newValue);
     if (!newValue.id)
         throw Error('Must provide `id` field into `input`');
 

@@ -55,7 +55,7 @@ UserGroup.prototype.editGroupStructure = async function (input, groupModel, prop
     return true;
 }
 
-UserGroup.prototype.joinGroup = async function (input, groupModel, proposalModel, userModel) {
+UserGroup.prototype.joinGroup = async function (input, groupModel, proposalModel, userModel, associationModel) {
     if (!input.group_id)
         throw Error('Must provide `group_id` to `input` object');
 
@@ -65,7 +65,10 @@ UserGroup.prototype.joinGroup = async function (input, groupModel, proposalModel
     const group = await groupModel.createFrom({ id: input.group_id });
     const association_id = group.__get('association_id');
     const proposals = await proposalModel.selectProposalsList('id', input.proposals, { child: true, association: { groups: true } }, "", [], userModel);
-    proposalModel.setSelected(input.proposals, input.group_id);
+
+
+    const dataForReserve = await associationModel.getAssociationsAsObject(null, {proposals: {status: true}}, proposalModel.newModel(), " WHERE `main`.`id` = ?", [ association_id ]);
+    proposalModel.setSelected(input.proposals, input.group_id, dataForReserve[association_id]);
 
     const group_size = await this.db.query('SELECT COUNT(`id`) as `count` FROM `user_group` WHERE `group_id` = ?', [ input.group_id ]).then(data => {
         return data[0].count;
