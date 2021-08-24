@@ -187,8 +187,9 @@ module.exports = new graphql.GraphQLObjectType({
                 const userGroup = UserGroup.newModel();
                 const groupModel = Group.newModel();
                 const proposalModel = Proposal.newModel();
+                const user = User.newModel();
 
-                return await userGroup.joinGroup(input, groupModel, proposalModel);
+                return await userGroup.joinGroup(input, groupModel, proposalModel, user);
             }
         }
     })
