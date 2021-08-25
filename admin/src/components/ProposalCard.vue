@@ -8,11 +8,6 @@
                     <b-button @click="printProposal(proposal)">Печать заявления</b-button>
                     <b-button @click="printResolution(proposal)">Печать согласия на обработку персональных данных</b-button>
                 </b-button-group>
-                <b-card-body>
-                    <b-badge variant='primary' pill class='woqewer-red' v-if='proposal.isReserve'>
-                        Заявление в резерве
-                    </b-badge>
-                </b-card-body>
                 <b-card-body v-if='proposal.selectedStatus.value != 0'>
                     <div>
                         <b-form-checkbox

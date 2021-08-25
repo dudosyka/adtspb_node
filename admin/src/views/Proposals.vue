@@ -19,14 +19,20 @@
 				    :title="`${proposal.child.surname} ${proposal.child.name}`"
 					 v-for='proposal of associationOpen.proposals'
 				>
-					<b-button @click='toggleProposal(proposal)'>
-						{{ (openedProposal[proposal.id]) ? 'Свернуть' : 'Развернуть' }}
-	                </b-button>
+						<div :class='{row: true, "mb-3": (openedProposal[proposal.id] && !proposal.isReserve)}'>
+							<b-card-body class='col-sm-7'>
+								<b-badge variant='primary' pill class='woqewer-red' v-if='proposal.isReserve'>
+									Заявление в резерве. № {{ proposal.queuePosition }}
+								</b-badge>
+							</b-card-body>
+							<b-button class='col-sm-5 h-75' @click='toggleProposal(proposal)'>
+								{{ (openedProposal[proposal.id]) ? 'Свернуть' : 'Развернуть' }}
+			                </b-button>
+						</div>
                     <b-collapse v-model="openedProposal[proposal.id]">
                         <ProposalCard v-if='openedProposal[proposal.id]' :input='JSON.stringify(proposal)' />
                     </b-collapse>
 				</b-card>
-
             </b-card>
         </article>
         </b-overlay>
@@ -184,6 +190,7 @@ export default {
 					isDocumentTaken: null,
 					isGroupSelected: null,
 					isReserve: null,
+					queuePosition: null,
 					status: {
 						id: null,
 						num: null,
