@@ -215,7 +215,7 @@ Admin.confirmDataEditing = async function (request) {
 	`;
 
 	const data = {
-		request
+		"request": request
 	};
 
 	return await _request('api', req, data).then(res => {

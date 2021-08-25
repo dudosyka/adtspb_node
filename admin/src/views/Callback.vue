@@ -1,6 +1,9 @@
 <template>
 	<main class="bg-wrapper" style="min-height: 100vh">
 		<Header />
+        <b-alert v-model="alert.show" class="asd">
+            {{ alert.msg }} 🥳
+        </b-alert>
         <b-card-group deck class="asdf">
             <div class="container">
                 <b-tabs>
@@ -72,6 +75,14 @@
 .asdf {
     padding: 30px;
 }
+.asd {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+}
+
 </style>
 
 <script>
@@ -89,6 +100,10 @@ export default {
             requestsOnEdit: [],
             requestsOnDelet: [],  
             overlay: false, 
+            alert: {
+                msg: '',
+                show: false,
+            }
         }
     },
     created() {
@@ -113,9 +128,21 @@ export default {
         },
         acceptEditData(request) {
             this.overlay = true
+            const id = Number(request.id)
+            Admin.confirmDataEditing(id).then( data => {
+                this.overlay = false
+                this.showAlert()
+            } )
         },
         cancelEditData(request) {
             this.overlay = true
+        },
+        showAlert(msg = 'Успешно!') {
+            this.alert.show = true
+            this.alert.msg = msg
+            setTimeout(() => {
+                this.alert.show = false
+            }, 3000)
         }
     }
 }
