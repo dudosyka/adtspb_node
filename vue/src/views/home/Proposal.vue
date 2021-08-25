@@ -71,9 +71,11 @@
 .salwoeiru {
     padding: 5px;
     border-radius: 5px;
-    background-color: #00ff00;
+    background-color: #0da46e;
     color: #fff;
-    max-height: max-content;
+    height: max-content;
+    text-align: center;
+
 }
 .children {
     max-width: 600px;
