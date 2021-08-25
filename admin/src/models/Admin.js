@@ -62,15 +62,22 @@ Admin.getChildOnDelet = async function() {
 
 Admin.confirmRemoveChild = async function(link) {
 	const req = `
-		mutation($link: Int) {
-		    confirmRemoveChild(link: $link)
+		mutation ($link: Int) {
+		    user {
+		        confirmRemoveChild (link: $link)
+		    }
 		}
 	`
 	let data = {
-		link
+		"link": link
 	}
 
-
+	return await _request('api', req, data)
+		.then( data => {
+			console.log(data)
+			return data
+		} )
+		.catch( err => console.error(err) )
 }
 
 Admin.getStat = async function() {

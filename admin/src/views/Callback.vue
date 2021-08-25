@@ -52,7 +52,7 @@
                                         <b-card-body>
                                             <b-row>
                                                 <b-button class="col-sm" variant="success" @click="acceptEditData(request)">Одобрить</b-button>
-                                                <b-button class="col-sm" variant="danger" @click="cancelEditData(request)">Отклонить</b-button>
+                                                <!--<b-button class="col-sm" variant="danger" @click="cancelEditData(request)">Отклонить</b-button>!-->
                                             </b-row>
                                         </b-card-body>
                                     </b-collapse>
@@ -60,9 +60,24 @@
                             </b-card>
                         </b-overlay>
                     </b-tab>
-                    <b-tab title="Удаление">
+                    <b-tab title="Удаление" @click="getChildOnDelet">
                         <b-card title="Запросы на удаление детей">
-                            <b-button @click="getChildOnDelet" variant="primary" block size="lg" style="width: 100%">Получить</b-button> 
+                            <!--<b-button @click="getChildOnDelet" variant="primary" block size="lg" style="width: 100%">Получить</b-button> !-->
+                        </b-card>
+                        <b-card 
+                            style="margin-top: 10px"
+                            v-for="request of requestsOnDelet"
+                            :title="`${request.parent.surname} ${request.parent.name} хочет удалить ${request.child.surname} ${request.child.name}`"
+                            :sub-title="`комментарий: ${request.comment}`"
+                        >
+                            <b-card-text>{{request.child.id}} id ребёнка</b-card-text>
+                            <b-card-text>{{request.parent.id}} id родителя</b-card-text>
+                            <b-card-body>
+                                <b-row>
+                                    <b-button class="col-sm" variant="success" @click="confirmRemoveChild(request)">Одобрить</b-button>
+                                    <!--<b-button class="col-sm" variant="danger" @click="cancelDeletChild(request)">Отклонить</b-button>!-->
+                                </b-row>
+                            </b-card-body>
                         </b-card>
                     </b-tab>
                 </b-tabs>
@@ -136,6 +151,19 @@ export default {
         },
         cancelEditData(request) {
             this.overlay = true
+        },
+        confirmRemoveChild(request) {
+            this.overlay = true
+            const id = Number(request.id)
+            Admin.confirmRemoveChild(id)
+                .then(data => {
+                    this.overlay = false
+                    this.showAlert()
+                    window.location.reload()
+                })
+        },
+        cancelDeletChild(request) {
+
         },
         showAlert(msg = 'Успешно!') {
             this.alert.show = true
