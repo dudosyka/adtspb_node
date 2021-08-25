@@ -125,7 +125,6 @@ import {Association} from "../../models/Association.js";
 import {User} from "../../models/User.js";
 import {Timetable} from "../../models/Timetable.js";
 import {Corrector} from "../../utils/Corrector.js";
-import {Parser} from '../../utils/Parser';
 import * as AppConfig from "../../config/AppConfig.js";
 import clone from 'clone';
 
@@ -250,15 +249,19 @@ export default {
         if (localStorage.getItem('selectedAssociations')) {
             old = JSON.parse(localStorage.getItem('selectedAssociations'));
         }
-        const associations = Object.keys(this.proposalParms.associations).filter(key => this.proposalParms.associations[key].already === false);
+        const associations = Object.keys(this.proposalParms.associations).filter(key => this.proposalParms.associations[key] != undefined).filter(el => el.already !== false);
         old[this.child.id] = associations;
         localStorage.setItem('selectedAssociations', JSON.stringify(old));
     },
 
     addAssociation(id) {
+        console.log(id);
+        console.log(this.associations);
         const lengthBefore = Object.keys(this.proposalParms.associations).length;
         this.proposalParms.associations[id] = clone(this.associations[id]);
-        console.log(this.proposalParms.associations[id]);
+        console.log(this.proposalParms);
+        if (this.proposalParms.associations[id] == undefined)
+            delete this.proposalParms.associations[id];
         if (lengthBefore != Object.keys(this.proposalParms.associations).length)
             this.proposalParms.weekHours += this.associations[id].hours_week;
         this.speedometr();
