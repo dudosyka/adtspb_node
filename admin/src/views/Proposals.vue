@@ -19,15 +19,12 @@
 				    :title="`${proposal.child.surname} ${proposal.child.name}`"
 					 v-for='proposal of associationOpen.proposals'
 				>
-					<b-button @click='openProposal(proposal)'>
-						Подробнее
-					</b-button>
-					<b-button @click='closeProposal(proposal)'>
-						Скрыть
-					</b-button>
-					<ProposalCard v-if='openedProposal[proposal.id]' :input='JSON.stringify(proposal)'>
-
-					</ProposalCard>
+					<b-button @click='toggleProposal(proposal)'>
+						{{ (openedProposal[proposal.id]) ? 'Свернуть' : 'Развернуть' }}
+	                </b-button>
+                    <b-collapse v-model="openedProposal[proposal.id]">
+                        <ProposalCard v-if='openedProposal[proposal.id]' :input='JSON.stringify(proposal)' />
+                    </b-collapse>
 				</b-card>
 
             </b-card>
@@ -229,13 +226,9 @@ export default {
 					this.overlay = false;
 				});
         },
-		openProposal(proposal) {
-			proposal.selectedGroups = this.associationOpen.selectedGroups;
-			this.openedProposal[proposal.id] = true;
-		},
-		closeProposal(proposal) {
-			this.openedProposal[proposal.id] = false;
-		},
+        toggleProposal(proposal) {
+            this.openedProposal[proposal.id] = !this.openedProposal[proposal.id]
+        },
 		computedLength(arr) {
             if (arr !== undefined) return arr.length
         }
