@@ -44,18 +44,21 @@ Proposal.prototype.createFromInput = async function (proposal) {
     return await this.baseCreateFrom(data);
 }
 
-Proposal.prototype.calculateReserve = function (association, proposal_id) {
+Proposal.prototype.calculateReserve = function (association, proposal_id, queue = false) {
     if (association == undefined)
-        return null;
+        return queue ? {isReserve: false, queue: 1} : false;
 
     let i = 1;
     for (proposal of association.proposals) {
         if (proposal.id == proposal_id) {
-            return (i > AppConfig.group_size * association.group_count);
+            const isReserve = (i > AppConfig.group_size * association.group_count);
+            return  queue ? {isReserve, queue: i} : isReserve;
         }
         if (proposal.status[0].num != 0)
             i++
     }
+
+    return queue ? {isReserve: false, queue: i} : false;
 }
 
 Proposal.prototype.selectProposalsList = async function (field, arr, selections, where = "", whereData = [], userModel = null) {
@@ -103,7 +106,9 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
         el.parent = parents[el.parent_id];
         el.status = statuses[el.id] == undefined ? [] : statuses[el.id];
         el.association = associations[el.association_id];
-        el.isReserve = this.calculateReserve(isReserve[el.association_id], el.id);
+        const calculate = this.calculateReserve(isReserve[el.association_id], el.id, true);
+        el.isReserve = calculate.isReserve;
+        el.queuePosition = calculate.queue;
         if (res[el[field]]) {
             res[el[field]].push(el);
         }

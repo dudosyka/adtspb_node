@@ -41,6 +41,9 @@ module.exports = new graphql.GraphQLObjectType({
         isReserve: {
             type: graphql.GraphQLBoolean,
         },
+        queuePosition: {
+            type: graphql.GraphQLInt,
+        },
         isDocumentTaken: {
             type: graphql.GraphQLBoolean,
             resolve(obj, data) {
