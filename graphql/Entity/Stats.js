@@ -17,7 +17,7 @@ Stats.prototype.getChildrenAmount = async function () {
 }
 
 function getFullness(actual, planned) {
-    if (actual == 0)
+    if (actual == 0 || planned == 0)
         return 0;
     else
         return Math.floor((actual / planned) * 100);
