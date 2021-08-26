@@ -103,7 +103,11 @@ export default {
 				},
 				{
 					value: 3,
-					text: "Другой статус"
+					text: "Переведен на 2 год"
+				},
+				{
+					value: 4,
+					text: "Переведен на 3 год"
 				}
 			],
 			ovz_types: [{text:'I', value: 1},{text:'II', value: 2},{text:'III', value: 3}, {text:'IV', value: 4},{text:'V', value: 5},{text:'VI', value: 6},{text:'VII', value: 7},{text:'VIII', value: 8}],
@@ -234,6 +238,7 @@ export default {
 				});
         },
         toggleProposal(proposal) {
+			proposal.selectedGroups = this.associationOpen.selectedGroups;
             this.openedProposal[proposal.id] = !this.openedProposal[proposal.id]
         },
 		computedLength(arr) {

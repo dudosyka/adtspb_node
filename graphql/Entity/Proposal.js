@@ -52,13 +52,15 @@ Proposal.prototype.calculateReserve = function (association, proposal_id, queue 
     for (proposal of association.proposals) {
         if (proposal.id == proposal_id) {
             const isReserve = (i > AppConfig.group_size * association.group_count);
-            return  queue ? {isReserve, queue: i} : isReserve;
+            const queue_position = i - AppConfig.group_size * association.group_count;
+            return  queue ? {isReserve, queue: queue_position} : isReserve;
         }
         if (proposal.status[0].num != 0)
             i++
     }
 
-    return queue ? {isReserve: false, queue: i} : false;
+    const queue_position = i - AppConfig.group_size * association.group_count;
+    return queue ? {isReserve: false, queue: queue_position} : false;
 }
 
 Proposal.prototype.selectProposalsList = async function (field, arr, selections, where = "", whereData = [], userModel = null) {
