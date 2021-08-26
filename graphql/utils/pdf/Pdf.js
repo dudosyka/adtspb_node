@@ -53,8 +53,9 @@ Pdf.prototype.generateProposal = async function (child, parent, child_extra_data
 
     const child_residence_flat = child_extra_data.__get('residence_flat') == null ? "" : `, кв. ` + child_extra_data.__get('residence_flat');
     const child_residence_address = child_extra_data.__get('residence_address') + child_residence_flat;
+
     const child_registration_flat = child_extra_data.__get('registration_flat') == null ? "" : `, кв. ` + child_extra_data.__get('registration_flat');
-    const child_registration_address = child_extra_data.__get('registration_address') + child_residence_flat;
+    const child_registration_address = child_extra_data.__get('registration_address') + child_registration_flat;
 
     const child_ovz = child_extra_data.ovz == 1 ? 'Да' : 'Нет';
 
