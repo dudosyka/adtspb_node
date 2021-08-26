@@ -97,7 +97,7 @@ User.prototype.getAllowedAssociations = async function () {
         data.push(sector_id);
     }
 
-    if (this.hasRole(11)) {
+    if (this.hasRole(11) || this.hasRole(14)) { //If super admin or admission office allow to all
         query = "WHERE `main`.`id` != ?";
         data = [ -1 ];
     }
