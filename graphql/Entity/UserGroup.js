@@ -1,5 +1,6 @@
 const baseEntity = require('./BaseEntity');
 const AppConfig = require('../config/AppConfig');
+const UserGroupLog = require('./UserGroupLog');
 
 let UserGroup = function () {}
 
@@ -25,7 +26,10 @@ UserGroup.prototype.execInsertQuery = async function (proposals, association_id,
         this.db.query('DELETE FROM `user_group` WHERE `user_id` = ? AND ' + range.query, range.ids);
         query += "INSERT INTO `user_group` (`group_id`, `user_id`) VALUES (?, ?);";
         ids.push(group_id, proposal.child.id);
+        const userGroupLog = UserGroupLog.newModel();
+        userGroupLog.logJoin(proposal.child_id, group_id);
     }
+
     return await this.db.query(query, ids);
 }
 
@@ -79,6 +83,7 @@ UserGroup.prototype.joinGroup = async function (input, groupModel, proposalModel
     }
 
     await this.execInsertQuery(proposals, association_id, input.group_id);
+
     return true;
 }
 
