@@ -139,6 +139,13 @@ Proposal.prototype.getProposalAmount = async function (association_id = null) {
         return (await this.db.query("SELECT COUNT(*) as `amount` FROM `proposal` as `main` RIGHT JOIN `proposal_status` as `sub` ON `main`.`id` = `sub`.`proposal_id` WHERE `sub`.`num` != 0 AND `main`.`association_id` = ?", [ association_id ]))[0].amount;
 }
 
+Proposal.prototype.getProposalAmountDocumentTaken = async function (association_id = null) {
+    if (association_id === null)
+        return (await this.db.query("SELECT COUNT(*) as `amount` FROM `proposal` as `main` RIGHT JOIN `proposal_status` as `sub` ON `main`.`id` = `sub`.`proposal_id` WHERE `sub`.`num` != 0 AND `main`.`document_taken` = 1"))[0].amount;
+    else
+        return (await this.db.query("SELECT COUNT(*) as `amount` FROM `proposal` as `main` RIGHT JOIN `proposal_status` as `sub` ON `main`.`id` = `sub`.`proposal_id` WHERE `sub`.`num` != 0 AND `main`.`association_id` = ? AND `main`.`document_taken` = 1", [ association_id ]))[0].amount;
+}
+
 Proposal.prototype.selectByChild = async function (child_id) {
     return await this.db.select(this, "`child_id` = ?", [ child_id ]).then(data => data).catch(err => { console.error(err); });
 };

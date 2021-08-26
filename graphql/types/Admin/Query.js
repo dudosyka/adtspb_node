@@ -10,7 +10,6 @@ const Association = require('../../Entity/Association');
 const associationModel = Association.newModel();
 
 const Proposal = require('../../Entity/Proposal');
-const dataMysql = require('../../data');
 
 module.exports = new graphql.GraphQLObjectType({
     name: "AdminQuery",

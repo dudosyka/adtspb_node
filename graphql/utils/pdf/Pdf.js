@@ -53,8 +53,9 @@ Pdf.prototype.generateProposal = async function (child, parent, child_extra_data
 
     const child_residence_flat = child_extra_data.__get('residence_flat') == null ? "" : `, кв. ` + child_extra_data.__get('residence_flat');
     const child_residence_address = child_extra_data.__get('residence_address') + child_residence_flat;
+
     const child_registration_flat = child_extra_data.__get('registration_flat') == null ? "" : `, кв. ` + child_extra_data.__get('registration_flat');
-    const child_registration_address = child_extra_data.__get('registration_address') + child_residence_flat;
+    const child_registration_address = child_extra_data.__get('registration_address') + child_registration_flat;
 
     const child_ovz = child_extra_data.ovz == 1 ? 'Да' : 'Нет';
 
@@ -126,6 +127,13 @@ Pdf.prototype.generateResolution = async function (child, parent, childExtraData
     child = {...child.fields};
     childExtraData = {...childExtraData.fields};
 
+    const child_residence_flat = childExtraData.residence_flat == null ? "" : `, кв. ` + childExtraData.residence_flat;
+    const child_residence_address = childExtraData.residence_address + child_residence_flat;
+
+    const child_registration_flat = childExtraData.registration_flat == null ? "" : `, кв. ` + childExtraData.registration_flat;
+    const child_registration_address = childExtraData.registration_address + child_registration_flat;
+
+
     Object.keys(child).map(key => {
         if (child[key] == null)
             child[key] = "";
@@ -164,7 +172,7 @@ Pdf.prototype.generateResolution = async function (child, parent, childExtraData
 
 
             <p style='font-size: 9pt; margin-bottom: 0pt; padding-bottom: 0;'>являясь законным представителем несовершеннолетнего, приходящегося мне _____________________,</p>
-            <p style='font-size: 9pt;'>зарегистрированного по адресу: <u>` + childExtraData.registration_address + `</u>, ФИО несовершеннолетнего <u>` + child.surname + ' ' + child.name + ' ' + child.lastname + `</u> в соответствии с Федеральным законом № от 27.7.2006 № 152-ФЗ «О персональных данных», даю свое согласие на обработку моих персональных данных и персональных данных несовершеннолетнего, относящихся исключительно к ниже перечисленным категориям персональных данных, в <b>ГБНОУ «Академия цифровых технологий»</b>, расположенное по адресу: 197198, Санкт-Петербург, Большой проспект П.С., 29/2 (далее Академия).</p>
+            <p style='font-size: 9pt;'>зарегистрированного по адресу: <u>` + child_registration_address + `</u>, ФИО несовершеннолетнего <u>` + child.surname + ' ' + child.name + ' ' + child.lastname + `</u> в соответствии с Федеральным законом № от 27.7.2006 № 152-ФЗ «О персональных данных», даю свое согласие на обработку моих персональных данных и персональных данных несовершеннолетнего, относящихся исключительно к ниже перечисленным категориям персональных данных, в <b>ГБНОУ «Академия цифровых технологий»</b>, расположенное по адресу: 197198, Санкт-Петербург, Большой проспект П.С., 29/2 (далее Академия).</p>
 
             <p style='font-size: 8pt; margin-bottom: 0; padding-bottom: 0;'>
                 <b style='font-size: 8pt; margin-bottom: 0; padding-bottom: 0;'><i style='font-size: 8pt; margin-bottom: 0; padding-bottom: 0;'>Перечень персональных данных, на обработку которых дается согласие:</i></b>

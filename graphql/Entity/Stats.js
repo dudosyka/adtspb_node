@@ -17,7 +17,7 @@ Stats.prototype.getChildrenAmount = async function () {
 }
 
 function getFullness(actual, planned) {
-    if (actual == 0)
+    if (actual == 0 || planned == 0)
         return 0;
     else
         return Math.floor((actual / planned) * 100);
@@ -30,23 +30,34 @@ Stats.prototype.getAssociationsStat = async function (arr, associationModel, use
 
     const associations = await associationModel.getAssociations(null, { proposals: true }, proposalModel, whereQuery, ids, userModel);
 
+    let reserve = 0;
     const res = associations.map(association => {
         //name, planned, actual, fullness_percent
         let actual = 0;
+        let document_taken = 0;
+        let planned = association.group_count * AppConfig.group_size;
 
         (association.proposals ?? []).map(el => {
             if (el.status[0].num != 0)
                 actual++;
+            if (el.document_taken == 1)
+                document_taken++;
         });
 
+        reserve += (actual - planned);
+
         return {
+            id: association.id,
             name: association.name,
-            planned: association.group_count * AppConfig.group_size,
+            planned,
             actual,
-            fullness_percent: getFullness(actual, association.group_count * AppConfig.group_size)
+            document_taken,
+            group_amount:  association.group_count,
+            fullness_percent: getFullness(actual, planned)
         }
     });
 
+    res[0].reserve = reserve;
     return res;
 }
 
@@ -59,12 +70,18 @@ Stats.prototype.getStat = async function (adminModel, associationModel, userMode
     const proposal = Proposal.newModel();
     const proposal_amount = await proposal.getProposalAmount();
 
+    const proposal_amount_document_taken = await proposal.getProposalAmountDocumentTaken();
+
     const associations = await this.getAssociationsStat(allowed, associationModel, userModel, proposalModel);
+
+    const proposal_reserve_amount = associations[0].reserve;
 
     return {
         parent_amount,
         child_amount,
         proposal_amount,
+        proposal_amount_document_taken,
+        proposal_reserve_amount,
         associations,
     }
 }
