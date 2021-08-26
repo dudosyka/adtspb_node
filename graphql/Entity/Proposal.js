@@ -55,7 +55,8 @@ Proposal.prototype.calculateReserve = function (association, proposal_id, queue 
             const queue_position = i - AppConfig.group_size * association.group_count;
             return  queue ? {isReserve, queue: queue_position} : isReserve;
         }
-        if (proposal.status[0].num != 0)
+        console.log(proposal.status[0].num);
+        if (proposal.status[0].num != 0 && proposal.status[0].num != 3 && proposal.status[0].num != 4)
             i++
     }
 

@@ -208,6 +208,7 @@ export default {
 					this.associationOpen.proposals = (this.associationOpen.proposals ?? []).map(proposal => {
 						this.$set(this.openedProposal, proposal.id, false);
 						proposal.selectedStatus = {
+							id: proposal.status[0].id,
 							value: proposal.status[0].num,
 							text: proposal.status[0].text
 						};

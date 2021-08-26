@@ -301,7 +301,11 @@ export default {
 				},
 				{
 					value: 3,
-					text: "Другой статус"
+					text: "Переведен на 2 год"
+				},
+				{
+					value: 4,
+					text: "Переведен на 3 год"
 				}
 			],
 			ovz_types: [{text:'I', value: 1},{text:'II', value: 2},{text:'III', value: 3}, {text:'IV', value: 4},{text:'V', value: 5},{text:'VI', value: 6},{text:'VII', value: 7},{text:'VIII', value: 8}],
@@ -328,7 +332,8 @@ export default {
 			Proposal.setDocumentTaken(proposal.id);
         },
         changeProposalStatus(proposal) {
-			//TODO Когда бэк будет готов запилить
+			proposal.selectedStatus.text = this.statuses[proposal.selectedStatus.value].text;
+			Proposal.editStatus(proposal.id, proposal.selectedStatus);
         },
         recallProposal(proposal, index) {
 			  Proposal.recall(Number(proposal.id));

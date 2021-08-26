@@ -120,4 +120,30 @@ Proposal.setDocumentTaken = async function (proposal) {
     })
 }
 
+Proposal.editStatus = async function (proposal_id, new_status) {
+    const req = `
+        mutation ($input: ProposalStatusInput) {
+            admin {
+                edit_proposal_status (input: $input)
+            }
+        }
+    `;
+
+    const data = {
+        input: {
+            id: Number(new_status.id),
+            text: new_status.text,
+            num: Number(new_status.value),
+            proposal_id: Number(proposal_id)
+        }
+    };
+
+    return await _request('api', req, data).then(res => {
+        console.log(res);
+        return res.admin ?? res;
+    }).catch(err => {
+        console.log(err);
+    })
+}
+
 export {Proposal}
