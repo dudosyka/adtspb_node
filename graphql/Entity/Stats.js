@@ -38,7 +38,7 @@ Stats.prototype.getAssociationsStat = async function (arr, associationModel, use
         let planned = association.group_count * AppConfig.group_size;
 
         (association.proposals ?? []).map(el => {
-            if (el.status[0].num != 0 && el.status[0].num != 3 && el.status[0].num != 4)
+            if (el.status[0].num != 0)
                 actual++;
             if (el.document_taken == 1)
                 document_taken++;
