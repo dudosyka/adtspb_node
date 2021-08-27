@@ -45,7 +45,7 @@
                     :class="{'input-error': errors.phone}"
                     tabindex="4" />
                 <div class="fatal-container" v-if="errors.phone">
-                    <p class="padding5-container">Неверный формат, пример: +7 111 111 11 11</p>
+                    <p class="padding5-container">{{ errors.msg.phone }}</p>
                 </div>
               </div>
 
@@ -69,7 +69,7 @@
                 <label class="label" v-bind:class="{'label-up': user.email, 'label-error': errors.email}">Email</label><br>
                 <input type="email" v-model="user.email" class="type" :class="{'input-error': errors.email}" tabindex="7">
                 <div class="fatal-container" v-if="errors.email">
-                    <p class="padding5-container">Неверный формат, почта должна содержать символы @ .</p>
+                    <p class="padding5-container">{{ errors.msg.email }}</p>
                 </div>
               </div>
 
@@ -168,7 +168,11 @@
             email: false,
             password: false,
             phone: false,
-            sex: false
+            sex: false,
+            msg: {
+              email: 'Неверный формат, почта должна содержать символы @ .',
+              phone: 'Неверный формат, пример: +7 111 111 11 11'
+            }
         },
         msg: null,
       }
@@ -197,9 +201,11 @@
                   console.log(msg);
                   if (msg === 'Email must be unique') {
                       this.errors['email'] = true;
+                      this.errors.msg.email = 'Почта должна быть уникальной'
                   }
                   else if (msg === 'Phone must be unique') {
                       this.errors['phone'] = true;
+                      this.errors.msg.phone = 'Номер телефона должен быть уникальным'
                   }
               }
           });
