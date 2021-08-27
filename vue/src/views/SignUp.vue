@@ -31,7 +31,7 @@
                 <label class="label" v-bind:class="{'label-up': user.lastname, 'label-error': errors.lastname}">Отчество</label><br>
                 <input type="text" v-model="user.lastname" class="type" :class="{'input-error': errors.lastname}" tabindex="3">
                 <div class="fatal-container" v-if="errors.lastname">
-                    <p class="padding5-container">Пожалуйста, укажите отсество</p>
+                    <p class="padding5-container">Пожалуйста, укажите отчество</p>
                 </div>
               </div>
               <div class="input-container required">

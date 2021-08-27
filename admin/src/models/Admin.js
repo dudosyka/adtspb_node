@@ -2,6 +2,27 @@ import {Parser} from '../utils/Parser'
 
 let Admin = {};
 
+Admin.editAssociationData = async function(data) {
+	const req = `
+		mutation ($input: AssociationInput) {
+		    admin {
+		        edit_association (input: $input) 
+		    }
+		}
+	`
+
+	var data = {
+
+	}
+
+	return await _request('api', req, data)
+		.then( data => {
+			console.log(data)
+			return data
+		} )
+		.catch( err => console.error(err) )
+}
+
 Admin.getDataOnEdit = async function(search) {
 	const req = `
 		query ($search: String) {

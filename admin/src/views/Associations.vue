@@ -141,6 +141,9 @@ export default {
     		})
     	},
     	*/
+    	editAssociationData(association) {
+    		
+    	},
     	nToDay(number) { 
     		return Corrector.weekDayByNumber(number)
     	},
