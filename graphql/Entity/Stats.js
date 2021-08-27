@@ -44,7 +44,8 @@ Stats.prototype.getAssociationsStat = async function (arr, associationModel, use
                 document_taken++;
         });
 
-        reserve += (actual - planned);
+        const association_reserve = (actual - planned);
+        reserve += association_reserve > 0 ? association_reserve : 0;
 
         return {
             id: association.id,

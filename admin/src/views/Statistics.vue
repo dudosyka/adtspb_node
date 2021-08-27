@@ -17,9 +17,9 @@
 
             <h2 class="ft-gray">Основного набора:</h2>
             <h2 class="ft-white">{{ stat.proposal_amount - stat.proposal_reserve_amount }}</h2>
-<!--
+
             <h2 class="ft-gray">Резерва:</h2>
-            <h2 class="ft-white">{{ stat.proposal_reserve_amount }}</h2> -->
+            <h2 class="ft-white">{{ stat.proposal_reserve_amount }}</h2>
         </header>
 
         <b-card>
