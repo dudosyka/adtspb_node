@@ -23,7 +23,7 @@ UserGroup.prototype.execInsertQuery = async function (proposals, association_id,
             continue;
         const range = this.db.createRangeQuery('id', proposal.association.groups, 'group_id');
         range.ids.unshift(proposal.child.id);
-        this.db.query('DELETE FROM `user_group` WHERE `user_id` = ? AND ' + range.query, range.ids);
+        await this.db.query('DELETE FROM `user_group` WHERE `user_id` = ? AND ' + range.query, range.ids);
         query += "INSERT INTO `user_group` (`group_id`, `user_id`) VALUES (?, ?);";
         ids.push(group_id, proposal.child.id);
         const userGroupLog = UserGroupLog.newModel();
@@ -70,18 +70,17 @@ UserGroup.prototype.joinGroup = async function (input, groupModel, proposalModel
     const association_id = group.__get('association_id');
     const proposals = await proposalModel.selectProposalsList('id', input.proposals, { child: true, association: { groups: true } }, "", [], userModel);
 
-
     const dataForReserve = await associationModel.getAssociationsAsObject(null, {proposals: {status: true}}, proposalModel.newModel(), " WHERE `main`.`id` = ?", [ association_id ]);
-    proposalModel.setSelected(input.proposals, input.group_id, dataForReserve[association_id]);
 
     const group_size = await this.db.query('SELECT COUNT(`id`) as `count` FROM `user_group` WHERE `group_id` = ?', [ input.group_id ]).then(data => {
         return data[0].count;
     });
 
-    if (group_size > 14) {
+    if (group_size > AppConfig.group_size) {
         throw Error('Group is full');
     }
 
+    await proposalModel.setSelected(input.proposals, input.group_id, dataForReserve[association_id]);
     await this.execInsertQuery(proposals, association_id, input.group_id);
 
     return true;
