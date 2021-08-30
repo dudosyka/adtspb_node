@@ -95,8 +95,6 @@
 </style>
 
 <script>
-import Header from '../components/Header'
-import {Admin} from '../models/Admin'
 import {Corrector} from '../utils/Corrector'
 
 export default {

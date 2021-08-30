@@ -2,7 +2,12 @@
     <main class="bg-wrapper">
         <Header />
         <b-overlay :show="overlay">
+            <b-card>
+                <b-button></b-button>
+                <b-collapse>
 
+                </b-collapse>
+            </b-card>
         </b-overlay>
     </main>
 </template>
