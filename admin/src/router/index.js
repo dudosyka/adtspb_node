@@ -28,6 +28,11 @@ const routes = [
     name: 'Proposals',
     component: () => import('../views/Proposals.vue')
   },
+  {
+    path: '/for_teacher',
+    name: 'Teacher',
+    component: () => import('../views/Teacher')
+  }
 ]
 
 const router = new VueRouter({

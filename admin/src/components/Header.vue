@@ -6,8 +6,9 @@
 			<router-link to="/statistics">Статистика(</router-link>
 			<router-link to="/associations">Объединения</router-link>
 			<router-link to="/proposals">Заявления</router-link>
-			<router-link to="/callback">Запросы</router-link>
-		</nav>
+            <router-link to="/callback">Запросы</router-link>
+            <router-link to="/for_teacher">Преподавателю</router-link>
+        </nav>
 	</header>
 </template>
 
@@ -23,7 +24,7 @@
 	}
 	.links-container {
 		display: grid;
-		grid-template-columns: repeat(5, auto) 1fr;
+		grid-template-columns: repeat(6, auto) 1fr;
 		justify-items: center;
 		align-items: center;
 		grid-gap: 20px;
