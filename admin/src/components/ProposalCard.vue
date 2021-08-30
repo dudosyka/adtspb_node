@@ -41,7 +41,7 @@
                         :id="'confirmReturn' + proposal.id"
                         hide-footer
                         >
-                        <b-button @click="proposal.selectedStatus.value = 0; recallProposal(proposal)" variant="danger">Подтверждаю</b-button>
+                        <b-button @click="recallProposal(proposal)" variant="danger">Подтверждаю</b-button>
                     </b-modal>
                 </b-card-body>
             </b-tab>
@@ -335,10 +335,15 @@ export default {
 			Proposal.setDocumentTaken(proposal.id);
         },
         changeProposalStatus(proposal) {
+			if (proposal.selectedStatus.value == 0) {
+				this.recallProposal(proposal);
+				return;
+			}
 			proposal.selectedStatus.text = this.statuses[proposal.selectedStatus.value].text;
 			Proposal.editStatus(proposal.id, proposal.selectedStatus);
         },
         recallProposal(proposal, index) {
+			  proposal.selectedStatus.value = 0;
 			  Proposal.recall(Number(proposal.id));
 			  this.$bvModal.hide('confirmReturn' + proposal.id)
         },
