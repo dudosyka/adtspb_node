@@ -167,7 +167,9 @@ export default {
   },
   created() {
     const child = localStorage.getItem('childInAssociations');
+
     Association.getAssociations(null, child).then(data => {
+        console.log(data)
         data.map(association => {
             const id = association.id;
 
@@ -176,11 +178,12 @@ export default {
             this.$set(this.associations[id], 'already', false);
             this.$set(this.associations[id], 'showSchendule', false);
             if (Object.keys(this.associations[id].groups).length) {
-                console.log('hi')
                 this.$set(this.associations[id].groups[0].timetable, 'show', true);
             }
-
         });
+        console.log(80, this.associations)
+        
+        console.log(81, this.associations)
 
         this.show.warn = Object.keys(this.associations).length < 1;
 
@@ -346,7 +349,7 @@ export default {
             this.proposalParms.speedometr = 1;
         }
         this.proposalParms.speedometr = Math.floor(this.proposalParms.speedometr * 100);
-    }
+    },
   },
   computed: {
     maxHours() {

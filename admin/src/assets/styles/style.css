@@ -7,6 +7,13 @@ h1,h2,h3,h4,h5,h6,p,ul,ol {
 	font-weight: normal;
 }
 
+.salwoeiru {
+	padding: 5px;
+	border-radius: 5px;
+	background-color: #00ff00;
+	color: #fff;
+}
+
 /*
 * {
 	color: #c4c4c4;

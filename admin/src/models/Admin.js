@@ -2,6 +2,27 @@ import {Parser} from '../utils/Parser'
 
 let Admin = {};
 
+Admin.editAssociationData = async function(data) {
+	const req = `
+		mutation ($input: AssociationInput) {
+		    admin {
+		        edit_association (input: $input) 
+		    }
+		}
+	`
+
+	var data = {
+
+	}
+
+	return await _request('api', req, data)
+		.then( data => {
+			console.log(data)
+			return data
+		} )
+		.catch( err => console.error(err) )
+}
+
 Admin.getDataOnEdit = async function(search) {
 	const req = `
 		query ($search: String) {
@@ -62,15 +83,22 @@ Admin.getChildOnDelet = async function() {
 
 Admin.confirmRemoveChild = async function(link) {
 	const req = `
-		mutation($link: Int) {
-		    confirmRemoveChild(link: $link)
+		mutation ($link: Int) {
+		    user {
+		        confirmRemoveChild (link: $link)
+		    }
 		}
 	`
 	let data = {
-		link
+		"link": link
 	}
 
-
+	return await _request('api', req, data)
+		.then( data => {
+			console.log(data)
+			return data
+		} )
+		.catch( err => console.error(err) )
 }
 
 Admin.getStat = async function() {
@@ -217,7 +245,7 @@ Admin.confirmDataEditing = async function (request) {
 	`;
 
 	const data = {
-		request
+		"request": request
 	};
 
 	return await _request('api', req, data).then(res => {

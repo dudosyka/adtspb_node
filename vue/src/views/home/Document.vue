@@ -5,8 +5,7 @@
         <article class="home-content">
             <div class="card shadow">
                 <!--<h1>Если не произошло автоматическое направление, нажмите на кнопку ниже</h1>!-->
-                <a v-if="show" class="dark-button" target="_blank" href="https://widget.easyweek.io/act/">Запись <!-- Открыть !--></a>
-                <h1 v-else>{{msg}}</h1>
+                <a class="dark-button" target="_blank" href="https://widget.easyweek.io/act/">Запись <!-- Открыть !--></a>
             </div>
         </article>
     </main>
@@ -87,7 +86,7 @@
         if (data.length !== originalLength) { 
             test.allIsNotReserve = true
         } else {
-            this.msg = 'Все Ваши зявления в резерве'
+            this.msg = 'Ошибка'
             this.show = false
             return
         }

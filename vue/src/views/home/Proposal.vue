@@ -45,6 +45,7 @@
                             <!--button class="dark-button wp100" @click="printPdf(proposal.id)" v-if="!proposal.isReserve">Печатать</button-->
 
                             <button v-if='!proposal.isDocumentTaken' class="dark-button wp100" @click="proposal.sure = true">Отозвать</button>
+                            <section v-else class="salwoeiru">Документы принесены</section>
                             <section class="card_wrapper horizontal-center" v-if="proposal.sure">
                                 <article class="card modal shadow">
                                     <p class="modal_heading">Вы уверены, что хотите отозвать заявления?</p>
@@ -66,6 +67,15 @@
 <style scoped>
 .home-content {
     padding: 30px;
+}
+.salwoeiru {
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #0da46e;
+    color: #fff;
+    height: max-content;
+    text-align: center;
+
 }
 .children {
     max-width: 600px;

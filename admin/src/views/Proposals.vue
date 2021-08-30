@@ -3,7 +3,7 @@
 		<Header />
         <b-overlay :show="overlay">
         <article class="bg-wrapper content" fluid>
-            <b-list-group>
+            <b-list-group class="col-sm">
                 <b-list-group-item
                     v-for="association of associations"
                     v-text="association.name"
