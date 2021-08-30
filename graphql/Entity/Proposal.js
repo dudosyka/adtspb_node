@@ -286,6 +286,8 @@ Proposal.prototype.recall = async function (requester, admin = false) {
     if (this.__get('group_selected') != 0) {
         await this.db.query('DELETE FROM `user_group` WHERE `user_id` = ? AND `group_id` = ?; UPDATE `proposal` SET `group_selected` = ? WHERE `id` = ?', [ this.__get('child_id'), this.__get('group_selected'), 0, this.__get('id') ]);
     }
+    await this.db.query('DELETE * FROM `selected_associations` WHERE `child_id` = ? AND `association_id` = ?', [ this.__get('child'), this.__get('association') ]);
+
     this.__set('group_selected', 0);
     this.__set('document_taken', 0);
     this.update();
