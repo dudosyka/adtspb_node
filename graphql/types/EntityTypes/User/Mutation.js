@@ -5,6 +5,8 @@ const UserChild = require("../../../Entity/UserChild");
 const UserGroup = require('../../../Entity/UserGroup');
 const UserExtraData = require("../../../Entity/UserExtraData");
 
+const Association = require('../../../Entity/Association');
+
 const Proposal = require('../../../Entity/Proposal');
 const Group = require('../../../Entity/Group');
 const EmailValidation = require('../../../Entity/EmailValidation');
@@ -188,8 +190,9 @@ module.exports = new graphql.GraphQLObjectType({
                 const groupModel = Group.newModel();
                 const proposalModel = Proposal.newModel();
                 const user = User.newModel();
+                const association = Association.newModel();
 
-                return await userGroup.joinGroup(input, groupModel, proposalModel, user);
+                return await userGroup.joinGroup(input, groupModel, proposalModel, user, association);
             }
         }
     })

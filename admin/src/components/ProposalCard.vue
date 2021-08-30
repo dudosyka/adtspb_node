@@ -3,6 +3,7 @@
         <b-card>
         <b-tabs v-if='proposal !== false'>
             <b-alert variant="success" class="slakjfklsdaf" :show="alert">Успешно 🥳</b-alert>
+            <b-alert variant="danger" class="slakjfklsdaf" :show="err_alert">{{err_alert_text}}</b-alert>
             <b-tab title="Заявление" active>
                 <b-button-group>
                     <b-button @click="printProposal(proposal)">Печать заявления</b-button>
@@ -40,7 +41,7 @@
                         :id="'confirmReturn' + proposal.id"
                         hide-footer
                         >
-                        <b-button @click="proposal.selectedStatus.value = 0; recallProposal(proposal)" variant="danger">Подтверждаю</b-button>
+                        <b-button @click="recallProposal(proposal)" variant="danger">Подтверждаю</b-button>
                     </b-modal>
                 </b-card-body>
             </b-tab>
@@ -301,13 +302,19 @@ export default {
 				},
 				{
 					value: 3,
-					text: "Другой статус"
+					text: "Переведен на 2 год"
+				},
+				{
+					value: 4,
+					text: "Переведен на 3 год"
 				}
 			],
 			ovz_types: [{text:'I', value: 1},{text:'II', value: 2},{text:'III', value: 3}, {text:'IV', value: 4},{text:'V', value: 5},{text:'VI', value: 6},{text:'VII', value: 7},{text:'VIII', value: 8}],
             disability_types: [{text:'I', value: 1}, {text:'II', value: 2}, {text:'III', value: 3}],
             overlay: false,
-            alert: false
+            alert: false,
+			err_alert: false,
+			err_alert_text: "",
         }
     },
     created() {
@@ -328,9 +335,15 @@ export default {
 			Proposal.setDocumentTaken(proposal.id);
         },
         changeProposalStatus(proposal) {
-			//TODO Когда бэк будет готов запилить
+			if (proposal.selectedStatus.value == 0) {
+				this.recallProposal(proposal);
+				return;
+			}
+			proposal.selectedStatus.text = this.statuses[proposal.selectedStatus.value].text;
+			Proposal.editStatus(proposal.id, proposal.selectedStatus);
         },
         recallProposal(proposal, index) {
+			  proposal.selectedStatus.value = 0;
 			  Proposal.recall(Number(proposal.id));
 			  this.$bvModal.hide('confirmReturn' + proposal.id)
         },
@@ -357,7 +370,13 @@ export default {
 			proposal.isGroupSelected = Number(proposal.isGroupSelected);
 			proposal.id = Number(proposal.id);
 			Proposal.joinGroup(proposal.id, proposal.isGroupSelected)
-				.finally(() => {
+				.catch(err => {
+					this.err_alert = true;
+					this.err_alert_text = "Группа переполнена";
+					setTimeout(() => {
+						this.err_alert = false;
+					}, 5000);
+				}).finally(() => {
 					this.overlay = false;
 				});
 		},

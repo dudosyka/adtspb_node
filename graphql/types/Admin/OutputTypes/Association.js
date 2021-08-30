@@ -15,6 +15,12 @@ module.exports = new graphql.GraphQLObjectType({
         actual: {
             type: graphql.GraphQLInt
         },
+        group_amount: {
+            type: graphql.GraphQLInt
+        },
+        document_taken: {
+            type: graphql.GraphQLInt
+        },
         fullness_percent: {
             type: graphql.GraphQLInt
         }

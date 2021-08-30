@@ -44,18 +44,24 @@ Proposal.prototype.createFromInput = async function (proposal) {
     return await this.baseCreateFrom(data);
 }
 
-Proposal.prototype.calculateReserve = function (association, proposal_id) {
+Proposal.prototype.calculateReserve = function (association, proposal_id, queue = false) {
     if (association == undefined)
-        return null;
+        return queue ? {isReserve: false, queue: 1} : false;
 
     let i = 1;
     for (proposal of association.proposals) {
         if (proposal.id == proposal_id) {
-            return (i > AppConfig.group_size * association.group_count);
+            const isReserve = (i > AppConfig.group_size * association.group_count);
+            const queue_position = i - AppConfig.group_size * association.group_count;
+            return  queue ? {isReserve, queue: queue_position} : isReserve;
         }
-        if (proposal.status[0].num != 0)
+        console.log(proposal.status[0].num);
+        if (proposal.status[0].num != 0 && proposal.status[0].num != 3 && proposal.status[0].num != 4)
             i++
     }
+
+    const queue_position = i - AppConfig.group_size * association.group_count;
+    return queue ? {isReserve: false, queue: queue_position} : false;
 }
 
 Proposal.prototype.selectProposalsList = async function (field, arr, selections, where = "", whereData = [], userModel = null) {
@@ -103,7 +109,9 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
         el.parent = parents[el.parent_id];
         el.status = statuses[el.id] == undefined ? [] : statuses[el.id];
         el.association = associations[el.association_id];
-        el.isReserve = this.calculateReserve(isReserve[el.association_id], el.id);
+        const calculate = this.calculateReserve(isReserve[el.association_id], el.id, true);
+        el.isReserve = calculate.isReserve;
+        el.queuePosition = calculate.queue;
         if (res[el[field]]) {
             res[el[field]].push(el);
         }
@@ -132,6 +140,13 @@ Proposal.prototype.getProposalAmount = async function (association_id = null) {
         return (await this.db.query("SELECT COUNT(*) as `amount` FROM `proposal` as `main` RIGHT JOIN `proposal_status` as `sub` ON `main`.`id` = `sub`.`proposal_id` WHERE `sub`.`num` != 0"))[0].amount;
     else
         return (await this.db.query("SELECT COUNT(*) as `amount` FROM `proposal` as `main` RIGHT JOIN `proposal_status` as `sub` ON `main`.`id` = `sub`.`proposal_id` WHERE `sub`.`num` != 0 AND `main`.`association_id` = ?", [ association_id ]))[0].amount;
+}
+
+Proposal.prototype.getProposalAmountDocumentTaken = async function (association_id = null) {
+    if (association_id === null)
+        return (await this.db.query("SELECT COUNT(*) as `amount` FROM `proposal` as `main` RIGHT JOIN `proposal_status` as `sub` ON `main`.`id` = `sub`.`proposal_id` WHERE `sub`.`num` != 0 AND `main`.`document_taken` = 1"))[0].amount;
+    else
+        return (await this.db.query("SELECT COUNT(*) as `amount` FROM `proposal` as `main` RIGHT JOIN `proposal_status` as `sub` ON `main`.`id` = `sub`.`proposal_id` WHERE `sub`.`num` != 0 AND `main`.`association_id` = ? AND `main`.`document_taken` = 1", [ association_id ]))[0].amount;
 }
 
 Proposal.prototype.selectByChild = async function (child_id) {
@@ -271,6 +286,11 @@ Proposal.prototype.recall = async function (requester, admin = false) {
     if (this.__get('group_selected') != 0) {
         await this.db.query('DELETE FROM `user_group` WHERE `user_id` = ? AND `group_id` = ?; UPDATE `proposal` SET `group_selected` = ? WHERE `id` = ?', [ this.__get('child_id'), this.__get('group_selected'), 0, this.__get('id') ]);
     }
+    await this.db.query('DELETE * FROM `selected_associations` WHERE `child_id` = ? AND `association_id` = ?', [ this.__get('child'), this.__get('association') ]);
+
+    this.__set('group_selected', 0);
+    this.__set('document_taken', 0);
+    this.update();
 
     return await Status.setToRecall(this.__get('id'));
 }

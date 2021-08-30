@@ -45,10 +45,10 @@ Admin.getDataOnEdit = async function(search) {
 
 	var data = { search }
 	console.log(data)
-	
+
 	return await _request('api', req, data)
 		.then( data => {
-			console.log(data.admin.user_data_on_edit)	
+			console.log(data.admin.user_data_on_edit)
 			return data.admin.user_data_on_edit
 		} )
 		.catch( err => console.error(err) )
@@ -109,8 +109,10 @@ Admin.getStat = async function() {
 		            parent_amount,
 		            child_amount,
 		            proposal_amount,
+					proposal_amount_document_taken,
+					proposal_reserve_amount,
 		            associations {
-		                id, name, planned, actual, fullness_percent
+		                id, name, planned, actual, fullness_percent, document_taken, group_amount
 		            }
 		        }
 		    }

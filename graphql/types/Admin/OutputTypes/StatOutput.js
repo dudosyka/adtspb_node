@@ -12,6 +12,12 @@ module.exports = new graphql.GraphQLObjectType({
         proposal_amount: {
             type: graphql.GraphQLInt
         },
+        proposal_amount_document_taken: {
+            type: graphql.GraphQLInt
+        },
+        proposal_reserve_amount: {
+            type: graphql.GraphQLInt,
+        },
         associations: {
             type: graphql.GraphQLList(AssociationStatOutput)
         }

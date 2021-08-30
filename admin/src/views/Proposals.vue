@@ -103,7 +103,11 @@ export default {
 				},
 				{
 					value: 3,
-					text: "Другой статус"
+					text: "Переведен на 2 год"
+				},
+				{
+					value: 4,
+					text: "Переведен на 3 год"
 				}
 			],
 			ovz_types: [{text:'I', value: 1},{text:'II', value: 2},{text:'III', value: 3}, {text:'IV', value: 4},{text:'V', value: 5},{text:'VI', value: 6},{text:'VII', value: 7},{text:'VIII', value: 8}],
@@ -204,6 +208,7 @@ export default {
 					this.associationOpen.proposals = (this.associationOpen.proposals ?? []).map(proposal => {
 						this.$set(this.openedProposal, proposal.id, false);
 						proposal.selectedStatus = {
+							id: proposal.status[0].id,
 							value: proposal.status[0].num,
 							text: proposal.status[0].text
 						};
@@ -234,6 +239,7 @@ export default {
 				});
         },
         toggleProposal(proposal) {
+			proposal.selectedGroups = this.associationOpen.selectedGroups;
             this.openedProposal[proposal.id] = !this.openedProposal[proposal.id]
         },
 		computedLength(arr) {
