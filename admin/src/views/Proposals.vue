@@ -19,6 +19,11 @@
 				    :title="`${proposal.child.surname} ${proposal.child.name}`"
 					 v-for='proposal of associationOpen.proposals'
 				>
+                    <div data-shut_up class="shut_up">
+                        <p>proposal ID <span>{{proposal.id}}</span></p>
+                        <p>child ID <span>{{proposal.child.id}}</span></p>
+                        <p>parent ID <span>{{proposal.parent.id}}</span></p>
+                    </div>
 						<div :class='{row: true, "mb-3": (openedProposal[proposal.id] && !proposal.isReserve)}'>
 							<b-card-body class='col-sm-7'>
 								<b-badge variant='primary' pill class='woqewer-red' v-if='proposal.isReserve'>
@@ -66,6 +71,9 @@
     background-color: red;
 	color: white;
     padding: 5px;
+}
+.shut_up {
+    display: none;
 }
 </style>
 
