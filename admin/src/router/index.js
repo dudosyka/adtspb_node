@@ -31,7 +31,7 @@ const routes = [
   {
     path: '/for_teacher',
     name: 'Teacher',
-    component: () => import('../views/Proposals.vue')
+    component: () => import('../views/Teacher.vue')
   }
 ]
 
