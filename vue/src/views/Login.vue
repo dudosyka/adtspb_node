@@ -1,5 +1,31 @@
 <template>
-  <main class="main-content">
+    <b-card title="Вход личный кабинет">
+        <b-form>
+            <b-form-group
+                label="Номер телефона / Электронная почта"
+                :description="errors.msg.login"
+            >
+                <b-form-input
+                    :state="errors.login"
+                    v-model="login"git
+                    required
+                />
+            </b-form-group>
+            <b-form-group
+                label="пароль"
+                :description="errors.msg.password"
+            >
+                <b-form-input
+                    :state="errors.password"
+                    v-model="pass"
+                    required
+                />
+            </b-form-group>
+            <b-button variant="primary" @click="auth">Войти</b-button>
+        </b-form>
+
+    </b-card>
+  <!--<main class="main-content">
       <div class="auth">
         <div class="form">
           <InputField
@@ -43,7 +69,7 @@
       </div>
 
       <AuthPlate title="Добро пожаловать в Личный кабинет"/>
-  </main>
+  </main>!-->
 </template>
 <script>
   import axios from "axios"
@@ -63,8 +89,9 @@
         pass: null,
         remember: false, //не используется
         errors: {
-          login: false,
-          password: false
+          login: null,
+          password: null,
+            msg: {}
         }
       }
     },
@@ -81,9 +108,11 @@
                   const msg = err.response.errors[0].message;
                   if (msg === 'login incorrect') {
                       this.errors.login = true;
+                      this.errors.msg.login = 'Неверный логин'
                   }
-                  else if (msg == 'password incorrect') {
+                  if (msg === 'password incorrect') {
                       this.errors.password = true;
+                      this.errors.msg.password = 'Неверный пароль'
                   }
                   //.....
               }

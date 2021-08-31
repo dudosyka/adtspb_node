@@ -5,6 +5,14 @@ import { request, GraphQLClient } from "graphql-request";
 import * as AppConfig from './config/AppConfig';
 import {AccessControl} from './utils/AccessControl';
 import {Association} from './models/Association';
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+
+// Import Bootstrap an BootstrapVue CSS files (order is important)
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
+Vue.use(BootstrapVue)
+Vue.use(IconsPlugin)
 
 const graphql = new GraphQLClient(AppConfig.api_url, {
     headers: {
