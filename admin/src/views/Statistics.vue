@@ -129,9 +129,7 @@ export default {
                 fullness_percent: "% наполненности",
                 document_taken: 'Принесено документов',
             }
-            console.log();
             this.stat = data;
-            console.log(`get Stat `, data);
             let first = true;
             this.dataForExcel = data.associations.map(el => {
                 let res = {
