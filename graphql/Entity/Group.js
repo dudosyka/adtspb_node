@@ -39,7 +39,7 @@ Group.prototype.getAssociationGroups = async function (association_ids, selectio
 
     let groups = {};
     res.map(group => {
-        group.timetable = timetables[group.id][0];
+        group.timetable = timetables[group.id] !== undefined ? timetables[group.id][0] : {};
         group.students = students[group.id] == undefined ? [] : students[group.id];
 
         if (groups[group.association_id]) {

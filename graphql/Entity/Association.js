@@ -36,7 +36,7 @@ Association.prototype.getAssociations = async function (age = null, selections =
         data = whereData;
     }
 
-    fullQuery = "SELECT `main`.*, `join`.* FROM `association` as `main` LEFT JOIN `association_extra_data` as `join` ON `main`.`id` = `join`.`association_id` " + whereQuery;
+    let fullQuery = "SELECT `main`.*, `join`.* FROM `association` as `main` LEFT JOIN `association_extra_data` as `join` ON `main`.`id` = `join`.`association_id` " + whereQuery;
 
     const res = await this.db.query(fullQuery, data);
     const ids = res.map(el => el.association_id);
