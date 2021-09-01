@@ -40,4 +40,22 @@ Timetable.prototype.edit = async function (newValue, logger, admin_id) {
     });
 }
 
+Timetable.prototype.getByGroup = async function (groups_id, selections) {
+    const { ids, query } = this.db.createRangeQuery(false, groups_id, 'group_id');
+
+    const timetables = await this.db.select(this, query, ids);
+
+    let result = {};
+    timetables.map(timetable => {
+        if (result[timetable.group_id]) {
+            result[timetable.group_id].push(timetable);
+        }
+        else {
+            result[timetable.group_id] = [ timetable ];
+        }
+    });
+
+    return result;
+}
+
 module.exports = (new Timetable());
