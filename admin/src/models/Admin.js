@@ -205,8 +205,16 @@ Admin.getAssociationById = async function (
 			name: null,
 			timetable: {
 				week: null
+			},
+			students: {
+				id: null,
+				surname: null,
+				name: null,
+				lastname: null,
+				email: null,
+				phone: null
 			}
-		}
+		},
 	},
 	id
 ) {
