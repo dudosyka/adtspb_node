@@ -142,6 +142,20 @@ Admin.getAssociations = async function(
 		hours_count: null,
 		study_period: null,
 		isRecruiment: null,
+		proposals: {
+			id: null,
+			child: {
+				id: null,
+				name: null,
+				surname: null,
+			},
+			parent: {
+				id: null,
+				name: null,
+				surname: null,
+			},
+			isReserve: null
+		},
 		groups: {
 			id: null,
 			name: null,

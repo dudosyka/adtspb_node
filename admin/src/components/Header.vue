@@ -7,6 +7,7 @@
 			<router-link to="/associations">Объединения</router-link>
 			<router-link to="/proposals">Заявления</router-link>
 			<router-link to="/callback">Запросы</router-link>
+            <router-link to="/teacher">Преподавателю</router-link>
 		</nav>
 	</header>
 </template>
