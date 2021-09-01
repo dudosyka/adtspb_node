@@ -19,6 +19,7 @@ AccessControl.checkRole = function (id) {
 }
 
 AccessControl.refreshApiToken = function (token = null) {
+    localStorage.removeItem('selectedAssociations');
     if (token !== null) {
         localStorage.setItem('token', token);
     }
@@ -68,6 +69,7 @@ AccessControl.logout = function (redirToLogin = false) {
     localStorage.removeItem('token');
     localStorage.removeItem('rules');
     localStorage.removeItem('roles');
+    localStorage.removeItem('selectedAssociations');
 
     if (redirToLogin)
         window.location = "/login";
