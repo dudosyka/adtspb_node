@@ -39,8 +39,7 @@ Group.prototype.getAssociationGroups = async function (association_ids, selectio
 
     let groups = {};
     res.map(group => {
-        group.timetable = timetables[group.id];
-        console.log(students[group.id]);
+        group.timetable = timetables[group.id][0];
         group.students = students[group.id] == undefined ? [] : students[group.id];
 
         if (groups[group.association_id]) {
@@ -50,8 +49,6 @@ Group.prototype.getAssociationGroups = async function (association_ids, selectio
             groups[group.association_id] = [ group ];
         }
     });
-
-    console.log(groups);
 
     return groups;
 }
