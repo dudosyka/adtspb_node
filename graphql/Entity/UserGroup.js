@@ -86,4 +86,22 @@ UserGroup.prototype.joinGroup = async function (input, groupModel, proposalModel
     return true;
 }
 
+UserGroup.prototype.getStructure = async function (groups_id) {
+    const { ids, query } = this.db.createRangeQuery(false, groups_id, 'group_id');
+
+    const relations = await this.db.select(this, query, ids);
+
+    let result = {};
+    relations.map(relation => {
+        if (result[relation.group_id]) {
+            result[relation.group_id].push(relation);
+        }
+        else {
+            result[relation.group_id] = [ relation ];
+        }
+    });
+
+    return result;
+}
+
 module.exports = (new UserGroup());
