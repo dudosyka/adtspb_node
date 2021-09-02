@@ -83,6 +83,9 @@ module.exports = new graphql.GraphQLObjectType({
                 }
             }
         },
+        proposal_id: {
+            type: graphql.GraphQLInt,
+        },
         proposals: {
             type: graphql.GraphQLList(ProposalOutput),
             resolve (obj, data) {

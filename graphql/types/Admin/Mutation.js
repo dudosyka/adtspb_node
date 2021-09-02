@@ -147,6 +147,23 @@ module.exports = new graphql.GraphQLObjectType({
 
                 const allowed = await obj.adminModel.getAllowedAssociations();
                 const admin_id = obj.viewer.id;
+
+                if (input.student && input.group) {
+
+                    let data = await proposal.db.query('select * from `proposal` where `group_selected` = ? and `child_id` = ?', [ input.group, input.student ]);
+                    if (!data.length)
+                        throw Error("Proposal not found");
+
+                    input.proposal = data[0].id;
+
+                    data = await proposal.db.query('select `id` from `proposal_status` where `proposal_id` = ?', [ data[0].id ]);
+                    if (!data.length)
+                        throw Error("Proposal not found");
+
+                    input.id = data[0].id;
+                    console.log("dfhjksdhfsdjkf", input);
+                }
+
                 await status.editStatus(input, logger, admin_id, proposal, allowed);
             }
         },
@@ -172,13 +189,29 @@ module.exports = new graphql.GraphQLObjectType({
             args: {
                 proposal: {
                     type: graphql.GraphQLInt
-                }
+                },
+                child: {
+                    type: graphql.GraphQLInt
+                },
+                group: {
+                    type: graphql.GraphQLInt
+                },
             },
             async resolve(obj, data) {
                 if (!obj.adminModel.hasAccess(28)) //Proposal status editing
                     throw Error('Forbidden');
 
                 const admin_id = obj.viewer.id;
+
+                if (data.child && data.group) {
+
+                    const req = await proposal.db.query('select * from `proposal` where `group_selected` = ? and `child_id` = ?', [ data.group, data.child ]);
+                    if (!req.length)
+                        throw Error("Proposal not found");
+
+                    data.proposal = req[0].id;
+                }
+
                 const model = await Proposal.createFrom({ id: data.proposal });
                 await model.recall(admin_id, true);
                 return true;
@@ -211,6 +244,35 @@ module.exports = new graphql.GraphQLObjectType({
             async resolve(obj, { input }) {
                 if (!obj.adminModel.hasAccess(36)) //Group`s structure editing
                     throw Error('Forbidden');
+
+                return await userGroup.joinGroup(input, group, proposal, user, association);
+            }
+        },
+        set_group_by_student: {
+            type: graphql.GraphQLBoolean,
+            args: {
+                child: {
+                    type: graphql.GraphQLInt,
+                },
+                association: {
+                    type: graphql.GraphQLInt,
+                },
+                group: {
+                    type: graphql.GraphQLInt,
+                },
+            },
+            async resolve(obj, data) {
+                let input = {
+                    group_id: data.group,
+                    proposals: []
+                };
+
+                const proposals = await proposal.db.query('select `main`.`id` as `id` from `proposal` as `main` left join `proposal_status` as `status` on `main`.`id`= `status`.`id` where `status`.`num` != 0 and `main`.`child_id` = ? and `main`.`association_id` = ?', [ data.child, data.association ]);
+
+                if (!proposals.length)
+                    throw Error("Proposal not found");
+                input.proposals = [ proposals[0].id ];
+                console.log(input);
 
                 return await userGroup.joinGroup(input, group, proposal, user, association);
             }

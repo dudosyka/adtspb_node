@@ -9,6 +9,12 @@ module.exports = new graphql.GraphQLInputObjectType({
         proposal_id: {
             type: graphql.GraphQLInt,
         },
+        student: {
+            type: graphql.GraphQLInt,
+        },
+        group: {
+            type: graphql.GraphQLInt,
+        },
         text: {
             type: graphql.GraphQLString,
         },

@@ -35,11 +35,25 @@ module.exports = new graphql.GraphQLObjectType({
                     throw Error('Forbidden');
 
                 const allowed = await obj.adminModel.getAllowedAssociations();
-                const { query, ids } = db.createRangeQuery(false, arr, "id");
+                let { query, ids } = db.createRangeQuery(false, arr, "id");
                 query = " AND `sub1`."+query;
 
-                proposals = await Proposal.selectProposalsList('association_id', [ association_id ], {status: true, child: true, parent: true}, query, ids);
+                let proposals = await Proposal.selectProposalsList('association_id', [ association_id ], {status: true, child: true, parent: true}, query, ids);
                 return proposals[association_id];
+            }
+        },
+        get_all_associations: {
+            type: graphql.GraphQLList(AssociationOutput),
+            args: {
+            },
+            async resolve(obj, {  }) {
+                const model = Proposal.newModel();
+
+                const allowed = await obj.adminModel.getAllowedAssociations();
+                let { query, ids } = model.db.createRangeQuery(false, allowed, "id");
+                query = "WHERE `main`."+query;
+
+                return  await Association.getAssociations(null, obj.selections, model, query, ids, User.newModel());
             }
         },
         rbac: {
@@ -84,3 +98,4 @@ const DataOnEdit = require('./OutputTypes/DataOnConfirm');
 const ChildOnDelete = require('./OutputTypes/ChildOnDelete');
 const StatOutput = require('./OutputTypes/StatOutput');
 const ProposalOutput = require('./OutputTypes/Proposal');
+const AssociationOutput = require("../EntityTypes/Association/Output");

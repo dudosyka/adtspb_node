@@ -169,8 +169,8 @@ Admin.getAssociations = async function(
 {
 	const req = `
 		query {
-		    association {
-		        getAll {
+		    admin {
+		        get_all_associations {
 		            ` + Parser.objToGraphQlQuery(fields) + `
 		        }
 		    }
@@ -179,8 +179,7 @@ Admin.getAssociations = async function(
 
 	return await _request('api', req)
 		.then(data => {
-			console.log("DATA", data);
-			return(data.association.getAll);
+			return(data.admin.get_all_associations);
 		})
 		.catch( err => console.error(err));
 }

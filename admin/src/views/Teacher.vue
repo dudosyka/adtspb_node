@@ -10,77 +10,28 @@
                     <b-button
                         v-for="group of association.groups"
                         v-text="group.name"
-                        @click="openGroup(group)"
+                        @click="openGroup(association, group)"
                     />
+                  <b-button @click="openReserve(association)">Резерв</b-button>
                 </b-button-group>
             </b-card>
 
             <b-modal
-                :title="groupOpened.id"
+                :title="groupOpened.name"
                 hide-footer
                 v-model="show.modal"
                 size="xl"
             >
-                <b-tabs>
-                    <b-tab title="Основной состав">
-                        <b-button>Скачать в Excel</b-button>
-                        <b-table
-                            :items="groupOpened.students"
-                            striped hover
-                        >
-                            <template
-                                #cell(действия)="data"
-                            >
-                                <b-button-group>
-                                    <b-button>
-                                        Отозвать
-                                    </b-button>
-                                    <b-form-select>
-                                        <template #first>
-                                            <b-form-select-option :value="null" disabled>Статус</b-form-select-option>
-                                        </template>
-                                        <b-form-select-option :value="0">Any</b-form-select-option> <!-- TODO: Change options !-->
-                                    </b-form-select>
-                                    <b-form-select>
-                                        <template #first>
-                                            <b-form-select-option :value="null" disabled>Переведён</b-form-select-option>
-                                        </template>
-                                        <b-form-select-option :value="1">Первый год</b-form-select-option> <!-- TODO: change options !-->
-                                    </b-form-select>
-                                </b-button-group>
-                            </template>
-                        </b-table>
-                    </b-tab>
-                    <b-tab title="Резерв">
-                        <b-button>Скачать в Excel</b-button>
-                        <b-table
-                            :items="groupOpened.students"
-                            striped hover
-                        >
-                            <template
-                                #cell(действия)="data"
-                            >
-                                <b-button-group>
-                                    <b-button>
-                                        Отозвать
-                                    </b-button>
-                                    <b-form-select>
-                                        <template #first>
-                                            <b-form-select-option :value="null" disabled>Статус</b-form-select-option>
-                                        </template>
-                                        <b-form-select-option :value="0">Any</b-form-select-option> <!-- TODO: Change options !-->
-                                    </b-form-select>
-                                    <b-form-select>
-                                        <template #first>
-                                            <b-form-select-option :value="null" disabled>Переведён</b-form-select-option>
-                                        </template>
-                                        <b-form-select-option :value="1">Первый год</b-form-select-option> <!-- TODO: change options !-->
-                                    </b-form-select>
-                                </b-button-group>
-                            </template>
-                        </b-table>
-                    </b-tab>
-                </b-tabs>
+                <StudentList :input="JSON.stringify(groupOpened)" />
+            </b-modal>
+
+            <b-modal
+                title="Резерв"
+                hide-footer
+                v-model="show.reserveModal"
+                size="xl"
+            >
+                <StudentList :show-event-manager="false" :input="JSON.stringify(reserveOpened)" />
             </b-modal>
         </b-overlay>
     </main>
@@ -88,21 +39,25 @@
 
 <script>
 import Header from '../components/Header'
+import StudentList from '../components/StudentList'
 import {Admin} from '../models/Admin'
+import clone from 'clone'
 
 export default {
     name: "Teacher",
     components: {
-        Header,
+        Header, StudentList
     },
     data() {
         return {
             show: {
                 overlay: true,
-                modal: false
+                modal: false,
+                reserveModal: false,
             },
             associations: [],
-            groupOpened: {}
+            groupOpened: {},
+            reserveOpened: {},
         }
     },
     created() {
@@ -111,10 +66,24 @@ export default {
         const fields = {
             id: null,
             name: null,
+            proposals: {
+              id: null,
+              isReserve: null,
+              child: {
+                id: null,
+                surname: null,
+                name: null,
+                lastname: null,
+                email: null,
+                phone: null,
+              }
+            },
             groups: {
                 id: null,
                 name: null,
+                association_id: null,
                 students: {
+                    id: null,
                     surname: null,
                     name: null,
                     lastname: null,
@@ -132,24 +101,41 @@ export default {
     },
     methods: {
         //WARNING: methods for fornt more stabilty
-        openGroup(group) {
-            const students = []
+        createObjectForTable(association, opened) {
+          const students = [];
 
-            for (let student of group.students) {
-                console.log(student)
-                let row = {
-                    'фамилия': student.surname,
-                    "имя": student.name,
-                    "отчетво": student.lastname,
-                    "почта": student.email,
-                    "номер телефона": student.phone,
-                    "действия": ''
-                }
-                students.push(row)
-            }
-            group.students  =  students
-            this.groupOpened = group
-            this.show.modal = true
+          for (let student of opened.students) {
+            let row = {
+              'id': student.id,
+              'Фамилия': student.surname,
+              "Имя": student.name,
+              "Отчетво": student.lastname,
+              "Почта (ребенка)": student.email,
+              "Номер телефона (ребенка)": student.phone,
+              "Действия": ''
+            };
+            students.push(row);
+          }
+
+          const tableData = clone(opened);
+          tableData.groups = association.groups.map(el => ({
+            name: el.name,
+            id: el.id,
+          }));
+          tableData.students = clone(students);
+          return tableData
+        },
+
+        openGroup(association, opened) {
+            this.groupOpened = this.createObjectForTable(association, opened);
+            this.show.modal = true;
+        },
+        openReserve(association) {
+            const onOpen = {
+              students: association.proposals.filter(el => el.isReserve).map(el => ({ ...el.child}))
+            };
+            this.reserveOpened = this.createObjectForTable(association, onOpen);
+            this.show.reserveModal = true;
         }
     }
 }
