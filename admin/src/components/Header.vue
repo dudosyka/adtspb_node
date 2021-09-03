@@ -3,11 +3,9 @@
 		<img src="../assets/images/pjaka.jpg" style="display: none">
 		<h1>ADTSPB Admin</h1>
 		<nav class="links-container">
-			<router-link to="/statistics">Статистика(</router-link>
-			<router-link to="/associations">Объединения</router-link>
-			<router-link to="/proposals">Заявления</router-link>
-			<router-link to="/callback">Запросы</router-link>
-            <router-link to="/teacher">Преподавателю</router-link>
+	      <template v-for='item in menu'>
+	          <router-link :to='item.link'>{{ item.title }}</router-link>
+	      </template>
 		</nav>
 	</header>
 </template>
@@ -38,4 +36,55 @@
 </style>
 
 <script>
+import AppConfig from '../config/AppConfig'
+
+function buildMenuItem(link, title) {
+    return {
+        link,
+        title
+    };
+}
+
+export default {
+  props: {
+    newProposal: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
+    return {
+        isChild: false,
+        manageChildren: false,
+        children: [],
+        navVisibility: true
+    }
+  },
+  created() {
+  },
+  computed: {
+      menu: function () {
+          let menu = {
+              '1home': {
+                  link: "/statistics",
+                  title: "Статистика",
+              },
+			  '2associations': {
+				  link: "/associations",
+				  title: "Объединения",
+			  }
+          }
+
+		  if (hasRole(AppConfig.teacher_role_id)) {
+			  menu['3teacher'] = buildMenuItem("/teacher", 'Преподавателю')
+		  }
+		  else {
+			  menu['3proposals'] = buildMenuItem("/proposals", "Заявления");
+			  menu['4callbacks'] = buildMenuItem("/callbacks", "Модерация");
+		  }
+
+          return menu;
+      }
+  }
+}
 </script>
