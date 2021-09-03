@@ -113,6 +113,9 @@ export default {
       this.dataForExcel = clone(this.students).map(el => {
         delete el['Действия'];
         delete el.id;
+        delete el.proposal_id;
+        delete el.proposal_status_id;
+        delete el.proposal_is_document_taken;
         el['Название объединения'] = data.association_name;
         el['Номер группы'] = data.name;
         return el;
