@@ -53,7 +53,9 @@ module.exports = new graphql.GraphQLObjectType({
                 let { query, ids } = model.db.createRangeQuery(false, allowed, "id");
                 query = "WHERE `main`."+query;
 
-                return  await Association.getAssociations(null, obj.selections, model, query, ids, User.newModel());
+                return  await Association.getAssociations(null, obj.selections, model, query, ids, User.newModel()).catch(err => {
+                    console.log(err);
+                });
             }
         },
         rbac: {

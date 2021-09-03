@@ -238,11 +238,23 @@ User.prototype.getFullData = async function (id = false, selections = {}, model 
         proposals = await model.selectProposalsList(field, rangeIds, selections.proposals);
     }
 
+    let parents = null;
+    if (selections.parent) {
+        let field = 'child_id';
+        const userChild = UserChild.newModel();
+        let rangeIds = await userChild.getParents(data.map(el => el.user_id));
+        parents = await this.getFullDataAsObject(rangeIds.map(el => Object.keys(el)[0]), selections.parent, model, role);
+        rangeIds.map(el => {
+            parents[Object.values(el)[0]] = parents[Object.keys(el)[0]];
+        });
+    }
+
     const result = {};
 
     data.map(user => {
         user.id = user.user_id;
         user.proposals = Object.keys(proposals ?? {}).length > 0 ? proposals[user.id] : null;
+        user.parent = Object.keys(parents ?? {}).length > 0 ? parents[user.id] : null;;
         result[user.id] = user;
         return user;
     })

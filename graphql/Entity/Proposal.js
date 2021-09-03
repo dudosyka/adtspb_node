@@ -87,13 +87,13 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
 
     let parents = {};
     if (selections.parent) {
-        parents = await userModel.getFullDataAsObject(proposals.map(el => el.parent_id), selections);
+        parents = await userModel.getFullDataAsObject(proposals.map(el => el.parent_id), selections.parent);
     }
 
     let children = {};
     if (selections.child) {
         const range = this.db.createRangeQuery('id', proposals, 'child_id');
-        children = await userModel.getFullDataAsObject(proposals.map(el => el.child_id), selections);
+        children = await userModel.getFullDataAsObject(proposals.map(el => el.child_id), selections.child);
     }
     let isReserve = {};
     if (selections.isReserve) {
@@ -255,6 +255,7 @@ Proposal.prototype.createNew = async function (userModel, userExtraDataModel, fr
 };
 
 Proposal.prototype.setDocumentTaken = async function (proposal, logger, admin_id, allowed)  {
+    console.log(proposal);
     const oldData = await this.db.select(this, "`id` = ?", [ proposal ]).then(data => {
         return data[0];
     });
@@ -313,6 +314,13 @@ Proposal.prototype.generateResolution = async function (child, parent, childExtr
     let pdf = new Pdf(this);
     const buffer = await pdf.generateResolution(child, parent, childExtraData);
     return buffer.toString('base64');
+}
+Proposal.getByStudentAndGroup = async function (child, group) {
+    const req = await this.db.query('select * from `proposal` where `group_selected` = ? and `child_id` = ?', [ group, child ]);
+    if (!req.length)
+        throw Error("Proposal not found");
+
+    return req[0].id;
 }
 
 module.exports = (new Proposal());

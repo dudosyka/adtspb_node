@@ -144,6 +144,25 @@ Proposal.setDocumentTaken = async function (proposal) {
     })
 }
 
+Proposal.setDocumentTakenByStudent = async function (proposal, child, group) {
+    const req = `
+        mutation ($child: Int, $group: Int) {
+            admin {
+                set_document_taken (child: $child, group: $group)
+            }
+        }
+    `;
+
+    const data = {
+        child, group
+    };
+
+    return await _request('api', req, data).then(res => {
+        console.log(res);
+        return res.admin ?? res;
+    })
+}
+
 Proposal.editStatus = async function (proposal_id, new_status) {
     const req = `
         mutation ($input: ProposalStatusInput) {

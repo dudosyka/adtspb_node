@@ -90,6 +90,13 @@ UserChild.prototype.getChildren = async function (child = true, agreed = 0, sele
     }
 }
 
+UserChild.prototype.getParents = async function (children) {
+    const { query, ids } = this.db.createRangeQuery(false, children, 'child_id');
+    const data = await this.db.select(this, query, ids);
+
+    return data.map(el =>({[el.parent_id]: el.child_id}));
+}
+
 UserChild.prototype.getChildRequests = async function () {
     return this.getChildren();
 }

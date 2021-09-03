@@ -172,7 +172,13 @@ module.exports = new graphql.GraphQLObjectType({
             args: {
                 proposal: {
                     type: graphql.GraphQLInt
-                }
+                },
+                child: {
+                    type: graphql.GraphQLInt
+                },
+                group: {
+                    type: graphql.GraphQLInt
+                },
             },
             async resolve (obj, data) {
             if (!obj.adminModel.hasAccess(28)) //Proposal status editing
@@ -180,10 +186,20 @@ module.exports = new graphql.GraphQLObjectType({
 
             const allowed = await obj.adminModel.getAllowedAssociations();
             const admin_id = obj.viewer.id;
-            await proposal.setDocumentTaken(data.proposal, logger, admin_id, allowed);
+
+            if (data.child && data.group) {
+                data.proposal = await proposal.getByStudentAndGroup(data.child, data.group).catch(err => {
+                    console.log(err);
+                });
+            }
+
+            await proposal.setDocumentTaken(data.proposal, logger, admin_id, allowed).catch(err => {
+                console.log(err);
+            });
             return true;
             }
         },
+
         recall_proposal: {
             type: graphql.GraphQLBoolean,
             args: {
@@ -204,12 +220,7 @@ module.exports = new graphql.GraphQLObjectType({
                 const admin_id = obj.viewer.id;
 
                 if (data.child && data.group) {
-
-                    const req = await proposal.db.query('select * from `proposal` where `group_selected` = ? and `child_id` = ?', [ data.group, data.child ]);
-                    if (!req.length)
-                        throw Error("Proposal not found");
-
-                    data.proposal = req[0].id;
+                    data.proposal = await proposal.getByStudentAndGroup(data.child, data.group);
                 }
 
                 const model = await Proposal.createFrom({ id: data.proposal });
