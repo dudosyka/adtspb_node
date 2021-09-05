@@ -74,14 +74,11 @@ export default {
 				  title: "Объединения",
 			  }
           }
-
-		  if (hasRole(AppConfig.teacher_role_id)) {
-			  menu['3teacher'] = buildMenuItem("/teacher", 'Преподавателю')
-		  }
-		  else {
+		  if (!hasRole(AppConfig.teacher_role_id)) {
 			  menu['3proposals'] = buildMenuItem("/proposals", "Заявления");
 			  menu['4callbacks'] = buildMenuItem("/callbacks", "Модерация");
 		  }
+		  menu['3teacher'] = buildMenuItem("/teacher", 'Преподавателю')
 
           return menu;
       }
