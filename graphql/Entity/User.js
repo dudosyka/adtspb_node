@@ -108,7 +108,7 @@ User.prototype.getAllowedAssociations = async function () {
     return (await this.db.query(query, data)).map(el => el.id);
 }
 
-User.prototype.auth = async function (data) {z
+User.prototype.auth = async function (data) {
     return new Promise(async (resolve, reject) => {
         let res = await this.db.select(this, "`email` = ? OR `phone` = ?", [ data['user'], data['user'] ]);
         if (res.length)
