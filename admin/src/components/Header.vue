@@ -76,7 +76,7 @@ export default {
           }
 		  if (!hasRole(AppConfig.teacher_role_id)) {
 			  menu['3proposals'] = buildMenuItem("/proposals", "Заявления");
-			  menu['4callbacks'] = buildMenuItem("/callbacks", "Модерация");
+			  menu['4callbacks'] = buildMenuItem("/callback", "Модерация");
 		  }
 		  menu['3teacher'] = buildMenuItem("/teacher", 'Преподавателю')
 
