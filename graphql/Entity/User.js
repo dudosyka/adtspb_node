@@ -89,21 +89,23 @@ User.prototype.getSector = async function () {
 
 User.prototype.getAllowedAssociations = async function () {
     const sector_id = await this.getSector();
-    let query = " WHERE `join`.`teacher_id` = ?";
+
+    let query = "select `association_id` as `id` from `association_teacher` where `user_id` = ?";
     let data = [ this.__get('id') ];
 
     if (sector_id !== false) {
-        query += "`join`.`sector_id` = ?";
+        query = "select `association_id` as `id` from `association_sector` where `sector_id` = ?";
         data.push(sector_id);
     }
 
     if (this.hasRole(11) || this.hasRole(14)) { //If super admin or admission office allow to all
         query = "WHERE `main`.`id` != ?";
         data = [ -1 ];
+        const association = Association.newModel();
+        return await association.getAssociations(null, {}, null, query, data).then(data => data.map(association => association.id));
     }
 
-    const association = Association.newModel();
-    return await association.getAssociations(null, {}, null, query, data).then(data => data.map(association => association.id));
+    return (await this.db.query(query, data)).map(el => el.id);
 }
 
 User.prototype.auth = async function (data) {

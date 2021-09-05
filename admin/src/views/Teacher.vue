@@ -118,6 +118,7 @@ export default {
                   isGroupSelected: null,
                   status: {
                       id: null,
+                      num: null,
                   },
                   child: {
                     id: null,
@@ -211,17 +212,17 @@ export default {
         },
 
         openReserve(association) {
-            this.reserveOpened = this.createObjectForTable(association, this.getOnOpen(association, el => el.isReserve));
+            this.reserveOpened = this.createObjectForTable(association, this.getOnOpen(association, el => (el.isReserve && el.status[0].num != 0)));
             this.show.reserveModal = true;
         },
 
         openNotDocumentTaken(association) {
-            this.notDocumentTaken = this.createObjectForTable(association, this.getOnOpen(association, el => (!el.isReserve && !el.isDocumentTaken)));
+            this.notDocumentTaken = this.createObjectForTable(association, this.getOnOpen(association, el => (!el.isReserve && !el.isDocumentTaken && el.status[0].num != 0)));
             this.show.notDocumentTakenModal = true;
         },
 
         openNotGroupSelected(association) {
-            this.notGroupSelected = this.createObjectForTable(association, this.getOnOpen(association, el => (!el.isReserve && el.isGroupSelected == 0)));
+            this.notGroupSelected = this.createObjectForTable(association, this.getOnOpen(association, el => (!el.isReserve && el.isGroupSelected == 0 && el.status[0].num != 0)));
             this.show.notGroupSelectedModal = true;
         },
 
