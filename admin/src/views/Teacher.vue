@@ -1,7 +1,6 @@
 <template>
     <main class="bg-wrapper">
         <Header />
-      <b-button @click="showWarn">sdf</b-button>
         <b-alert
           :show="show.warn.crowded"
           class="sdlakfjslad"
