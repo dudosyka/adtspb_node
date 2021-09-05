@@ -14,6 +14,12 @@ UserGroup.prototype.fields = {
 
 UserGroup.prototype.table = "user_group";
 
+UserGroup.prototype.getOldGroup = async function (range) {
+    const groups = await this.db.query('SELECT `group_id` FROM `user_group` WHERE `user_id` = ? AND ' + range.query, range.ids);
+    console.log(groups);
+    return (groups.length) ? groups[0].group_id : null;
+}
+
 UserGroup.prototype.execInsertQuery = async function (proposals, association_id, group_id) {
     let query = "";
     let ids = [];
@@ -23,11 +29,13 @@ UserGroup.prototype.execInsertQuery = async function (proposals, association_id,
             continue;
         const range = this.db.createRangeQuery('id', proposal.association.groups, 'group_id');
         range.ids.unshift(proposal.child.id);
+        const old_group_id = await this.getOldGroup(range);
         await this.db.query('DELETE FROM `user_group` WHERE `user_id` = ? AND ' + range.query, range.ids);
         query += "INSERT INTO `user_group` (`group_id`, `user_id`) VALUES (?, ?);";
         ids.push(group_id, proposal.child.id);
+
         const userGroupLog = UserGroupLog.newModel();
-        userGroupLog.logJoin(proposal.child_id, group_id);
+        userGroupLog.logJoin(proposal.child_id, group_id, old_group_id);
     }
 
     return await this.db.query(query, ids);
