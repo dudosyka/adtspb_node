@@ -1,6 +1,15 @@
 <template>
     <main class="bg-wrapper">
         <Header />
+      <b-button @click="showWarn">sdf</b-button>
+        <b-alert
+          :show="show.warn.crowded"
+          class="sdlakfjslad"
+          variant="danger"
+          dismissible
+        >
+          Группа переполнена
+        </b-alert>
         <b-overlay :show="show.overlay">
             <b-card
                 v-for="association of associations"
@@ -82,6 +91,9 @@ export default {
                 reserveModal: false,
                 notDocumentTakenModal: false,
                 notGroupSelectedModal: false,
+                warn: {
+                  crowded: false,
+                }
             },
             associations: [],
             groupOpened: {students: []},
@@ -212,6 +224,11 @@ export default {
         openNotGroupSelected(association) {
             this.notGroupSelected = this.createObjectForTable(association, this.getOnOpen(association, el => (!el.isReserve && el.isGroupSelected == 0)));
             this.show.notGroupSelectedModal = true;
+        },
+
+        showWarn() {
+          this.show.warn.crowded = true
+          setTimeout(() => { this.show.warn.crowded = false}, 3000)
         }
     }
 }
@@ -220,5 +237,11 @@ export default {
 <style scoped>
     .modal-xl {
         max-width: 80% !important;
+    }
+    .sdlakfjslad {
+      position: fixed;
+      z-index: 999;
+      top: 15px;
+      left: 50%; transform: translateX(-50%);
     }
 </style>
