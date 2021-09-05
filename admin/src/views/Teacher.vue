@@ -1,14 +1,6 @@
 <template>
     <main class="bg-wrapper">
         <Header />
-        <b-alert
-          :show="show.warn.crowded"
-          class="sdlakfjslad"
-          variant="danger"
-          dismissible
-        >
-          Группа переполнена
-        </b-alert>
         <b-overlay :show="show.overlay">
             <b-card
                 v-for="association of associations"

@@ -1,5 +1,13 @@
 <template>
   <b-card>
+    <b-alert
+      :show="warn.crowded"
+      class="sdlakfjslad"
+      variant="danger"
+      dismissible
+    >
+      Группа переполнена
+    </b-alert>
     <download-excel
         :data   = "dataForExcel"
         worksheet = "GROUP_DATA"
@@ -98,6 +106,9 @@ export default {
       openedGroupId: null,
       openedAssociationId: null,
       dataForExcel: null,
+      warn: {
+        crowded: false
+      }
     }
   },
   async created() {
@@ -168,7 +179,9 @@ export default {
                   await Proposal.setDocumentTaken(Number(proposal_id));
                   break;
               }
-              await Proposal.setDocumentTakenByStudent(Number(child), Number(group));
+              await Proposal.setDocumentTakenByStudent(Number(child), Number(group)).catch(() => {
+                this.showWarn()
+              })
           }
         }
 
@@ -185,6 +198,11 @@ export default {
         if (proposal_id)
             return await Proposal.joinGroup(Number(proposal_id), Number(this.groupSelected[child]));
         await Proposal.setGroupByStudent(child, association, this.groupSelected[child]);
+    },
+
+    showWarn() {
+      this.warn.crowded = true
+      setTimeout(() => { this.show.warn.crowded = false}, 3000)
     }
   }
 }
@@ -201,5 +219,12 @@ export default {
     background-color: red;
 	color: white;
     padding: 5px;
+}
+
+.sdlakfjslad {
+  position: fixed;
+  z-index: 999;
+  top: 15px;
+  left: 50%; transform: translateX(-50%);
 }
 </style>
