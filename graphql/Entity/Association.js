@@ -46,8 +46,8 @@ Association.prototype.getAssociations = async function (age = null, selections =
 
     let groups = null;
     if (selections.groups) {
-        const model = Group.newModel();
-        groups = await model.getAssociationGroups(ids, selections.groups, userModel);
+        const groupModel = Group.newModel();
+        groups = await groupModel.getAssociationGroups(ids, selections.groups, userModel, model);
     }
 
     let proposals = null;

@@ -55,7 +55,6 @@ Proposal.prototype.calculateReserve = function (association, proposal_id, queue 
             const queue_position = i - AppConfig.group_size * association.group_count;
             return  queue ? {isReserve, queue: queue_position} : isReserve;
         }
-        console.log(proposal.status[0].num);
         if (proposal.status[0].num != 0 && proposal.status[0].num != 3 && proposal.status[0].num != 4)
             i++
     }
@@ -240,7 +239,6 @@ Proposal.prototype.canJoinAssociation = async function (userModel, userExtraData
 
 Proposal.prototype.createNew = async function (userModel, userExtraDataModel, fromAdmin = false) {
     await this.canJoinAssociation(userModel, userExtraDataModel, fromAdmin);
-    console.log("djhdjahjdkjsa");
 
     const proposal = await this.save(true);
 
@@ -255,7 +253,6 @@ Proposal.prototype.createNew = async function (userModel, userExtraDataModel, fr
 };
 
 Proposal.prototype.setDocumentTaken = async function (proposal, logger, admin_id, allowed)  {
-    console.log(proposal);
     const oldData = await this.db.select(this, "`id` = ?", [ proposal ]).then(data => {
         return data[0];
     });
@@ -278,7 +275,6 @@ Proposal.prototype.recall = async function (requester, admin = false) {
     if (Number(requester) !== this.__get('parent_id') && !admin) {
             throw Error('Forbidden');
     }
-    console.log(requester, !admin, this.__get('parent_id'));
 
     if (this.__get('document_taken') == 1) {
         throw Error('Document taken');

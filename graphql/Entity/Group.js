@@ -14,7 +14,7 @@ Group.prototype.fields = {
 
 Group.prototype.table = "group";
 
-Group.prototype.getAssociationGroups = async function (association_ids, selections, userModel) {
+Group.prototype.getAssociationGroups = async function (association_ids, selections, userModel, proposalModel) {
     const { ids, query } = this.db.createRangeQuery(false, association_ids, '`association_id`');
 
     const res = await this.db.query("SELECT * FROM `group` as `main` WHERE " + query, ids);
@@ -29,7 +29,8 @@ Group.prototype.getAssociationGroups = async function (association_ids, selectio
     let students = {};
     if (selections.students) {
         const userGroup = UserGroup.newModel();
-        const students_ids = await userGroup.getStructure(groups_id);
+        // const students_ids = await userGroup.getStructure(groups_id);
+        const students_ids = await userGroup.getStudentsDocumentTaken(groups_id, proposalModel);
 
         for (id of Object.keys(students_ids)) {
             const rangeQuery = this.db.createRangeQuery(false, students_ids[id].map(el => el.user_id), '`main`.`id`');

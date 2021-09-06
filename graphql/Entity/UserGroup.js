@@ -112,4 +112,56 @@ UserGroup.prototype.getStructure = async function (groups_id) {
     return result;
 }
 
+UserGroup.prototype.getStudentsDocumentTaken = async function (groups_id, proposalModel) {
+    const structureData = await this.getStructure(groups_id);
+    let structure = structureData;
+    // Object.keys(structureData).map(key => {
+    //     structureData[key].map(userGroup => {
+    //         if (structure[key]) {
+    //             structure[key][userGroup.user_id] = userGroup;
+    //         }
+    //         else {
+    //             structure[key] = {
+    //                 [userGroup.user_id]: userGroup
+    //             };
+    //         }
+    //     });
+    // });
+
+    const proposalsData = await proposalModel.selectProposalsList('group_selected', groups_id, {status: true, });
+    let proposals = {};
+    Object.keys(proposalsData).map(key => {
+        proposalsData[key].map(proposal => {
+            if (proposals[key]) {
+                proposals[key][proposal.child_id] = proposal;
+            }
+            else {
+                proposals[key] = {
+                    [proposal.child_id]: proposal
+                };
+            }
+        });
+    });
+    console.log(proposals);
+
+    const result = {};
+    Object.keys(structure).map(key => {
+        const el = structure[key];
+        const groupProposals = proposals[key];
+
+        el.map(userGroup => {
+            const proposal = groupProposals[userGroup.user_id];
+            if (proposal.document_taken == 0 || proposal.status[0].num == 0)
+                return
+
+            if (result[key])
+                result[key].push(userGroup);
+            else
+                result[key] = [ userGroup ];
+        });
+    });
+
+    return result;
+}
+
 module.exports = (new UserGroup());
