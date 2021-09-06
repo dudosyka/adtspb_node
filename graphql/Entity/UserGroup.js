@@ -151,6 +151,8 @@ UserGroup.prototype.getStudentsDocumentTaken = async function (groups_id, propos
 
         el.map(userGroup => {
             const proposal = groupProposals[userGroup.user_id];
+            if (proposal == undefined)
+                return;
             if (proposal.document_taken == 0 || proposal.status[0].num == 0)
                 return
 
