@@ -82,6 +82,9 @@ export default {
                 reserveModal: false,
                 notDocumentTakenModal: false,
                 notGroupSelectedModal: false,
+                warn: {
+                  crowded: false,
+                }
             },
             associations: [],
             groupOpened: {students: []},
@@ -213,6 +216,11 @@ export default {
         openNotGroupSelected(association) {
             this.notGroupSelected = this.createObjectForTable(association, this.getOnOpen(association, el => (!el.isReserve && el.isGroupSelected == 0 && el.status[0].num != 0)));
             this.show.notGroupSelectedModal = true;
+        },
+
+        showWarn() {
+          this.show.warn.crowded = true
+          setTimeout(() => { this.show.warn.crowded = false}, 3000)
         }
     }
 }
@@ -221,5 +229,11 @@ export default {
 <style scoped>
     .modal-xl {
         max-width: 80% !important;
+    }
+    .sdlakfjslad {
+      position: fixed;
+      z-index: 999;
+      top: 15px;
+      left: 50%; transform: translateX(-50%);
     }
 </style>

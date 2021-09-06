@@ -1,5 +1,13 @@
 <template>
   <b-card>
+    <b-alert
+      :show="warn.crowded"
+      class="sdlakfjslad"
+      variant="danger"
+      dismissible
+    >
+      Группа переполнена
+    </b-alert>
     <download-excel
         :data   = "dataForExcel"
         worksheet = "GROUP_DATA"
@@ -27,19 +35,33 @@
           #cell(действия)="data"
       >
         <b-button-group>
-          <b-form-select v-if="showEventManager" v-model="eventSelected[data.item.id]">
-            <b-form-select-option :value="null" disabled>Смена статуса</b-form-select-option>
-            <b-form-select-option :value="0">Отказались</b-form-select-option>
-            <b-form-select-option :value="1">Переден на второй год</b-form-select-option>
-            <b-form-select-option :value="2">Переден на третий год</b-form-select-option>
-            <b-form-select-option :value="3">Документы принесены</b-form-select-option>
-          </b-form-select>
-          <b-button v-if="showEventManager" @click="saveEvent(data.item.id, openedGroupId, data.item.proposal_id)" variant='success'>Сохранить</b-button>
-          <b-form-select v-model="groupSelected[data.item.id]">
-            <b-form-select-option :value="null" disabled>Смена группы</b-form-select-option>
-            <b-form-select-option v-for="group of groups" v-if='group.id != openedGroupId' :value="group.id">{{ group.name }}</b-form-select-option>
-          </b-form-select>
-          <b-button @click="saveGroup(data.item.id, openedAssociationId, data.item.proposal_id)" variant='success'>Сохранить</b-button>
+          <b-container>
+            <b-row>
+              <b-col>
+                <b-form-select v-if="showEventManager" v-model="eventSelected[data.item.id]">
+                  <b-form-select-option :value="null" disabled>Смена статуса</b-form-select-option>
+                  <b-form-select-option :value="0">Отказались</b-form-select-option>
+                  <b-form-select-option :value="1">Переден на второй год</b-form-select-option>
+                  <b-form-select-option :value="2">Переден на третий год</b-form-select-option>
+                  <b-form-select-option :value="3">Документы принесены</b-form-select-option>
+                </b-form-select>
+              </b-col>
+              <b-col>
+                <b-button v-if="showEventManager" @click="saveEvent(data.item.id, openedGroupId, data.item.proposal_id)" variant='success'>Сохранить</b-button>
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col>
+                <b-form-select v-model="groupSelected[data.item.id]">
+                  <b-form-select-option :value="null" disabled>Смена группы</b-form-select-option>
+                  <b-form-select-option v-for="group of groups" v-if='group.id != openedGroupId' :value="group.id">{{ group.name }}</b-form-select-option>
+                </b-form-select>
+              </b-col>
+              <b-col>
+                <b-button @click="saveGroup(data.item.id, openedAssociationId, data.item.proposal_id)" variant='success'>Сохранить</b-button>
+              </b-col>
+            </b-row>
+          </b-container>
         </b-button-group>
       </template>
     </b-table>
@@ -84,6 +106,9 @@ export default {
       openedGroupId: null,
       openedAssociationId: null,
       dataForExcel: null,
+      warn: {
+        crowded: false
+      }
     }
   },
   async created() {
@@ -154,7 +179,9 @@ export default {
                   await Proposal.setDocumentTaken(Number(proposal_id));
                   break;
               }
-              await Proposal.setDocumentTakenByStudent(Number(child), Number(group));
+              await Proposal.setDocumentTakenByStudent(Number(child), Number(group)).catch(() => {
+                this.showWarn()
+              })
           }
         }
 
@@ -171,6 +198,11 @@ export default {
         if (proposal_id)
             return await Proposal.joinGroup(Number(proposal_id), Number(this.groupSelected[child]));
         await Proposal.setGroupByStudent(child, association, this.groupSelected[child]);
+    },
+
+    showWarn() {
+      this.warn.crowded = true
+      setTimeout(() => { this.show.warn.crowded = false}, 3000)
     }
   }
 }
@@ -187,5 +219,12 @@ export default {
     background-color: red;
 	color: white;
     padding: 5px;
+}
+
+.sdlakfjslad {
+  position: fixed;
+  z-index: 999;
+  top: 15px;
+  left: 50%; transform: translateX(-50%);
 }
 </style>
