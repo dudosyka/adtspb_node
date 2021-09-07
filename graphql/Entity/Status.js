@@ -64,7 +64,6 @@ Status.prototype.getAll = async function (query, queryData, selections = {}, asO
         return result;
     }
     return res;
-    console.log(res);
 }
 
 Status.prototype.table = "proposal_status";

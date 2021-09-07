@@ -129,7 +129,6 @@ export default {
         this.groupSelected[el.id] = null;
         this.eventSelected[el.id] = null;
       })
-
       this.openedGroupId = data.id;
       this.openedAssociationId = data.association_id;
 
@@ -186,6 +185,7 @@ export default {
         }
 
         if (value != null) {
+          console.log(group, proposal_id);
             if (proposal_id) {
                 await Proposal.editStatus(Number(proposal_id), { id: Number(proposal_status_id), value, text });
             }

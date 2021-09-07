@@ -180,7 +180,6 @@ export default {
             id: el.id,
           }));
           tableData.association_id = association.id;
-          tableData.id = this.openedGroupId;
           tableData.students = clone(students);
           return tableData
         },

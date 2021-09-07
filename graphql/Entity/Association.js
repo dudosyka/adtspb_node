@@ -127,7 +127,6 @@ Association.prototype.newFromInput = async function (input, extraModel) {
     if (res === false) {
         throw Error(JSON.stringify(await this.validate()));
     }
-    console.log(input);
     input.association_id = res.insertId;
     extraModel.load(input);
     await extraModel.save();

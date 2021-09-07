@@ -161,7 +161,6 @@ module.exports = new graphql.GraphQLObjectType({
                         throw Error("Proposal not found");
 
                     input.id = data[0].id;
-                    console.log("dfhjksdhfsdjkf", input);
                 }
 
                 await status.editStatus(input, logger, admin_id, proposal, allowed);
@@ -283,7 +282,6 @@ module.exports = new graphql.GraphQLObjectType({
                 if (!proposals.length)
                     throw Error("Proposal not found");
                 input.proposals = [ proposals[0].id ];
-                console.log(input);
 
                 return await userGroup.joinGroup(input, group, proposal, user, association);
             }

@@ -94,7 +94,6 @@ Proposal.create = async function (association, child) {
 }
 
 Proposal.createFromObject = async function (obj, child_id) {
-    console.log("OBJECT", obj);
     let result = [];
     for (let index in obj) {
         const assoc = obj[index];

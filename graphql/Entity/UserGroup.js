@@ -16,7 +16,6 @@ UserGroup.prototype.table = "user_group";
 
 UserGroup.prototype.getOldGroup = async function (range) {
     const groups = await this.db.query('SELECT `group_id` FROM `user_group` WHERE `user_id` = ? AND ' + range.query, range.ids);
-    console.log(groups);
     return (groups.length) ? groups[0].group_id : null;
 }
 
@@ -142,7 +141,6 @@ UserGroup.prototype.getStudentsDocumentTaken = async function (groups_id, propos
             }
         });
     });
-    console.log(proposals);
 
     const result = {};
     Object.keys(structure).map(key => {
