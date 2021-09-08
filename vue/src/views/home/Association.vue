@@ -172,7 +172,6 @@ export default {
         console.log(data)
         data.map(association => {
             const id = association.id;
-
             //this properties must be reactive
             this.$set(this.associations, id, association);
             this.$set(this.associations[id], 'already', false);
@@ -181,9 +180,6 @@ export default {
                 this.$set(this.associations[id].groups[0].timetable, 'show', true);
             }
         });
-        console.log(80, this.associations)
-        
-        console.log(81, this.associations)
 
         this.show.warn = Object.keys(this.associations).length < 1;
 
@@ -206,9 +202,10 @@ export default {
 
         User.getFullData(fields, child).then(data => {
             this.child = data.data;
-            // console.log("CHILD", this.child);
             this.child.proposals.map(el => {
                 if (el.status[0].num != 0) {
+                    if (!this.associations[el.association.id])
+                      return;
                     this.associations[el.association.id].already = true;
                     this.proposalParms.associations[el.association.id] = el.association;
                     this.proposalParms.associations[el.association.id].already = true;
