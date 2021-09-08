@@ -311,7 +311,8 @@ Proposal.prototype.generateResolution = async function (child, parent, childExtr
     const buffer = await pdf.generateResolution(child, parent, childExtraData);
     return buffer.toString('base64');
 }
-Proposal.getByStudentAndGroup = async function (child, group) {
+
+Proposal.prototype.getByStudentAndGroup = async function (child, group) {
     const req = await this.db.query('select * from `proposal` where `group_selected` = ? and `child_id` = ?', [ group, child ]);
     if (!req.length)
         throw Error("Proposal not found");
