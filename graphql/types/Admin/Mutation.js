@@ -280,7 +280,7 @@ module.exports = new graphql.GraphQLObjectType({
                     proposals: []
                 };
 
-                const proposals = await proposal.db.query('select `main`.`id` as `id` from `proposal` as `main` left join `proposal_status` as `status` on `main`.`id`= `status`.`id` where `status`.`num` != 0 and `main`.`child_id` = ? and `main`.`association_id` = ?', [ data.child, data.association ]);
+                const proposals = await proposal.db.query('select `main`.`id` as `id` from `proposal` as `main` left join `proposal_status` as `status` on `main`.`id`= `status`.`proposal_id` where `status`.`num` != 0 and `main`.`child_id` = ? and `main`.`association_id` = ?', [ data.child, data.association ]);
 
                 if (!proposals.length)
                     throw Error("Proposal not found");
