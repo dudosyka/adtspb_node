@@ -213,7 +213,7 @@ export default {
         },
 
         openNotGroupSelected(association) {
-            this.notGroupSelected = this.createObjectForTable(association, this.getOnOpen(association, el => (!el.isReserve && el.isGroupSelected == 0 && el.status[0].num != 0)));
+            this.notGroupSelected = this.createObjectForTable(association, this.getOnOpen(association, el => (!el.isReserve && el.isDocumentTaken && el.isGroupSelected == 0 && el.status[0].num != 0)));
             this.show.notGroupSelectedModal = true;
         },
 
