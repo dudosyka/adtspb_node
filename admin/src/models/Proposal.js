@@ -61,16 +61,17 @@ Proposal.downloadPdf = async function (proposal_id, name) {
     a.remove();
 }
 
-Proposal.recall = async function (proposal) {
+Proposal.recall = async function (proposal, fromTeacher = false) {
     const req = `
-        mutation ($proposal: Int) {
+        mutation ($proposal: Int, $fromTeacher: Boolean) {
             admin {
-                recall_proposal (proposal: $proposal)
+                recall_proposal (proposal: $proposal, fromTeacher: $fromTeacher)
             }
         }
     `;
     const data = {
-        proposal
+        proposal,
+        fromTeacher
     };
 
     return await _request('api', req, data).then(res => {
@@ -216,18 +217,19 @@ Proposal.editStatusByStudent = async function (student, group, new_status) {
     })
 }
 
-Proposal.recallByStudent = async function (student, group) {
+Proposal.recallByStudent = async function (student, group, fromTeacher = false) {
     const req = `
-        mutation ($child: Int, $group: Int) {
+        mutation ($child: Int, $group: Int, $fromTeacher: Boolean) {
             admin {
-                recall_proposal (child: $child, group: $group)
+                recall_proposal (child: $child, group: $group, fromTeacher: $fromTeacher)
             }
         }
     `;
 
     const data = {
         child: Number(student),
-        group: Number(group)
+        group: Number(group),
+        fromTeacher
     };
 
     return await _request('api', req, data).then(res => {

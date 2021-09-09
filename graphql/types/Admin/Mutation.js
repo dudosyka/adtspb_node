@@ -211,6 +211,9 @@ module.exports = new graphql.GraphQLObjectType({
                 group: {
                     type: graphql.GraphQLInt
                 },
+                fromTeacher: {
+                    type: graphql.GraphQLBoolean
+                }
             },
             async resolve(obj, data) {
                 if (!obj.adminModel.hasAccess(28)) //Proposal status editing
@@ -223,7 +226,7 @@ module.exports = new graphql.GraphQLObjectType({
                 }
 
                 const model = await Proposal.createFrom({ id: data.proposal });
-                await model.recall(admin_id, true);
+                await model.recall(admin_id, true, data.fromTeacher);
                 return true;
             }
         },

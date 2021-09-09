@@ -268,7 +268,7 @@ Proposal.prototype.setDocumentTaken = async function (proposal, logger, admin_id
     return true;
 }
 
-Proposal.prototype.recall = async function (requester, admin = false) {
+Proposal.prototype.recall = async function (requester, admin = false, teacher = false) {
     if (this.__get('association_id') === null)
         throw Error('Proposal not found');
 
@@ -276,7 +276,7 @@ Proposal.prototype.recall = async function (requester, admin = false) {
             throw Error('Forbidden');
     }
 
-    if (this.__get('document_taken') == 1) {
+    if (this.__get('document_taken') == 1 && !teacher) {
         throw Error('Document taken');
     }
 

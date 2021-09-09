@@ -154,11 +154,11 @@ export default {
             value = 0;
             text = "Отозвано";
             if (proposal_id) {
-                await Proposal.recall(Number(proposal_id));
+                await Proposal.recall(Number(proposal_id), true);
                 value = null;
                 break;
             }
-            await Proposal.recallByStudent(child, group, { value, text });
+            await Proposal.recallByStudent(child, group, true);
             value = null;
             break;
           }
