@@ -61,16 +61,17 @@ Proposal.downloadPdf = async function (proposal_id, name) {
     a.remove();
 }
 
-Proposal.recall = async function (proposal) {
+Proposal.recall = async function (proposal, fromTeacher = false) {
     const req = `
-        mutation ($proposal: Int) {
+        mutation ($proposal: Int, $fromTeacher: Boolean) {
             admin {
-                recall_proposal (proposal: $proposal)
+                recall_proposal (proposal: $proposal, fromTeacher: $fromTeacher)
             }
         }
     `;
     const data = {
-        proposal
+        proposal,
+        fromTeacher
     };
 
     return await _request('api', req, data).then(res => {
@@ -101,6 +102,30 @@ Proposal.joinGroup = async function (proposal, group_id) {
     })
 }
 
+Proposal.setGroupByStudent = async function (child, association, group) {
+    const req = `
+        mutation ($child: Int, $association: Int, $group: Int) {
+            admin {
+                set_group_by_student (child: $child, association: $association, group: $group)
+            }
+        }
+    `;
+
+    const data = {
+        child: Number(child),
+        association: Number(association),
+        group: Number(group)
+    };
+
+    return await _request('api', req, data).then(data => {
+        console.log(data);
+        return data.admin ?? data;
+    }).catch(err => {
+        console.log(err);
+        throw err;
+    })
+}
+
 Proposal.setDocumentTaken = async function (proposal) {
     const req = `
         mutation ($proposal: Int) {
@@ -112,6 +137,25 @@ Proposal.setDocumentTaken = async function (proposal) {
 
     const data = {
         proposal
+    };
+
+    return await _request('api', req, data).then(res => {
+        console.log(res);
+        return res.admin ?? res;
+    })
+}
+
+Proposal.setDocumentTakenByStudent = async function (proposal, child, group) {
+    const req = `
+        mutation ($child: Int, $group: Int) {
+            admin {
+                set_document_taken (child: $child, group: $group)
+            }
+        }
+    `;
+
+    const data = {
+        child, group
     };
 
     return await _request('api', req, data).then(res => {
@@ -136,6 +180,56 @@ Proposal.editStatus = async function (proposal_id, new_status) {
             num: Number(new_status.value),
             proposal_id: Number(proposal_id)
         }
+    };
+
+    return await _request('api', req, data).then(res => {
+        console.log(res);
+        return res.admin ?? res;
+    }).catch(err => {
+        console.log(err);
+    })
+}
+
+Proposal.editStatusByStudent = async function (student, group, new_status) {
+    const req = `
+        mutation ($input: ProposalStatusInput) {
+            admin {
+                edit_proposal_status (input: $input)
+            }
+        }
+    `;
+
+    const data = {
+        input: {
+            id: Number(new_status.id),
+            text: new_status.text,
+            num: Number(new_status.value),
+            student: Number(student),
+            group: Number(group)
+        }
+    };
+
+    return await _request('api', req, data).then(res => {
+        console.log(res);
+        return res.admin ?? res;
+    }).catch(err => {
+        console.log(err);
+    })
+}
+
+Proposal.recallByStudent = async function (student, group, fromTeacher = false) {
+    const req = `
+        mutation ($child: Int, $group: Int, $fromTeacher: Boolean) {
+            admin {
+                recall_proposal (child: $child, group: $group, fromTeacher: $fromTeacher)
+            }
+        }
+    `;
+
+    const data = {
+        child: Number(student),
+        group: Number(group),
+        fromTeacher
     };
 
     return await _request('api', req, data).then(res => {

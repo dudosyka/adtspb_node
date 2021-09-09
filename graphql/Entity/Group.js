@@ -1,5 +1,6 @@
 const baseEntity = require('./BaseEntity');
 const Timetable = require('./Timetable');
+const UserGroup = require('./UserGroup');
 
 let Group = function () {}
 
@@ -13,65 +14,40 @@ Group.prototype.fields = {
 
 Group.prototype.table = "group";
 
-Group.prototype.getAssociationGroups = async function (association_ids, selections) {
-    const { ids, query } = this.db.createRangeQuery(false, association_ids, 'association_id');
+Group.prototype.getAssociationGroups = async function (association_ids, selections, userModel, proposalModel) {
+    const { ids, query } = this.db.createRangeQuery(false, association_ids, '`association_id`');
 
-    let sub1Query = "";
+    const res = await this.db.query("SELECT * FROM `group` as `main` WHERE " + query, ids);
+    const groups_id = res.map(el => el.id);
+
+    let timetables = {};
     if (selections.timetable) {
-        sub1Query = "LEFT JOIN `timetable` AS `sub1` ON `main`.`id` = `sub1`.`group_id`";
+        const timetable = Timetable.newModel();
+        timetables = await timetable.getByGroup(groups_id, selections.timetable);
     }
 
-    let sub1Selections = (sub1Query == "") ? '' : '"" as `sub1_decorator`, `sub1`.`id` as `timetable_id`, `sub1`.*,';
-    let mainSelections = '"" as `main_decorator`, `main`.*';
+    let students = {};
+    if (selections.students) {
+        const userGroup = UserGroup.newModel();
+        // const students_ids = await userGroup.getStructure(groups_id);
+        const students_ids = await userGroup.getStudentsDocumentTaken(groups_id, proposalModel);
 
-    let fullQuery = "SELECT " + sub1Selections + mainSelections + " FROM `group` AS `main` " + sub1Query + " WHERE `main`." + query;
+        for (id of Object.keys(students_ids)) {
+            const rangeQuery = this.db.createRangeQuery(false, students_ids[id].map(el => el.user_id), '`main`.`id`');
+            students[id] = await userModel.getFullData(false, selections.students, null, null, false, rangeQuery.query, rangeQuery.ids);
+        }
+    }
 
-    const res = await this.db.query(fullQuery, ids);
     let groups = {};
-
     res.map(group => {
-        let parsed = {};
-        let pushIntoSub1 = false;
+        group.timetable = timetables[group.id] !== undefined ? timetables[group.id][0] : {};
+        group.students = students[group.id] == undefined ? [] : students[group.id];
 
-        let timetable = {};
-        let main = {};
-
-        Object.keys(group).map(selectedField => {
-            const value = group[selectedField];
-
-            if (selectedField == 'sub1_decorator') {
-                pushIntoSub1 = true;
-            }
-            if (selectedField == 'main_decorator') {
-                pushIntoSub1 = false;
-            }
-            if (pushIntoSub1) {
-                timetable[selectedField] = value;
-            }
-            else {
-                main[selectedField] = value;
-            }
-            if (selectedField == 'association_id') {
-                main[selectedField] = value;
-            }
-        });
-
-
-        delete main.main_decorator;
-        timetable.id = timetable.timetable_id;
-        delete timetable.timetable_id;
-        delete timetable.sub1_decorator;
-
-        parsed = {
-            ...main,
-            timetable
-        };
-
-        if (groups[group['association_id']]) {
-            groups[group['association_id']].push(parsed);
+        if (groups[group.association_id]) {
+            groups[group.association_id].push(group);
         }
         else {
-            groups[group['association_id']] = [ parsed ];
+            groups[group.association_id] = [ group ];
         }
     });
 

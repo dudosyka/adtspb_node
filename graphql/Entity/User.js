@@ -89,21 +89,23 @@ User.prototype.getSector = async function () {
 
 User.prototype.getAllowedAssociations = async function () {
     const sector_id = await this.getSector();
-    let query = " WHERE `join`.`teacher_id` = ?";
+
+    let query = "select `association_id` as `id` from `association_teacher` where `user_id` = ?";
     let data = [ this.__get('id') ];
 
     if (sector_id !== false) {
-        query += "`join`.`sector_id` = ?";
+        query = "select `association_id` as `id` from `association_sector` where `sector_id` = ?";
         data.push(sector_id);
     }
 
     if (this.hasRole(11) || this.hasRole(14)) { //If super admin or admission office allow to all
         query = "WHERE `main`.`id` != ?";
         data = [ -1 ];
+        const association = Association.newModel();
+        return await association.getAssociations(null, {}, null, query, data).then(data => data.map(association => association.id));
     }
 
-    const association = Association.newModel();
-    return await association.getAssociations(null, {}, null, query, data).then(data => data.map(association => association.id));
+    return (await this.db.query(query, data)).map(el => el.id);
 }
 
 User.prototype.auth = async function (data) {
@@ -238,11 +240,23 @@ User.prototype.getFullData = async function (id = false, selections = {}, model 
         proposals = await model.selectProposalsList(field, rangeIds, selections.proposals);
     }
 
+    let parents = null;
+    if (selections.parent) {
+        let field = 'child_id';
+        const userChild = UserChild.newModel();
+        let rangeIds = await userChild.getParents(data.map(el => el.user_id));
+        parents = await this.getFullDataAsObject(rangeIds.map(el => Object.keys(el)[0]), selections.parent, model, role);
+        rangeIds.map(el => {
+            parents[Object.values(el)[0]] = parents[Object.keys(el)[0]];
+        });
+    }
+
     const result = {};
 
     data.map(user => {
         user.id = user.user_id;
         user.proposals = Object.keys(proposals ?? {}).length > 0 ? proposals[user.id] : null;
+        user.parent = Object.keys(parents ?? {}).length > 0 ? parents[user.id] : null;;
         result[user.id] = user;
         return user;
     })

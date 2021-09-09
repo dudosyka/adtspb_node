@@ -142,6 +142,20 @@ Admin.getAssociations = async function(
 		hours_count: null,
 		study_period: null,
 		isRecruiment: null,
+		proposals: {
+			id: null,
+			child: {
+				id: null,
+				name: null,
+				surname: null,
+			},
+			parent: {
+				id: null,
+				name: null,
+				surname: null,
+			},
+			isReserve: null
+		},
 		groups: {
 			id: null,
 			name: null,
@@ -155,8 +169,8 @@ Admin.getAssociations = async function(
 {
 	const req = `
 		query {
-		    association {
-		        getAll {
+		    admin {
+		        get_all_associations {
 		            ` + Parser.objToGraphQlQuery(fields) + `
 		        }
 		    }
@@ -165,8 +179,7 @@ Admin.getAssociations = async function(
 
 	return await _request('api', req)
 		.then(data => {
-			console.log("DATA", data);
-			return(data.association.getAll);
+			return(data.admin.get_all_associations);
 		})
 		.catch( err => console.error(err));
 }
@@ -191,8 +204,16 @@ Admin.getAssociationById = async function (
 			name: null,
 			timetable: {
 				week: null
+			},
+			students: {
+				id: null,
+				surname: null,
+				name: null,
+				lastname: null,
+				email: null,
+				phone: null
 			}
-		}
+		},
 	},
 	id
 ) {

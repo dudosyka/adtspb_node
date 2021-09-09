@@ -26,7 +26,9 @@ function getFullness(actual, planned) {
 Stats.prototype.getAssociationsStat = async function (arr, associationModel, userModel, proposalModel) {
     const { query, ids } = db.createRangeQuery(false, arr, "id");
 
-    const whereQuery = " WHERE `main`." + query;
+    let whereQuery = " WHERE `main`." + query;
+    if (arr.length <= 0)
+        whereQuery = "WHERE `main`.`id` = 0";
 
     const associations = await associationModel.getAssociations(null, { proposals: true }, proposalModel, whereQuery, ids, userModel);
 
@@ -58,7 +60,9 @@ Stats.prototype.getAssociationsStat = async function (arr, associationModel, use
         }
     });
 
-    res[0].reserve = reserve;
+    if (res.length)
+        res[0].reserve = reserve;
+
     return res;
 }
 
@@ -75,7 +79,9 @@ Stats.prototype.getStat = async function (adminModel, associationModel, userMode
 
     const associations = await this.getAssociationsStat(allowed, associationModel, userModel, proposalModel);
 
-    const proposal_reserve_amount = associations[0].reserve;
+    let proposal_reserve_amount = 0;
+    if (associations.length)
+        proposal_reserve_amount = associations[0].reserve;
 
     return {
         parent_amount,

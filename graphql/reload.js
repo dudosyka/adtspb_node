@@ -38,12 +38,10 @@ const userGroup = UserGroup.newModel();
             }
             else {
                 await db.query('insert into `user_group` (`group_id`, `user_id`) VALUES (?, ?)', [ el.group_selected, el.child_id ]);
-                console.log(1, el.id, el.group_selected, el.child_id);
             }
         }
         else {
             await db.query('insert into `user_group` (`group_id`, `user_id`) VALUES (?, ?)', [ el.group_selected, el.child_id ]);
-            console.log(2, el.id, el.group_selected, el.child_id);
         }
     }
 

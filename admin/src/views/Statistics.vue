@@ -24,14 +24,13 @@
 
         <b-card>
             <div class="row-right">
-                <download-excel
-                    :data   = "dataForExcel"
-                    worksheet = "ADT-stats"
-                    name    = "adt_stats.xls">
-                    <b-button>Скачать Excel</b-button>
-                </download-excel>
+              <download-excel
+                  :data   = "dataForExcel"
+                  worksheet = "ADT-stats"
+                  name    = "adt_stats.xls">
+              </download-excel>
             </div>
-            <b-table striped hover :items="stat.associations" :fields="stat.fields" class="sdfsdkfajha"></b-table>
+            <b-table sticky-header striped hover :items="stat.associations" :fields="stat.fields" class="sdfsdkfajha"></b-table>
         </b-card>
         </b-overlay>
     </main>
@@ -129,9 +128,7 @@ export default {
                 fullness_percent: "% наполненности",
                 document_taken: 'Принесено документов',
             }
-            console.log();
             this.stat = data;
-            console.log(`get Stat `, data);
             let first = true;
             this.dataForExcel = data.associations.map(el => {
                 let res = {

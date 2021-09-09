@@ -18,6 +18,9 @@ module.exports = new graphql.GraphQLObjectType({
         association_id: {
             type: graphql.GraphQLInt
         },
+        students: {
+            type: graphql.GraphQLList(UserOutput)
+        },
         timetable: {
             type: TimetableOutput,
         },
@@ -25,3 +28,4 @@ module.exports = new graphql.GraphQLObjectType({
 });
 
 const TimetableOutput = require("../Timetable/Output");
+const UserOutput = require('../User/OutputTypes/Main');

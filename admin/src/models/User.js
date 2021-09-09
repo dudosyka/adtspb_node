@@ -578,6 +578,12 @@ User.calculateAge = function (birthday) {
     return 0;
 }
 
+User.calculateAgeFromTimestamp = function (birthday) {
+    const now = new Date(2021, 8, 1, 0, 0);
+    const diff = now - birthday;
+    return Math.floor(diff / 31557600000);
+}
+
 User.getDataOnEdit = function (target = 0) {
     const req = `
         query ($target: Int) {

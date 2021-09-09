@@ -21,7 +21,6 @@ module.exports = new graphql.GraphQLObjectType({
                     throw Error('Forbidden');
 
                 await rbac.addRoleToUser(user_role.user_id, user_role.role_id).catch(err => {
-                    console.log(err.code);
                     if (err.code) {
                         if (err.code == "ER_DUP_ENTRY")
                             throw Error('Role had already been added');

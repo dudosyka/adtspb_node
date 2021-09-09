@@ -55,7 +55,6 @@ Proposal.prototype.calculateReserve = function (association, proposal_id, queue 
             const queue_position = i - AppConfig.group_size * association.group_count;
             return  queue ? {isReserve, queue: queue_position} : isReserve;
         }
-        console.log(proposal.status[0].num);
         if (proposal.status[0].num != 0 && proposal.status[0].num != 3 && proposal.status[0].num != 4)
             i++
     }
@@ -87,13 +86,13 @@ Proposal.prototype.selectProposalsList = async function (field, arr, selections,
 
     let parents = {};
     if (selections.parent) {
-        parents = await userModel.getFullDataAsObject(proposals.map(el => el.parent_id), selections);
+        parents = await userModel.getFullDataAsObject(proposals.map(el => el.parent_id), selections.parent);
     }
 
     let children = {};
     if (selections.child) {
         const range = this.db.createRangeQuery('id', proposals, 'child_id');
-        children = await userModel.getFullDataAsObject(proposals.map(el => el.child_id), selections);
+        children = await userModel.getFullDataAsObject(proposals.map(el => el.child_id), selections.child);
     }
     let isReserve = {};
     if (selections.isReserve) {
@@ -240,7 +239,6 @@ Proposal.prototype.canJoinAssociation = async function (userModel, userExtraData
 
 Proposal.prototype.createNew = async function (userModel, userExtraDataModel, fromAdmin = false) {
     await this.canJoinAssociation(userModel, userExtraDataModel, fromAdmin);
-    console.log("djhdjahjdkjsa");
 
     const proposal = await this.save(true);
 
@@ -270,23 +268,22 @@ Proposal.prototype.setDocumentTaken = async function (proposal, logger, admin_id
     return true;
 }
 
-Proposal.prototype.recall = async function (requester, admin = false) {
+Proposal.prototype.recall = async function (requester, admin = false, teacher = false) {
     if (this.__get('association_id') === null)
         throw Error('Proposal not found');
 
     if (Number(requester) !== this.__get('parent_id') && !admin) {
             throw Error('Forbidden');
     }
-    console.log(requester, !admin, this.__get('parent_id'));
 
-    if (this.__get('document_taken') == 1) {
+    if (this.__get('document_taken') == 1 && !teacher) {
         throw Error('Document taken');
     }
 
     if (this.__get('group_selected') != 0) {
         await this.db.query('DELETE FROM `user_group` WHERE `user_id` = ? AND `group_id` = ?; UPDATE `proposal` SET `group_selected` = ? WHERE `id` = ?', [ this.__get('child_id'), this.__get('group_selected'), 0, this.__get('id') ]);
     }
-    await this.db.query('DELETE * FROM `selected_associations` WHERE `child_id` = ? AND `association_id` = ?', [ this.__get('child'), this.__get('association') ]);
+    await this.db.query('DELETE FROM `selected_associations` WHERE `child_id` = ? AND `association_id` = ?', [ this.__get('child'), this.__get('association') ]);
 
     this.__set('group_selected', 0);
     this.__set('document_taken', 0);
@@ -313,6 +310,14 @@ Proposal.prototype.generateResolution = async function (child, parent, childExtr
     let pdf = new Pdf(this);
     const buffer = await pdf.generateResolution(child, parent, childExtraData);
     return buffer.toString('base64');
+}
+
+Proposal.prototype.getByStudentAndGroup = async function (child, group) {
+    const req = await this.db.query('select * from `proposal` where `group_selected` = ? and `child_id` = ?', [ group, child ]);
+    if (!req.length)
+        throw Error("Proposal not found");
+
+    return req[0].id;
 }
 
 module.exports = (new Proposal());

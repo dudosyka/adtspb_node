@@ -3,7 +3,7 @@ const Proposal = require('../../../../Entity/Proposal');
 const User = require('../../../../Entity/User');
 
 module.exports = new graphql.GraphQLObjectType({
-    name: "UserOutput",
+    name: "ParentOutput",
     //Arrow func to prevent 'use before initialization' err
     fields: () => ({
         id: {
@@ -33,9 +33,7 @@ module.exports = new graphql.GraphQLObjectType({
         password: {
             type: graphql.GraphQLString,
         },
-        parent: {
-            type: ParentOutput,
-        },
+
         //Extra data
         birthday: {
             type: graphql.GraphQLFloat
@@ -100,4 +98,3 @@ module.exports = new graphql.GraphQLObjectType({
 const OvzOutput = require('../../Ovz/Output');
 const DisabilityGroupOutput = require('../../DisabilityGroup/Output');
 const ProposalOutput = require('../../Proposal/Output');
-const ParentOutput = require('./Parent');

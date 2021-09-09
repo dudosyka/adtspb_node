@@ -36,7 +36,7 @@ Association.prototype.getAssociations = async function (age = null, selections =
         data = whereData;
     }
 
-    fullQuery = "SELECT `main`.*, `join`.* FROM `association` as `main` LEFT JOIN `association_extra_data` as `join` ON `main`.`id` = `join`.`association_id` " + whereQuery;
+    let fullQuery = "SELECT `main`.*, `join`.* FROM `association` as `main` LEFT JOIN `association_extra_data` as `join` ON `main`.`id` = `join`.`association_id` " + whereQuery;
 
     const res = await this.db.query(fullQuery, data);
     const ids = res.map(el => el.association_id);
@@ -46,8 +46,8 @@ Association.prototype.getAssociations = async function (age = null, selections =
 
     let groups = null;
     if (selections.groups) {
-        const model = Group.newModel();
-        groups = await model.getAssociationGroups(ids, selections.groups);
+        const groupModel = Group.newModel();
+        groups = await groupModel.getAssociationGroups(ids, selections.groups, userModel, model);
     }
 
     let proposals = null;
@@ -127,7 +127,6 @@ Association.prototype.newFromInput = async function (input, extraModel) {
     if (res === false) {
         throw Error(JSON.stringify(await this.validate()));
     }
-    console.log(input);
     input.association_id = res.insertId;
     extraModel.load(input);
     await extraModel.save();

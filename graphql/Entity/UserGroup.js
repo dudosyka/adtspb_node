@@ -14,6 +14,11 @@ UserGroup.prototype.fields = {
 
 UserGroup.prototype.table = "user_group";
 
+UserGroup.prototype.getOldGroup = async function (range) {
+    const groups = await this.db.query('SELECT `group_id` FROM `user_group` WHERE `user_id` = ? AND ' + range.query, range.ids);
+    return (groups.length) ? groups[0].group_id : null;
+}
+
 UserGroup.prototype.execInsertQuery = async function (proposals, association_id, group_id) {
     let query = "";
     let ids = [];
@@ -23,11 +28,13 @@ UserGroup.prototype.execInsertQuery = async function (proposals, association_id,
             continue;
         const range = this.db.createRangeQuery('id', proposal.association.groups, 'group_id');
         range.ids.unshift(proposal.child.id);
+        const old_group_id = await this.getOldGroup(range);
         await this.db.query('DELETE FROM `user_group` WHERE `user_id` = ? AND ' + range.query, range.ids);
         query += "INSERT INTO `user_group` (`group_id`, `user_id`) VALUES (?, ?);";
         ids.push(group_id, proposal.child.id);
+
         const userGroupLog = UserGroupLog.newModel();
-        userGroupLog.logJoin(proposal.child_id, group_id);
+        userGroupLog.logJoin(proposal.child_id, group_id, old_group_id);
     }
 
     return await this.db.query(query, ids);
@@ -84,6 +91,77 @@ UserGroup.prototype.joinGroup = async function (input, groupModel, proposalModel
     await this.execInsertQuery(proposals, association_id, input.group_id);
 
     return true;
+}
+
+UserGroup.prototype.getStructure = async function (groups_id) {
+    const { ids, query } = this.db.createRangeQuery(false, groups_id, 'group_id');
+
+    const relations = await this.db.select(this, query, ids);
+
+    let result = {};
+    relations.map(relation => {
+        if (result[relation.group_id]) {
+            result[relation.group_id].push(relation);
+        }
+        else {
+            result[relation.group_id] = [ relation ];
+        }
+    });
+
+    return result;
+}
+
+UserGroup.prototype.getStudentsDocumentTaken = async function (groups_id, proposalModel) {
+    const structureData = await this.getStructure(groups_id);
+    let structure = structureData;
+    // Object.keys(structureData).map(key => {
+    //     structureData[key].map(userGroup => {
+    //         if (structure[key]) {
+    //             structure[key][userGroup.user_id] = userGroup;
+    //         }
+    //         else {
+    //             structure[key] = {
+    //                 [userGroup.user_id]: userGroup
+    //             };
+    //         }
+    //     });
+    // });
+
+    const proposalsData = await proposalModel.selectProposalsList('group_selected', groups_id, {status: true, });
+    let proposals = {};
+    Object.keys(proposalsData).map(key => {
+        proposalsData[key].map(proposal => {
+            if (proposals[key]) {
+                proposals[key][proposal.child_id] = proposal;
+            }
+            else {
+                proposals[key] = {
+                    [proposal.child_id]: proposal
+                };
+            }
+        });
+    });
+
+    const result = {};
+    Object.keys(structure).map(key => {
+        const el = structure[key];
+        const groupProposals = proposals[key];
+
+        el.map(userGroup => {
+            const proposal = groupProposals[userGroup.user_id];
+            if (proposal == undefined)
+                return;
+            if (proposal.document_taken == 0 || proposal.status[0].num == 0)
+                return
+
+            if (result[key])
+                result[key].push(userGroup);
+            else
+                result[key] = [ userGroup ];
+        });
+    });
+
+    return result;
 }
 
 module.exports = (new UserGroup());
