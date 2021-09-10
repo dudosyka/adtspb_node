@@ -3,6 +3,8 @@
         <Header />
         <b-overlay :show="overlay">
         <header class="header">
+
+          <template v-if="!hideNumbers">
             <h2 class="ft-gray">Общее число родителей:</h2>
             <h2 class="ft-white">{{ stat.parent_amount }}</h2>
 
@@ -20,6 +22,9 @@
 
             <h2 class="ft-gray">Резерва:</h2>
             <h2 class="ft-white">{{ stat.proposal_reserve_amount }}</h2>
+            </template>
+
+
         </header>
 
         <b-card>
@@ -28,6 +33,9 @@
                   :data   = "dataForExcel"
                   worksheet = "ADT-stats"
                   name    = "adt_stats.xls">
+                <b-button variant="success">
+                  Скачать в excel
+                </b-button>
               </download-excel>
             </div>
             <b-table sticky-header striped hover :items="stat.associations" :fields="stat.fields" class="sdfsdkfajha"></b-table>
@@ -104,7 +112,8 @@ export default {
               },
               { colA: "Another", colB: "Regular cell" },
             ],
-            overlay: false
+            overlay: false,
+            hideNumbers: false,
         }
     },
     async created() {
@@ -155,7 +164,10 @@ export default {
                 return res;
             });
             console.log(this.dataForExcel);
-        })
+        });
+        if (hasRole(12)) {
+          this.hideNumbers = true;
+        }
     }
 }
 
