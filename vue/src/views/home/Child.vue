@@ -226,7 +226,8 @@
       },
       toAssociations(id) {
         localStorage.setItem('childInAssociations', id);
-        window.location = 'child/association';
+        // window.location = 'child/association';
+        this.$router.push({name: 'Association'});
         console.log(localStorage.getItem('childInAssociations'))
       }
 

@@ -141,7 +141,8 @@
 
         _request("endoor", req, data)
           .then(data => {
-            window.location = '/login'
+            this.$router.push({name: "Login"});
+            // window.location = '/login'
           })
           .catch(err => console.error(err))
       }

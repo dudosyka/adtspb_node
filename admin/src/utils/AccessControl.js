@@ -1,6 +1,7 @@
 const AccessControl = {};
 import { request, GraphQLClient } from "graphql-request";
 import * as AppConfig from '../config/AppConfig';
+import router from '../router/index'
 
 AccessControl.checkRule = function (id) {
     const rules = localStorage.getItem('rules');
@@ -70,9 +71,11 @@ AccessControl.logout = function (redirToLogin = false) {
     localStorage.removeItem('roles');
 
     if (redirToLogin)
-        window.location = "/login";
+        router.push({name: "Login"});
+        // window.location = "/login";
     else
-        window.location = window.location;
+        router.go()
+        // window.location = window.location;
 }
 
 export {AccessControl};

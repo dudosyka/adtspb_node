@@ -159,7 +159,8 @@ export default {
                 .then(data => {
                     this.overlay = false
                     this.showAlert()
-                    window.location.reload()
+                    this.$router.go();
+                    // window.location.reload()
                 })
         },
         cancelDeletChild(request) {

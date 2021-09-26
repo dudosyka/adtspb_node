@@ -2,6 +2,7 @@ import {Validator} from "../utils/Validator";
 import {Parser} from "../utils/Parser";
 import {Corrector} from "../utils/Corrector";
 import {AccessControl} from '../utils/AccessControl'
+import router from '../router/index'
 
 let User = {};
 
@@ -54,8 +55,10 @@ User.login = async function ({login, pass}) {
 
 User.auth = function (token, redir = false) {
     localStorage.setItem('token', token);
-    if (redir)
-        window.location = window.location;
+    if (redir) {
+        router.go();
+        // window.location = window.location;
+    }
     return;
 }
 
@@ -75,7 +78,8 @@ User.checkConfirmation  = async function (id) {
     try {
         refreshApiToken();
     } catch (err) {
-        window.location = window.location;
+        router.go();
+        // window.location = window.location;
     }
 
     return await _request("api", req, data).then(check => {
@@ -88,7 +92,8 @@ User.checkConfirmation  = async function (id) {
 }
 
 User.setOnConfirm = function () {
-    window.location = '/confirmation';
+    router.push({name: "Confirmation"});
+    // window.location = '/confirmation';
 }
 
 User.confirmUser = async function (code) {
@@ -112,7 +117,8 @@ User.confirmUser = async function (code) {
       if (data.user.confirm.isConfirmed) {
           AccessControl.refreshApiToken(data.user.confirm.token);
           AccessControl.refreshAccess();
-          window.location = '/';
+          router.push({name: "Home"});
+          // window.location = '/';
           return true;
       }
       return false;

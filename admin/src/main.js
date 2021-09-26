@@ -38,7 +38,8 @@ global._request = async (route, query, data = {}) => {
         if (err.response.error) {
             const msg = JSON.parse(err.response.error).message;
             if (msg == 'Not confirmed') {
-                window.location = '/confirmation';
+                router.push({name: "Confirmation"});
+                // window.location = '/confirmation';
             }
             if (msg == 'refresh') {
                 AccessControl.logout(true);

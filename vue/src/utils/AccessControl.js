@@ -1,6 +1,7 @@
 const AccessControl = {};
 import { request, GraphQLClient } from "graphql-request";
 import * as AppConfig from '../config/AppConfig';
+import router from '../router/index'
 
 AccessControl.checkRule = function (id) {
     const rules = localStorage.getItem('rules');
@@ -72,9 +73,9 @@ AccessControl.logout = function (redirToLogin = false) {
     localStorage.removeItem('selectedAssociations');
 
     if (redirToLogin)
-        window.location = "/login";
+        router.push({name: "login"});
     else
-        window.location = window.location;
+        router.go();
 }
 
 export {AccessControl};
