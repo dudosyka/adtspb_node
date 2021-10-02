@@ -116,6 +116,7 @@ export default {
                     id: null,
                     surname: null,
                     name: null,
+                    lastname: null,
                     birthday: null,
                     parent: {
                         name: null,
@@ -133,6 +134,7 @@ export default {
                         id: null,
                         surname: null,
                         name: null,
+                        lastname: null,
                         birthday: null,
                         parent: {
                             name: null,
@@ -156,6 +158,10 @@ export default {
           const students = [];
 
           for (let student of opened.students) {
+            let birth = new Date(student.birthday);
+            let year = birth.getFullYear();
+            let month = birth.getMonth() + 1;
+            let day = birth.getDate();
             let row = {
               'id': student.id,
               'proposal_id': student.proposal_id,
@@ -163,6 +169,8 @@ export default {
               'proposal_is_document_taken': student.proposal_is_document_taken,
               'Фамилия (ребенка)': student.surname,
               'Имя (ребенка)': student.name,
+              'Отчество (ребенка)': student.lastname,
+              'Дата рождения ребенка': year + "-" + month + "-" + day,
               'Возраст ребенка': User.calculateAgeFromTimestamp(Number(student.birthday)),
               'Имя (родителя)': student.parent.name,
               'Отчество (родителя)': student.parent.lastname,
